@@ -1,0 +1,1017 @@
+{
+    "systemName": "custom-cre-001-draft-review",
+    "name": "CRE - Matter - 001 - Draft - Review",
+    "description": "Commercial Real Estate draft and negotiation phase. Documents are either drafted by us or received from the other side depending on the transaction. The documents then go through a review cycle",
+    "overrideNotifications": false,
+    "exceptionNotifications": false,
+    "exceptionNotificationEmailAddresses": null,
+    "variables": [
+        {
+            "systemName": "draftAgreementTaskId",
+            "name": "Draft Agreement Task Id",
+            "defaultValue": null,
+            "type": "/Identifier/Work Type Identifier/Task Identifier",
+            "isCollection": false,
+            "isInputVariable": false,
+            "isMandatory": false
+        },
+        {
+            "systemName": "matterId",
+            "name": "matterId",
+            "defaultValue": null,
+            "type": "/Identifier/Work Type Identifier",
+            "isCollection": false,
+            "isInputVariable": true,
+            "isMandatory": true
+        },
+        {
+            "systemName": "matterOwnerId",
+            "name": "Matter Owner Id",
+            "defaultValue": null,
+            "type": "/Identifier/Ods Entity Identifier",
+            "isCollection": false,
+            "isInputVariable": false,
+            "isMandatory": true
+        },
+        {
+            "systemName": "matterSupportElseMatterOwner",
+            "name": "Matter Support else Matter Owner",
+            "defaultValue": null,
+            "type": "/Identifier/Ods Entity Identifier",
+            "isCollection": false,
+            "isInputVariable": false,
+            "isMandatory": true
+        },
+        {
+            "systemName": "reviewCycleNumber",
+            "name": "reviewCycleNumber",
+            "defaultValue": null,
+            "type": "/Number",
+            "isCollection": false,
+            "isInputVariable": false,
+            "isMandatory": true
+        },
+        {
+            "systemName": "revisedDocChoices",
+            "name": "revisedDocChoices",
+            "defaultValue": null,
+            "type": "/Identifier/Action Plan Identifier",
+            "isCollection": false,
+            "isInputVariable": false,
+            "isMandatory": true
+        }
+    ],
+    "steps": [
+        {
+            "ideData": {
+                "x": 1175,
+                "y": -100
+            },
+            "actions": [
+                {
+                    "config": {
+                        "runForId": "matterId",
+                        "ruleToRun": "custom-cre-mattersupport-matterowner",
+                        "assignToId": "matterSupportElseMatterOwner"
+                    },
+                    "connections": {},
+                    "actionSystemName": "allocationRule",
+                    "name": "Run allocation rule Matter Support"
+                },
+                {
+                    "config": {
+                        "taskType": "task-activity-prepare-document",
+                        "taskTitle": "Draft Agreement",
+                        "taskDescription": "Draft Agreement",
+                        "dueInDays": "1",
+                        "tag": "Draft and Review",
+                        "dueOnVariable": null,
+                        "priorityId": null,
+                        "actionPlanItems": [],
+                        "actionPlanTitle": "Action plan",
+                        "parentWorkItemId": "matterId",
+                        "taskOwnerOdsId": "matterSupportElseMatterOwner",
+                        "outputVariable": "draftAgreementTaskId",
+                        "onCompleteOutlet": false,
+                        "onOverdueOutlet": false,
+                        "templateSystemName": "custom-cre-draft-agreement",
+                        "useDynamicTemplateName": false,
+                        "dynamicTemplateSystemName": null,
+                        "recipientOdsId": null,
+                        "regardingOdsId": null,
+                        "phaseOutlets": [
+                            {
+                                "systemName": "task-activity-prepare-document-issued",
+                                "name": "Issued"
+                            }
+                        ],
+                        "assignments": []
+                    },
+                    "connections": {
+                        "task-activity-prepare-document-issued": {
+                            "step": "split1",
+                            "port": "left3",
+                            "points": []
+                        }
+                    },
+                    "actionSystemName": "CreatePrepareDocumentV2",
+                    "name": "002 - Prep Doc: Draft Agreement"
+                }
+            ],
+            "systemName": "_002PrimaryDocument",
+            "name": "002 - Primary Document",
+            "description": null,
+            "isStart": false,
+            "isEnd": false,
+            "isOptimal": true
+        },
+        {
+            "ideData": {
+                "x": 2275,
+                "y": -75
+            },
+            "actions": [
+                {
+                    "config": {
+                        "taskType": "custom-task-alternative-outome-not-required-yes-no",
+                        "taskTitle": "Has client approval for the draft document been received ??",
+                        "taskDescription": "Has client approval for the draft document been received or is not required?",
+                        "dueInDays": "5",
+                        "tag": "Draft and Review",
+                        "dueOnVariable": null,
+                        "priorityId": 9001,
+                        "actionPlanItems": [],
+                        "actionPlanTitle": "",
+                        "parentWorkItemId": "matterId",
+                        "taskOwnerOdsId": "matterSupportElseMatterOwner",
+                        "outputVariable": null,
+                        "onCompleteOutlet": false,
+                        "onOverdueOutlet": false,
+                        "phaseOutlets": [
+                            {
+                                "systemName": "custom-task-alternative-outome-not-required-yes-no-plan-no",
+                                "name": "No"
+                            },
+                            {
+                                "systemName": "custom-task-alternative-outome-not-required-yes-no-plan-not-required",
+                                "name": "Not Required"
+                            },
+                            {
+                                "systemName": "custom-task-alternative-outome-not-required-yes-no-plan-yes",
+                                "name": "Yes"
+                            }
+                        ],
+                        "assignments": []
+                    },
+                    "connections": {
+                        "custom-task-alternative-outome-not-required-yes-no-plan-no": {
+                            "step": "_003ClientApproval",
+                            "port": "bottom5",
+                            "points": []
+                        },
+                        "custom-task-alternative-outome-not-required-yes-no-plan-yes": {
+                            "step": "split2",
+                            "port": "left3",
+                            "points": []
+                        },
+                        "custom-task-alternative-outome-not-required-yes-no-plan-not-required": {
+                            "step": "split2",
+                            "port": "left3",
+                            "points": []
+                        }
+                    },
+                    "actionSystemName": "createTaskV2",
+                    "name": "[Gateway] Has client approval for the draft document been received or is not required?"
+                }
+            ],
+            "systemName": "_003ClientApproval",
+            "name": "003 - Client Approval",
+            "description": null,
+            "isStart": false,
+            "isEnd": false,
+            "isOptimal": true
+        },
+        {
+            "ideData": {
+                "x": 3550,
+                "y": -75
+            },
+            "actions": [
+                {
+                    "config": {
+                        "runForId": "matterId",
+                        "ruleToRun": "custom-cre-mattersupport-matterowner",
+                        "assignToId": "matterSupportElseMatterOwner"
+                    },
+                    "connections": {},
+                    "actionSystemName": "allocationRule",
+                    "name": "Run allocation rule"
+                },
+                {
+                    "config": {
+                        "taskType": "task-activity-send-email",
+                        "taskTitle": "Draft Agreement",
+                        "dueInDays": "1",
+                        "dueOnVariable": null,
+                        "addActionPlan": false,
+                        "actionPlanTitle": "",
+                        "parentWorkItemId": "matterId",
+                        "taskOwnerOdsId": null,
+                        "actionPlanItemsList": null,
+                        "outputVariable": null,
+                        "fromParticipantRole": "matter-support",
+                        "toParticipantRole": "client",
+                        "ccParticipantRole": null,
+                        "regarding": "matterId",
+                        "emailTemplate": "custom-cre-conflict-request-letter-enclosing-draft-agreement-to-other-side",
+                        "useDynamicTemplateName": false,
+                        "dynamicTemplateSystemName": null,
+                        "tag": null,
+                        "onCompleteOutlet": true,
+                        "onReminderOutlet": true,
+                        "phaseOutlets": [
+                            {
+                                "systemName": "task-activity-send-email-phases-sent",
+                                "name": "Sent"
+                            }
+                        ],
+                        "assignments": []
+                    },
+                    "connections": {
+                        "task-activity-send-email-phases-sent": {
+                            "step": "split3",
+                            "port": "left3",
+                            "points": []
+                        }
+                    },
+                    "actionSystemName": "OutboundEmail",
+                    "name": "[Email] Letter enclosing draft agreement to other side"
+                },
+                {
+                    "config": {
+                        "mode": "formfield",
+                        "workItemIdVariable": "matterId",
+                        "newValueVariable": null,
+                        "newValue": "1",
+                        "attributeSystemName": "reviewCycleNumber",
+                        "formId": "6cb7c1ca-d0e0-492f-8133-41af265527ad"
+                    },
+                    "connections": {},
+                    "actionSystemName": "UpdateAttribute",
+                    "name": "Set review cycle to 1"
+                }
+            ],
+            "systemName": "_004EmailLetterEnclosingDraftAgreementToOtherSide",
+            "name": "004 - [Email] Letter enclosing draft agreement to other side",
+            "description": null,
+            "isStart": false,
+            "isEnd": false,
+            "isOptimal": true
+        },
+        {
+            "ideData": {
+                "x": 1175,
+                "y": 325
+            },
+            "actions": [
+                {
+                    "config": {
+                        "runForId": "matterId",
+                        "ruleToRun": "custom-cre-mattersupport-matterowner",
+                        "assignToId": "matterSupportElseMatterOwner"
+                    },
+                    "connections": {},
+                    "actionSystemName": "allocationRule",
+                    "name": "Run allocation rule"
+                },
+                {
+                    "config": {
+                        "taskType": "task-activity-document-expectation",
+                        "taskTitle": "Receive Draft Agreement from Other Side",
+                        "taskDescription": "Waiting for draft document from other side",
+                        "dueInDays": "3",
+                        "tag": "Draft and Review",
+                        "dueOnVariable": null,
+                        "priorityId": 9001,
+                        "actionPlanItems": [],
+                        "actionPlanTitle": "",
+                        "parentWorkItemId": "matterId",
+                        "taskOwnerOdsId": "matterSupportElseMatterOwner",
+                        "outputVariable": null,
+                        "onCompleteOutlet": true,
+                        "onOverdueOutlet": false,
+                        "phaseOutlets": [],
+                        "assignments": []
+                    },
+                    "connections": {
+                        "onComplete": {
+                            "step": "prepDocReviseDocumentWithClientApproval",
+                            "port": "left2",
+                            "points": []
+                        }
+                    },
+                    "actionSystemName": "createTaskV2",
+                    "name": "[Doc Exp] Draft Agreement from other side"
+                }
+            ],
+            "systemName": "awaitingOtherSideDraftAgreement",
+            "name": "Awaiting Other Side Draft Agreement",
+            "description": null,
+            "isStart": false,
+            "isEnd": false,
+            "isOptimal": true
+        },
+        {
+            "ideData": {
+                "x": 4875,
+                "y": 0
+            },
+            "actions": [
+                {
+                    "config": {
+                        "workItemIdVariable": "matterId",
+                        "expectedTypeSystemName": "matter-realestate-au-lts",
+                        "phaseSystemName": "matter-real-estate-report-engross"
+                    },
+                    "connections": {},
+                    "actionSystemName": "progressMilestone",
+                    "name": "[Change Phase] Change phase to Negotiate & Finalise"
+                },
+                {
+                    "config": {
+                        "now": true,
+                        "startOnDateTimeVariable": null,
+                        "startIn": 1,
+                        "startInType": "Days",
+                        "description": "Start step"
+                    },
+                    "connections": {
+                        "execute": {
+                            "step": "finish",
+                            "port": "left1",
+                            "points": []
+                        }
+                    },
+                    "actionSystemName": "startStep",
+                    "name": "Start step"
+                }
+            ],
+            "systemName": "changePhaseReporting",
+            "name": "Change Phase: Reporting",
+            "description": null,
+            "isStart": false,
+            "isEnd": false,
+            "isOptimal": true
+        },
+        {
+            "ideData": {
+                "x": 5675,
+                "y": 125
+            },
+            "actions": [],
+            "systemName": "finish",
+            "name": "Plan complete",
+            "description": "The plan is complete",
+            "isStart": false,
+            "isEnd": true,
+            "isOptimal": true
+        },
+        {
+            "ideData": {
+                "x": 158.93328857421875,
+                "y": -184.70862438625775
+            },
+            "actions": [
+                {
+                    "config": {
+                        "taskType": "task",
+                        "taskTitle": "Perform initial review tasks",
+                        "taskDescription": "Perform initial review tasks",
+                        "dueInDays": "1",
+                        "tag": "Draft and Review",
+                        "dueOnVariable": null,
+                        "priorityId": 9001,
+                        "actionPlanItems": [
+                            {
+                                "type": "checkbox",
+                                "description": "Review: Matter Details",
+                                "mandatory": true,
+                                "order": 0,
+                                "withCta": true,
+                                "outputVariable": null,
+                                "choices": [],
+                                "ctaTitle": "Key Facts",
+                                "ctaIcon": "fa-edit",
+                                "ctaCss": "btn-success",
+                                "ctaStyles": null,
+                                "ctaCommand": "edit-sharedo",
+                                "ctaCommandConfig": "{}",
+                                "ctaContextType": "sharedo",
+                                "ctaContextIdVariable": "matterId"
+                            },
+                            {
+                                "type": "checkbox",
+                                "description": "Capture: Matter parties",
+                                "mandatory": true,
+                                "order": 20,
+                                "withCta": true,
+                                "outputVariable": null,
+                                "choices": [],
+                                "ctaTitle": "Participants",
+                                "ctaIcon": "fa-users",
+                                "ctaCss": "btn-success",
+                                "ctaStyles": null,
+                                "ctaCommand": "sharedo-manage-participants",
+                                "ctaCommandConfig": "{}",
+                                "ctaContextType": "sharedo",
+                                "ctaContextIdVariable": "matterId"
+                            },
+                            {
+                                "type": "checkbox",
+                                "description": "Searches: Order Searches if required",
+                                "mandatory": true,
+                                "order": 30,
+                                "withCta": true,
+                                "outputVariable": null,
+                                "choices": [],
+                                "ctaTitle": "Infotrack",
+                                "ctaIcon": "fa-search",
+                                "ctaCss": null,
+                                "ctaStyles": null,
+                                "ctaCommand": "open-url",
+                                "ctaCommandConfig": "{\"url\":\"https://www.infotrack.com.au/\",\"openInNewWindow\":true,\"portalRelative\":false,\"requireSharedo\":false,\"requireParticipant\":false,\"requireRole\":false}",
+                                "ctaContextType": null,
+                                "ctaContextIdVariable": null
+                            },
+                            {
+                                "type": "checkbox",
+                                "description": "Capture: Add consents (if required) ",
+                                "mandatory": true,
+                                "order": 80,
+                                "withCta": true,
+                                "outputVariable": null,
+                                "choices": [],
+                                "ctaTitle": "Create Consent",
+                                "ctaIcon": "fa-check-square",
+                                "ctaCss": "btn-success",
+                                "ctaStyles": null,
+                                "ctaCommand": "create-sharedo",
+                                "ctaCommandConfig": "{\"useCurrentContextAsParent\":true,\"typeSystemName\":\"task-activity-document-expectation\",\"title\":\"Consent from :\",\"description\":null}",
+                                "ctaContextType": "sharedo",
+                                "ctaContextIdVariable": "matterId"
+                            },
+                            {
+                                "type": "checkbox",
+                                "description": "Capture: Set Complexities ",
+                                "mandatory": true,
+                                "order": 90,
+                                "withCta": true,
+                                "outputVariable": null,
+                                "choices": [],
+                                "ctaTitle": "Set Complexities  [TBD]",
+                                "ctaIcon": "fa-file",
+                                "ctaCss": "btn-success",
+                                "ctaStyles": null,
+                                "ctaCommand": null,
+                                "ctaCommandConfig": "{}",
+                                "ctaContextType": null,
+                                "ctaContextIdVariable": "matterId"
+                            },
+                            {
+                                "type": "checkbox",
+                                "description": "Capture: Key Dates",
+                                "mandatory": true,
+                                "order": 10,
+                                "withCta": true,
+                                "outputVariable": null,
+                                "choices": [],
+                                "ctaTitle": "Key Dates",
+                                "ctaIcon": "fa-calendar",
+                                "ctaCss": "btn-success",
+                                "ctaStyles": null,
+                                "ctaCommand": "edit-key-dates",
+                                "ctaCommandConfig": "{}",
+                                "ctaContextType": "sharedo",
+                                "ctaContextIdVariable": "matterId"
+                            },
+                            {
+                                "type": "checkbox",
+                                "description": "Document:  Data Validation",
+                                "mandatory": true,
+                                "order": 100,
+                                "withCta": true,
+                                "outputVariable": null,
+                                "choices": [],
+                                "ctaTitle": "Prep Document",
+                                "ctaIcon": "fa-file-text-o",
+                                "ctaCss": null,
+                                "ctaStyles": null,
+                                "ctaCommand": "sharedo-open-or-create-task",
+                                "ctaCommandConfig": "{\"instanceTag\":null,\"sharedoType\":\"task-activity-prepare-document\",\"assignToHolderOfRole\":\"matter-support\",\"title\":\"\",\"dueOffset\":\"1d\",\"processTags\":[],\"prepareDocument\":{\"template\":\"dc-top-and-tail-letter\",\"documentClass\":null,\"recipientRole\":null,\"regardingRole\":null}}",
+                                "ctaContextType": "sharedo",
+                                "ctaContextIdVariable": "matterId"
+                            }
+                        ],
+                        "actionPlanTitle": "Action Plan",
+                        "parentWorkItemId": "matterId",
+                        "taskOwnerOdsId": "matterSupportElseMatterOwner",
+                        "outputVariable": null,
+                        "onCompleteOutlet": true,
+                        "onOverdueOutlet": true,
+                        "phaseOutlets": [],
+                        "assignments": []
+                    },
+                    "connections": {},
+                    "actionSystemName": "createTaskV2",
+                    "name": "001b - Task: Perform Initial Review Tasks "
+                },
+                {
+                    "config": {
+                        "taskType": "task-gateway",
+                        "taskTitle": "Are we drafting agreement?",
+                        "taskDescription": "Indicate yes if the other side is drafting the documents or no if we are",
+                        "dueInDays": "1",
+                        "tag": "Draft and Review",
+                        "dueOnVariable": null,
+                        "priorityId": 9001,
+                        "actionPlanItems": [],
+                        "actionPlanTitle": "",
+                        "parentWorkItemId": "matterId",
+                        "taskOwnerOdsId": "matterSupportElseMatterOwner",
+                        "outputVariable": null,
+                        "onCompleteOutlet": false,
+                        "onOverdueOutlet": false,
+                        "phaseOutlets": [
+                            {
+                                "systemName": "task-gateway-no",
+                                "name": "No"
+                            },
+                            {
+                                "systemName": "task-gateway-yes",
+                                "name": "Yes"
+                            }
+                        ],
+                        "assignments": []
+                    },
+                    "connections": {
+                        "task-gateway-yes": {
+                            "step": "_002PrimaryDocument",
+                            "port": "left3",
+                            "points": []
+                        },
+                        "task-gateway-no": {
+                            "step": "awaitingOtherSideDraftAgreement",
+                            "port": "left2",
+                            "points": []
+                        }
+                    },
+                    "actionSystemName": "createTaskV2",
+                    "name": "001a - Gateway: are we drafting agreement?"
+                },
+                {
+                    "config": {},
+                    "connections": {},
+                    "actionSystemName": "placeholder",
+                    "name": "Note that on implementation we may need to put in some if statements to vary the prepare document template that is being used"
+                }
+            ],
+            "systemName": "initialStep",
+            "name": "Initial Steps",
+            "description": null,
+            "isStart": false,
+            "isEnd": false,
+            "isOptimal": true
+        },
+        {
+            "ideData": {
+                "x": 2150,
+                "y": 375
+            },
+            "actions": [
+                {
+                    "config": {
+                        "parentWorkItemIdVariable": "matterId",
+                        "keyDateType": "custom-re-initial-draft-initial-review-sent-to-client",
+                        "dueOnVariable": null,
+                        "dueInDays": 0,
+                        "markComplete": true,
+                        "outputVariable": null,
+                        "phaseOutlets": []
+                    },
+                    "connections": {},
+                    "actionSystemName": "CreateKeyDate",
+                    "name": "[Key Date] Initial Draft / Reviews Send To Client"
+                }
+            ],
+            "systemName": "keyDateDraftAgreementSentToClientSet",
+            "name": "[Key Date] Draft Agreement sent to client set",
+            "description": null,
+            "isStart": false,
+            "isEnd": false,
+            "isOptimal": true
+        },
+        {
+            "ideData": {
+                "x": 4625,
+                "y": 325
+            },
+            "actions": [
+                {
+                    "config": {
+                        "parentWorkItemIdVariable": "matterId",
+                        "keyDateType": "custom-re-documents-agreed",
+                        "dueOnVariable": null,
+                        "dueInDays": 0,
+                        "markComplete": true,
+                        "outputVariable": null,
+                        "phaseOutlets": []
+                    },
+                    "connections": {},
+                    "actionSystemName": "CreateKeyDate",
+                    "name": "[Key date] Set Draft Agreement Sent to Other SideKey "
+                }
+            ],
+            "systemName": "keyDateSetDraftAgreementSentToOtherSide",
+            "name": "[Key date] Set Draft Agreement Sent to Other Side",
+            "description": null,
+            "isStart": false,
+            "isEnd": false,
+            "isOptimal": true
+        },
+        {
+            "ideData": {
+                "x": -275,
+                "y": -100
+            },
+            "actions": [
+                {
+                    "config": {
+                        "runForId": "matterId",
+                        "ruleToRun": "custom-cre-mattersupport-matterowner",
+                        "assignToId": "matterSupportElseMatterOwner"
+                    },
+                    "connections": {},
+                    "actionSystemName": "allocationRule",
+                    "name": "Run allocation rule"
+                },
+                {
+                    "config": {
+                        "variables": [
+                            "matterSupportElseMatterOwner",
+                            "matterId"
+                        ]
+                    },
+                    "connections": {},
+                    "actionSystemName": "LogVariables",
+                    "name": "Log Variables"
+                },
+                {
+                    "config": {
+                        "now": true,
+                        "startOnDateTimeVariable": null,
+                        "startIn": 1,
+                        "startInType": "Days",
+                        "description": "Finish"
+                    },
+                    "connections": {
+                        "execute": {
+                            "step": "initialStep",
+                            "port": "left2",
+                            "points": []
+                        }
+                    },
+                    "actionSystemName": "startStep",
+                    "name": "Finish"
+                }
+            ],
+            "systemName": "main",
+            "name": "Main entry point",
+            "description": "The main entry point of the plan",
+            "isStart": true,
+            "isEnd": false,
+            "isOptimal": true
+        },
+        {
+            "ideData": {
+                "x": 1925,
+                "y": 750
+            },
+            "actions": [
+                {
+                    "config": {
+                        "runForId": "matterId",
+                        "ruleToRun": "custom-cre-mattersupport-matterowner",
+                        "assignToId": "matterSupportElseMatterOwner"
+                    },
+                    "connections": {},
+                    "actionSystemName": "allocationRule",
+                    "name": "Run allocation rule"
+                },
+                {
+                    "config": {
+                        "taskType": "task-file-review",
+                        "taskTitle": "Revise document and send for client approval with advice / suggestions",
+                        "taskDescription": null,
+                        "dueInDays": "1",
+                        "tag": "Draft and Negotiation",
+                        "dueOnVariable": null,
+                        "priorityId": 9001,
+                        "actionPlanItems": [],
+                        "actionPlanTitle": "",
+                        "parentWorkItemId": "matterId",
+                        "taskOwnerOdsId": "matterSupportElseMatterOwner",
+                        "outputVariable": null,
+                        "onCompleteOutlet": false,
+                        "onOverdueOutlet": false,
+                        "templateSystemName": "dc-top-and-tail-letter",
+                        "useDynamicTemplateName": false,
+                        "dynamicTemplateSystemName": null,
+                        "recipientOdsId": "matterSupportElseMatterOwner",
+                        "regardingOdsId": null,
+                        "phaseOutlets": [
+                            {
+                                "systemName": "task-done",
+                                "name": "Done"
+                            }
+                        ],
+                        "assignments": []
+                    },
+                    "connections": {
+                        "task-done": {
+                            "step": "setKeyDateInitialAgreementReviewComplete",
+                            "port": "left4",
+                            "points": []
+                        }
+                    },
+                    "actionSystemName": "CreatePrepareDocumentV2",
+                    "name": "[Action] Review Draft Document and send response"
+                }
+            ],
+            "systemName": "prepDocReviseDocumentWithClientApproval",
+            "name": "Prep Doc: Revise Document with Client Approval",
+            "description": null,
+            "isStart": false,
+            "isEnd": false,
+            "isOptimal": true
+        },
+        {
+            "ideData": {
+                "x": 4050,
+                "y": 700
+            },
+            "actions": [
+                {
+                    "config": {
+                        "taskType": "task-activity-prepare-document",
+                        "taskTitle": "Letter enclosing draft agreement to other side",
+                        "taskDescription": "",
+                        "dueInDays": "1",
+                        "tag": "Draft and Review",
+                        "dueOnVariable": null,
+                        "priorityId": 9001,
+                        "actionPlanItems": [],
+                        "actionPlanTitle": "",
+                        "parentWorkItemId": "matterId",
+                        "taskOwnerOdsId": "matterSupportElseMatterOwner",
+                        "outputVariable": null,
+                        "onCompleteOutlet": false,
+                        "onOverdueOutlet": false,
+                        "templateSystemName": "custom-cre-conflict-request-letter-enclosing-draft-agreement-to-other-side",
+                        "useDynamicTemplateName": false,
+                        "dynamicTemplateSystemName": null,
+                        "recipientOdsId": null,
+                        "regardingOdsId": null,
+                        "phaseOutlets": [
+                            {
+                                "systemName": "task-activity-prepare-document-issued",
+                                "name": "Issued"
+                            }
+                        ],
+                        "assignments": []
+                    },
+                    "connections": {},
+                    "actionSystemName": "CreatePrepareDocumentV2",
+                    "name": "Letter enclosing draft agreement to other side"
+                }
+            ],
+            "systemName": "saveBox",
+            "name": "Save Box",
+            "description": null,
+            "isStart": false,
+            "isEnd": false,
+            "isOptimal": true
+        },
+        {
+            "ideData": {
+                "x": 3575,
+                "y": 375
+            },
+            "actions": [
+                {
+                    "config": {
+                        "parentWorkItemIdVariable": "matterId",
+                        "keyDateType": "custom-kd-cre-draft-documents-approved-by-client",
+                        "dueOnVariable": null,
+                        "dueInDays": 0,
+                        "markComplete": true,
+                        "outputVariable": null,
+                        "phaseOutlets": []
+                    },
+                    "connections": {},
+                    "actionSystemName": "CreateKeyDate",
+                    "name": "[Set Key Date] Client approval for agreement received"
+                }
+            ],
+            "systemName": "setKeyDateClientApprovalForAgreementReceived",
+            "name": "[Set Key Date] Client approval for agreement received",
+            "description": null,
+            "isStart": false,
+            "isEnd": false,
+            "isOptimal": true
+        },
+        {
+            "ideData": {
+                "x": 2750,
+                "y": 750
+            },
+            "actions": [
+                {
+                    "config": {
+                        "parentWorkItemIdVariable": "matterId",
+                        "keyDateType": "custom-re-documents-agreed",
+                        "dueOnVariable": null,
+                        "dueInDays": 0,
+                        "markComplete": true,
+                        "outputVariable": null,
+                        "phaseOutlets": []
+                    },
+                    "connections": {
+                        "keydate-done": {
+                            "step": "changePhaseReporting",
+                            "port": "bottom5",
+                            "points": []
+                        }
+                    },
+                    "actionSystemName": "CreateKeyDate",
+                    "name": "[Set Key Date] Initial Agreement Review Complete"
+                }
+            ],
+            "systemName": "setKeyDateInitialAgreementReviewComplete",
+            "name": "[Set Key Date] Initial Agreement Review Complete",
+            "description": null,
+            "isStart": false,
+            "isEnd": false,
+            "isOptimal": true
+        },
+        {
+            "ideData": {
+                "x": 1825,
+                "y": -75
+            },
+            "actions": [
+                {
+                    "config": {
+                        "now": true,
+                        "startOnDateTimeVariable": null,
+                        "startIn": 1,
+                        "startInType": "Days",
+                        "description": "Start step"
+                    },
+                    "connections": {
+                        "execute": {
+                            "step": "_003ClientApproval",
+                            "port": "left3",
+                            "points": []
+                        }
+                    },
+                    "actionSystemName": "startStep",
+                    "name": "Start step"
+                },
+                {
+                    "config": {
+                        "now": true,
+                        "startOnDateTimeVariable": null,
+                        "startIn": 1,
+                        "startInType": "Days",
+                        "description": "Start step"
+                    },
+                    "connections": {
+                        "execute": {
+                            "step": "keyDateDraftAgreementSentToClientSet",
+                            "port": "left2",
+                            "points": []
+                        }
+                    },
+                    "actionSystemName": "startStep",
+                    "name": "Start step"
+                }
+            ],
+            "systemName": "split1",
+            "name": "+",
+            "description": null,
+            "isStart": false,
+            "isEnd": false,
+            "isOptimal": true
+        },
+        {
+            "ideData": {
+                "x": 3075,
+                "y": -50
+            },
+            "actions": [
+                {
+                    "config": {
+                        "now": true,
+                        "startOnDateTimeVariable": null,
+                        "startIn": 1,
+                        "startInType": "Days",
+                        "description": "Start step"
+                    },
+                    "connections": {
+                        "execute": {
+                            "step": "_004EmailLetterEnclosingDraftAgreementToOtherSide",
+                            "port": "left1",
+                            "points": []
+                        }
+                    },
+                    "actionSystemName": "startStep",
+                    "name": "Start step"
+                },
+                {
+                    "config": {
+                        "now": true,
+                        "startOnDateTimeVariable": null,
+                        "startIn": 1,
+                        "startInType": "Days",
+                        "description": "Start step"
+                    },
+                    "connections": {
+                        "execute": {
+                            "step": "setKeyDateClientApprovalForAgreementReceived",
+                            "port": "left1",
+                            "points": []
+                        }
+                    },
+                    "actionSystemName": "startStep",
+                    "name": "Start step"
+                }
+            ],
+            "systemName": "split2",
+            "name": "+",
+            "description": null,
+            "isStart": false,
+            "isEnd": false,
+            "isOptimal": true
+        },
+        {
+            "ideData": {
+                "x": 4275,
+                "y": -25
+            },
+            "actions": [
+                {
+                    "config": {
+                        "now": true,
+                        "startOnDateTimeVariable": null,
+                        "startIn": 1,
+                        "startInType": "Days",
+                        "description": "Start step"
+                    },
+                    "connections": {
+                        "execute": {
+                            "step": "changePhaseReporting",
+                            "port": "left3",
+                            "points": []
+                        }
+                    },
+                    "actionSystemName": "startStep",
+                    "name": "Start step"
+                },
+                {
+                    "config": {
+                        "now": true,
+                        "startOnDateTimeVariable": null,
+                        "startIn": 1,
+                        "startInType": "Days",
+                        "description": "Start step"
+                    },
+                    "connections": {
+                        "execute": {
+                            "step": "keyDateSetDraftAgreementSentToOtherSide",
+                            "port": "left1",
+                            "points": []
+                        }
+                    },
+                    "actionSystemName": "startStep",
+                    "name": "Start step"
+                }
+            ],
+            "systemName": "split3",
+            "name": "+",
+            "description": null,
+            "isStart": false,
+            "isEnd": false,
+            "isOptimal": true
+        }
+    ]
+}
