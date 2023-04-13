@@ -1,0 +1,27 @@
+{
+    "id": "Demo.DemoDesigner",
+    "priority": 6000,
+    "designer":
+    {
+        "allowInPortalDesigner": false,
+        "allowInSharedoPortalDesigner": false
+    },
+    "scripts":
+    [
+        "/_ideFiles/Demo/Demo/designer/DemoDesigner.js"
+    ],
+    "styles":
+    [
+        "/_ideFiles/Demo/Demo/designer/DemoDesigner.css"
+    ],
+    "templates":
+    [
+        "/_ideFiles/Demo/Demo/designer/DemoDesigner.html"
+    ],
+    "menuTemplates":
+    [
+    ],
+    "components":
+    [
+    ]
+}
