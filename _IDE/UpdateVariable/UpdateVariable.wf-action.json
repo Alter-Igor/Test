@@ -1,0 +1,33 @@
+{
+    // The system name for the type of node
+    "systemName": "UpdateVariable",
+
+    // The category to show this in the toolbox
+    "category": "Workflow Utilities",
+
+    // The display info
+    "name": "Update Variable",
+    "icon": "fa-cog",
+    "description": "Update a workflow variable",
+
+    // The widget used to configure this node type
+    "configWidget": "UpdateVariableDesigner",
+
+    // Any other scripts to include that are used by the factory
+    "factoryIncludes": [],
+
+    // The factory for creating a node of this type
+    "factoryScript": "/_ideFiles/UpdateVariable/UpdateVariable-factory.js",
+
+    // The template for generating the code for this type
+    "templateScript": "/_ideFiles/UpdateVariable/UpdateVariable-template.js",
+
+    // Any additional helper scripts to load and run before the main generated script runs
+    "helperScripts":  ["StringHelpers"],
+    // Declare any required variable types your step expects to use - e.g. /Identifier or /Identifier/Ods Entity Identifier
+    "requiredTypes":  [
+        "/Date Time",
+        "/String",
+        "/Number"
+    ] 
+}

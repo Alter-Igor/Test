@@ -1,4 +1,4 @@
-namespace("Demo");
+namespace("Visualisation.Widgets");
 
 /**
  * Constructor for your widget - remember the name of this JS type must match the ID of the widget in it's .widget.json manifest
@@ -7,7 +7,7 @@ namespace("Demo");
  * @param {} baseModel          The base widget model (contains unique id etc)
  * @returns {} 
  */
-Demo.Demo = function(element, configuration, baseModel)
+Visualisation.Widgets.SingleValueDisplay = function(element, configuration, baseModel)
 {
     var self = this;
     var defaults =
@@ -16,7 +16,7 @@ Demo.Demo = function(element, configuration, baseModel)
         id: null,
 
         // Model items from the designer widget
-        todoMessage: null
+        fieldPath: null
     };
     var options = $.extend(true, {}, defaults, configuration);
 
@@ -30,15 +30,9 @@ Demo.Demo = function(element, configuration, baseModel)
     self.model =
     {
         // Remember, only things that might change need to be observable!
-        todoMessage: options.todoMessage,
+        fieldPath: options.fieldPath,
         id: options.id,
-        title: ko.observable(),
-        reference: ko.observable(),
-        createdDate: ko.observable(),
-        updatedDate: ko.observable(),
-        owner: ko.observable(),
-        client: ko.observable(),
-        knownAssociates: ko.observableArray()
+        value: ko.observable(),
     };
 };
 
@@ -46,7 +40,7 @@ Demo.Demo = function(element, configuration, baseModel)
  * Called by the UI framework when this widget is being unloaded - clean up
  * any subscriptions or references here that would keep this instance alive
  */
-Demo.Demo.prototype.onDestroy = function()
+Visualisation.Widgets.SingleValueDisplay.prototype.onDestroy = function()
 {
     var self = this;
 };
@@ -55,29 +49,14 @@ Demo.Demo.prototype.onDestroy = function()
  * Called by the UI framework after initial creation and binding to load data
  * into it's model
  */
-Demo.Demo.prototype.loadAndBind = function()
+Visualisation.Widgets.SingleValueDisplay.prototype.loadAndBind = function()
 {
     var self = this;
 
-    Demo.DemoAgent.loadWorkItem(self.model.id).then(function(data)
+    Visualisation.Widgets.SingleValueDisplayAgent.loadWorkItem(self.model).then(function(data)
     {
-        self.model.title(data.title);
-        self.model.reference(data.reference);
-        self.model.createdDate(data.createdDate);
-        self.model.updatedDate(data.updatedDate);
-        self.model.owner(data.owner);
-        self.model.client(data.client);
+        self.model.value(data);
     });
 
-    Demo.DemoAgent.getExternalData().then(function(response)
-    {
-        self.model.knownAssociates(_.map(response.data, function(person)
-        {
-            return {
-                name: person.firstName + " " + person.lastName,
-                email: person.email,
-                picture: person.picture
-            };
-        }));
-    });
+   
 };

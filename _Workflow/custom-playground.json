@@ -1,0 +1,315 @@
+{
+    "systemName": "custom-playground",
+    "name": "a custom-playground",
+    "description": null,
+    "overrideNotifications": false,
+    "exceptionNotifications": true,
+    "exceptionNotificationEmailAddresses": "",
+    "variables": [
+        {
+            "systemName": "inBool",
+            "name": "InBool",
+            "defaultValue": "true",
+            "type": "/Boolean",
+            "isCollection": false,
+            "isInputVariable": true,
+            "isMandatory": true
+        },
+        {
+            "systemName": "inNumber",
+            "name": "inNumber",
+            "defaultValue": "1",
+            "type": "/Number",
+            "isCollection": false,
+            "isInputVariable": true,
+            "isMandatory": true
+        },
+        {
+            "systemName": "inString",
+            "name": "inString",
+            "defaultValue": "bla bla",
+            "type": "/String",
+            "isCollection": false,
+            "isInputVariable": true,
+            "isMandatory": true
+        },
+        {
+            "systemName": "outBool",
+            "name": "outBool",
+            "defaultValue": null,
+            "type": "/Boolean",
+            "isCollection": false,
+            "isInputVariable": false,
+            "isMandatory": false
+        },
+        {
+            "systemName": "outNumber",
+            "name": "outNumber",
+            "defaultValue": null,
+            "type": "/Number",
+            "isCollection": false,
+            "isInputVariable": false,
+            "isMandatory": false
+        },
+        {
+            "systemName": "outString",
+            "name": "outString",
+            "defaultValue": null,
+            "type": "/String",
+            "isCollection": false,
+            "isInputVariable": false,
+            "isMandatory": true
+        }
+    ],
+    "steps": [
+        {
+            "ideData": {
+                "x": 1027.724609375,
+                "y": 334.8494140625
+            },
+            "actions": [
+                {
+                    "config": {
+                        "variableToUpdate": "outNumber",
+                        "newValue": "{{inNumber}}000"
+                    },
+                    "connections": {},
+                    "actionSystemName": "UpdateVariable",
+                    "name": "Update Variable Number"
+                },
+                {
+                    "config": {
+                        "variableToUpdate": "outString",
+                        "newValue": "{{inNumber}} not a string"
+                    },
+                    "connections": {},
+                    "actionSystemName": "UpdateVariable",
+                    "name": "Update Variable String"
+                },
+                {
+                    "config": {
+                        "now": true,
+                        "startOnDateTimeVariable": null,
+                        "startIn": 1,
+                        "startInType": "Days",
+                        "description": "Start step"
+                    },
+                    "connections": {
+                        "execute": {
+                            "step": "finish",
+                            "port": "left3",
+                            "points": []
+                        }
+                    },
+                    "actionSystemName": "startStep",
+                    "name": "Start step"
+                }
+            ],
+            "systemName": "combo",
+            "name": "Combo",
+            "description": null,
+            "isStart": false,
+            "isEnd": false,
+            "isOptimal": true
+        },
+        {
+            "ideData": {
+                "x": 1375,
+                "y": 475
+            },
+            "actions": [],
+            "systemName": "finish",
+            "name": "Plan complete",
+            "description": "The plan is complete",
+            "isStart": false,
+            "isEnd": true,
+            "isOptimal": true
+        },
+        {
+            "ideData": {
+                "x": 150,
+                "y": -75
+            },
+            "actions": [
+                {
+                    "config": {
+                        "variables": [
+                            "inBool",
+                            "inNumber",
+                            "inString"
+                        ]
+                    },
+                    "connections": {},
+                    "actionSystemName": "LogVariables",
+                    "name": "Log Variables"
+                },
+                {
+                    "config": {
+                        "now": true,
+                        "startOnDateTimeVariable": null,
+                        "startIn": 1,
+                        "startInType": "Days",
+                        "description": "Start step"
+                    },
+                    "connections": {
+                        "execute": {
+                            "step": "sameSame",
+                            "port": "left1",
+                            "points": []
+                        }
+                    },
+                    "actionSystemName": "startStep",
+                    "name": "Start step"
+                }
+            ],
+            "systemName": "main",
+            "name": "Main entry point",
+            "description": "The main entry point of the plan",
+            "isStart": true,
+            "isEnd": false,
+            "isOptimal": true
+        },
+        {
+            "ideData": {
+                "x": 575,
+                "y": -150
+            },
+            "actions": [
+                {
+                    "config": {
+                        "variableToUpdate": "outBool",
+                        "newValue": "{{inBool}}"
+                    },
+                    "connections": {},
+                    "actionSystemName": "UpdateVariable",
+                    "name": "Update Variable Bool"
+                },
+                {
+                    "config": {
+                        "variableToUpdate": "outNumber",
+                        "newValue": "{{inNumber}}"
+                    },
+                    "connections": {},
+                    "actionSystemName": "UpdateVariable",
+                    "name": "Update Variable Number"
+                },
+                {
+                    "config": {
+                        "variableToUpdate": "outString",
+                        "newValue": "{{inString}}"
+                    },
+                    "connections": {},
+                    "actionSystemName": "UpdateVariable",
+                    "name": "Update Variable String"
+                },
+                {
+                    "config": {
+                        "variables": [
+                            "outBool",
+                            "outNumber",
+                            "outString"
+                        ]
+                    },
+                    "connections": {},
+                    "actionSystemName": "LogVariables",
+                    "name": "Log Variables"
+                },
+                {
+                    "config": {
+                        "now": true,
+                        "startOnDateTimeVariable": null,
+                        "startIn": 1,
+                        "startInType": "Days",
+                        "description": "Start step"
+                    },
+                    "connections": {
+                        "execute": {
+                            "step": "statics",
+                            "port": "left1",
+                            "points": []
+                        }
+                    },
+                    "actionSystemName": "startStep",
+                    "name": "Start step"
+                }
+            ],
+            "systemName": "sameSame",
+            "name": "Same Same",
+            "description": null,
+            "isStart": false,
+            "isEnd": false,
+            "isOptimal": true
+        },
+        {
+            "ideData": {
+                "x": 600,
+                "y": 400
+            },
+            "actions": [
+                {
+                    "config": {
+                        "variableToUpdate": "outBool",
+                        "newValue": "false"
+                    },
+                    "connections": {},
+                    "actionSystemName": "UpdateVariable",
+                    "name": "Update Variable Bool"
+                },
+                {
+                    "config": {
+                        "variableToUpdate": "outNumber",
+                        "newValue": "1000"
+                    },
+                    "connections": {},
+                    "actionSystemName": "UpdateVariable",
+                    "name": "Update Variable Number"
+                },
+                {
+                    "config": {
+                        "variableToUpdate": "outString",
+                        "newValue": "Hello"
+                    },
+                    "connections": {},
+                    "actionSystemName": "UpdateVariable",
+                    "name": "Update Variable Sting"
+                },
+                {
+                    "config": {
+                        "variables": [
+                            "outBool",
+                            "outNumber",
+                            "outString"
+                        ]
+                    },
+                    "connections": {},
+                    "actionSystemName": "LogVariables",
+                    "name": "Log Variables"
+                },
+                {
+                    "config": {
+                        "now": true,
+                        "startOnDateTimeVariable": null,
+                        "startIn": 1,
+                        "startInType": "Days",
+                        "description": "Start step"
+                    },
+                    "connections": {
+                        "execute": {
+                            "step": "combo",
+                            "port": "left2",
+                            "points": []
+                        }
+                    },
+                    "actionSystemName": "startStep",
+                    "name": "Start step"
+                }
+            ],
+            "systemName": "statics",
+            "name": "Statics",
+            "description": null,
+            "isStart": false,
+            "isEnd": false,
+            "isOptimal": true
+        }
+    ]
+}

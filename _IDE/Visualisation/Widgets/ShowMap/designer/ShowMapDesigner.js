@@ -1,4 +1,4 @@
-namespace("Demo");
+namespace("Visualisation.Widgets");
 
 /**
  * Constructor for your widget
@@ -7,7 +7,7 @@ namespace("Demo");
  * @param {} baseModel          The base widget model (contains unique id etc)
  * @returns {} 
  */
-Demo.DemoDesigner = function(element, configuration, baseModel)
+Visualisation.Widgets.ShowMapDesigner = function(element, configuration, baseModel)
 {
     var self = this;
     var defaults =
@@ -20,43 +20,43 @@ Demo.DemoDesigner = function(element, configuration, baseModel)
             sharedoTypeSystemName: null     // If mode===sharedoType, contains the type being edited
         },
         // Your designer model is also passed in
-        todoMessage: null
+        showMap: null
     };
     var options = $.extend(true, {}, defaults, configuration);
 
     // Create the model
     self.model =
     {
-        todoMessage: ko.observable(options.todoMessage)
+        showMap: ko.observable(options.showMap)
     };
 
     // Create the model validators
-    self.validation =
-    {
-        todoMessage: ko.pureComputed(function()
-        {
-            var message = self.model.todoMessage();
-            if (!message) return "The message is required";
-            return null;
-        })
-    };
+    // self.validation =
+    // {
+    //     showMap: ko.pureComputed(function()
+    //     {
+    //         var message = self.model.showMap();
+    //         if (!message) return "The message is required";
+    //         return null;
+    //     })
+    // };
 
     // Expose a validationErrorCount observable to tell the host designer blade
     // whether save is currently possible or not. Return 0 to indicate all is valid,
     // or if not, the count of errors. If no validation required, this can be removed.
-    self.validationErrorCount = ko.pureComputed(function()
-    {
-        var fails = 0;
-        if (self.validation.todoMessage()) fails++;
-        return fails;
-    });
+    // self.validationErrorCount = ko.pureComputed(function()
+    // {
+    //     var fails = 0;
+    //     if (self.validation.showMap()) fails++;
+    //     return fails;
+    // });
 };
 
 /**
  * Called by the UI framework when this widget is being unloaded - clean up
  * any subscriptions or references here that would keep this instance alive
  */
-Demo.DemoDesigner.prototype.onDestroy = function()
+Visualisation.Widgets.ShowMapDesigner.prototype.onDestroy = function()
 {
     var self = this;
 };
@@ -65,7 +65,7 @@ Demo.DemoDesigner.prototype.onDestroy = function()
  * Called by the UI framework after initial creation and binding to load data
  * into it's model
  */
-Demo.DemoDesigner.prototype.loadAndBind = function()
+Visualisation.Widgets.ShowMapDesigner.prototype.loadAndBind = function()
 {
     var self = this;
 };
@@ -73,11 +73,11 @@ Demo.DemoDesigner.prototype.loadAndBind = function()
 /**
  * Called by the widget/portal editor framework to get the configuration model
  */
-Demo.DemoDesigner.prototype.getModel = function()
+Visualisation.Widgets.ShowMapDesigner.prototype.getModel = function()
 {
     var self = this;
     return {
-        todoMessage: self.model.todoMessage()
+        showMap: self.model.showMap()
     };
 };
 

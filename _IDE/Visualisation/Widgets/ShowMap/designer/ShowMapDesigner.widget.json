@@ -1,5 +1,5 @@
 {
-    "id": "Demo.DemoDesigner",
+    "id": "Visualisation.Widgets.ShowMapDesigner",
     "priority": 6000,
     "designer":
     {
@@ -8,15 +8,15 @@
     },
     "scripts":
     [
-        "/_ideFiles/Demo/Demo/designer/DemoDesigner.js"
+        "/_ideFiles/Visualisation/Widgets/ShowMap/designer/ShowMapDesigner.js"
     ],
     "styles":
     [
-        "/_ideFiles/Demo/Demo/designer/DemoDesigner.css"
+        "/_ideFiles/Visualisation/Widgets/ShowMap/designer/ShowMapDesigner.css"
     ],
     "templates":
     [
-        "/_ideFiles/Demo/Demo/designer/DemoDesigner.html"
+        "/_ideFiles/Visualisation/Widgets/ShowMap/designer/ShowMapDesigner.html"
     ],
     "menuTemplates":
     [
