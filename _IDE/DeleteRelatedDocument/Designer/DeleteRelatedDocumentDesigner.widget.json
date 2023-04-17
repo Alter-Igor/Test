@@ -1,0 +1,31 @@
+{
+    "id":  "DeleteRelatedDocumentDesigner", 
+    "priority": 6000, 
+    "designer":
+    {
+        "allowInPortalDesigner": false,
+        "allowInSharedoPortalDesigner": false
+    },
+    "scripts":
+    [
+        "/_ideFiles/DeleteRelatedDocument/designer/DeleteRelatedDocumentDesigner.js"
+    ],
+    "styles":
+    [
+        "/_ideFiles/DeleteRelatedDocument/designer/DeleteRelatedDocumentDesigner.css"
+    ],
+    "templates":
+    [
+        "/_ideFiles/DeleteRelatedDocument/designer/DeleteRelatedDocumentDesigner.html"
+    ],
+    "menuTemplates":
+    [
+    ],
+    "components":
+    [
+        "Sharedo.Core.Case.Components.SharedoTypePicker",
+        "Sharedo.UI.Framework.Components.Toggle",
+        "Sharedo.Core.Case.WorkflowEditor.WFAssignmentComponent",
+        "Sharedo.Core.Case.WorkflowEditor.WFPhaseOutletComponent"
+    ]
+}
