@@ -1,0 +1,42 @@
+
+
+
+.alpaca-container 
+{
+    display: flex!important;
+    justify-content: space-between!important;
+    align-items: baseline!important;
+    flex-wrap: wrap;
+}
+.alpaca-container-item-first
+{
+    width:100%;
+     font-weight: 700;
+}
+
+.alpaca-container-label
+{
+    border: #d31c76 1px solid !important;
+    background-color: transparent !important;
+}
+
+.form-group .alpaca-field .alpaca-field-label .alpaca-optional .alpaca-field-valid
+{
+    margin: 0px 0px 0px 0px !important;
+}
+
+.alpaca-container  .alpaca-control
+{
+    margin: 0px 0px 0px 0px !important;
+}
+
+
+.form-group.alpaca-field.alpaca-field-label.alpaca-optional.alpaca-field-valid
+{
+        margin: 0px 0px 0px 0px !important;
+}
+
+.alpaca-container  .form-group.alpaca-field.alpaca-field-decimal.alpaca-optional.alpaca-field-valid .control-label.alpaca-control-label
+{
+    font-weight: 100;
+}

@@ -1,0 +1,1310 @@
+{
+    "id": "31b3700e-24bf-43c1-8117-6cfd693c683f",
+    "systemName": "four-colum-test",
+    "title": "1. WK - Cyber Details",
+    "description": null,
+    "layout": "/_ideFiles/CustomLayout/Custom.html",
+    "layoutParent": "bootstrap-edit",
+    "showTitle": false,
+    "readonly": false,
+    "fields": [
+        {
+            "id": "0e56ac1c-1f54-4ddd-bccf-014ef1c26a15",
+            "type": 2,
+            "name": "wk-cyber-breach-date",
+            "title": "Breach Date",
+            "description": "The date the breach was discovered",
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 0,
+            "attributes": {
+                "format": "DD-MM-YYYY"
+            }
+        },
+        {
+            "id": "4356a8cb-91a8-4b12-a8a5-176f26e555a5",
+            "type": 13,
+            "name": "wk-cyber-global-breach",
+            "title": "Global Breach?",
+            "description": "Was the databreach global?",
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 10,
+            "attributes": {
+                "dataOn": "Yes",
+                "dataOff": "No",
+                "buttonWidth": "100px",
+                "buttonHeight": ""
+            }
+        },
+        {
+            "id": "e1021cde-f23b-4a8d-b7f4-56740c40aea8",
+            "type": 4,
+            "name": "wk-cyber-breach-type",
+            "title": "Type of Breach",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 20,
+            "attributes": {
+                "optionSetName": "wk-cyber-breach-type",
+                "allowNoSelection": true,
+                "multiple": true
+            }
+        },
+        {
+            "id": "22dc9f24-7b39-4e8c-a3d9-7d7c3d5c52f9",
+            "type": 4,
+            "name": "wk-cyber-attack-type",
+            "title": "Attack Type",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 30,
+            "attributes": {
+                "optionSetName": "wk-cyber-attack-type",
+                "allowNoSelection": true,
+                "multiple": true
+            }
+        },
+        {
+            "id": "78786d00-57e8-4ea7-b23e-86f67b551381",
+            "type": 0,
+            "name": "wk-cyber-malware-type",
+            "title": "Malware Type",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 40,
+            "attributes": {}
+        },
+        {
+            "id": "1e09bd95-2c60-464f-8e64-4d4ee5cd3adc",
+            "type": 0,
+            "name": "wk-cyber-entity-breached",
+            "title": "Primary Entity Breached",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 50,
+            "attributes": {}
+        },
+        {
+            "id": "79a39adc-c0f5-4350-a12b-f65c4bfdc185",
+            "type": 4,
+            "name": "wk-cyber-info-type",
+            "title": "Type of Information Affected",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 60,
+            "attributes": {
+                "optionSetName": "wk-cyber-information-type",
+                "allowNoSelection": true,
+                "multiple": true
+            }
+        },
+        {
+            "id": "c277873a-af35-47e9-8aa0-92b4b5a1960f",
+            "type": 0,
+            "name": "wk-cyber-info-type-other",
+            "title": "Other",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 70,
+            "attributes": {
+                "visibleIf": "wk-cyber-info-type=500000077"
+            }
+        },
+        {
+            "id": "86b2ddd7-ef68-45ce-9597-c0d262d5b231",
+            "type": 4,
+            "name": "wk-cyber-engagement-details",
+            "title": "Engagement Details",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 105,
+            "attributes": {
+                "optionSetName": "wk-cyber-engagement-details",
+                "allowNoSelection": true,
+                "multiple": true,
+                "placeholderText": "&nbsp;",
+                "showSelectedColour": false,
+                "showSelectedIcon": false,
+                "chronologyCard": false
+            }
+        },
+        {
+            "id": "4b66d226-3059-4efa-9870-60e22a15f4e3",
+            "type": 3,
+            "name": "wk-cyber-date-breach-discovered",
+            "title": "Date Breach Discovered",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 110,
+            "attributes": {
+                "format": "DD-MM-YYYY HH:mm:ss",
+                "chronologyCard": false
+            }
+        },
+        {
+            "id": "78dac671-45f9-4a59-b081-c7a4d9ad39dc",
+            "type": 12,
+            "name": "wk-cyber-location-original-breach",
+            "title": "Location of Original Breach",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 120,
+            "attributes": {
+                "rows": 4,
+                "richText": false,
+                "maxLength": 500,
+                "showMaxLengthIndicator": true,
+                "requiredOnlyInPhases": "some-phase",
+                "chronologyCard": false
+            }
+        },
+        {
+            "id": "c586221e-d45a-48d5-9da4-222839781994",
+            "type": 0,
+            "name": "wk-cyber-hq-insured",
+            "title": "Headquarters of Insured",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 130,
+            "attributes": {
+                "maxLength": 500,
+                "chronologyCard": false
+            }
+        },
+        {
+            "id": "3b6a9539-31d8-412c-bf65-6feee8b91982",
+            "type": 4,
+            "name": "wk-cyber-size-business",
+            "title": "Size of Business (Revenue)",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 150,
+            "attributes": {
+                "optionSetName": "wk-cyber-size-of-business",
+                "allowNoSelection": true,
+                "multiple": false,
+                "placeholderText": "&nbsp;",
+                "showSelectedColour": false,
+                "showSelectedIcon": false,
+                "chronologyCard": false
+            }
+        },
+        {
+            "id": "0549b28a-4022-4642-b7a0-4a23d1a639a8",
+            "type": 4,
+            "name": "wk-cyber-size-business-employees",
+            "title": "Size of Business",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 160,
+            "attributes": {
+                "optionSetName": "wk-cyber-size-of-business-employees",
+                "allowNoSelection": true,
+                "multiple": false,
+                "placeholderText": "&nbsp;",
+                "showSelectedColour": false,
+                "showSelectedIcon": false,
+                "chronologyCard": false
+            }
+        },
+        {
+            "id": "d2cc4bb1-3eb6-4123-b659-ca124f650f41",
+            "type": 4,
+            "name": "wk-cyber-primary-cause-breach",
+            "title": "Primary Cause of Breach",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 170,
+            "attributes": {
+                "optionSetName": "wk-cyber-primary-cause-of-breach-level-1",
+                "allowNoSelection": true,
+                "multiple": false,
+                "placeholderText": "&nbsp;",
+                "showSelectedColour": false,
+                "showSelectedIcon": false,
+                "chronologyCard": false
+            }
+        },
+        {
+            "id": "9ded649b-ce93-4c80-a9cf-82e0588e17a1",
+            "type": 4,
+            "name": "wk-cyber-primary-cause-of-breach-malicious-criminal-attack",
+            "title": "Malicous or Criminal Attack Type",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 180,
+            "attributes": {
+                "optionSetName": "wk-cyber-primary-cause-of-breach-malicious-criminal-attack",
+                "allowNoSelection": true,
+                "multiple": false,
+                "placeholderText": "&nbsp;",
+                "showSelectedColour": false,
+                "showSelectedIcon": false,
+                "chronologyCard": false,
+                "visibleIf": "wk-cyber-primary-cause-breach=500001692"
+            }
+        },
+        {
+            "id": "59802b50-8800-473c-b714-aa05fbf30adc",
+            "type": 4,
+            "name": "wk-cyber-primary-cause-of-breach-human-error",
+            "title": "Human Error Type",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 190,
+            "attributes": {
+                "optionSetName": "wk-cyber-primary-cause-of-breach-human-error",
+                "allowNoSelection": true,
+                "multiple": false,
+                "placeholderText": "&nbsp;",
+                "showSelectedColour": false,
+                "showSelectedIcon": false,
+                "chronologyCard": false,
+                "visibleIf": "wk-cyber-primary-cause-breach=500001690"
+            }
+        },
+        {
+            "id": "6ce1068d-bb3c-48dc-bc8c-7f204dac5aee",
+            "type": 4,
+            "name": "wk-cyber-primary-cause-of-breach-system-fault",
+            "title": "System Fault Type",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 200,
+            "attributes": {
+                "optionSetName": "wk-cyber-primary-cause-of-breach-system-fault",
+                "allowNoSelection": true,
+                "multiple": false,
+                "placeholderText": "&nbsp;",
+                "showSelectedColour": false,
+                "showSelectedIcon": false,
+                "chronologyCard": false,
+                "visibleIf": "wk-cyber-primary-cause-breach=500001691"
+            }
+        },
+        {
+            "id": "996af525-a101-4a5a-8fec-a92e2328e1ad",
+            "type": 4,
+            "name": "wk-cyber-primary-cause-of-breach-malicious-criminal-attack-cyber",
+            "title": "Cyber Incident Type",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 210,
+            "attributes": {
+                "optionSetName": "wk-cyber-primary-cause-of-breach-malicious-criminal-attack-cyber",
+                "allowNoSelection": true,
+                "multiple": false,
+                "placeholderText": "&nbsp;",
+                "showSelectedColour": false,
+                "showSelectedIcon": false,
+                "chronologyCard": false,
+                "visibleIf": "wk-cyber-primary-cause-of-breach-malicious-criminal-attack=500001693"
+            }
+        },
+        {
+            "id": "31e3eb3d-e103-4d27-a182-d4c66cf6fd6a",
+            "type": 13,
+            "name": "wk-cyber-multiple-parties",
+            "title": "Multiple Parties",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 220,
+            "attributes": {
+                "dataOn": "Yes",
+                "dataOff": "No",
+                "buttonWidth": "100px",
+                "buttonHeight": "",
+                "chronologyCard": false,
+                "default": false
+            }
+        },
+        {
+            "id": "6115ebda-72f2-4c65-bef1-3ee79f833cba",
+            "type": 0,
+            "name": "wk-cyber-other-entities",
+            "title": "Other Entities Breached",
+            "description": "The NDB scheme recognises that entities often hold personal information jointly. For example, one entity may have physical possession of the information, while another has legal control or ownership. OAIC suggests that, in general, the entity with the most direct relationship with the individuals affected by the data breach should carry out notification.  For further information please refer to the following guidance: Data breaches involving more than one entity.",
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 230,
+            "attributes": {
+                "placeholder": "",
+                "maxLength": 250,
+                "pattern": ".*",
+                "chronologyCard": false
+            }
+        },
+        {
+            "id": "772b4935-6667-43db-b45e-637344a60d66",
+            "type": 13,
+            "name": "wk-cyber-ransomware-attack",
+            "title": "Ransomware Attack?",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 240,
+            "attributes": {
+                "dataOn": "Yes",
+                "dataOff": "No",
+                "buttonWidth": "100px",
+                "buttonHeight": "",
+                "chronologyCard": false,
+                "default": false
+            }
+        },
+        {
+            "id": "824d62d0-cbc4-4285-a826-54ac62738020",
+            "type": 16,
+            "name": "wk-cyber-size-ransom",
+            "title": "Size of Ransom Demand",
+            "description": "",
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 245,
+            "attributes": {
+                "precision": 2,
+                "visibleIf": "wk-cyber-ransomware-attack=true",
+                "chronologyCard": false
+            }
+        },
+        {
+            "id": "adc4a525-e578-4c35-b137-af6aae038ccb",
+            "type": 13,
+            "name": "wk-cyber-ransom-paid",
+            "title": "Ransom Paid?",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 250,
+            "attributes": {
+                "dataOn": "Yes",
+                "dataOff": "No",
+                "buttonWidth": "100px",
+                "buttonHeight": "",
+                "chronologyCard": false,
+                "default": false
+            }
+        },
+        {
+            "id": "6de8dc31-e8c5-441a-8502-83e102c28746",
+            "type": 16,
+            "name": "wk-cyber-size-payment",
+            "title": "Size of Payment",
+            "description": "",
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 255,
+            "attributes": {
+                "precision": 2,
+                "visibleIf": "wk-cyber-ransom-paid=true",
+                "chronologyCard": false
+            }
+        },
+        {
+            "id": "1e549c10-4267-4e4b-ae85-b3bf0ece71b2",
+            "type": 14,
+            "name": "wk-cyber-header-2",
+            "title": "Regulatory",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 280,
+            "attributes": {
+                "labelText": "Regulatory",
+                "cssClasses": "sd-form-header",
+                "elementType": "h2",
+                "chronologyCard": false
+            }
+        },
+        {
+            "id": "eddb77f6-2887-4bf9-bd46-ea7285074e2d",
+            "type": 13,
+            "name": "wk-cyber-notif-regulator",
+            "title": "Notification to Regulator",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 290,
+            "attributes": {
+                "dataOn": "Yes",
+                "dataOff": "No",
+                "buttonWidth": "100px",
+                "buttonHeight": "",
+                "chronologyCard": false,
+                "default": false
+            }
+        },
+        {
+            "id": "b7b3a68c-aa2e-464a-b473-3315f2b46bfe",
+            "type": 13,
+            "name": "wk-cyber-regulatory-notif",
+            "title": "Regulatory Notification",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 300,
+            "attributes": {
+                "dataOn": "Yes",
+                "dataOff": "No",
+                "buttonWidth": "100px",
+                "buttonHeight": "",
+                "chronologyCard": false,
+                "default": false
+            }
+        },
+        {
+            "id": "a88d85b9-d8ab-4ca9-967f-90ae9b3d3f84",
+            "type": 14,
+            "name": "wk-cyber-label-1",
+            "title": "Data protection authorities, law enforcement or regulatory bodies",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 310,
+            "attributes": {
+                "labelText": "Data protection authorities, law enforcement or regulatory bodies",
+                "cssClasses": "WKTitle1",
+                "elementType": "p",
+                "chronologyCard": false,
+                "visibleIf": "wk-cyber-regulatory-notif=true"
+            }
+        },
+        {
+            "id": "30707015-4796-4e00-a7e6-7a460fa2f982",
+            "type": 2,
+            "name": "wk-cyber-oaic-date",
+            "title": "Date Notification Made to OAIC",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 330,
+            "attributes": {
+                "format": "DD-MM-YYYY",
+                "visibleIf": "wk-cyber-regulatory-notif=true",
+                "chronologyCard": false
+            }
+        },
+        {
+            "id": "358b855a-91a6-4e75-9638-8c8b3b807c4f",
+            "type": 2,
+            "name": "wk-cyber-acsc-date",
+            "title": "Date Notification Made to ACSC",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 350,
+            "attributes": {
+                "format": "DD-MM-YYYY",
+                "visibleIf": "wk-cyber-regulatory-notif=true",
+                "chronologyCard": false
+            }
+        },
+        {
+            "id": "65ce12c8-c190-46f2-8e26-f979d1b79893",
+            "type": 2,
+            "name": "wk-cyber-asx-date",
+            "title": "Date Notification Made to ASX",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 365,
+            "attributes": {
+                "format": "DD-MM-YYYY",
+                "visibleIf": "wk-cyber-regulatory-notif=true",
+                "chronologyCard": false
+            }
+        },
+        {
+            "id": "d5985b4a-a4cb-45c5-ad2a-db5b609cbb4a",
+            "type": 2,
+            "name": "wk-cyber-ato-date",
+            "title": "Date Notification Made to ATO",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 380,
+            "attributes": {
+                "format": "DD-MM-YYYY",
+                "visibleIf": "wk-cyber-regulatory-notif=true",
+                "chronologyCard": false
+            }
+        },
+        {
+            "id": "3e8f475a-fc84-4f64-93f2-9a80530de0cf",
+            "type": 2,
+            "name": "wk-cyber-apra-date",
+            "title": "Date Notification Made to APRA",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 400,
+            "attributes": {
+                "format": "DD-MM-YYYY",
+                "visibleIf": "wk-cyber-regulatory-notif=true",
+                "chronologyCard": false
+            }
+        },
+        {
+            "id": "ba7a8547-c96b-4da6-a6db-8a8d417dcfd2",
+            "type": 2,
+            "name": "wk-cyber-asic-date",
+            "title": "Date Notification Made to ASIC",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 420,
+            "attributes": {
+                "format": "DD-MM-YYYY",
+                "visibleIf": "wk-cyber-regulatory-notif=true",
+                "chronologyCard": false
+            }
+        },
+        {
+            "id": "818b7f0f-a6da-4c73-a804-efcc81ffc3f8",
+            "type": 2,
+            "name": "wk-cyber-afp-date",
+            "title": "Date Notification Made to AFP",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 440,
+            "attributes": {
+                "format": "DD-MM-YYYY",
+                "visibleIf": "wk-cyber-regulatory-notif=true",
+                "chronologyCard": false
+            }
+        },
+        {
+            "id": "3b6ff8e3-a7dd-4505-9a81-ff231d63643a",
+            "type": 2,
+            "name": "wk-cyber-austrac-date",
+            "title": "Date Notification Made to AUSTRAC",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 460,
+            "attributes": {
+                "format": "DD-MM-YYYY",
+                "visibleIf": "wk-cyber-regulatory-notif=true",
+                "chronologyCard": false
+            }
+        },
+        {
+            "id": "d27d521f-1cac-4034-9d71-2b2f9db10f18",
+            "type": 0,
+            "name": "wk-cyber-org-other",
+            "title": "Other",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 470,
+            "attributes": {
+                "visibleIf": "wk-cyber-regulatory-notif=true"
+            }
+        },
+        {
+            "id": "fd048b6b-6cff-4fd0-bbae-836db3fa6134",
+            "type": 13,
+            "name": "wk-cyber-has-affected-individuals",
+            "title": "Has Affected Individuals?",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 480,
+            "attributes": {
+                "dataOn": "Yes",
+                "dataOff": "No",
+                "buttonWidth": "100px",
+                "buttonHeight": "",
+                "chronologyCard": false,
+                "default": false
+            }
+        },
+        {
+            "id": "433234f5-f953-4b3c-92d6-9e165dc46e59",
+            "type": 4,
+            "name": "wk-cyber-no-affected",
+            "title": "Number of Affected Individuals",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 490,
+            "attributes": {
+                "optionSetName": "wk-cyber-number-of-affected-individuals",
+                "allowNoSelection": true,
+                "multiple": false,
+                "visibleIf": "wk-cyber-has-affected-individuals=true"
+            }
+        },
+        {
+            "id": "3e9a01b9-d2b9-4457-ac0c-b989313912d6",
+            "type": 16,
+            "name": "wk-cyber-exact-number",
+            "title": "Exact number of individuals whose personal information is involved in the data breach",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 492,
+            "attributes": {
+                "precision": 0,
+                "visibleIf": "wk-cyber-has-affected-individuals=true"
+            }
+        },
+        {
+            "id": "47df1227-72ee-46e3-b192-46a5e04dc98a",
+            "type": 4,
+            "name": "wk-cyber-no-affected-aus",
+            "title": "Number of Individuals Affected in Australia",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 494,
+            "attributes": {
+                "optionSetName": "wk-cyber-number-of-affected-individuals",
+                "allowNoSelection": true,
+                "multiple": false,
+                "visibleIf": "wk-cyber-has-affected-individuals=true"
+            }
+        },
+        {
+            "id": "19e61c14-9afc-4366-af15-42c633fab32b",
+            "type": 16,
+            "name": "wk-cyber-no-notified",
+            "title": "Number of individuals notified",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 500,
+            "attributes": {
+                "precision": 0,
+                "chronologyCard": false
+            }
+        },
+        {
+            "id": "d502af63-8f23-4e27-83c1-1175eba17116",
+            "type": 13,
+            "name": "wk-cyber-regulatory-investigation",
+            "title": "Regulatory Investigation Involved?",
+            "description": "Regulatory Investigation Involved?",
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 510,
+            "attributes": {
+                "dataOn": "Yes",
+                "dataOff": "No",
+                "buttonWidth": "100px",
+                "buttonHeight": ""
+            }
+        },
+        {
+            "id": "1862b702-67eb-483f-a472-1814b30314cb",
+            "type": 14,
+            "name": "wk-cyber-label-2",
+            "title": "Data protection authorities, law enforcement or regulatory bodies",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 515,
+            "attributes": {
+                "labelText": "Data protection authorities, law enforcement or regulatory bodies",
+                "cssClasses": "WKTitle1",
+                "elementType": "p",
+                "chronologyCard": false,
+                "visibleIf": "wk-cyber-regulatory-investigation=true"
+            }
+        },
+        {
+            "id": "b9c0e8a9-052f-4be5-ad61-80a7837e3057",
+            "type": 2,
+            "name": "wk-cyber-inv-oaic-date",
+            "title": "Date Investigation Commenced at OAIC",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 530,
+            "attributes": {
+                "format": "DD-MM-YYYY",
+                "chronologyCard": false,
+                "visibleIf": "wk-cyber-regulatory-investigation=true"
+            }
+        },
+        {
+            "id": "fb6494c6-c91f-4a66-8eaf-942ff2875f19",
+            "type": 2,
+            "name": "wk-cyber-inv-acsc-date",
+            "title": "Date Investigation Commenced at ACSC",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 550,
+            "attributes": {
+                "format": "DD-MM-YYYY",
+                "chronologyCard": false,
+                "visibleIf": "wk-cyber-regulatory-investigation=true"
+            }
+        },
+        {
+            "id": "1251c874-b8d9-4c8f-9cce-e8197cf53314",
+            "type": 2,
+            "name": "wk-cyber-inv-asx-date",
+            "title": "Date Investigation Commenced at ASX",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 570,
+            "attributes": {
+                "format": "DD-MM-YYYY",
+                "chronologyCard": false,
+                "visibleIf": "wk-cyber-regulatory-investigation=true"
+            }
+        },
+        {
+            "id": "6566a19d-6a70-46b1-a957-df35f5193382",
+            "type": 2,
+            "name": "wk-cyber-inv-ato-date",
+            "title": "Date Investigation Commenced at ATO",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 590,
+            "attributes": {
+                "format": "DD-MM-YYYY",
+                "chronologyCard": false,
+                "visibleIf": "wk-cyber-regulatory-investigation=true"
+            }
+        },
+        {
+            "id": "53d7fb95-2ccb-4727-90e1-223ddd36cbba",
+            "type": 2,
+            "name": "wk-cyber-inv-apra-date",
+            "title": "Date Investigation Commenced at APRA",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 610,
+            "attributes": {
+                "format": "DD-MM-YYYY",
+                "chronologyCard": false,
+                "visibleIf": "wk-cyber-regulatory-investigation=true"
+            }
+        },
+        {
+            "id": "3e0c4929-40cb-4431-985c-206cc951aaff",
+            "type": 2,
+            "name": "wk-cyber-inv-asic-date",
+            "title": "Date Investigation Commenced at ASIC",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 630,
+            "attributes": {
+                "format": "DD-MM-YYYY",
+                "chronologyCard": false,
+                "visibleIf": "wk-cyber-regulatory-investigation=true"
+            }
+        },
+        {
+            "id": "f9f5e39a-5ea1-4ae0-bc76-10804a30b3e9",
+            "type": 2,
+            "name": "wk-cyber-inv-afp-date",
+            "title": "Date Investigation Commenced at AFP",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 650,
+            "attributes": {
+                "format": "DD-MM-YYYY",
+                "chronologyCard": false,
+                "visibleIf": "wk-cyber-regulatory-investigation=true"
+            }
+        },
+        {
+            "id": "576d2c42-9af3-4e3f-80e8-2769c75c1836",
+            "type": 2,
+            "name": "wk-cyber-inv-austrac-date",
+            "title": "Date Investigation Commenced at AUSTRAC",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 670,
+            "attributes": {
+                "format": "DD-MM-YYYY",
+                "chronologyCard": false,
+                "visibleIf": "wk-cyber-regulatory-investigation=true"
+            }
+        },
+        {
+            "id": "4047d3ca-c8f2-4b78-966a-8cf6908878dc",
+            "type": 0,
+            "name": "wk-cyber-inv-org-other",
+            "title": "Other",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 680,
+            "attributes": {
+                "visibleIf": "wk-cyber-regulatory-investigation=true"
+            }
+        },
+        {
+            "id": "de00b647-f550-484d-84f2-6ac2ecfcd745",
+            "type": 14,
+            "name": "wk-cyber-header-3",
+            "title": "Reserves",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 690,
+            "attributes": {
+                "labelText": "Reserves",
+                "cssClasses": "sd-form-header",
+                "elementType": "h2",
+                "chronologyCard": false
+            }
+        },
+        {
+            "id": "25a3f48c-fa03-4a68-9302-18343791a453",
+            "type": 4,
+            "name": "wk-cyber-currency",
+            "title": "Currency",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 700,
+            "attributes": {
+                "optionSetName": "wk-cyber-currency-codes",
+                "allowNoSelection": true,
+                "multiple": false
+            }
+        },
+        {
+            "id": "d4076ceb-d85b-4f33-aece-4de0f95aa514",
+            "type": 0,
+            "name": "wk-cyber-currency-other",
+            "title": "Other Currency",
+            "description": "",
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 702,
+            "attributes": {
+                "chronologyCard": false,
+                "visibleIf": "wk-cyber-currency=500001796"
+            }
+        },
+        {
+            "id": "6d366234-e49b-4132-9525-63ad14eca819",
+            "type": 13,
+            "name": "wk-cyber-fixed-fee",
+            "title": "Fixed Fee?",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 710,
+            "attributes": {
+                "dataOn": "Yes",
+                "dataOff": "No",
+                "buttonWidth": "100px",
+                "buttonHeight": "",
+                "chronologyCard": false,
+                "default": false
+            }
+        },
+        {
+            "id": "2ce72376-1736-4071-8f98-d6c7b51d9d67",
+            "type": 16,
+            "name": "wk-cyber-claimant-claimed-amount",
+            "title": "Claimant (1st party) Claimed Amount",
+            "description": "",
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 720,
+            "attributes": {
+                "precision": 2,
+                "chronologyCard": false
+            }
+        },
+        {
+            "id": "a9cce89d-60a8-43d9-bcf3-73ace25f44b3",
+            "type": 16,
+            "name": "wk-cyber-3rd-claimed-amount",
+            "title": "Third Party Claimed Amount",
+            "description": "",
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 730,
+            "attributes": {
+                "precision": 2,
+                "chronologyCard": false
+            }
+        },
+        {
+            "id": "d2c28f73-0f1f-41d2-8a20-a5e6dae6597b",
+            "type": 16,
+            "name": "wk-cyber-firm-initial-claim",
+            "title": "Firm Initial Claim Reserve (total) Low - High",
+            "description": "",
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 740,
+            "attributes": {
+                "precision": 2,
+                "chronologyCard": false
+            }
+        },
+        {
+            "id": "161775b8-05a3-43c8-b1e3-a456243434dc",
+            "type": 16,
+            "name": "wk-cyber-firm-initial-claim-low",
+            "title": "Low",
+            "description": "",
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 740,
+            "attributes": {
+                "precision": 2,
+                "chronologyCard": false,
+                 "cssClasses":"c-low"
+            }
+        },
+        {
+            "id": "f49cdc36-bcc8-4145-a080-10e160ba0a62",
+            "type": 16,
+            "name": "wk-cyber-firm-initial-claim-high",
+            "title": "High",
+            "description": "",
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 740,
+            "attributes": {
+                "precision": 2,
+                "chronologyCard": false,
+                "cssClasses":"c-high"
+            }
+        },
+        {
+            "id": "d7dee71c-3916-4ce5-8c87-8a101c619aaf",
+            "type": 16,
+            "name": "wk-cyber-firm-initial-costs",
+            "title": "Firm Initial Costs Reserve (total) Low - High",
+            "description": "",
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 750,
+            "attributes": {
+                "precision": 2,
+                "chronologyCard": false
+            }
+        },
+        {
+            "id": "98ce02d4-e175-42d0-88e9-74e4fbb51528",
+            "type": 16,
+            "name": "wk-cyber-firm-final-claim",
+            "title": "Firm Final Claim Reserve (total) Low - High",
+            "description": "",
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 760,
+            "attributes": {
+                "precision": 2,
+                "chronologyCard": false
+            }
+        },
+        {
+            "id": "ee486ff2-5d31-430e-9d3f-8552a11a8723",
+            "type": 16,
+            "name": "wk-cyber-firm-final-costs",
+            "title": "Firm Final Costs Reserve (total) Low - High",
+            "description": "",
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 770,
+            "attributes": {
+                "precision": 2,
+                "chronologyCard": false
+            }
+        },
+        {
+            "id": "4634d197-a8c2-40dc-99ce-2a1e21d027ff",
+            "type": 16,
+            "name": "wk-cyber-reseve-applied-insurer",
+            "title": "Reserve Applied by Insurer (if known)",
+            "description": "",
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 780,
+            "attributes": {
+                "precision": 2,
+                "chronologyCard": false
+            }
+        },
+        {
+            "id": "8a2274bb-c994-447e-a7e8-98fcafddad90",
+            "type": 14,
+            "name": "wk-cyber-header-4",
+            "title": "Vendor and Costs Incurred",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 790,
+            "attributes": {
+                "labelText": "Vendor and Costs Incurred",
+                "cssClasses": "sd-form-header",
+                "elementType": "h2",
+                "chronologyCard": false
+            }
+        },
+        {
+            "id": "f4af9263-6a23-4fb1-9536-5e567791707e",
+            "type": 16,
+            "name": "wk-cyber-vendor-legal-costs",
+            "title": "Legal Costs Billed",
+            "description": "",
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 800,
+            "attributes": {
+                "precision": 2,
+                "chronologyCard": false
+            }
+        },
+        {
+            "id": "2c60d2e3-c3e2-4b0f-b88b-855846fef53b",
+            "type": 10,
+            "name": "wk-cyber-vendor",
+            "title": "Vendor Name",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 810,
+            "attributes": {
+                "multiple": true,
+                "roleSystemNames": "",
+                "includeAncestors": false,
+                "chronologyCard": false
+            }
+        },
+        {
+            "id": "379c416c-1ad1-4e00-80b7-165594b85b40",
+            "type": 4,
+            "name": "wk-cyber-vendor-type",
+            "title": "Vendor Type",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 820,
+            "attributes": {
+                "optionSetName": "wk-cyber-vendor-types",
+                "allowNoSelection": true,
+                "multiple": false,
+                "placeholderText": "&nbsp;",
+                "showSelectedColour": false,
+                "showSelectedIcon": false,
+                "chronologyCard": false
+            }
+        },
+        {
+            "id": "214792ec-3ee8-40e7-ac59-6a60bdb773fe",
+            "type": 0,
+            "name": "wk-cyber-vendor-other",
+            "title": "Other Vendor Type",
+            "description": "",
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 822,
+            "attributes": {
+                "chronologyCard": false,
+                "visibleIf": "wk-cyber-vendor-type=500001735"
+            }
+        },
+        {
+            "id": "eb966522-784d-435a-a037-e58676ac98c5",
+            "type": 16,
+            "name": "wk-cyber-disburse-value",
+            "title": "Disbursement Value",
+            "description": "",
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 830,
+            "attributes": {
+                "precision": 2,
+                "chronologyCard": false
+            }
+        },
+        {
+            "id": "7c5b4d28-33e8-4e90-bb90-b45dffe7276a",
+            "type": 14,
+            "name": "wk-cyber-header-5",
+            "title": "Settlement",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 840,
+            "attributes": {
+                "labelText": "Settlement",
+                "cssClasses": "sd-form-header",
+                "elementType": "h2",
+                "chronologyCard": false
+            }
+        },
+        {
+            "id": "b40fffcd-5f8a-4f81-b31e-d0fe71994e1f",
+            "type": 16,
+            "name": "wk-cyber-claimant-amount-paid",
+            "title": "Claimant (1st party) Amount Paid",
+            "description": "",
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 850,
+            "attributes": {
+                "precision": 2,
+                "chronologyCard": false
+            }
+        },
+        {
+            "id": "4b400853-19b5-47b1-bf87-4b9b7d9e759c",
+            "type": 16,
+            "name": "wk-cyber-3rd-amount-paid",
+            "title": "Third Party Amount Paid",
+            "description": "",
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 860,
+            "attributes": {
+                "precision": 2,
+                "chronologyCard": false
+            }
+        },
+        {
+            "id": "15cc0287-6d94-41d0-b4dc-ef3aa4856c85",
+            "type": 13,
+            "name": "wk-cyber-regulatory-penalty-issued",
+            "title": "Regulatory Penalty Issued?",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 870,
+            "attributes": {
+                "dataOn": "Yes",
+                "dataOff": "No",
+                "buttonWidth": "100px",
+                "buttonHeight": "",
+                "chronologyCard": false,
+                "default": false
+            }
+        },
+        {
+            "id": "31fc86e5-1c80-4aab-8a31-f85011c75f4b",
+            "type": 16,
+            "name": "wk-cyber-penalty-amount",
+            "title": "Penalty Amount",
+            "description": "",
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 890,
+            "attributes": {
+                "precision": 2,
+                "chronologyCard": false,
+                "visibleIf": "wk-cyber-regulatory-penalty-issued=true"
+            }
+        }
+    ],
+    "sections": [],
+    "smartVariableSystemName": null
+}
