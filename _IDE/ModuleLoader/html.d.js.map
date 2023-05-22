@@ -1,0 +1,1 @@
+{"version":3,"file":"html.d.js","names":[],"sources":["../../src/ModuleLoader/html.d.ts"],"sourcesContent":["declare module '*.html' {\n    const value: string;\n    export default value\n  }\n\n\n//declare '$ajax'.\ndeclare var $ajax: any;"],"mappings":""}

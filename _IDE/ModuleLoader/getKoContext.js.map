@@ -1,0 +1,1 @@
+{"version":3,"file":"getKoContext.js","names":[],"sources":["../../src/ModuleLoader/getKoContext.ts"],"sourcesContent":["import { IFormBuilderContext } from \"../Typings/FormBuilder/IFormBuilderContext\";\nimport * as ko from \"knockout\";\n"],"mappings":""}

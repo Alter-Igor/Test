@@ -1,0 +1,82 @@
+export interface Root {
+  workItem: WorkItem;
+  aspectData: AspectData;
+}
+
+export interface AspectData {
+  formBuilder: FormBuilder;
+  workScheduling: WorkScheduling;
+  taskDetails: TaskDetails;
+  taskAssignedTo: TaskAssignedTo;
+  tags: Tags;
+  mandatoryInPhase: MandatoryInPhase;
+  taskDueDate: TaskDueDate;
+}
+
+export interface TaskDueDate {
+  id: string;
+  dueDateTime: string;
+  dueDateTime_TimeZone: string;
+  reminders: any[];
+}
+
+export interface MandatoryInPhase {
+  transitions: Transition[];
+  transitionSystemNames: any[];
+}
+
+export interface Transition {
+  systemName: string;
+  fromPhaseName: string;
+  toPhaseName: string;
+  sharedoTypeName: string;
+}
+
+export interface Tags {
+  tags: any[];
+}
+
+export interface TaskAssignedTo {
+  primaryOwner: string;
+  displayName: string;
+}
+
+export interface TaskDetails {
+}
+
+export interface WorkScheduling {
+  id: string;
+  actualStart?: any;
+  actualEnd?: any;
+  restarted?: any;
+  expectedStart?: any;
+  expectedEnd: string;
+  userProvidedExpectedStart: boolean;
+  userProvidedExpectedEnd: boolean;
+  linkDueDateToExpectedStart: boolean;
+  linkDueDateToExpectedEnd: boolean;
+}
+
+export interface FormBuilder {
+  formData: FormData;
+  sharedoId: string;
+  formId?: any;
+  formIds: any[];
+}
+
+export interface FormData {
+  altEDiscoverySearchDescription: string;
+  altEDiscoverySearchSuggestedBinderName: string;
+}
+
+export interface WorkItem {
+  title: string;
+  titleIsUserProvided: boolean;
+  userTitle?: any;
+  description: string;
+  categoryId: number;
+  reference: string;
+  referenceIsUserProvided: boolean;
+  externalReference?: any;
+  priorityId: number;
+}

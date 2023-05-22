@@ -1,0 +1,31 @@
+const path = require("path");
+
+module.exports = [
+  { watch: true,
+    entry: {
+        "registerSWModule":"./src/registerSWModule.ts",
+        "K2ServiceWorker":"./src/K2ServiceWorker.ts",
+    },
+    output: {
+      path: path.join(__dirname, "build/src"),
+      filename: "[name].js",
+    },
+    mode: 'development',
+    module: {
+      rules: [
+        {
+          test: /\.ts$/,
+          exclude: /node_modules/,
+          loader: "babel-loader",
+        },
+      ],
+    },
+    resolve: {
+      extensions: ['.ts', '.js'],
+    },
+    target: "web",
+    node: {
+      __dirname: false,
+    },
+  }
+];
