@@ -1,0 +1,29 @@
+﻿{
+      // The system name for the type of node
+    "systemName": "customCreateCallToAction",
+
+    // The category to show this in the toolbox
+    "category": "Custom Task Actions",
+
+    // The display info
+    "name": "Create call to action.",
+    "icon": "fa-check-square-o",
+    "description": "Creates a call to action to be used in an action plan",
+   
+    // The widget used to configure this node type
+    "configWidget": "Custom.WorkflowActions.CreateCallToActionDesigner",
+
+    "factoryScript": "/_ideFiles/WorkflowActions/CreateCallToAction/createCallToAction-factory.js",
+
+    "templateScript": "/_ideFiles/WorkflowActions/CreateCallToAction/createCallToAction-template.js",
+
+    // Any additional helper scripts to load and run before the main generated script runs
+    "helperScripts": [ "StringHelpers" ],
+
+    "requiredTypes": [
+      "/Entity/Call To Action",
+      "/Identifier/Work Type Identifier",
+      "/Identifier/Participant Identifier",
+      "/Identifier/Participant Role Identifier"
+    ] 
+}

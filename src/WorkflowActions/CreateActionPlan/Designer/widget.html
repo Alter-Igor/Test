@@ -1,0 +1,71 @@
+﻿<div data-bind="widgetChrome:{ icon: 'fa-list', title: 'Action configuration' }">
+
+    <div class="form-group">
+        <label for="name">Action name:</label>
+        <input id="name" type="text" class="form-control" data-bind="textInput:action.name" />
+        <div class="text-danger" data-bind="visible:action.validation.name, text:action.validation.name"></div>
+    </div>
+
+</div>
+
+<div data-bind="widgetChrome:{ icon: 'fa-list', title: 'Action plan item configuration' }">
+    <div class="form-group toggle-form-group">
+        <label for="type">Item type:</label>
+
+        <select id="type" class="form-control" data-bind="value:action.config.type">
+            <!-- ko foreach: action.ui.types-->
+            <option data-bind="value:$data.value, text:$data.name"></option>
+            <!-- /ko -->
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>Description:</label>
+        <!-- ko component: { name: "core-wf-token-input", params: { value: action.config.description, rootModel: model } } -->
+        <!-- /ko -->
+        <div class="text-danger" data-bind="visible:action.validation.description, text:action.validation.description"></div>
+    </div>
+
+    <div class="form-group toggle-form-group" data-bind="visible: action.ui.allowMandatory">
+        <label for="mandatory">Mandatory:</label>
+        <div class="input-group">
+            <input type="checkbox" id="mandatory" data-bind="toggleSwitch: action.config.mandatory, toggleOptions: { on: 'Yes', off: 'No' }">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="order">Ordering:</label>
+        <input id="order" type="number" class="form-control" data-bind="textInput:action.config.order" />
+    </div>
+</div>
+
+<div data-bind="widgetChrome:{ icon: 'fa-announce', title: 'Call to action' }, visible: action.ui.allowCta">
+
+    <div class="alert alert-info">
+        You can optionally specify a call to action to link to this action plan item. Build the call to action
+        first using the "Create call to action" action.
+    </div>
+
+    <div class="form-group">
+        <label>Attach call to action:</label>
+        <!-- ko component: { name: "core-wf-variable-selector", params:action.ui.callToActionVarSelector } -->
+        <!-- /ko -->
+    </div>
+
+</div>
+
+<div data-bind="widgetChrome:{ icon: 'fa-arrow-left', title: 'Output' }">
+
+    <div class="form-group">
+        <label>Output to variable:</label>
+        <!-- ko component: { name: "core-wf-variable-selector", params:action.ui.outputVariableSelector } -->
+        <!-- /ko -->
+    </div>
+
+    <div class="form-group">
+        <label>Add to collection:</label>
+        <!-- ko component: { name: "core-wf-variable-selector", params:action.ui.outputCollectionSelector } -->
+        <!-- /ko -->
+    </div>
+
+</div>

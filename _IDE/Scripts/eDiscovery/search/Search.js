@@ -11,6 +11,13 @@ function _runMe() {
       return;
     }
     var sharedoId = context.workItemContext.id();
+
+    // example of gettig data from sharedo
+    // let data = await $ajax.get("/api/v1/public/workItem/" + sharedoId);    
+    // if(data.aspectData.formBuilder.formData.altEDiscoverySearchDescription === "test") {
+    //         console.log("its test");
+    // }
+
     var currentPhaseName = context.workItemContext.phaseName();
     console.log("%c[".concat(thisModuleName, "] - currentPhaseName"), "color: #00aaff", currentPhaseName);
     if (currentPhaseName === undefined) {

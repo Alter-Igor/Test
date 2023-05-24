@@ -1,0 +1,28 @@
+﻿{
+    
+    "id":  "Custom.WorkflowActions.CreateActionPlanDesigner", 
+    "designer":
+    {
+        "allowInPortalDesigner": false,
+        "allowInSharedoPortalDesigner": false
+    },
+    "scripts":
+    [
+        "/_ideFiles/WorkflowActions/createActionPlan/designer/widget.js"
+    ],
+    "styles":
+    [
+    ],
+    "templates":
+    [
+        "/_ideFiles/WorkflowActions/createActionPlan/designer/widget.html"
+    ],
+    "menuTemplates":
+    [
+    ],
+    "components":
+    [
+      "Sharedo.Core.Case.Components.SharedoTypePicker",
+      "Sharedo.UI.Framework.Components.Toggle"
+    ]
+}

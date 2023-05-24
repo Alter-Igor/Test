@@ -1,0 +1,11 @@
+export interface ICallToAction {
+  CallToActionTitle: string;
+  CallToActionIcon: string;
+  CallToActionCss?: any;
+  CallToActionStyles?: any;
+  CallToActionCommand: string;
+  CallToActionCommandConfiguration: string;
+  CallToActionContextType: string;
+  CallToActionContextId: any;
+}
+

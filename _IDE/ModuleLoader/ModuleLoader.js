@@ -1,3 +1,4 @@
+//log with  color
 console.log("%c [ModuleLoader] module-loader webcomponent loaded", "background: #222; color: #bada55", this);
 var template = document.createElement('template');
 template.innerHTML = "\n<div style=\"display:none;\" class=\"module-loader\">  \n    <slot></slot>\n</div>";
@@ -14,6 +15,8 @@ class ModuleLoader extends HTMLElement {
   }
   connectedCallback() {
     console.log("%c [ModuleLoader] connectedCallback", "background: #222; color: #bada55", this);
+
+    // setTimeout(() => {
     var slots = this.thisShadowRoot.querySelectorAll('slot');
     console.log(slots);
     var scriptURL = slots[0].assignedNodes()[0].textContent;
@@ -29,6 +32,9 @@ class ModuleLoader extends HTMLElement {
       var context = createFormBuilderContext(closestForm);
       runMe(context);
     });
+
+    // }, 1000);
+
     this.render();
   }
   render() {
@@ -45,6 +51,7 @@ function createFormBuilderContext(element) {
     alpacaForm: getAlpacaForm(element),
     workItemContext: window.ko.contextFor(element.parentElement).$parentContext.$data.options.model
   };
+  //log with color
   console.log("%c [ModuleLoader] createFormBuilderContext return value", "background: #222; color: #bada55", retValue);
   return retValue;
 }

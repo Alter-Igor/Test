@@ -9,14 +9,16 @@
     "deploy": "webpack",
     "typecheck": "tsc --p .",
     "compile": "cross-env-shell babel $INIT_CWD -d $INIT_CWD --extensions '.ts' --no-comments --source-maps --out-dir ./_IDE",
-    "compileBabel": "babel src -d build --extensions '.ts' --no-comments --source-maps --out-dir ./_IDE --copy-files",
+    "compileBabel": "babel src -d build --extensions '.ts' --source-maps --out-dir ./_IDE --copy-files",
     "test": "echo \"Error: no test specified\" && exit 1",
     "typecheck-compile": "npm run typecheck && npm run compile"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/knockout.validation": "^0.0.39",
     "knockout": "^3.5.1",
+    "knockout.validation": "^2.0.4",
     "typescript": "^5.0.4"
   },
   "devDependencies": {

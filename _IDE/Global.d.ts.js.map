@@ -1,1 +1,0 @@
-{"version":3,"file":"Global.d.ts.js","names":[],"sources":["../src/Global.d.ts.ts"],"sourcesContent":["import * as knockout from \"knockout\";\n\n//make ko a global variable\n// window[\"ko\"] = knockout;\n"],"mappings":""}
