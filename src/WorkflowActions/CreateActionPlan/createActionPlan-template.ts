@@ -8,6 +8,7 @@ let actionPlan : IActionPlan ={
 };
 
 
+
 actionPlan.description = sharedo.buildString("$model.Configuration.description;");
 actionPlan.type = "$model.Configuration.type";
 actionPlan.mandatory = $model.Configuration.mandatory;
