@@ -51,7 +51,7 @@
        
         
         // Create the variable validator/selector - this is dynamic based on context type
-        self.ui.taskId = self.trackVariable(self.config.taskId, "/Identifier/Work Type Identifier/Task Identifier");
+        self.ui.taskId = self.trackVariable(self.config.taskId, "/Identifier");
         //self.ui.outputVariable = self.trackVariable(self.config.outputVariable, "/Identifier/Work Type Identifier/Task Identifier");
         self.ui.actionPlanItemsList = self.trackVariable(self.config.actionPlanItemsList, "/Entity/Action Plan Item",
             {

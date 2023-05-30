@@ -1,33 +1,41 @@
 (() => {
-  var taskId = ctx["newTaskId"];
+  log.Information("---- updateExistingTaskActionPlan-template ----");
+  var taskId = ctx["$model.Configuration.taskId;"];
   if (!taskId) {
     throw new Error("Task id was not provided");
   }
+  log.Information("taskId: " + taskId);
   var existingAp = false;
-  var actionPlanBuilder = actions.sharedo.BuildActionPlan().ForSharedo(taskId);
-  var actionPlan = task.ActionPlan;
-  var apId;
-  if (actionPlan && actionPlan.Id && actionPlan.Id == Guid.Empty) {
-    //must only be == not ===     
-    log.Information("Existing action plan found");
-    actionPlanBuilder = actionPlanBuilder.ForExistingActionPlan(actionPlan.Id);
+  var existingApId = getExistingActionPlanId(taskId);
+  if (existingApId) {
     existingAp = true;
   }
-  if (!existingAp) {
-    log.Information("No existing action plan found");
-    actionPlan = task.WithActionPlan().WithTitle(sharedo.buildString("$model.Configuration.actionPlanTitle;"));
-  }
-
-  // let obj = actionPlan;
-  // for (let key in obj) {
-  //     if (typeof obj[key] === 'function') {
-  //         log.Information("function " + key);
-  //     }
-  //     else {
-  //         log.Information(key + " : " + obj[key]);
-  //         log.Information(JSON.stringify(obj[key]));
-  //     }
+  var actionPlanBuilder = actions.sharedo.BuildActionPlan().ForSharedo(taskId);
+  // let actionPlan = actionPlanBuilder.ActionPlan;
+  // //Note Id is always empty so use title
+  // log.Information("actionPlan: " + JSON.stringify(actionPlan));
+  // let apId;
+  // if (actionPlan && actionPlan.Title) { //must only be == not ===     
+  //     log.Information("Existing action plan found");
+  //     actionPlanBuilder = actionPlanBuilder.ForExistingActionPlan(actionPlan.Id);
+  //     existingAp = true;
   // }
+
+  if (!existingAp) {
+    log.Information("No existing action plan found so creation one");
+    actionPlanBuilder.WithTitle(sharedo.buildString("$model.Configuration.actionPlanTitle;"));
+  } else {
+    actionPlanBuilder.ForExistingActionPlan();
+  }
+  var obj = actionPlanBuilder;
+  for (var key in obj) {
+    if (typeof obj[key] === 'function') {
+      log.Information("function " + key);
+    } else {
+      log.Information(key + " : " + obj[key]);
+      log.Information(JSON.stringify(obj[key]));
+    }
+  }
 
   // Add action plan items
   // $ifNotNull.Configuration.actionPlanItemsList
@@ -46,22 +54,21 @@
         var actionPlanItem = buildActionPlan(i);
         log.Information('*** actionPlanItem:');
         log.Information(JSON.stringify(actionPlanItem));
-        actionPlan = actionPlan.AddItem(actionPlanItem);
+        actionPlanBuilder = actionPlanBuilder.AddItem(actionPlanItem);
       });
     }
   }
   // $endif
 
   log.Information('*** actionPlanBuilder:');
-  log.Information(JSON.stringify(actionPlan));
-  task = actionPlan.Build();
+  actionPlanBuilder = actionPlanBuilder.Build();
 
   // $endif
 
   //loop though object and show all method and properties
 
   log.Information("----- save -------");
-  task.Save();
+  actionPlanBuilder.Save();
   // ()=>{
 
   // let taskId = ctx["$model.Configuration.taskId"];
@@ -165,6 +172,18 @@
     // endif;
     log.Information('**** buildCallToAction finished');
     return cta;
+  }
+  function getExistingActionPlanId(id) {
+    var result = sharedo.http.get("/api/sharedo/".concat(id, "/actionplan"));
+    log.Information("result: " + JSON.stringify(result));
+    if (result.success) {
+      log.Information("result.body: " + JSON.stringify(result.body));
+      if (result.body && result.body.id) {
+        log.Information("result.body.id: " + result.body.id);
+        return result.body.id;
+      }
+    }
+    return undefined;
   }
 })();
 //# sourceMappingURL=updateExistingTaskActionPlan-template.js.map

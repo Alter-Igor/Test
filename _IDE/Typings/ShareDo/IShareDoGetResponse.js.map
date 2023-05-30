@@ -1,0 +1,1 @@
+{"version":3,"file":"IShareDoGetResponse.js","names":[],"sources":["../../../src/Typings/ShareDo/IShareDoGetResponse.ts"],"sourcesContent":["interface IShareDoGetResponse<T> {\n    status: string;\n    success: boolean;\n    body: T;\n  }"],"mappings":""}
