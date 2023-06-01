@@ -1,0 +1,623 @@
+[
+    {
+      "data": {
+        "created": "2022-07-12",
+        "closedDate": "2023-05-15",
+        "matterCode": "81735089",
+        "shortName": "Litigation case for intellectual property dispute",
+        "secure": false,
+        "status": "Closed",
+        "client": {
+          "code": "107689",
+          "name": "Global Tech Corporation"
+        },
+        "practiceGroup": "Intellectual Property",
+        "department": "Legal",
+        "practiceArea": {
+          "code": "IPD",
+          "name": "Intellectual Property Disputes"
+        },
+        "profitCentre": "Litigation - Group 2",
+        "location": {
+          "office": "San Francisco",
+          "country": "United States",
+          "region": "North America"
+        },
+        "currency": {
+          "code": "USD",
+          "name": "US Dollar"
+        },
+        "categories": [
+          "Litigation"
+        ],
+        "type": "Intellectual Property",
+        "timeClass": "Billable",
+        "timeType": "Standard",
+        "feeRateSet": "",
+        "meta": {
+          "sourceDatabase": "SF",
+          "eBillingEnabled": true
+        },
+        "partner": {
+          "code": "19876",
+          "name": "Anderson, Sarah",
+          "email": "Sarah.Anderson@globaltech.com"
+        },
+        "timeKeepers": [
+          {
+            "code": "19876",
+            "name": "Anderson, Sarah",
+            "email": "Sarah.Anderson@globaltech.com"
+          },
+          {
+            "code": "20456",
+            "name": "Johnson, Michael",
+            "email": "Michael.Johnson@globaltech.com"
+          },
+          {
+            "code": "17543",
+            "name": "Lee, Jessica",
+            "email": "Jessica.Lee@globaltech.com"
+          }
+        ]
+      }
+    },
+    {
+      "data": {
+        "created": "2022-11-19",
+        "closedDate": null,
+        "matterCode": "81735090",
+        "shortName": "Employment law consultation for XYZ Corporation",
+        "secure": true,
+        "status": "Open",
+        "client": {
+          "code": "105432",
+          "name": "XYZ Corporation"
+        },
+        "practiceGroup": "Employment Law",
+        "department": "Labor",
+        "practiceArea": {
+          "code": "ELC",
+          "name": "Employment Law Consultation"
+        },
+        "profitCentre": "Employment Law - Group 3",
+        "location": {
+          "office": "London",
+          "country": "United Kingdom",
+          "region": "Europe"
+        },
+        "currency": {
+          "code": "GBP",
+          "name": "British Pound"
+        },
+        "categories": [
+          "Consultation"
+        ],
+        "type": "Employment Law",
+        "timeClass": "Billable",
+        "timeType": "Standard",
+        "feeRateSet": "",
+        "meta": {
+          "sourceDatabase": "LON",
+          "eBillingEnabled": true
+        },
+        "partner": {
+          "code": "18765",
+          "name": "Thompson, James",
+          "email": "James.Thompson@xyzcorp.com"
+        },
+        "timeKeepers": [
+          {
+            "code": "18765",
+            "name": "Thompson, James",
+            "email": "James.Thompson@xyzcorp.com"
+          },
+          {
+            "code": "19785",
+            "name": "Williams, Emily",
+            "email": "Emily.Williams@xyzcorp.com"
+          },
+          {
+            "code": "20564",
+            "name": "Davis, Benjamin",
+            "email": "Benjamin.Davis@xyzcorp.com"
+          },
+          {
+            "code": "19786",
+            "name": "Smith, Olivia",
+            "email": "Olivia.Smith@xyzcorp.com"
+          }
+        ]
+      }
+    },
+    {
+      "data": {
+        "created": "2023-01-03",
+        "closedDate": "2023-02-28",
+        "matterCode": "81735091",
+        "shortName": "Real estate transaction for commercial property",
+        "secure": false,
+        "status": "Closed",
+        "client": {
+          "code": "102349",
+          "name": "ABC Real Estate Investments"
+        },
+        "practiceGroup": "Real Estate",
+        "department": "Property",
+        "practiceArea": {
+          "code": "REC",
+          "name": "Real Estate Commercial"
+        },
+        "profitCentre": "Real Estate - Group 1",
+        "location": {
+          "office": "New York",
+          "country": "United States",
+          "region": "North America"
+        },
+        "currency": {
+          "code": "USD",
+          "name": "US Dollar"
+        },
+        "categories": [
+          "Real Estate"
+        ],
+        "type": "Commercial Property",
+        "timeClass": "Billable",
+        "timeType": "Standard",
+        "feeRateSet": "",
+        "meta": {
+          "sourceDatabase": "NYC",
+          "eBillingEnabled": true
+        },
+        "partner": {
+          "code": "17654",
+          "name": "Davis, Robert",
+          "email": "Robert.Davis@abcrealestate.com"
+        },
+        "timeKeepers": [
+          {
+            "code": "17654",
+            "name": "Davis, Robert",
+            "email": "Robert.Davis@abcrealestate.com"
+          },
+          {
+            "code": "18975",
+            "name": "Johnson, Samantha",
+            "email": "Samantha.Johnson@abcrealestate.com"
+          },
+          {
+            "code": "20164",
+            "name": "Thompson, Matthew",
+            "email": "Matthew.Thompson@abcrealestate.com"
+          }
+        ]
+      }
+    },
+    {
+      "data": {
+        "created": "2022-09-22",
+        "closedDate": "2023-04-15",
+        "matterCode": "81735092",
+        "shortName": "Contract negotiation for IT services agreement",
+        "secure": true,
+        "status": "Closed",
+        "client": {
+          "code": "108976",
+          "name": "Tech Solutions Inc."
+        },
+        "practiceGroup": "Technology",
+        "department": "Legal",
+        "practiceArea": {
+          "code": "ITA",
+          "name": "IT Agreements"
+        },
+        "profitCentre": "Technology - Group 2",
+        "location": {
+          "office": "Seattle",
+          "country": "United States",
+          "region": "North America"
+        },
+        "currency": {
+          "code": "USD",
+          "name": "US Dollar"
+        },
+        "categories": [
+          "Contract Negotiation"
+        ],
+        "type": "IT Services",
+        "timeClass": "Billable",
+        "timeType": "Standard",
+        "feeRateSet": "",
+        "meta": {
+          "sourceDatabase": "SEA",
+          "eBillingEnabled": true
+        },
+        "partner": {
+          "code": "19976",
+          "name": "Wilson, Jennifer",
+          "email": "Jennifer.Wilson@techsolutions.com"
+        },
+        "timeKeepers": [
+          {
+            "code": "19976",
+            "name": "Wilson, Jennifer",
+            "email": "Jennifer.Wilson@techsolutions.com"
+          },
+          {
+            "code": "20785",
+            "name": "Clark, David",
+            "email": "David.Clark@techsolutions.com"
+          }
+        ]
+      }
+    },
+    {
+      "data": {
+        "created": "2022-12-01",
+        "closedDate": "2023-03-31",
+        "matterCode": "81735093",
+        "shortName": "Tax advisory services for international expansion",
+        "secure": false,
+        "status": "Closed",
+        "client": {
+          "code": "105643",
+          "name": "Global Corp Inc."
+        },
+        "practiceGroup": "Tax",
+        "department": "Advisory",
+        "practiceArea": {
+          "code": "TAX",
+          "name": "Tax Advisory"
+        },
+        "profitCentre": "Tax - Group 1",
+        "location": {
+          "office": "London",
+          "country": "United Kingdom",
+          "region": "Europe"
+        },
+        "currency": {
+          "code": "GBP",
+          "name": "British Pound"
+        },
+        "categories": [
+          "Advisory Services"
+        ],
+        "type": "International Tax",
+        "timeClass": "Billable",
+        "timeType": "Standard",
+        "feeRateSet": "",
+        "meta": {
+          "sourceDatabase": "LON",
+          "eBillingEnabled": true
+        },
+        "partner": {
+          "code": "18654",
+          "name": "Baker, David",
+          "email": "David.Baker@globalcorp.com"
+        },
+        "timeKeepers": [
+          {
+            "code": "18654",
+            "name": "Baker, David",
+            "email": "David.Baker@globalcorp.com"
+          },
+          {
+            "code": "19786",
+            "name": "Smith, Olivia",
+            "email": "Olivia.Smith@globalcorp.com"
+          },
+          {
+            "code": "20476",
+            "name": "Wilson, Thomas",
+            "email": "Thomas.Wilson@globalcorp.com"
+          }
+        ]
+      }
+    },
+    {
+      "data": {
+        "created": "2023-02-17",
+        "closedDate": null,
+        "matterCode": "81735094",
+        "shortName": "Corporate restructuring for merger and acquisition",
+        "secure": false,
+        "status": "Open",
+        "client": {
+          "code": "109875",
+          "name": "ABC Corporation"
+        },
+        "practiceGroup": "Corporate",
+        "department": "Legal",
+        "practiceArea": {
+          "code": "CRS",
+          "name": "Corporate Restructuring"
+        },
+        "profitCentre": "Corporate - Group 1",
+        "location": {
+          "office": "Sydney",
+          "country": "Australia",
+          "region": "Asia-Pacific"
+        },
+        "currency": {
+          "code": "AUD",
+          "name": "Australian Dollar"
+        },
+        "categories": [
+          "M&A"
+        ],
+        "type": "Restructuring",
+        "timeClass": "Billable",
+        "timeType": "Standard",
+        "feeRateSet": "",
+        "meta": {
+          "sourceDatabase": "SYD",
+          "eBillingEnabled": false
+        },
+        "partner": {
+          "code": "17765",
+          "name": "Cooper, Emily",
+          "email": "Emily.Cooper@abccorp.com"
+        },
+        "timeKeepers": [
+          {
+            "code": "17765",
+            "name": "Cooper, Emily",
+            "email": "Emily.Cooper@abccorp.com"
+          },
+          {
+            "code": "18876",
+            "name": "Parker, Daniel",
+            "email": "Daniel.Parker@abccorp.com"
+          }
+        ]
+      }
+    },
+    {
+      "data": {
+        "created": "2022-10-10",
+        "closedDate": "2023-01-31",
+        "matterCode": "81735095",
+        "shortName": "Regulatory compliance review for pharmaceutical company",
+        "secure": false,
+        "status": "Closed",
+        "client": {
+          "code": "104567",
+          "name": "PharmaTech Ltd."
+        },
+        "practiceGroup": "Regulatory",
+        "department": "Legal",
+        "practiceArea": {
+          "code": "RCR",
+          "name": "Regulatory Compliance Review"
+        },
+        "profitCentre": "Regulatory - Group 2",
+        "location": {
+          "office": "Berlin",
+          "country": "Germany",
+          "region": "Europe"
+        },
+        "currency": {
+          "code": "EUR",
+          "name": "EURO"
+        },
+        "categories": [
+          "Compliance"
+        ],
+        "type": "Pharmaceuticals",
+        "timeClass": "Billable",
+        "timeType": "Standard",
+        "feeRateSet": "",
+        "meta": {
+          "sourceDatabase": "BER",
+          "eBillingEnabled": true
+        },
+        "partner": {
+          "code": "19543",
+          "name": "Schmidt, Thomas",
+          "email": "Thomas.Schmidt@pharmatech.com"
+        },
+        "timeKeepers": [
+          {
+            "code": "19543",
+            "name": "Schmidt, Thomas",
+            "email": "Thomas.Schmidt@pharmatech.com"
+          },
+          {
+            "code": "20345",
+            "name": "Wagner, Julia",
+            "email": "Julia.Wagner@pharmatech.com"
+          }
+        ]
+      }
+    },
+    {
+      "data": {
+        "created": "2023-03-05",
+        "closedDate": null,
+        "matterCode": "81735096",
+        "shortName": "Privacy law compliance for technology company",
+        "secure": false,
+        "status": "Open",
+        "client": {
+          "code": "106789",
+          "name": "Tech Solutions Corp."
+        },
+        "practiceGroup": "Privacy",
+        "department": "Legal",
+        "practiceArea": {
+          "code": "PLC",
+          "name": "Privacy Law Compliance"
+        },
+        "profitCentre": "Privacy - Group 1",
+        "location": {
+          "office": "Toronto",
+          "country": "Canada",
+          "region": "North America"
+        },
+        "currency": {
+          "code": "CAD",
+          "name": "Canadian Dollar"
+        },
+        "categories": [
+          "Privacy"
+        ],
+        "type": "Technology",
+        "timeClass": "Billable",
+        "timeType": "Standard",
+        "feeRateSet": "",
+        "meta": {
+          "sourceDatabase": "TOR",
+          "eBillingEnabled": true
+        },
+        "partner": {
+          "code": "18345",
+          "name": "Garcia, Maria",
+          "email": "Maria.Garcia@techsolutionscorp.com"
+        },
+        "timeKeepers": [
+          {
+            "code": "18345",
+            "name": "Garcia, Maria",
+            "email": "Maria.Garcia@techsolutionscorp.com"
+          },
+          {
+            "code": "19123",
+            "name": "Lopez, Carlos",
+            "email": "Carlos.Lopez@techsolutionscorp.com"
+          },
+          {
+            "code": "20345",
+            "name": "Wagner, Julia",
+            "email": "Julia.Wagner@techsolutionscorp.com"
+          }
+        ]
+      }
+    },
+    {
+      "data": {
+        "created": "2022-08-18",
+        "closedDate": "2023-02-28",
+        "matterCode": "81735097",
+        "shortName": "Environmental law compliance for energy company",
+        "secure": true,
+        "status": "Closed",
+        "client": {
+          "code": "108567",
+          "name": "EnergyCo Inc."
+        },
+        "practiceGroup": "Environmental Law",
+        "department": "Legal",
+        "practiceArea": {
+          "code": "ELC",
+          "name": "Environmental Law Compliance"
+        },
+        "profitCentre": "Environmental Law - Group 2",
+        "location": {
+          "office": "Houston",
+          "country": "United States",
+          "region": "North America"
+        },
+        "currency": {
+          "code": "USD",
+          "name": "US Dollar"
+        },
+        "categories": [
+          "Compliance"
+        ],
+        "type": "Energy",
+        "timeClass": "Billable",
+        "timeType": "Standard",
+        "feeRateSet": "",
+        "meta": {
+          "sourceDatabase": "HOU",
+          "eBillingEnabled": true
+        },
+        "partner": {
+          "code": "17654",
+          "name": "Davis, Robert",
+          "email": "Robert.Davis@energyco.com"
+        },
+        "timeKeepers": [
+          {
+            "code": "17654",
+            "name": "Davis, Robert",
+            "email": "Robert.Davis@energyco.com"
+          },
+          {
+            "code": "18543",
+            "name": "Gomez, Sofia",
+            "email": "Sofia.Gomez@energyco.com"
+          },
+          {
+            "code": "19785",
+            "name": "Williams, Emily",
+            "email": "Emily.Williams@energyco.com"
+          }
+        ]
+      }
+    },
+    {
+      "data": {
+        "created": "2023-04-10",
+        "closedDate": null,
+        "matterCode": "81735098",
+        "shortName": "Data breach incident response for financial institution",
+        "secure": true,
+        "status": "Open",
+        "client": {
+          "code": "105678",
+          "name": "Banking Group Ltd."
+        },
+        "practiceGroup": "Cybersecurity",
+        "department": "Legal",
+        "practiceArea": {
+          "code": "CIR",
+          "name": "Cyber Incident Response"
+        },
+        "profitCentre": "Cybersecurity - Group 1",
+        "location": {
+          "office": "New York",
+          "country": "United States",
+          "region": "North America"
+        },
+        "currency": {
+          "code": "USD",
+          "name": "US Dollar"
+        },
+        "categories": [
+          "Incident Response"
+        ],
+        "type": "Financial Institutions",
+        "timeClass": "Billable",
+        "timeType": "Standard",
+        "feeRateSet": "",
+        "meta": {
+          "sourceDatabase": "NYC",
+          "eBillingEnabled": true
+        },
+        "partner": {
+          "code": "18765",
+          "name": "Thompson, James",
+          "email": "James.Thompson@bankinggroup.com"
+        },
+        "timeKeepers": [
+          {
+            "code": "18765",
+            "name": "Thompson, James",
+            "email": "James.Thompson@bankinggroup.com"
+          },
+          {
+            "code": "19654",
+            "name": "Allen, Sarah",
+            "email": "Sarah.Allen@bankinggroup.com"
+          },
+          {
+            "code": "20345",
+            "name": "Wagner, Julia",
+            "email": "Julia.Wagner@bankinggroup.com"
+          }
+        ]
+      }
+    }
+  ]
+  

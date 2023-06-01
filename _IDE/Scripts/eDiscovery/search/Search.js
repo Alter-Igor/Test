@@ -16,7 +16,7 @@ function _runMe() {
     // let data = await $ajax.get("/api/v1/public/workItem/" + sharedoId);    
     // if(data.aspectData.formBuilder.formData.altEDiscoverySearchDescription === "test") {
     //         console.log("its test");
-    // }
+    // }  
 
     var currentPhaseName = context.workItemContext.phaseName();
     console.log("%c[".concat(thisModuleName, "] - currentPhaseName"), "color: #00aaff", currentPhaseName);
@@ -26,11 +26,11 @@ function _runMe() {
     if (currentPhaseName === "Draft") {
       return;
     }
-    if (context.alpacaForm.options.readonly === true) {
+    if (context.form.options.readonly === true) {
       return;
     }
-    context.alpacaForm.options.readonly = true;
-    context.alpacaForm.refresh();
+    context.form.options.readonly = true;
+    context.form.refresh();
   });
   return _runMe.apply(this, arguments);
 }

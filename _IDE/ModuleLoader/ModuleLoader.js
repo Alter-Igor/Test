@@ -22,7 +22,10 @@ class ModuleLoader extends HTMLElement {
     var scriptURL = slots[0].assignedNodes()[0].textContent;
     console.log(scriptURL);
     if (!scriptURL) return;
-    import(window.location.origin + scriptURL).then(module => {
+    //import the script with no cache
+
+    var scriptUrl = window.location.origin + scriptURL + "?v=" + new Date().getTime();
+    import(scriptUrl).then(module => {
       console.log("module", module);
       var runMe = module.runMe;
       if (!runMe) throw new Error("No runMe function");
@@ -31,6 +34,8 @@ class ModuleLoader extends HTMLElement {
       if (!closestForm) throw new Error("No closestForm");
       var context = createFormBuilderContext(closestForm);
       runMe(context);
+    }).catch(err => {
+      console.log(err);
     });
 
     // }, 1000);
@@ -48,15 +53,21 @@ function createFormBuilderContext(element) {
   var retValue = {
     koContext: window.ko.contextFor(element.parentElement),
     element: element,
-    alpacaForm: getAlpacaForm(element),
+    fields: getAlpacaFormFields(element),
+    form: getAlpacaForm(element),
     workItemContext: window.ko.contextFor(element.parentElement).$parentContext.$data.options.model
   };
   //log with color
   console.log("%c [ModuleLoader] createFormBuilderContext return value", "background: #222; color: #bada55", retValue);
   return retValue;
 }
+function getAlpacaFormFields(context) {
+  var alpaca = $(context).alpaca();
+  return alpaca.childrenByPropertyId;
+}
 function getAlpacaForm(context) {
-  return $(context).alpaca();
+  var alpaca = $(context).alpaca();
+  return alpaca;
 }
 export {};
 //# sourceMappingURL=ModuleLoader.js.map

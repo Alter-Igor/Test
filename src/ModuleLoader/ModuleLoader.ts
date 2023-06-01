@@ -17,9 +17,7 @@ class ModuleLoader extends HTMLElement{
      this.attachShadow({ mode: 'open'});
      if(!this.shadowRoot) throw new Error("No shadowRoot");
      this.thisShadowRoot = this.shadowRoot;
-     this.shadowRoot.appendChild(template.content.cloneNode(true));
-     
-    
+     this.shadowRoot.appendChild(template.content.cloneNode(true));         
  } 
 
  connectedCallback(){
@@ -32,7 +30,10 @@ class ModuleLoader extends HTMLElement{
     let scriptURL = slots[0].assignedNodes()[0].textContent;
     console.log(scriptURL);
     if(!scriptURL) return;
-    import(window.location.origin + scriptURL).then((module) => {
+    //import the script with no cache
+    
+    let scriptUrl = window.location.origin + scriptURL + "?v=" + new Date().getTime();
+    import(scriptUrl).then((module) => {
         console.log("module",module);
         let runMe = module.runMe; 
         if(!runMe) throw new Error("No runMe function");
@@ -41,6 +42,8 @@ class ModuleLoader extends HTMLElement{
         if(!closestForm) throw new Error("No closestForm");
         let context = createFormBuilderContext(closestForm);
         runMe(context);
+    }).catch((err) => {
+        console.log(err);
     });
     
     // }, 1000);
@@ -63,7 +66,8 @@ function createFormBuilderContext(element: HTMLElement) : IFormBuilderContext {
     let retValue : IFormBuilderContext = {
         koContext: window.ko.contextFor(element.parentElement),
         element: element,
-        alpacaForm: getAlpacaForm(element),
+        fields: getAlpacaFormFields(element),
+        form: getAlpacaForm(element),
         workItemContext: (window.ko.contextFor(element.parentElement) as any).$parentContext.$data.options.model
     }
     //log with color
@@ -73,6 +77,12 @@ function createFormBuilderContext(element: HTMLElement) : IFormBuilderContext {
 
 }
 
+function getAlpacaFormFields(context: any) {
+    let alpaca = ($(context) as any).alpaca();
+    return alpaca.childrenByPropertyId
+}
+
 function getAlpacaForm(context: any) {
-    return ($(context) as any).alpaca();
+    let alpaca = ($(context) as any).alpaca();
+    return alpaca;
 }
