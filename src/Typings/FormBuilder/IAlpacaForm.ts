@@ -2,11 +2,11 @@
 
 
 export type TChildrenByPropertyId = { 
-    [key:string]: FormBuilderField
+    [key:string]: IAlpacaField
 };
 
-export interface FormBuilderField {
-    parent: FormBuilderField;
+export interface IAlpacaField {
+    parent: IAlpacaField;
     childrenByPropertyId: TChildrenByPropertyId ;
     isValid: () => boolean;
     children: any[];

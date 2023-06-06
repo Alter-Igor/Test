@@ -1,0 +1,13 @@
+<div class="Visualisation-Widgets-SingleValueDisplayDesigner">
+    
+    <div data-bind="widgetChrome:{ icon: 'fa-cog', title: 'configuration' }">
+  
+
+        <div class="form-group">
+            <label for="todo">Enter the field path:</label>
+            <input id="todo" class="form-control" type="text" data-bind="textInput:model.fieldPath"/>
+            <span class="text-danger" data-bind="visible:validation.fieldPath, text:validation.fieldPath"></span>
+        </div>
+    </div>
+
+</div>

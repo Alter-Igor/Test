@@ -1,0 +1,1 @@
+{"version":3,"file":"createCallToAction-template.d.js","names":[],"sources":["../../../src/NodeBased/WorkflowActions/CreateCallToAction/createCallToAction-template.d.ts"],"sourcesContent":["declare let cta: ICallToAction;\n"],"mappings":""}

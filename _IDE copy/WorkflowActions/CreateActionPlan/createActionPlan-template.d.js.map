@@ -1,0 +1,1 @@
+{"version":3,"file":"createActionPlan-template.d.js","names":[],"sources":["../../../src/WorkflowActions/CreateActionPlan/createActionPlan-template.d.ts"],"sourcesContent":["declare let actionPlan: IActionPlan;\ndeclare let listAsString: any;\ndeclare let list: any;\n"],"mappings":""}

@@ -1,0 +1,37 @@
+{
+    "id": "Visualisation.Widgets.SingleValueDisplay",
+    "priority": 6000,
+    "designer":
+    {
+        "allowInPortalDesigner": false,
+        "allowInSharedoPortalDesigner": true,
+        "title": "TODO: Name widget SingleValueDisplay",
+        "icon": "fa-cog",
+        "description": "TODO: Describe your widget",
+        "categories":
+        [
+            "TODO Categorise SingleValueDisplay"
+        ],
+        "isConfigurable": true,
+        "configurationWidget": "Visualisation.Widgets.SingleValueDisplayDesigner"
+    },
+    "scripts":
+    [
+        "/_ideFiles/Visualisation/Widgets/SingleValueDisplay/SingleValueDisplayAgent.js",
+        "/_ideFiles/Visualisation/Widgets/SingleValueDisplay/SingleValueDisplay.js"
+    ],
+    "styles":
+    [
+        "/_ideFiles/Visualisation/Widgets/SingleValueDisplay/SingleValueDisplay.css"
+    ],
+    "templates":
+    [
+        "/_ideFiles/Visualisation/Widgets/SingleValueDisplay/SingleValueDisplay.html"
+    ],
+    "menuTemplates":
+    [
+    ],
+    "components":
+    [
+    ]
+}

@@ -1,0 +1,27 @@
+{
+    "id": "Visualisation.Widgets.SingleValueDisplayDesigner",
+    "priority": 6000,
+    "designer":
+    {
+        "allowInPortalDesigner": false,
+        "allowInSharedoPortalDesigner": false
+    },
+    "scripts":
+    [
+        "/_ideFiles/Visualisation/Widgets/SingleValueDisplay/designer/SingleValueDisplayDesigner.js"
+    ],
+    "styles":
+    [
+        "/_ideFiles/Visualisation/Widgets/SingleValueDisplay/designer/SingleValueDisplayDesigner.css"
+    ],
+    "templates":
+    [
+        "/_ideFiles/Visualisation/Widgets/SingleValueDisplay/designer/SingleValueDisplayDesigner.html"
+    ],
+    "menuTemplates":
+    [
+    ],
+    "components":
+    [
+    ]
+}

@@ -1,0 +1,30 @@
+﻿{
+    "id":  "Custom.WorkflowActions.CreateCallToActionDesigner", 
+    "designer":
+    {
+        "allowInPortalDesigner": false,
+        "allowInSharedoPortalDesigner": false
+    },
+    "scripts":
+    [
+        "/_ideFiles/WorkflowActions/createCallToAction/designer/widget.js"
+    ],
+    "styles":
+    [
+    ],
+    "templates":
+    [
+        "/_ideFiles/WorkflowActions/createCallToAction/designer/widget.html"
+    ],
+    "menuTemplates":
+    [
+    ],
+    "components":
+    [
+      "Sharedo.Core.Case.Components.SharedoTypePicker",
+      "Sharedo.UI.Framework.Components.Toggle",
+      "Sharedo.UI.Framework.Components.IconPicker",
+      "Sharedo.UI.Framework.Components.SyntaxEditor",
+      "Sharedo.Core.Case.Menus.CommandEditorComponent"
+    ]
+}

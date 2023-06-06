@@ -1,0 +1,10 @@
+{
+    "CallToActionTitle": "Generate Document from Template",
+    "CallToActionIcon": "fa-cogs",
+    "CallToActionCss": null,
+    "CallToActionStyles": null,
+    "CallToActionCommand": "sharedo-open-or-create-task",
+    "CallToActionCommandConfiguration": "{\"instanceTag\":null,\"sharedoType\":\"task-activity-prepare-document-internal\",\"assignToHolderOfRole\":null,\"title\":\"Generate a Certification Letter from a Template\",\"dueOffset\":null,\"processTags\":[],\"prepareDocument\":{\"template\":\"dc-top-and-tail-letter\",\"documentClass\":null,\"recipientRole\":null,\"regardingRole\":null}}",
+    "CallToActionContextType": "sharedo",
+    "CallToActionContextId": {}
+}

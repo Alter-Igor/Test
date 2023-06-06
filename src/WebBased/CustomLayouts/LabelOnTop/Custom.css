@@ -1,0 +1,14 @@
+.custom-label-on-top .form-group.alpaca-field.alpaca-field-text
+{  
+    display:flex;
+    flex-direction: column;
+    align-content: center;
+    flex-wrap: nowrap;
+    justify-content: space-evenly;
+    align-items: flex-start;
+}
+
+.custom-label-on-top .col-sm-9, .custom-label-on-top .col-sm-3
+{
+    width: 100%;
+}
