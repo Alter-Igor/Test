@@ -58,17 +58,17 @@ window.Custom.WorkflowActions.CreateCallToActionDesigner.prototype.chooseCommand
       break;
   }
   if (self.model.blade) $ui.stacks.cancelAfter(self.model.blade);else $ui.stacks.cancelAll();
-  var selectCommand = function selectCommand(then) {
+  var selectCommand = function (then) {
     $ui.stacks.openPanel("Sharedo.Core.Case.Menus.SelectCommandBlade", {
       menuType: "General",
       objectType: objectType
     }, {
-      closing: function closing(systemName) {
+      closing: function (systemName) {
         then(systemName);
       }
     });
   };
-  var editCommand = function editCommand(command, config) {
+  var editCommand = function (command, config) {
     $ui.stacks.openPanel("Sharedo.Core.Case.Menus.CommandEditorBlade", {
       systemName: command,
       configuration: JSON.parse(config),
@@ -80,7 +80,7 @@ window.Custom.WorkflowActions.CreateCallToActionDesigner.prototype.chooseCommand
         objectType: objectType
       }
     }, {
-      closing: function closing(result) {
+      closing: function (result) {
         self.action.config.command(result.systemName);
         self.action.config.commandConfig(JSON.stringify(result.configuration));
       }

@@ -1,4 +1,4 @@
-var cta = {
+let cta = {
   title: undefined,
   styles: undefined,
   contextType: undefined,

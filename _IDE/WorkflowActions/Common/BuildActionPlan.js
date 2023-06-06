@@ -1,7 +1,7 @@
 export function buildActionPlan(actionPlanModel) {
-  var actionPlan = actions.sharedo.BuildActionPlanItem();
+  let actionPlan = actions.sharedo.BuildActionPlanItem();
   actionPlan = actionPlan.WithDescription(actionPlanModel.description);
-  var type = actionPlanModel.type;
+  let type = actionPlanModel.type;
   if (type === "checkbox") {
     actionPlan = actionPlan.AddCheckbox();
   }
@@ -18,12 +18,12 @@ export function buildActionPlan(actionPlanModel) {
   }
   // $endif
 
-  var order = actionPlanModel.order;
+  let order = actionPlanModel.order;
   actionPlan = actionPlan.WithOrder(order);
 
   // $ifNotNull.Configuration.callToActionVar
   if (actionPlanModel.callToActionVar) {
-    var callToAction = actionPlanModel.callToActionVar;
+    let callToAction = actionPlanModel.callToActionVar;
     if (!callToAction) {
       log.Warning("Create action plan - a call to action variable ($model.Configuration.callToActionVar) was specified but was empty");
     } else {
@@ -32,11 +32,11 @@ export function buildActionPlan(actionPlanModel) {
   }
   // $endif
 
-  var plan = actionPlan.Build();
+  let plan = actionPlan.Build();
   return plan;
 }
 export function buildCallToAction(callToActionModel) {
-  var cta = actions.sharedo.BuildCallToAction().WithDisplay(callToActionModel.title);
+  let cta = actions.sharedo.BuildCallToAction().WithDisplay(callToActionModel.title);
   if (callToActionModel.styles) {
     cta = cta.WithStyles(callToActionModel.styles);
   }

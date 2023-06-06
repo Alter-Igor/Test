@@ -1,5 +1,5 @@
 (function () {
-  var createModel = function createModel(actionModel, actionOptions, wfModel, stepModel) {
+  var createModel = function (actionModel, actionOptions, wfModel, stepModel) {
     // Reference self as the action model we're extending
     var self = actionModel;
 
@@ -50,7 +50,7 @@
       mustNotBeCollection: false
     });
   };
-  var dispose = function dispose(actionModel) {
+  var dispose = function (actionModel) {
     var self = actionModel;
     self.ui.taskId.dispose();
     //self.ui.outputVariable.dispose();

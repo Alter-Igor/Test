@@ -1,14 +1,11 @@
 {
     "presets": [
-      [
-        "@babel/preset-env",
-        {
-          "modules": false,
-          "targets": { "esmodules": true }
-        }
-      ],
-      ["@babel/preset-typescript"]
+    
+      "@babel/preset-typescript"
     ],
+    "targets": {
+      "esmodules": false
+    },
     "ignore": ["node_modules"],
     "comments": true,
     "minified": false,

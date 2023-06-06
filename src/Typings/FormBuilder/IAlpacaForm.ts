@@ -6,6 +6,7 @@ export type TChildrenByPropertyId = {
 };
 
 export interface IAlpacaField {
+    name: string ;
     parent: IAlpacaField;
     childrenByPropertyId: TChildrenByPropertyId ;
     isValid: () => boolean;

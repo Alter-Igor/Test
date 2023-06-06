@@ -1,5 +1,5 @@
 (function () {
-  var createModel = function createModel(actionModel, actionOptions, wfModel, stepModel) {
+  var createModel = function (actionModel, actionOptions, wfModel, stepModel) {
     // Reference self as the action model we're extending
     var self = actionModel;
 
@@ -106,7 +106,7 @@
     // Map through the assignments to the view model exposed by WFAssignmentComponent
     self.ui.assignments = new Sharedo.Core.Case.WorkflowEditor.WFAssignments(self, options.config.assignments);
   };
-  var dispose = function dispose(actionModel) {
+  var dispose = function (actionModel) {
     var self = actionModel;
     self.ui.parentWorkItemId.dispose();
     self.ui.taskOwnerOdsId.dispose();
@@ -116,7 +116,7 @@
     self.ui.phases.dispose();
     self.ui.assignments.dispose();
   };
-  var getModel = function getModel(actionModel) {
+  var getModel = function (actionModel) {
     var self = actionModel;
     var config = ko.toJS(self.config);
 

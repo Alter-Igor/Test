@@ -39,7 +39,7 @@ window.Custom.WorkflowActions.CreateTaskDesigner = function (element, configurat
   self.disposables = [self.action.config.onCompleteOutlet.subscribe(self.setOnCompleteOutlet.bind(self)), self.action.config.onOverdueOutlet.subscribe(self.setOnOverdueOutlet.bind(self))];
 };
 window.Custom.WorkflowActions.CreateTaskDesigner.prototype.loadAndBind = function () {
-  var self = this;
+  const self = this;
   $ajaxMutex.getOnce("/api/ods/optionsets/work-priority").then(response => {
     self.priorities(response.optionSetValueProperties);
   });

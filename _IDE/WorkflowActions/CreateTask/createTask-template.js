@@ -1,6 +1,6 @@
-var connections = $model.Connections;
-var taskId = Guid.NewGuid();
-var dueOn = DateTime.Now;
+let connections = $model.Connections;
+let taskId = Guid.NewGuid();
+let dueOn = DateTime.Now;
 
 // $ifNotNull.Configuration.outputVariable
 ctx["$model.Configuration.outputVariable"] = taskId.ToString(); // It's a guid, need to to string it 
@@ -16,7 +16,7 @@ if ("$model.Configuration.dueInDays") {
 dueOn = DateTime.Parse(ctx["$model.Configuration.dueOnVariable"]);
 // $endif
 
-var task = actions.sharedo.BuildTask().WithId(taskId).OfType("$model.Configuration.taskType").WithTitle(sharedo.buildString("$model.Configuration.taskTitle;"))
+let task = actions.sharedo.BuildTask().WithId(taskId).OfType("$model.Configuration.taskType").WithTitle(sharedo.buildString("$model.Configuration.taskTitle;"))
 // $ifNotNull.Configuration.priorityId
 .WithPriorityId($model.Configuration.priorityId)
 // $endif;
@@ -43,14 +43,14 @@ if (connections["$current.systemName"]) {
 // $endif;
 
 // $ifNotNull.Configuration.parentWorkItemId
-var parentId = ctx["$model.Configuration.parentWorkItemId"];
+let parentId = ctx["$model.Configuration.parentWorkItemId"];
 if (parentId) {
   task = task.ForSharedo(parentId);
 }
 // $endif
 
 // $ifNotNull.Configuration.taskOwnerOdsId
-var ownerId = ctx["$model.Configuration.taskOwnerOdsId"];
+let ownerId = ctx["$model.Configuration.taskOwnerOdsId"];
 if (ownerId) {
   task = task.Assign("primary-owner").To(ownerId);
 }
@@ -65,23 +65,23 @@ if (ctx["$current.odsIdVariableName"]) task = task.Assign("$current.roleSystemNa
 // $if.Configuration.addActionPlan
 {
   // Add action plan
-  var actionPlanBuilder = task.WithActionPlan().WithTitle(sharedo.buildString("$model.Configuration.actionPlanTitle;"));
+  let actionPlanBuilder = task.WithActionPlan().WithTitle(sharedo.buildString("$model.Configuration.actionPlanTitle;"));
 
   // Add action plan items
   // $ifNotNull.Configuration.actionPlanItemsList
   {
-    var itemsAsString = ctx["$model.Configuration.actionPlanItemsList"];
+    let itemsAsString = ctx["$model.Configuration.actionPlanItemsList"];
     log.Information('*** itemsAsString:');
     log.Information(JSON.stringify(itemsAsString));
     if (itemsAsString) {
-      var items = itemsAsString; //JSON.parse(itemsAsString) as Array<any>;
+      let items = itemsAsString; //JSON.parse(itemsAsString) as Array<any>;
       items.slice().sort((a, b) => Number.parseInt(a.order, 10) - Number.parseInt(b.order, 10)).forEach(function (i) {
         log.Information('*** i:');
         log.Information('description: ' + i.description);
         log.Information('type: ' + i.type);
         log.Information('order: ' + i.order);
         log.Information('**********');
-        var actionPlanItem = buildActionPlan(i);
+        let actionPlanItem = buildActionPlan(i);
         log.Information('*** actionPlanItem:');
         log.Information(JSON.stringify(actionPlanItem));
         actionPlanBuilder = actionPlanBuilder.AddItem(actionPlanItem);
@@ -101,9 +101,9 @@ log.Information('*** task:');
 log.Information(JSON.stringify(task));
 function buildActionPlan(actionPlanModel) {
   log.Information("*** function buildActionPlan()");
-  var actionPlan = actions.sharedo.BuildActionPlanItem();
+  let actionPlan = actions.sharedo.BuildActionPlanItem();
   actionPlan = actionPlan.WithDescription(actionPlanModel.description);
-  var type = actionPlanModel.type;
+  let type = actionPlanModel.type;
   if (type === "checkbox") {
     actionPlan = actionPlan.AddCheckbox();
   }
@@ -116,18 +116,18 @@ function buildActionPlan(actionPlanModel) {
   if (actionPlanModel.mandatory) {
     actionPlan = actionPlan.MarkRequired();
   }
-  var order = actionPlanModel.order;
+  let order = actionPlanModel.order;
   actionPlan = actionPlan.WithOrder(order);
   if (actionPlanModel.callToActionVar) {
-    var callToAction = actionPlanModel.callToActionVar;
+    let callToAction = actionPlanModel.callToActionVar;
     if (!callToAction) {
       log.Warning("Create action plan - a call to action variable ($model.Configuration.callToActionVar) was specified but was empty");
     } else {
-      var cta = buildCallToAction(callToAction);
+      let cta = buildCallToAction(callToAction);
       actionPlan = actionPlan.WithCallToAction(cta);
     }
   }
-  var plan = actionPlan.Build();
+  let plan = actionPlan.Build();
   log.Information("*** function buildActionPlan() finished");
   return plan;
 }
@@ -136,7 +136,7 @@ function buildCallToAction(callToActionModel) {
   log.Information("************-Data-****************");
   log.Information(JSON.stringify(callToActionModel));
   log.Information("****************************");
-  var cta = actions.sharedo.BuildCallToAction().WithDisplay(callToActionModel.title);
+  let cta = actions.sharedo.BuildCallToAction().WithDisplay(callToActionModel.title);
   if (callToActionModel.styles) {
     cta = cta.WithStyles(callToActionModel.styles);
   }
@@ -144,9 +144,9 @@ function buildCallToAction(callToActionModel) {
   cta.CallToActionContextType = callToActionModel.contextType;
   log.Information("ContextIdVariable: " + callToActionModel.contextIdVariable);
   if (callToActionModel.contextIdVariable) {
-    var contextId = ctx[callToActionModel.contextIdVariable];
+    let contextId = ctx[callToActionModel.contextIdVariable];
     if (contextId) {
-      log.Information("typeof contextId: ".concat(typeof contextId));
+      log.Information(`typeof contextId: ${typeof contextId}`);
       if (typeof contextId === 'string') {
         contextId = Guid.Parse(contextId);
       }
@@ -154,7 +154,7 @@ function buildCallToAction(callToActionModel) {
       cta.CallToActionContextId = contextId;
       log.Information("cta.CallToActionContextId: " + cta.CallToActionContextId);
     } else {
-      log.Warning("ContextIdVariable: ".concat(callToActionModel.contextIdVariable, " was not found in the context"));
+      log.Warning(`ContextIdVariable: ${callToActionModel.contextIdVariable} was not found in the context`);
     }
   }
   cta.CallToActionCommand = callToActionModel.command;

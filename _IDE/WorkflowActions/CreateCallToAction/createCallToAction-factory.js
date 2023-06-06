@@ -1,5 +1,5 @@
 (function () {
-  var createModel = function createModel(actionModel, actionOptions, wfModel, stepModel) {
+  var createModel = function (actionModel, actionOptions, wfModel, stepModel) {
     // Reference self as the action model we're extending
     var self = actionModel;
 
@@ -92,7 +92,7 @@
     self.ui.contextIdVariableSelector = self.trackVariable(self.config.contextIdVariable, self.ui.allowedVariableType);
     self.ui.outputVariableSelector = self.trackVariable(self.config.outputVariable, "/Entity/Call To Action");
   };
-  var dispose = function dispose(actionModel) {
+  var dispose = function (actionModel) {
     var self = actionModel;
     self.ui.contextIdVariableSelector.dispose();
     self.ui.outputVariableSelector.dispose();

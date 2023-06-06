@@ -3,7 +3,7 @@
 //this is so we can allow for deprication of the Alpaca API
 //Adapter for Alpaca API
 
-import { IAlpacaField } from "../../Typings/FormBuilder/IAlpacaForm";
+import { IAlpacaField, TChildrenByPropertyId } from "../../Typings/FormBuilder/IAlpacaForm";
 
 
 export type TFormBuilderFields = { 
@@ -15,11 +15,19 @@ export class FormBuilder {
 
     alpacaForm: IAlpacaField;
     fieldsById: TFormBuilderFields = {};
-    fields: Array<FormBuilder> | undefined;
+    fields: Array<FormBuilder> =[];
     parent: FormBuilder | undefined;
+    name: string ='';
     
-    constructor(context: any) {
-        this.alpacaForm = ($(context) as any).alpaca();
+    constructor(context: HTMLElement | IAlpacaField, parent?: FormBuilder) {
+        //check to see if context is a HTMLElement or an AlpacaField
+        if (context instanceof HTMLElement) {
+            this.alpacaForm = ($(context) as any).alpaca();
+        } else {
+            this.alpacaForm = context;
+        }
+        this.parent = parent;
+        this.name = this.alpacaForm.name;
         this.populateFields();
     }
 
@@ -63,7 +71,8 @@ export class FormBuilder {
         this.fieldsById = {};
         this.fields = [];
         for(let key in this.alpacaForm.childrenByPropertyId) {
-            let newItem = new FormBuilder(this.alpacaForm.childrenByPropertyId[key]);
+            let childAlpacaForm = this.alpacaForm.childrenByPropertyId[key];
+            let newItem = new FormBuilder(childAlpacaForm,this);
             newItem.parent = this;
             this.fieldsById[key] = newItem;
             this.fields.push(newItem);

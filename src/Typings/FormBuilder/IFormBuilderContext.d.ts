@@ -1,7 +1,7 @@
 import * as ko from "knockout";
 import { IWorkTypeContext } from "../ShareDo/IWorkTypeContext";
 import { TShareDoBlade } from "../ShareDoJS/AddEditSharedo";
-import { FormBuilder } from "../../ModuleLoader/AlphacaAdapter";
+import { FormBuilder } from "../../WebBased/ModuleLoader/AlphacaAdapter";
 export interface IFormBuilderContext {
     getAspect(aspecSystemName: string): IAspect;
     form: FormBuilder | undefined;
