@@ -1,3 +1,4 @@
+import { IAspect } from "../FormBuilder/IFormBuilderContext";
 
 
 
@@ -25,7 +26,7 @@ export type TShareDoBlade  =
     title : ko.Observable
 
     displayTitle :ko.Observable
-    aspects : ko.ObservableArray
+    aspects : ko.ObservableArray<IAspect<any>>
     aspectDefinitions : ko.Observable
     validationErrorCount : ko.Observable
     isValid :ko.Observable

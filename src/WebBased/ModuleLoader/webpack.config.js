@@ -28,7 +28,7 @@ module.exports = [
           {
             from: "**/*.json",
             context: path.resolve(__dirname),
-            to: path.resolve("../../../_IIDE/ModuleLoader/ModuleLoader"),
+            to: path.resolve("../../../_IDE/ModuleLoader"),
           },     
 
         ],

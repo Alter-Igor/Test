@@ -6,26 +6,16 @@ import { FormBuilder } from "../../WebBased/ModuleLoader/AlphacaAdapter";
 
 
 export interface IFormBuilderContext {
-    getAspect(aspecSystemName: string): IAspect;   
+    getAspect(aspecSystemName: string): IAspect<any>;   
     form :FormBuilder | undefined;
-    blade:TShareDoBlade;
+    blade:TShareDoBlade | undefined;
     koContext: ko.BindingContext;
     element: HTMLElement;
     workItemContext: IWorkTypeContext    
 }    
 
-
-export interface IAspect
-{
-    aspectDefinitionId: string;   
-    model:  {
-        instanceId: string, 
-        id: () => string, 
-        parentSharedoId: () => string,
-         title: () => string, 
-         titleIsUserProvided: () => string
-    }
-    widget:  {
+export interface IWidget
+{    
         options: {},
          enabled: () => boolean,
           description: () => string,
@@ -43,8 +33,38 @@ export interface IAspect
             canContextCollapse: () => boolean,
             icon: () => string
         }
-        [key:string]: any
-        }
+        [key:string]: any | undefined        
+}
+
+export interface IOdsWidget extends IWidget
+{
+    odsEntities: () => IOdsWidgetODSEntities[];
+}
+
+export interface IOdsWidgetODSEntities {
+  roleName: string;
+  label: string;
+  showSearchOds: boolean;
+  selected: (value:boolean|undefined) => boolean;
+  roleSystemName: (value:string|undefined) => string;
+  required: (value:boolean|undefined) => boolean;
+  participantType: (value:string|undefined) => string;
+  odsName: (value:string|undefined) => string;
+  odsId: (value:string|undefined) => string;
+  icon: (value:string|undefined) => string;
+}
+
+export interface IAspect<T extends IWidget>
+{
+    aspectDefinitionId: string;   
+    model:  {
+        instanceId: string, 
+        id: () => string, 
+        parentSharedoId: () => string,
+         title: () => string, 
+         titleIsUserProvided: () => string
+    }
+    widget: T 
   
     
 }

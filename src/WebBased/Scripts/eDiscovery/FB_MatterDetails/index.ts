@@ -1,9 +1,13 @@
 
 import { IFormBuilderContext } from "../../../../Typings/FormBuilder/IFormBuilderContext";
 import { IShareDoOptionSet } from "../../../../Typings/OptionSets/IShareDoOptionSet";
+import {  getAllOdsPickerForRole, searchForClient, searchForUser } from "../../../Common/OdsHelper";
 import { FormBuilder } from "../../../ModuleLoader/AlphacaAdapter";
 import { IExpertMatter } from "../Typings/IExpertMatterData";
 
+type OdsWidget = {
+    [key:string]: any
+};
 //This function is called from the module-loader webcomponent in the form builder
 export function runMe(context: IFormBuilderContext) {
     let { expertMatterNumber, matterDetails, pipelineMatter } = createVariables(context);
@@ -39,13 +43,22 @@ function createVariables(context: IFormBuilderContext) {
 function addEventHandlers(context: IFormBuilderContext, matterDetails: FormBuilder, expertMatterNumber: FormBuilder, pipelineMatter: FormBuilder) {
     if(!context.form) throw new Error("No form");
 
+    matterDetails.fieldsById[enumMatterDetailFields.matterDetailsPartnerName]?.on("change", function (this: any, ev: any) {
+    
+        //log color
+        console.log("%c Partner name changed to: " + matterDetails.fieldsById[enumMatterDetailFields.matterDetailsPartnerName]?.getValue(), "color: pink; font-size: 20px;");
+
+
+    });
+
+
     context.form.fieldsById[enumFields.expertMatterNumber]?.on("change", function (this: any, ev: any) {
 
         // hide or show the matter details field
         hideShowMatterDetails(matterDetails, expertMatterNumber, pipelineMatter);
 
         // update the matter details field
-        updateMatterDetails(matterDetails, expertMatterNumber, pipelineMatter);
+        updateMatterDetails(context,matterDetails, expertMatterNumber, pipelineMatter);
     });
 
     //add event handlet for pipeline-matter changed
@@ -55,7 +68,9 @@ function addEventHandlers(context: IFormBuilderContext, matterDetails: FormBuild
         hideShowMatterDetails(matterDetails, expertMatterNumber, pipelineMatter);
 
         // update the matter details field
-        updateMatterDetails(matterDetails, expertMatterNumber, pipelineMatter);
+        updateMatterDetails(context,matterDetails, expertMatterNumber, pipelineMatter);
+
+        
     });
 
     //add event handlet for jurisdiction changed
@@ -105,8 +120,8 @@ function setMatterDetailsState(matterDetails: FormBuilder, status: boolean = tru
     });
   
     // show/hide the partner name and selector
-    matterDetails.fieldsById[enumMatterDetailFields.matterDetailsPartnerSelector]?.hidden(!status);
-    matterDetails.fieldsById[enumMatterDetailFields.matterDetailsPartnerName]?.hidden(status);
+   // matterDetails.fieldsById[enumMatterDetailFields.matterDetailsPartnerSelector]?.hidden(!status);
+   // matterDetails.fieldsById[enumMatterDetailFields.matterDetailsPartnerName]?.hidden(status);
     
 }
 
@@ -115,6 +130,16 @@ async function clearMatterDetails(matterDetails: FormBuilder) {
     matterDetails.fields?.forEach(function (child: any) {
         child.setValue("");
     });
+    
+}
+
+function clearMatterPartnerOdsPicker(context: IFormBuilderContext)
+{
+    let odsMatterPartner = getPartnerOdsPicker(context);
+    if(odsMatterPartner)
+    {
+        odsMatterPartner.selected(false);
+    }
 }
 
 /* 
@@ -123,14 +148,16 @@ async function clearMatterDetails(matterDetails: FormBuilder) {
 3. We find the selected matter by using the matter code and client name from the data we got from the endpoint
 4. If the matter is undefined, we clear the matterDetails and return
 5. If the matter is not undefined, we set the values of the matterDetails fields */
-async function updateMatterDetails(matterDetails: FormBuilder, expertMatterNumber: FormBuilder, pipelineMatter: FormBuilder) {
+async function updateMatterDetails(context: IFormBuilderContext,matterDetails: FormBuilder, expertMatterNumber: FormBuilder, pipelineMatter: FormBuilder) {
 
     let data = await getMatterData();
 
     clearMatterDetails(matterDetails); //clear the matter details form
 
     let selectedMatter = data.find(function (matter: any) {
+        //set the display portion of the expert-matter-number field
         return expertMatterNumber.getValue() === `${matter.data.matterCode} - ${matter.data.client.name}`;
+        
     });
 
     if (selectedMatter === undefined || pipelineMatter.getValue() === true) { //if the matter is not found or if the matter is a pipeline matter, clear the matter details form and return
@@ -145,7 +172,9 @@ async function updateMatterDetails(matterDetails: FormBuilder, expertMatterNumbe
         // matterDetails.parent.childrenByPropertyId['temp-matter-number'].setValue("N/A");
     }
 
-    
+     //set the value portion of the expert-matter-number field
+     context.form?.fieldsById[enumFields.expertMatterNumberValue]?.setValue(selectedMatter.data.matterCode);
+       
 
     matterDetails.fieldsById[enumMatterDetailFields.matterDetailsClientName]?.setValue(selectedMatter.data.client.name);
     matterDetails.fieldsById[enumMatterDetailFields.matterDetailsClientCode]?.setValue(selectedMatter.data.client.code);
@@ -156,7 +185,66 @@ async function updateMatterDetails(matterDetails: FormBuilder, expertMatterNumbe
 
     console.log("matterDetails.isValid():" + matterDetails.isValid());
 
+    tryUpdatePartnerOdsPicker(selectedMatter, context);
+    tryUpdateClientOdsPicker(selectedMatter, context);
 
+}
+
+
+
+function tryUpdateClientOdsPicker(selectedMatter: IExpertMatter, context: IFormBuilderContext) {
+    let clientCode = selectedMatter.data.client.code;
+    searchForClient(clientCode).then((clients) => {
+        let client = clients[0];
+        console.log("%c Partner name changed to: " + client?.id, "color: pink; font-size: 20px;", clients);
+        let odsClientPicker = getClientOdsPicker(context);
+        if (!odsClientPicker)
+            return;
+
+        if (!client) {
+            odsClientPicker.selected(false);
+            return;
+        }
+
+        
+        odsClientPicker.icon('fa-bank');
+        
+        odsClientPicker.odsName(client.name);
+        odsClientPicker.odsId(client.id);
+        odsClientPicker.selected(true);
+
+
+
+    });
+}
+
+
+function tryUpdatePartnerOdsPicker(selectedMatter: IExpertMatter, context: IFormBuilderContext) {
+    let partnerLastName = selectedMatter.data.partner.name.split(",")[0];
+    searchForUser(selectedMatter.data.partner.email).then((users) => {
+        
+        let user = users[0];
+        
+
+        console.log("%c Partner name changed to: " + user?.id, "color: pink; font-size: 20px;", user);
+        let odsMatterPartner = getPartnerOdsPicker(context);
+        if (!odsMatterPartner)
+            return;
+
+        if (!user) {
+            odsMatterPartner.selected(false);
+            return;
+        }
+
+        odsMatterPartner.icon('fa-male');
+        
+        odsMatterPartner.odsName(user.firstName + " " + user.surname);
+        odsMatterPartner.odsId(user.id);
+        odsMatterPartner.selected(true);
+
+
+
+    });
 }
 
 async function getMatterData() {
@@ -187,10 +275,12 @@ export enum enumFields {
     jurisdictionsCountry = "jurisdictions-country",
     pipelineMatter = "pipeline-matter",
     expertMatterNumber = "expert-matter-number",
+    expertMatterNumberValue = "expert-matter-number-value",
     tempMatterNumber = "temp-matter-number",
     subMatterCode = "sub-matter-code",
     abcMatterNumber = "abc-matter-number",
-    matterDetails = "matter-details"
+    matterDetails = "matter-details",
+    
 }
 
 export enum enumMatterDetailFields {
@@ -204,6 +294,10 @@ export enum enumMatterDetailFields {
 }
 
 
+function getPartnerOdsPicker(context: IFormBuilderContext) {
+    return getAllOdsPickerForRole(context.blade, "Matter Partner")[0];
+}
 
-
- 
+function getClientOdsPicker(context: IFormBuilderContext) {
+    return getAllOdsPickerForRole(context.blade, "Client")[0];
+}
