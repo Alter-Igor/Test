@@ -1,0 +1,316 @@
+{
+    "systemName": "ALT-eDiscovery-Job-Send-Response",
+    "name": "ALT eDiscovery - Job - Send Response",
+    "description": null,
+    "overrideNotifications": false,
+    "exceptionNotifications": true,
+    "exceptionNotificationEmailAddresses": "",
+    "variables": [
+        {
+            "systemName": "emailId",
+            "name": "Email Id",
+            "defaultValue": null,
+            "type": "/Identifier/Work Type Identifier/Task Identifier",
+            "isCollection": false,
+            "isInputVariable": false,
+            "isMandatory": false
+        },
+        {
+            "systemName": "jobCreatorOdsId",
+            "name": "Job Creator Ods Id",
+            "defaultValue": null,
+            "type": "/Identifier/Action Plan Identifier",
+            "isCollection": false,
+            "isInputVariable": false,
+            "isMandatory": false
+        },
+        {
+            "systemName": "jobId",
+            "name": "JobId",
+            "defaultValue": null,
+            "type": "/Identifier/Work Type Identifier",
+            "isCollection": false,
+            "isInputVariable": true,
+            "isMandatory": true
+        },
+        {
+            "systemName": "jobRequestorOdsId",
+            "name": "Job Requestor Ods Id",
+            "defaultValue": null,
+            "type": "/Identifier/Action Plan Identifier",
+            "isCollection": false,
+            "isInputVariable": false,
+            "isMandatory": false
+        },
+        {
+            "systemName": "message",
+            "name": "Message",
+            "defaultValue": null,
+            "type": "/String",
+            "isCollection": false,
+            "isInputVariable": true,
+            "isMandatory": true
+        },
+        {
+            "systemName": "title",
+            "name": "Title",
+            "defaultValue": null,
+            "type": "/String",
+            "isCollection": false,
+            "isInputVariable": true,
+            "isMandatory": true
+        }
+    ],
+    "steps": [
+        {
+            "ideData": {
+                "x": 675,
+                "y": 25
+            },
+            "actions": [
+                {
+                    "config": {
+                        "taskType": "task-activity-send-email",
+                        "taskTitle": "{{title}}",
+                        "dueInDays": 0,
+                        "dueOnVariable": null,
+                        "addActionPlan": false,
+                        "actionPlanTitle": "",
+                        "parentWorkItemId": "jobId",
+                        "taskOwnerOdsId": null,
+                        "actionPlanItemsList": null,
+                        "outputVariable": "emailId",
+                        "fromParticipantRole": null,
+                        "toParticipantRole": "job-requestor",
+                        "ccParticipantRole": "job-interested-parties",
+                        "regarding": "jobId",
+                        "emailTemplate": "gsd-ediscovery-response-email-to-requestor",
+                        "useDynamicTemplateName": false,
+                        "dynamicTemplateSystemName": null,
+                        "tag": null,
+                        "onCompleteOutlet": true,
+                        "onReminderOutlet": true,
+                        "phaseOutlets": [
+                            {
+                                "systemName": "task-activity-send-email-phases-failed",
+                                "name": "Failed"
+                            }
+                        ],
+                        "assignments": []
+                    },
+                    "connections": {
+                        "task-activity-send-email-phases-failed": {
+                            "step": "notifyAdministrator",
+                            "port": "left2",
+                            "points": []
+                        }
+                    },
+                    "actionSystemName": "OutboundEmail",
+                    "name": "Create outbound email"
+                },
+                {
+                    "config": {
+                        "mode": "formfield",
+                        "workItemIdVariable": "emailId",
+                        "newValueVariable": "title",
+                        "newValue": null,
+                        "attributeSystemName": "response-subject",
+                        "formId": "a255fa0f-9489-402c-a6bd-7c48fa5ca869"
+                    },
+                    "connections": {},
+                    "actionSystemName": "UpdateAttribute",
+                    "name": "Add Subject"
+                },
+                {
+                    "config": {
+                        "mode": "formfield",
+                        "workItemIdVariable": "emailId",
+                        "newValueVariable": "message",
+                        "newValue": null,
+                        "attributeSystemName": "response-body",
+                        "formId": "a255fa0f-9489-402c-a6bd-7c48fa5ca869"
+                    },
+                    "connections": {},
+                    "actionSystemName": "UpdateAttribute",
+                    "name": "Add Body"
+                },
+                {
+                    "config": {
+                        "now": true,
+                        "startOnDateTimeVariable": null,
+                        "startIn": 1,
+                        "startInType": "Days",
+                        "description": "Start step"
+                    },
+                    "connections": {
+                        "execute": {
+                            "step": "sendEmail",
+                            "port": "left4",
+                            "points": []
+                        }
+                    },
+                    "actionSystemName": "startStep",
+                    "name": "Start step"
+                }
+            ],
+            "systemName": "createOutboundEmail",
+            "name": "Create Outbound Email",
+            "description": null,
+            "isStart": false,
+            "isEnd": false,
+            "isOptimal": true
+        },
+        {
+            "ideData": {
+                "x": 1475,
+                "y": 250
+            },
+            "actions": [],
+            "systemName": "finish",
+            "name": "Plan complete",
+            "description": "The plan is complete",
+            "isStart": false,
+            "isEnd": true,
+            "isOptimal": true
+        },
+        {
+            "ideData": {
+                "x": 350,
+                "y": 0
+            },
+            "actions": [
+                {
+                    "config": {
+                        "workItemId": "jobId",
+                        "workItemType": "task-ediscovery-project-job",
+                        "variableMappings": [
+                            {
+                                "variableSystemName": "jobCreatorOdsId",
+                                "composerPath": "workitem.roles.creator.ods.id"
+                            },
+                            {
+                                "variableSystemName": "jobRequestorOdsId",
+                                "composerPath": "workitem.roles.job-requestor.ods.id"
+                            }
+                        ],
+                        "collectionMappings": []
+                    },
+                    "connections": {},
+                    "actionSystemName": "loadData",
+                    "name": "Load work item data"
+                },
+                {
+                    "config": {
+                        "now": true,
+                        "startOnDateTimeVariable": null,
+                        "startIn": 1,
+                        "startInType": "Days",
+                        "description": "Start step"
+                    },
+                    "connections": {
+                        "execute": {
+                            "step": "createOutboundEmail",
+                            "port": "left3",
+                            "points": []
+                        }
+                    },
+                    "actionSystemName": "startStep",
+                    "name": "Start step"
+                }
+            ],
+            "systemName": "loadJob",
+            "name": "Load Job",
+            "description": null,
+            "isStart": false,
+            "isEnd": false,
+            "isOptimal": true
+        },
+        {
+            "ideData": {
+                "x": 0,
+                "y": 0
+            },
+            "actions": [
+                {
+                    "config": {
+                        "now": true,
+                        "startOnDateTimeVariable": null,
+                        "startIn": 1,
+                        "startInType": "Days",
+                        "description": "Finish"
+                    },
+                    "connections": {
+                        "execute": {
+                            "step": "loadJob",
+                            "port": "left3",
+                            "points": []
+                        }
+                    },
+                    "actionSystemName": "startStep",
+                    "name": "Finish"
+                }
+            ],
+            "systemName": "main",
+            "name": "Main entry point",
+            "description": "The main entry point of the plan",
+            "isStart": true,
+            "isEnd": false,
+            "isOptimal": true
+        },
+        {
+            "ideData": {
+                "x": 1125,
+                "y": -200
+            },
+            "actions": [],
+            "systemName": "notifyAdministrator",
+            "name": "Notify Administrator",
+            "description": null,
+            "isStart": false,
+            "isEnd": false,
+            "isOptimal": true
+        },
+        {
+            "ideData": {
+                "x": 1100,
+                "y": 200
+            },
+            "actions": [
+                {
+                    "config": {
+                        "workItemIdVariable": "emailId",
+                        "expectedTypeSystemName": "task-activity-send-email",
+                        "phaseSystemName": "task-activity-send-email-phases-pending"
+                    },
+                    "connections": {},
+                    "actionSystemName": "progressMilestone",
+                    "name": "Progress milestone"
+                },
+                {
+                    "config": {
+                        "now": true,
+                        "startOnDateTimeVariable": null,
+                        "startIn": 1,
+                        "startInType": "Days",
+                        "description": "Start step"
+                    },
+                    "connections": {
+                        "execute": {
+                            "step": "finish",
+                            "port": "left3",
+                            "points": []
+                        }
+                    },
+                    "actionSystemName": "startStep",
+                    "name": "Start step"
+                }
+            ],
+            "systemName": "sendEmail",
+            "name": "Send Email",
+            "description": null,
+            "isStart": false,
+            "isEnd": false,
+            "isOptimal": true
+        }
+    ]
+}
