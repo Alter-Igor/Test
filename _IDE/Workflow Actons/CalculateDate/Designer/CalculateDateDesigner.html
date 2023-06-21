@@ -1,0 +1,53 @@
+
+<div class="Workflow Actons-CalculateDateDesigner">
+
+    <div data-bind="widgetChrome:{ icon: 'fa-list', title: 'Action configuration' }">
+        <div class="form-group">
+            <label for="name">Action name:</label>
+            <input id="name" type="text" class="form-control" data-bind="textInput:action.name" />
+            <div class="text-danger" data-bind="visible:action.validation.name, text:action.validation.name"></div>
+        </div>
+    </div>
+
+    <div data-bind="widgetChrome:{ icon: 'fa-plus', title: 'New work item' }">
+
+        <div class="form-group">
+            <label for="workType">From Date:</label>
+            <!-- ko component: { name: "sharedo-type-picker", params: sharedoTypePickerOptions } -->
+            <!-- /ko -->
+            <div class="text-danger" data-bind="visible:action.validation.sharedoTypeSystemName, text:action.validation.sharedoTypeSystemName"></div>
+        </div>
+
+        <div class="form-group">
+            <label for="reference">Unit to Add:</label>
+            <!-- ko component: { name: "core-wf-token-input", params: { value: action.config.reference, rootModel: model } } -->
+            <!-- /ko -->
+        </div>
+
+        <div class="form-group">
+            <label for="title">Value:</label>
+            <!-- ko component: { name: "core-wf-token-input", params: { value: action.config.title, rootModel: model } } -->
+            <!-- /ko -->
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description:</label>
+            <!-- ko component: { name: "core-wf-token-input", params: { type:'textarea', value: action.config.description, rootModel: model } } -->
+            <!-- /ko -->
+        </div>
+       
+
+    </div>
+   
+   
+    <div data-bind="widgetChrome:{ icon: 'fa-arrow-left', title: 'Output' }">
+
+        <div class="form-group">
+            <label>Store new work item Id in variable:</label>
+            <!-- ko component: { name: "core-wf-variable-selector", params:action.ui.outputVariable } -->
+            <!-- /ko -->
+        </div>
+
+    </div>
+
+</div>

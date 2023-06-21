@@ -6,7 +6,7 @@
   "scripts": {
     "watch": "tsc-watch --p . --onSuccess \"npm run compileBabel\" --onFailure \"echo 'TypeScript compilation failed' && exit 1\"",
     "watchBableNodeBased": "babel src/NodeBased --out-dir ./_IDE --extensions '.ts' --copy-files --watch",
-    "watchWebPackWebBased": "webpack --watch",
+    "watchWebPackWebBased": "cd src/WebBased; webpack --watch",
     "watchAll": "npm run watchBableNodeBased & npm run watchWebPackWebBased",
     "typecheck": "tsc --p .",
     "test": "echo \"Error: no test specified\" && exit 1",

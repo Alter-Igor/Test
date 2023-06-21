@@ -1,5 +1,4 @@
-import { IAspect } from "../FormBuilder/IFormBuilderContext";
-
+import { IAspect } from "../Aspect/IAspect";
 
 
 export type TShareDoBlade  = 

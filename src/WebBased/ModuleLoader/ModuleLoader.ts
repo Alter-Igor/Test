@@ -107,6 +107,7 @@ class ModuleLoader extends HTMLElement {
         console.log("%c [ModuleLoader] render", "background: #222; color: #bada55", this);
     }
 }
+
 window.customElements.define('module-loader', ModuleLoader);
 
 
