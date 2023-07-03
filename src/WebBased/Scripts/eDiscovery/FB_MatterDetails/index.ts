@@ -139,7 +139,8 @@ async function updateMatterDetails(context: IFormBuilderContext,matterDetails: F
     clearMatterDetails(matterDetails); //clear the matter details form
     let selectedMatter = data.find(function (matter: any) {
         //set the display portion of the expert-matter-number field
-        return expertMatterNumber.getValue() === `${matter.data.matterCode} - ${matter.data.client.name}`;
+       // return expertMatterNumber.getValue() === `${matter.data.matterCode} - ${matter.data.client.name}`;
+       return expertMatterNumber.getValue() === matter.data.matterCode;
         
     });
 
@@ -168,8 +169,15 @@ async function updateMatterDetails(context: IFormBuilderContext,matterDetails: F
 
     console.log("matterDetails.isValid():" + matterDetails.isValid());
 
-    tryUpdatePartnerOdsPicker(selectedMatter, context);
-    tryUpdateClientOdsPicker(selectedMatter, context);
+    try
+    {
+        tryUpdatePartnerOdsPicker(selectedMatter, context);
+        tryUpdateClientOdsPicker(selectedMatter, context);
+    }
+    catch(e)
+    {
+        console.log("Failed to auto updating ods pickers, user required to select manually");
+    }
 
 }
 

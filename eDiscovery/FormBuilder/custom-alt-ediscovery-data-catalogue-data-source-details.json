@@ -1,0 +1,384 @@
+{
+    "id": "cde21cee-e666-46fc-aa93-302577138db0",
+    "systemName": "custom-alt-ediscovery-data-catalogue-data-source-details",
+    "title": "Custom ALT eDiscovery Data Catalogue Data Source Details",
+    "description": "Custodianm Source, Source Details",
+    "layout": "/_ideFiles/CustomLayouts/LabelOnTop/Custom.html",
+    "layoutParent": "bootstrap-edit-horizontal",
+    "showTitle": false,
+    "readonly": false,
+    "fields": [
+        {
+            "id": "098f7b5d-7150-40d1-8e67-225a04d0a86b",
+            "type": 10,
+            "name": "custodian",
+            "title": "Custodian",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 100,
+            "attributes": {
+                "placeholder": "Specify the custodian",
+                "maxLength": 50,
+                "pattern": ".*",
+                "chronologyCard": false
+            }
+        },
+        {
+            "id": "b6de0ac7-7c70-4af1-8686-6cc025dda4ae",
+            "type": 4,
+            "name": "timezone",
+            "title": "Timezone",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 0,
+            "attributes": {
+                "optionSetName": "alt-ediscovery-data-collection-timezones",
+                "allowNoSelection": false,
+                "multiple": false,
+                "placeholderText": "&nbsp;",
+                "showSelectedColour": false,
+                "showSelectedIcon": false,
+                "chronologyCard": false
+            }
+        },
+        {
+            "id": "33a9acfe-26f6-4feb-9474-5d29fa7c46ef",
+            "type": 12,
+            "name": "notes",
+            "title": "Notes",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 0,
+            "attributes": {
+                "rows": 5,
+                "richText": true,
+                "maxLength": 1024,
+                "showMaxLengthIndicator": true,
+                "chronologyCard": false
+            }
+        }
+    ],
+    "sections": [
+        {
+            "id": "c45a9c0d-4dc8-4cab-b13d-deb575972707",
+            "name": "Collection",
+            "title": "Collection",
+            "readonly": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 40,
+            "fields": [
+                {
+                    "id": "a21ba65d-364d-4994-aeb9-e3ee09569bdf",
+                    "type": 12,
+                    "name": "collection-purpose",
+                    "title": "Purpose",
+                    "description": null,
+                    "readonly": false,
+                    "required": false,
+                    "layoutLocation": ".layout-top",
+                    "displayOrder": 0,
+                    "attributes": {
+                        "rows": 10,
+                        "richText": true,
+                        "maxLength": 500,
+                        "showMaxLengthIndicator": true,
+                        "chronologyCard": true
+                    }
+                },
+                {
+                    "id": "371f663f-528e-45b9-b62c-73a3f36198f0",
+                    "type": 12,
+                    "name": "collection-relevant-context",
+                    "title": "Relevant Context",
+                    "description": null,
+                    "readonly": false,
+                    "required": false,
+                    "layoutLocation": ".layout-top",
+                    "displayOrder": 0,
+                    "attributes": {
+                        "rows": 5,
+                        "richText": true,
+                        "maxLength": 50,
+                        "showMaxLengthIndicator": true,
+                        "chronologyCard": true
+                    }
+                },
+                {
+                    "id": "c2dfd6c1-3d53-4e2c-b48b-a852e452b382",
+                    "type": 2,
+                    "name": "collection-date",
+                    "title": "Date",
+                    "description": null,
+                    "readonly": false,
+                    "required": false,
+                    "layoutLocation": ".layout-top",
+                    "displayOrder": 0,
+                    "attributes": {
+                        "format": "YYYY-MM-DD",
+                        "chronologyCard": true
+                    }
+                },
+                {
+                    "id": "cc4df4c0-a139-4162-af4f-5acea80f491e",
+                    "type": 0,
+                    "name": "collection-person",
+                    "title": "Person",
+                    "description": null,
+                    "readonly": false,
+                    "required": false,
+                    "layoutLocation": ".layout-top",
+                    "displayOrder": 20,
+                    "attributes": {
+                        "placeholder": "Placeholder Text",
+                        "maxLength": 55,
+                        "pattern": ".*"
+                    }
+                }
+            ],
+            "attributes": {
+                "chronologyCard": false
+            }
+        },
+        {
+            "id": "86b666e0-26f3-4793-800d-9ee45be171a7",
+            "name": "source",
+            "title": "Source",
+            "readonly": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 50,
+            "fields": [
+                {
+                    "id": "8db25be1-7e55-40dd-b4bc-038daf5c0bff",
+                    "type": 0,
+                    "name": "data-source",
+                    "title": "Source",
+                    "description": null,
+                    "readonly": false,
+                    "required": false,
+                    "layoutLocation": ".layout-top",
+                    "displayOrder": 200,
+                    "attributes": {
+                        "placeholder": "Specify the data source",
+                        "maxLength": 50,
+                        "pattern": ".*",
+                        "chronologyCard": false
+                    }
+                },
+                {
+                    "id": "a1ef6313-1b8b-4988-b114-b1af7b0839aa",
+                    "type": 12,
+                    "name": "data-source-details",
+                    "title": "Source Details",
+                    "description": null,
+                    "readonly": false,
+                    "required": false,
+                    "layoutLocation": ".layout-top",
+                    "displayOrder": 300,
+                    "attributes": {
+                        "rows": 5,
+                        "richText": false,
+                        "maxLength": 500,
+                        "chronologyCard": false
+                    }
+                }
+            ],
+            "attributes": {
+                "chronologyCard": false
+            }
+        },
+        {
+            "id": "225654df-2854-4573-b29c-0bef902595e5",
+            "name": "collection-filter",
+            "title": "Collection Filter",
+            "readonly": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 60,
+            "fields": [
+                {
+                    "id": "0aa7b00c-dc67-4b56-9432-a0d918baa7b4",
+                    "type": 2,
+                    "name": "collection-filter-start-date",
+                    "title": "Filter Start Date",
+                    "description": null,
+                    "readonly": false,
+                    "required": false,
+                    "layoutLocation": ".layout-top",
+                    "displayOrder": 900,
+                    "attributes": {
+                        "format": "YYYY-MM-DD",
+                        "chronologyCard": false
+                    }
+                },
+                {
+                    "id": "e7790c85-13c8-449a-94ed-0b6c898eb169",
+                    "type": 2,
+                    "name": "collection-filter-end-date",
+                    "title": "Filter Start Date",
+                    "description": null,
+                    "readonly": false,
+                    "required": false,
+                    "layoutLocation": ".layout-top",
+                    "displayOrder": 1000,
+                    "attributes": {
+                        "format": "YYYY-MM-DD",
+                        "chronologyCard": false
+                    }
+                },
+                {
+                    "id": "b38505d7-23ef-4f3e-917d-af82c045ece8",
+                    "type": 12,
+                    "name": "collection-filter-terms",
+                    "title": "Filter Terms",
+                    "description": null,
+                    "readonly": false,
+                    "required": false,
+                    "layoutLocation": ".layout-top",
+                    "displayOrder": 1100,
+                    "attributes": {
+                        "rows": 5,
+                        "richText": false,
+                        "maxLength": 50,
+                        "chronologyCard": false
+                    }
+                },
+                {
+                    "id": "33616120-64f0-4ae2-916e-b2773077212a",
+                    "type": 12,
+                    "name": "collection-filter-other",
+                    "title": "Filter Other",
+                    "description": null,
+                    "readonly": false,
+                    "required": false,
+                    "layoutLocation": ".layout-top",
+                    "displayOrder": 1200,
+                    "attributes": {
+                        "rows": 5,
+                        "richText": false,
+                        "maxLength": 50,
+                        "chronologyCard": false
+                    }
+                }
+            ],
+            "attributes": {
+                "chronologyCard": false
+            }
+        },
+        {
+            "id": "84655169-dcc7-4991-a897-47834e3971cc",
+            "name": "actual",
+            "title": "Actual",
+            "readonly": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 70,
+            "fields": [
+                {
+                    "id": "c694023a-72a1-4ea6-a356-792deb13508d",
+                    "type": 1,
+                    "name": "actual-collection-file-count",
+                    "title": "File Count",
+                    "description": null,
+                    "readonly": false,
+                    "required": false,
+                    "layoutLocation": ".layout-top",
+                    "displayOrder": 0,
+                    "attributes": {
+                        "minValue": 0,
+                        "chronologyCard": false
+                    }
+                },
+                {
+                    "id": "02aa0ceb-3f2e-41d5-9779-86d258d2abc0",
+                    "type": 16,
+                    "name": "actual-collection-size",
+                    "title": "Collected / Extracted Size",
+                    "description": null,
+                    "readonly": false,
+                    "required": false,
+                    "layoutLocation": ".layout-top",
+                    "displayOrder": 1400,
+                    "attributes": {
+                        "precision": 2,
+                        "minValue": 0,
+                        "chronologyCard": false
+                    }
+                }
+            ],
+            "attributes": {
+                "chronologyCard": false
+            }
+        },
+        {
+            "id": "928e3d84-3c72-4b02-8670-2e7834663dcd",
+            "name": "delivery",
+            "title": "Delivery",
+            "readonly": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 80,
+            "fields": [
+                {
+                    "id": "913b4a40-b01e-46bf-85db-02989993dcd7",
+                    "type": 0,
+                    "name": "delivery-method",
+                    "title": "Delivery Method",
+                    "description": null,
+                    "readonly": false,
+                    "required": false,
+                    "layoutLocation": ".layout-top",
+                    "displayOrder": 500,
+                    "attributes": {
+                        "placeholder": "Specify delivery method",
+                        "maxLength": 50,
+                        "pattern": ".*",
+                        "chronologyCard": false
+                    }
+                },
+                {
+                    "id": "0962f29e-281e-43e9-84c5-fe9d4d7463be",
+                    "type": 12,
+                    "name": "delivery-details",
+                    "title": "Delivery Details",
+                    "description": null,
+                    "readonly": false,
+                    "required": false,
+                    "layoutLocation": ".layout-top",
+                    "displayOrder": 600,
+                    "attributes": {
+                        "rows": 5,
+                        "richText": false,
+                        "maxLength": 500,
+                        "chronologyCard": false
+                    }
+                },
+                {
+                    "id": "ea2da0cb-eb18-4875-94eb-01fe1375fcf1",
+                    "type": 16,
+                    "name": "delivery-container-size",
+                    "title": "Delivery Container Size GB",
+                    "description": null,
+                    "readonly": false,
+                    "required": false,
+                    "layoutLocation": ".layout-top",
+                    "displayOrder": 700,
+                    "attributes": {
+                        "precision": 2,
+                        "minValue": 0,
+                        "chronologyCard": false
+                    }
+                }
+            ],
+            "attributes": {
+                "chronologyCard": false
+            }
+        }
+        
+        
+        
+    ],
+    "smartVariableSystemName": null
+}

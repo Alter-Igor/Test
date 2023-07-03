@@ -187,7 +187,14 @@ export function getOdsWidgets(blade: TShareDoBlade): IAspect<IOdsWidget>[] | und
  */
 async function searchOdsAndReturnRows<T>(search: string,postBody:any): Promise<T[]> {
     let APIResult = await _search<T>(postBody);
-    if(!APIResult) return [];  
+    //log color
+    console.log("%c ODS Search Result", "color: #ff0000", APIResult);
+    if(!APIResult) 
+    {
+        console.log("%c ODS Search Result - undefined", "color: #ff0000");
+        return [];  
+    }
+    console.log("%c ODS Search Result", "color: #ff0000", APIResult);
     return extractRowsFromODSSearchResults<T>(APIResult);
   
 }
