@@ -8,23 +8,23 @@
     "showTitle": false,
     "readonly": false,
     "fields": [
-        {
-            "id": "098f7b5d-7150-40d1-8e67-225a04d0a86b",
-            "type": 10,
-            "name": "custodian",
+            {
+    "id": "0ecfc50f-5304-4c8b-ab5a-e10cc7035072",
+    "type": 0,
+     "name": "custodian",
             "title": "Custodian",
-            "description": null,
-            "readonly": false,
-            "required": false,
-            "layoutLocation": ".layout-top",
-            "displayOrder": 100,
-            "attributes": {
-                "placeholder": "Specify the custodian",
-                "maxLength": 50,
-                "pattern": ".*",
-                "chronologyCard": false
-            }
-        },
+    "description": null,
+    "readonly": false,
+    "required": false,
+    "layoutLocation": ".layout-top",
+    "displayOrder": 0,
+    "attributes": {
+        "placeholder": "Placeholder Text",
+        "maxLength": 50,
+        "pattern": ".*",
+        "chronologyCard": true
+    }
+},
         {
             "id": "b6de0ac7-7c70-4af1-8686-6cc025dda4ae",
             "type": 4,
