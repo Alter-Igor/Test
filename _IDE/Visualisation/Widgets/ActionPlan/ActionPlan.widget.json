@@ -1,0 +1,37 @@
+{
+    "id": "Visualisation.Widgets.ActionPlan",
+    "priority": 6000,
+    "designer":
+    {
+        "allowInPortalDesigner": true,
+        "allowInSharedoPortalDesigner": true,
+        "title": "Custom ActionPlan Widget",
+        "icon": "fa-cog",
+        "description": "A custom ActionPlan widget for use in the Sharedo Portal.",
+        "categories":
+        [
+            "Custom"
+        ],
+        "isConfigurable": true,
+        "configurationWidget": "Visualisation.Widgets.ActionPlanDesigner"
+    },
+    "scripts":
+    [
+        "/_ideFiles/Visualisation/Widgets/ActionPlan/ActionPlan.js"
+    ],
+    "styles":
+    [
+        "/_ideFiles/Visualisation/Widgets/ActionPlan/ActionPlan.css"
+    ],
+    "templates":
+    [
+        "/_ideFiles/Visualisation/Widgets/ActionPlan/ActionPlan.html"
+    ],
+    "menuTemplates":
+    [
+        "/_ideFiles/Visualisation/Widgets/ActionPlan/ActionPlanMenu.html"
+    ],
+    "components":
+    [
+    ]
+}

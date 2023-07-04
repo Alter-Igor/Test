@@ -1,1 +1,0 @@
-{"version":3,"file":"BuildActionPlan.d.js","names":[],"sources":["../../../src/WorkflowActions/Common/BuildActionPlan.d.ts"],"sourcesContent":["export declare function buildActionPlan(actionPlanModel: IActionPlan): any;\nexport declare function buildCallToAction(callToActionModel: ICallToAction): any | undefined;\n"],"mappings":""}

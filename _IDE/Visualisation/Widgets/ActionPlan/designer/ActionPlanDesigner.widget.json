@@ -1,0 +1,27 @@
+{
+    "id": "Visualisation.Widgets.ActionPlanDesigner",
+    "priority": 6000,
+    "designer":
+    {
+        "allowInPortalDesigner": false,
+        "allowInSharedoPortalDesigner": false
+    },
+    "scripts":
+    [
+        "/_ideFiles/Visualisation/Widgets/ActionPlan/designer/ActionPlanDesigner.js"
+    ],
+    "styles":
+    [
+        "/_ideFiles/Visualisation/Widgets/ActionPlan/designer/ActionPlanDesigner.css"
+    ],
+    "templates":
+    [
+        "/_ideFiles/Visualisation/Widgets/ActionPlan/designer/ActionPlanDesigner.html"
+    ],
+    "menuTemplates":
+    [
+    ],
+    "components":
+    [
+    ]
+}
