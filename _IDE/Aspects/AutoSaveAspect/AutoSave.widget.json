@@ -1,0 +1,48 @@
+{
+    "id": "Aspects.AutoSave",
+    "priority": 6000,
+    "designer":
+    {
+        "allowInPortalDesigner": false,
+        "allowInSharedoPortalDesigner": false,
+        "allowAspectAdapter": true,  
+        "title": "Auto Save Aspect On First Open",
+        "icon": "fa-cog",
+        "description": "Automatically Saves the current aspect when it is first opened, enabling the user to click once to start phase",
+        "categories": 
+        [
+        ],
+        "isConfigurable": true,
+        "configurationWidget": null,
+        "defaultConfigurationJson": { 
+            "eventToFireSaveOn": "Sharedo.Core.Case.Aspect.Tasks.DueDateChanged",
+            "singleEvent":true ,
+            "runSaveAfterMilliseconds":null,
+            "debug":
+            {
+                "enabled":false,
+                "logToConsole":false,
+                "showEvents":false,
+                "showInAspect":false
+            }
+    } 
+    },
+    "scripts":
+    [
+        "/_ideFiles/Aspects/AutoSaveAspect/AutoSave.js"
+    ],
+    "styles":
+    [
+        "/_ideFiles/Aspects/AutoSaveAspect/AutoSave.css"
+    ],
+    "templates":
+    [
+        "/_ideFiles/Aspects/AutoSaveAspect/AutoSave.html"
+    ],
+    "menuTemplates":
+    [
+    ],
+    "components":
+    [
+    ]
+}

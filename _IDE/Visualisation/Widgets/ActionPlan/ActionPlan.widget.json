@@ -12,7 +12,7 @@
         [
             "Custom"
         ],
-        "isConfigurable": true,
+        "isConfigurable": false,
         "configurationWidget": "Visualisation.Widgets.ActionPlanDesigner"
     },
     "scripts":

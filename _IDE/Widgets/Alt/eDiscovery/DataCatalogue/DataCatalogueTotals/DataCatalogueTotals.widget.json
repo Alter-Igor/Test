@@ -1,0 +1,37 @@
+{
+    "id": "Widgets.Alt.eDiscovery.DataCatalogue.DataCatalogueTotals",
+    "priority": 6000,
+    "designer":
+    {
+        "allowInPortalDesigner": false,
+        "allowInSharedoPortalDesigner": true,
+        "title": "Data Catalogue Totals",
+        "icon": "fa-cog",
+        "description": "Aggrigated totals for the Data Catalogue",
+        "categories":
+        [
+            "eDiscovery"
+        ],
+        "isConfigurable": true,
+        "configurationWidget": "Widgets.Alt.eDiscovery.DataCatalogue.DataCatalogueTotalsDesigner"
+    },
+    "scripts":
+    [
+        "/_ideFiles/Widgets/Alt/eDiscovery/DataCatalogue/DataCatalogueTotals/DataCatalogueTotalsAgent.js",
+        "/_ideFiles/Widgets/Alt/eDiscovery/DataCatalogue/DataCatalogueTotals/DataCatalogueTotals.js"
+    ],
+    "styles":
+    [
+        "/_ideFiles/Widgets/Alt/eDiscovery/DataCatalogue/DataCatalogueTotals/DataCatalogueTotals.css"
+    ],
+    "templates":
+    [
+        "/_ideFiles/Widgets/Alt/eDiscovery/DataCatalogue/DataCatalogueTotals/DataCatalogueTotals.html"
+    ],
+    "menuTemplates":
+    [
+    ],
+    "components":
+    [
+    ]
+}

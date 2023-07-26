@@ -1,0 +1,35 @@
+<div class="Visualisation-Widgets-IBMatterWarning">
+
+    <div data-bind="html:model.informationBarrierMessage"></div>
+    <div>
+        Last check date: <span data-bind="text:model.lastCheckDateFormatted"></span>
+    </div>
+    
+    <div class="btn btn-primary" data-bind="click:loadAndBind">Run IB Check</div>
+    <!-- <div data-bind="text:model.todoMessage"></div> -->
+
+    <!-- <table class="standard-list table-striped">
+        <tbody>
+        <tr>
+            <td><strong>Information Barrier</strong></td>
+            <td data-bind="text:model.informationBarrier"></td>
+        </tr>
+        </tbody>
+    </table> -->
+    
+    <!-- <p>Below is a list of known associates from an external service</p> -->
+    
+    <!-- <table class="standard-list table-striped">
+        <tbody data-bind="foreach:model.knownAssociates">
+        <tr>
+            <td width="50">
+                <img data-bind="attr:{ src:picture }" style="max-width:50px"/>
+            </td>
+            <td width="*">
+                <strong data-bind="text:name"></strong><br/>
+                <span data-bind="text:email"></span>
+            </td>
+        </tr>
+        </tbody>
+    </table> -->
+</div>

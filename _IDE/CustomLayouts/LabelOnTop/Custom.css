@@ -1,5 +1,5 @@
 .custom-label-on-top .form-group.alpaca-field.alpaca-field-text
-{  
+{
     display:flex;
     flex-direction: column;
     align-content: center;
@@ -12,3 +12,11 @@
 {
     width: 100%;
 }
+
+.custom-label-on-top .control-label
+{
+
+    width: 75%;
+}
+
+

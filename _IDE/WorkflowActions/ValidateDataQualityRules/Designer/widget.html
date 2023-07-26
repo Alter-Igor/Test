@@ -1,0 +1,33 @@
+﻿<div data-bind="widgetChrome:{ icon: 'fa-list', title: 'Action configuration' }">
+
+    <div class="form-group">
+        <label for="name">Action name:</label>
+        <input id="name" type="text" class="form-control" data-bind="textInput:action.name" />
+        <div class="text-danger" data-bind="visible:action.validation.name, text:action.validation.name"></div>
+    </div>
+
+</div>
+
+
+<div data-bind="widgetChrome:{ icon: 'fa-announce', title: 'Task Details' }">
+
+   
+    <div class="form-group">
+        <label>Work Type Identifier:</label>
+        <!-- ko component: { name: "core-wf-variable-selector", params:action.ui.Id } -->
+        <!-- /ko -->
+    </div>
+
+</div>
+
+<div data-bind="widgetChrome:{ icon: 'fa-list', title: 'Action plan' }">
+   
+
+    <div class="form-group">
+        <label>:</label>
+        <!-- ko component: { name: "core-wf-variable-selector", params:action.ui.actionPlanItemsList } -->
+        <!-- /ko -->
+    </div>
+
+</div>
+

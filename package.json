@@ -7,6 +7,7 @@
     "watch": "tsc-watch --p . --onSuccess \"npm run compileBabel\" --onFailure \"echo 'TypeScript compilation failed' && exit 1\"",
     "watchBableNodeBased": "babel src/NodeBased --out-dir ./_IDE --extensions '.ts' --copy-files --watch",
     "watchWebPackWebBased": "cd src/WebBased; webpack --watch",
+    "watchWebPackWebeDiscovery": "cd src/WebBased/Scripts/eDiscovery; webpack --watch",
     "watchAll": "npm run watchBableNodeBased & npm run watchWebPackWebBased",
     "typecheck": "tsc --p .",
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -17,7 +18,8 @@
   "dependencies": {
     "@types/knockout.validation": "^0.0.39",
     "knockout": "^3.5.1",
-    "knockout.validation": "^2.0.4"
+    "knockout.validation": "^2.0.4",
+    "moment": "^2.29.4"
   },
   "devDependencies": {
     "@babel/cli": "^7.18.6",

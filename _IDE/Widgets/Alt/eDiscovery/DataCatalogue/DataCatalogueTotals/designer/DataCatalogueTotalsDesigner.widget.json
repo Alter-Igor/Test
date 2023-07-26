@@ -1,0 +1,27 @@
+{
+    "id": "Widgets.Alt.eDiscovery.DataCatalogue.DataCatalogueTotalsDesigner",
+    "priority": 6000,
+    "designer":
+    {
+        "allowInPortalDesigner": false,
+        "allowInSharedoPortalDesigner": false
+    },
+    "scripts":
+    [
+        "/_ideFiles/Widgets/Alt/eDiscovery/DataCatalogue/DataCatalogueTotals/designer/DataCatalogueTotalsDesigner.js"
+    ],
+    "styles":
+    [
+        "/_ideFiles/Widgets/Alt/eDiscovery/DataCatalogue/DataCatalogueTotals/designer/DataCatalogueTotalsDesigner.css"
+    ],
+    "templates":
+    [
+        "/_ideFiles/Widgets/Alt/eDiscovery/DataCatalogue/DataCatalogueTotals/designer/DataCatalogueTotalsDesigner.html"
+    ],
+    "menuTemplates":
+    [
+    ],
+    "components":
+    [
+    ]
+}

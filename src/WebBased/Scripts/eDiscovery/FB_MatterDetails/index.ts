@@ -3,6 +3,7 @@ import { IFormBuilderContext } from "../../../../Typings/FormBuilder/IFormBuilde
 import { IShareDoOptionSet } from "../../../../Typings/OptionSets/IShareDoOptionSet";
 import { IOdsEntity } from "../../../../Typings/WidgetsOdsEntityPicker/IOdsEntity";
 import {  getAllRoleConfigForRole, searchForClients, searchForUsers } from "../../../Common/OdsHelper";
+import { executeGet } from "../../../Common/api/api";
 import { FormBuilder } from "../../../ModuleLoader/AlphacaAdapter";
 import { IExpertMatter } from "../Typings/IExpertMatterData";
 
@@ -15,7 +16,7 @@ const matterPartnerRoleSystemName = "matter-partner";
 const clientRoleSystemName = "client";
 
 //This function is called from the module-loader webcomponent in the form builder
-export function runMe(context: IFormBuilderContext) {
+export function runMe(context: IFormBuilderContext) : boolean {
    
     let { expertMatterNumber, matterDetails, pipelineMatter } = createVariables(context);
 
@@ -25,17 +26,32 @@ export function runMe(context: IFormBuilderContext) {
     
     (window as any).tester = context; //just for debugging
     
-    if(context.workItemContext.id() !== undefined && !context.workItemContext?.phaseName()?.toLowerCase().includes("draft"))
+    if(context.workItemContext.id() !== undefined)
     {
-        //only run this code if the work item is new
-        console.log("%c [ModuleLoader] FB_MatterDetails - exit (only run on new)", "background: #222; color: #bada55", context.workItemContext.id());
-        return;
+        let exit = true;
+        //if the work item is new or in draft dont exit
+        if(context.workItemContext?.phaseName()?.toLowerCase().includes("draft") || !context.workItemContext?.phaseName())
+        {
+            exit = false;
+        }
+        
+        if(exit===true)
+        {
+             //only run this code if the work item is new
+            console.log("%c [ModuleLoader] FB_MatterDetails - exit (only run on new)", "background: #222; color: #bada55", context.workItemContext.id());
+            console.log("%c [ModuleLoader] context.workItemContext.id() ", "background: #222; color: #bada55", context.workItemContext.id());
+            console.log("%c [ModuleLoader] context.workItemContext?.phaseName() ", "background: #222; color: #bada55", context.workItemContext?.phaseName());
+            return true;
+        }
     }
 
     hideShowMatterDetails(matterDetails, expertMatterNumber, pipelineMatter);
     //add a change event to the expert-matter-number
     addEventHandlers(context, matterDetails, expertMatterNumber, pipelineMatter);
     generateTempMatterNumber(context);
+
+    $ui.events.broadcast("script.matterDetailsLoaded", context);
+    return true;
 }
 
 // This function creates variables for the form.
@@ -134,8 +150,9 @@ async function clearMatterDetails(matterDetails: FormBuilder) {
 5. If the matter is not undefined, we set the values of the matterDetails fields */
 async function updateMatterDetails(context: IFormBuilderContext,matterDetails: FormBuilder, expertMatterNumber: FormBuilder, pipelineMatter: FormBuilder) {
 
-    let data = await getMatterData();
-
+    
+    let data = await getMatterData(expertMatterNumber.getValue());
+    console.log(data);
     clearMatterDetails(matterDetails); //clear the matter details form
     let selectedMatter = data.find(function (matter: any) {
         //set the display portion of the expert-matter-number field
@@ -157,21 +174,21 @@ async function updateMatterDetails(context: IFormBuilderContext,matterDetails: F
     }
 
      //set the value portion of the expert-matter-number field
-     context.form?.fieldsById[enumFields.expertMatterNumberValue]?.setValue(selectedMatter.data.matterCode);
+     context.form?.fieldsById[enumFields.expertMatterNumberValue]?.setValue(selectedMatter?.data?.matterCode || "");
        
 
-    matterDetails.fieldsById[enumMatterDetailFields.matterDetailsClientName]?.setValue(selectedMatter.data.client.name);
-    matterDetails.fieldsById[enumMatterDetailFields.matterDetailsClientCode]?.setValue(selectedMatter.data.client.code);
-    matterDetails.fieldsById[enumMatterDetailFields.matterDetailsPracticeArea]?.setValue(selectedMatter.data.practiceArea.name);
-    matterDetails.fieldsById[enumMatterDetailFields.matterDetailsName]?.setValue(selectedMatter.data.shortName);
-    matterDetails.fieldsById[enumMatterDetailFields.matterDetailsPartnerName]?.setValue(selectedMatter.data.partner.name);
-    matterDetails.fieldsById[enumMatterDetailFields.matterDetailsIb]?.setValue(selectedMatter.data.secure);
+    matterDetails.fieldsById[enumMatterDetailFields.matterDetailsClientName]?.setValue(selectedMatter?.data?.client?.name || "");
+    matterDetails.fieldsById[enumMatterDetailFields.matterDetailsClientCode]?.setValue(selectedMatter?.data?.client?.code || "");
+   // matterDetails.fieldsById[enumMatterDetailFields.matterDetailsPracticeArea]?.setValue(selectedMatter?.data?.practiceArea?.name || "");
+    matterDetails.fieldsById[enumMatterDetailFields.matterDetailsName]?.setValue(selectedMatter?.data?.shortName || "");
+    matterDetails.fieldsById[enumMatterDetailFields.matterDetailsPartnerName]?.setValue(selectedMatter?.data?.partner?.name || "");
+    matterDetails.fieldsById[enumMatterDetailFields.matterDetailsIb]?.setValue(selectedMatter?.data?.secure || "");
 
     console.log("matterDetails.isValid():" + matterDetails.isValid());
 
+
     try
     {
-        tryUpdatePartnerOdsPicker(selectedMatter, context);
         tryUpdateClientOdsPicker(selectedMatter, context);
     }
     catch(e)
@@ -179,6 +196,15 @@ async function updateMatterDetails(context: IFormBuilderContext,matterDetails: F
         console.log("Failed to auto updating ods pickers, user required to select manually");
     }
 
+    try
+    {
+        tryUpdatePartnerOdsPicker(selectedMatter, context);
+    }
+    catch(e)
+    {
+        console.log("Failed to auto updating ods pickers, user required to select manually");
+    }
+    
 }
 
 
@@ -240,9 +266,32 @@ function tryUpdatePartnerOdsPicker(selectedMatter: IExpertMatter, context: IForm
  * Call the server to get the matter data
  * @returns the data from the server without cache
  */
-async function getMatterData() {
-    //get the data from the server without cache
-    return await $ajax.get(/* webpackIgnore: true */ window.document.location.origin + "/_ideFiles/SampleData/eDiscovery/matters.json") as IExpertMatter[];
+async function getMatterData(expertMatterNumber?:string) : Promise<IExpertMatter[]> {
+    
+    let retValue:IExpertMatter[] = [];
+    if(expertMatterNumber === undefined || expertMatterNumber.length === 0)
+    {
+        return retValue;
+    }
+   
+    //return await $ajax.get(/* webpackIgnore: true */ window.document.location.origin + "/_ideFiles/SampleData/eDiscovery/matters.json") as IExpertMatter[];
+   
+
+    // //get the data from the server without cache
+    let data = await executeGet<any>(`/api/externalMatterProvider/details/${expertMatterNumber}`);
+     console.log("%c [ModuleLoader] getMatterData return value", "background: #222; color: #bada55", data)
+     if(data && data.matterCode)
+     {
+        let matter:IExpertMatter = {
+            data: data
+        };
+
+         retValue.push(matter);
+     }
+    // {
+    //     retValue = data.externalMatterProviderSearchResults as IExpertMatter[];
+    // }
+     return retValue;
 }
 
 /**

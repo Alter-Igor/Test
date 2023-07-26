@@ -1,0 +1,12 @@
+div.Aspects-SaveAndSubmit
+{
+    /* align-items: center; */
+    display: flex;
+    align-content: flex-end;
+    justify-content: space-evenly;
+}
+
+div.Aspects-SaveAndSubmit .btn.btn-primary
+{
+    width: 95%;
+}
