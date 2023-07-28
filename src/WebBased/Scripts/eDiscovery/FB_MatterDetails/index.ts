@@ -45,6 +45,9 @@ export function runMe(context: IFormBuilderContext) : boolean {
         }
     }
 
+    (window as any).aspectDebuger = (window as any).aspectDebuger || {};
+    (window as any).aspectDebuger.matterDetailsFormBuilder = matterDetails;
+
     hideShowMatterDetails(matterDetails, expertMatterNumber, pipelineMatter);
     //add a change event to the expert-matter-number
     addEventHandlers(context, matterDetails, expertMatterNumber, pipelineMatter);
@@ -132,6 +135,9 @@ function setMatterDetailsState(matterDetails: FormBuilder, status: boolean = tru
         // set the readonly status of the child property
         child.readonly(!status);
     });
+
+    // set the readonly status of the matter details sub area
+    matterDetails.fieldsById[enumMatterDetailFields.matterDetailsIbLastChecked]?.hidden(true);
 }
 
 // clear all the child properties of the matter details sub area of the form builder
@@ -153,7 +159,7 @@ async function updateMatterDetails(context: IFormBuilderContext,matterDetails: F
     
     let data = await getMatterData(expertMatterNumber.getValue());
     console.log(data);
-    clearMatterDetails(matterDetails); //clear the matter details form
+    //clearMatterDetails(matterDetails); //clear the matter details form
     let selectedMatter = data.find(function (matter: any) {
         //set the display portion of the expert-matter-number field
        // return expertMatterNumber.getValue() === `${matter.data.matterCode} - ${matter.data.client.name}`;
@@ -275,22 +281,25 @@ async function getMatterData(expertMatterNumber?:string) : Promise<IExpertMatter
     }
    
     //return await $ajax.get(/* webpackIgnore: true */ window.document.location.origin + "/_ideFiles/SampleData/eDiscovery/matters.json") as IExpertMatter[];
-   
-
     // //get the data from the server without cache
-    let data = await executeGet<any>(`/api/externalMatterProvider/details/${expertMatterNumber}`);
-     console.log("%c [ModuleLoader] getMatterData return value", "background: #222; color: #bada55", data)
-     if(data && data.matterCode)
-     {
-        let matter:IExpertMatter = {
-            data: data
-        };
+    try
+    {
+        let data = await executeGet<any>(`/api/externalMatterProvider/details/${expertMatterNumber}`);
+        console.log("%c [ModuleLoader] getMatterData return value", "background: #222; color: #bada55", data)
+        if(data && data.matterCode)
+        {
+            let matter:IExpertMatter = {
+                data: data
+            };
 
-         retValue.push(matter);
-     }
-    // {
-    //     retValue = data.externalMatterProviderSearchResults as IExpertMatter[];
-    // }
+            retValue.push(matter);
+        }
+    }
+    catch(e)
+    {
+        console.log("Failed to get matter data from server",e);
+
+    }
      return retValue;
 }
 
@@ -338,7 +347,8 @@ export enum enumMatterDetailFields {
     matterDetailsClientCode = "matter-details-client-code",
     matterDetailsPracticeArea = "matter-details-practice-area",
     matterDetailsName = "matter-details-name",
-    matterDetailsIb = "matter-details-ib"
+    matterDetailsIb = "matter-details-ib",
+    matterDetailsIbLastChecked = "matter-details-ib-last-check"
 }
 
 /**

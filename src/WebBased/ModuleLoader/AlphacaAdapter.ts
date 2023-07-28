@@ -43,10 +43,10 @@ export class FormBuilder {
 
     public hidden(value?: boolean): boolean {
         if (value != undefined) {
-            this.alpacaForm.options.hidden = !value;
+            this.alpacaForm.options.hidden = value;
             this.alpacaForm.refresh();
         }
-        return !this.alpacaForm.options.hidden;
+        return this.alpacaForm.options.hidden;
     }
 
     public getValue(): any {
