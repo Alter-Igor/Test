@@ -231,11 +231,13 @@
         }
 
         return undefined;
-
+ 
     }
-
+  
     function updateExistingTaskActionPlanItems(id: string, actionPlanBuilder: any) {
        
+        log.Information("updateExistingTaskActionPlanItems");
+        
         //remove Ids from action plan items
         //have to build a new array as we cannot delete Id from the passed in actionPlanBuilder
         //Object does not support dynamic members 
@@ -244,8 +246,28 @@
         //Loop though the new action plan items and remove the Ids
         //add the new items with the removed ids to the new array
         for(let i = 0; i < actionPlanBuilder.length; i++){
+
+            let itemObj = actionPlanBuilder[i];
+            //get the CallToActionContextId as stringify looses it
+            let CallToActionContextId : undefined;
+            
+            try{
+            CallToActionContextId= itemObj.CallToActionContextId.ToString();
+            log.Information("CallToActionContextId: " + CallToActionContextId);
+            }
+            catch(e){
+                log.Information("CallToActionContextId not found");
+            }
+
+            
+            
             let item = JSON.stringify(actionPlanBuilder[i]);
+            log.Information("item: " + item);
             let dataItem = JSON.parse(item);
+            if(CallToActionContextId)
+            {
+                dataItem.CallToActionContextId = CallToActionContextId; //put back CTA Id
+            }
             if(dataItem.Id)
             {
                 log.Information(typeof dataItem.Id);
