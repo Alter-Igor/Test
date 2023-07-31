@@ -20,7 +20,11 @@ class ComponentsPlayClass {
     odsEntityPickerConfig: any;
 
     autoComplete: any;
-    selectedMatter: any;
+    selectedAutoCompleteValue = ko.observable({
+        firstName: "igor",
+        lastName: "Jericevich",
+        email: "igor@nothgin.com"
+    });
     odsPicker: any;
     odsCountdown: ko.Observable<number> | undefined;
 
@@ -56,52 +60,97 @@ class ComponentsPlayClass {
                     searching: "One moment...",
                     noResults: "Nothing found"
                 },
+                templates:
+                {
+                    result: "_components_play_template",
+                    message: undefined
+                },
                 select:
                 {
                     allowClear: true,
-                    selectedValue: this.selectedMatter,
-                    onLoad: this.autoCompleteLoadMatter.bind(this)
+                    selectedValue: this.selectedAutoCompleteValue,
+                    onLoad: this.autoCompleteLoad.bind(this)
                 },
-                onFind: this.autoCompleteFinder.bind(this),
-                templates: { result: "__matter_search_item_template" },
+
+                onFind: this.autoCompleteFinder.bind(this)
 
             }
         );
     }
 
-    autoCompleteFinder(v:string) {
 
-            this.log("autoCompleteFinder", v);
-            let search = v.toLowerCase();
+    autocompleteSelected(v: any) {
+        this.log("autocompleteSelected: ", v);
+    }
+
+    autoCompleteChoose(v: any) {
+        this.log("autoCompleteChoose: ", v);
+    }
+
+    autoCompleteFinder(v: string) {
+
+        this.log("autoCompleteFinder: ", v);
+        let search = v.toLowerCase();
+        let results: Array<IAutoCompleteFindCard> = [];
+
+        //create 100 records of fake contact data
+        let fakeData = [];
+        for (let i = 0; i < 100; i++) {
+
+            let newItem = {
+                firstName: "First " + i,
+                lastName: "Last " + i,
+                email:"email" + i + "@test.com",
+                phone: "0123456789" + i
+            }
+            fakeData.push(newItem);
+        }
+
+
+        //filter fake data by search term
+        fakeData = fakeData.filter(item => {
+            return item.firstName.toLowerCase().indexOf(search) > -1 ||
+                item.lastName.toLowerCase().indexOf(search) > -1 ||
+                item.email.toLowerCase().indexOf(search) > -1 ||
+                item.phone.toLowerCase().indexOf(search) > -1;
+        });
         
 
-            let results: Array<IAutoCompleteFindCard> = [];
-
-            //create a list of 100 items
-            for (let i = 0; i < 100; i++) {
-                results.push(new Sharedo.UI.Framework.Components.AutoCompleteFindCard({
-                    type: "result",
-                    id: i,
-                    icon: "fa-users",
-                    text: "Team " + i
-                }));
-            }
-
-            if (results.length > 0) {
-                results = _.sortBy(results, "text");
-                results.splice(0, 0, new Sharedo.UI.Framework.Components.AutoCompleteFindCard({
-                    type: "message",
-                    icon: "fa-check text-success",
-                    text: "Found " + results.length + " teams"
-                }));
-            }
+        //create a result for each fake data item
+        fakeData.forEach(item => {
+            results.push(new Sharedo.UI.Framework.Components.AutoCompleteFindCard({
+                type: "result",
+                id: item,
+                data:item,
+                icon: "fa-users",
+                text: item.firstName + " " + item.lastName,
+            }));
+        });
         
-            return results;
-        };
 
-    
-    autoCompleteLoadMatter() {
-        this.log("loadMatter", this)
+        if (results.length > 0) {
+            results.splice(0, 0, new Sharedo.UI.Framework.Components.AutoCompleteFindCard({
+                type: "message",
+                icon: "fa-check text-success",
+                text: "Found " + results.length + " teams"
+            }));
+        }
+
+        return results;
+    };
+
+
+    autoCompleteLoad(v: any) {
+        this.log("autoCompleteLoad", v)
+        
+        return new Sharedo.UI.Framework.Components.AutoCompleteDisplayCard({
+            id: v,
+            type: "result",
+            icon: "fa-users",
+            data: v,
+            text: v.firstName + " - " + v.lastName
+        });
+
     }
 
     private setModelDefaults(options: any) {
@@ -183,7 +232,6 @@ class ComponentsPlayClass {
         let tickFunction = () => {
             interval = interval - 50;
             if (interval < 5) { interval = 30; }
-            console.log("interval", interval);
             if (!this.odsCountdown) { return; }
             this.odsCountdown(this.odsCountdown() - 1);
             let currentCountdown = this.odsCountdown();
