@@ -17,6 +17,7 @@
   "license": "ISC",
   "dependencies": {
     "@types/knockout.validation": "^0.0.39",
+    "@types/vscode": "^1.80.0",
     "knockout": "^3.5.1",
     "knockout.validation": "^2.0.4",
     "moment": "^2.29.4"

@@ -1,0 +1,27 @@
+{
+    "id": "PlayGround.ComponentsPlayDesigner",
+    "priority": 6000,
+    "designer":
+    {
+        "allowInPortalDesigner": false,
+        "allowInSharedoPortalDesigner": false
+    },
+    "scripts":
+    [
+        "/_ideFiles/Visualisation/Widgets/PlayGround/ComponentsPlay/designer/ComponentsPlayDesigner.js"
+    ],
+    "styles":
+    [
+        "/_ideFiles/Visualisation/Widgets/PlayGround/ComponentsPlay/designer/ComponentsPlayDesigner.css"
+    ],
+    "templates":
+    [
+        "/_ideFiles/Visualisation/Widgets/PlayGround/ComponentsPlay/designer/ComponentsPlayDesigner.html"
+    ],
+    "menuTemplates":
+    [
+    ],
+    "components":
+    [
+    ]
+}

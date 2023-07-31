@@ -1,0 +1,27 @@
+<div class="Visualisation-Widgets-ComponentsPlay">
+
+    <div data-bind="html:model.informationBarrierMessage"></div>
+    <div>
+        Last check date: <span data-bind="text:model.lastCheckDateFormatted"></span>
+    </div>
+    
+    <div class="btn btn-primary" data-bind="click:loadAndBind">This is a button</div>
+   
+    <div>sharedoId <span data-bind="text:model.sharedoId"></span></div>
+    <div>odsEntityPickerConfig <span data-bind="text:odsEntityPickerConfig"></span></div>
+
+    
+    <!-- ko component: { name: "auto-complete", params: autoComplete } -->
+            <!-- /ko -->
+
+   <div class="odsEntityPicker">
+    <!-- ko component: { name: "sharedo-core-case-ods-entity-picker", params: odsPicker } -->
+    <!-- /ko -->
+    <!-- ko if: odsCountdown() > 0 -->
+    <div class="osdDefaultCountdown">
+        <div data-bind="text:odsCountdown"></div>
+    </div>
+    <!-- /ko -->
+    </div>
+            
+</div>

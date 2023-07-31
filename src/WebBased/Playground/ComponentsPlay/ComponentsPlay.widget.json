@@ -1,0 +1,38 @@
+{
+    "id": "PlayGround.ComponentsPlay",
+    "priority": 6000,
+    "designer": 
+    {
+        "allowInPortalDesigner": false,
+        "allowInSharedoPortalDesigner": true,
+        "title": "ComponentsPlay",
+        "icon": "fa-cog",
+        "description": "Information Barrier Warning",
+        "categories":
+        [
+            "PlayGround"
+        ],
+        "isConfigurable": true,
+        "configurationWidget": "PlayGround.ComponentsPlayDesigner"
+    },
+    "scripts":
+    [
+        "/_ideFiles/Visualisation/Widgets/PlayGround/ComponentsPlay/ComponentsPlay.js"
+    ],
+    "styles":
+    [
+        "/_ideFiles/Visualisation/Widgets/PlayGround/ComponentsPlay/ComponentsPlay.css"
+    ],
+    "templates":
+    [
+        "/_ideFiles/Visualisation/Widgets/PlayGround/ComponentsPlay/ComponentsPlay.html"
+    ],
+    "menuTemplates":
+    [
+    ],
+    "components":
+    [
+        "Sharedo.Core.Case.Components.OdsEntityPicker",
+        "Sharedo.UI.Framework.Components.AutoComplete"
+    ]
+}
