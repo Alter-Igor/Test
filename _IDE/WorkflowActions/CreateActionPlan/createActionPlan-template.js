@@ -1,4 +1,4 @@
-let actionPlan = {
+var actionPlan = {
   type: "",
   mandatory: undefined,
   order: undefined,
@@ -17,15 +17,15 @@ ctx["$model.Configuration.outputVariable"] = actionPlan;
 // $endif;
 
 // $ifNotNull.Configuration.outputCollection
-let listAsString = ctx["$model.Configuration.outputCollection"];
+var listAsString = ctx["$model.Configuration.outputCollection"];
 if (!listAsString) {
   log.Information('*** create new array');
-  let emptyArray = [];
+  var emptyArray = [];
   listAsString = emptyArray; //JSON.stringify(emptyArray);
   // log.Information(listAsString);
   ctx["$model.Configuration.outputCollection"] = listAsString;
 }
-let list = listAsString; // JSON.parse(listAsString) as Array<any>;
+var list = listAsString; // JSON.parse(listAsString) as Array<any>;
 list.push(actionPlan);
 ctx["$model.Configuration.outputCollection"] = list;
 // $endif;

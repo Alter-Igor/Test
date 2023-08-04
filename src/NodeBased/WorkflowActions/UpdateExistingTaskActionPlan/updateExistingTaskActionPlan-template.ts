@@ -229,9 +229,7 @@
                 return result.body.id;
             }
         }
-
         return undefined;
- 
     }
   
     function updateExistingTaskActionPlanItems(id: string, actionPlanBuilder: any) {
@@ -288,6 +286,4 @@
             log.Information("update failed: " + JSON.stringify(result));
         }
     }
-
-
 })();
