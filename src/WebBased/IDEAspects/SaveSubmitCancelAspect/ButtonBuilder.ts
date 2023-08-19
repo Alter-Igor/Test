@@ -1,7 +1,5 @@
-
-import { TShareDoBlade } from '../../../Typings/ShareDoJS/AddEditSharedo';
-
-
+import { TShareDoBlade } from "../../../Typings/ShareDoJS/AddEditSharedo";
+import {ASMaterialButton, ASMaterialDesignButtonStyles} from "alterspective-material-design-web-components"
 export interface IButtonGroup {
     name: ko.Observable<string>;
     showTitle: ko.Observable<boolean>;
@@ -9,19 +7,19 @@ export interface IButtonGroup {
     order: number;
     buttons: IButton[];
 }
-
+ 
 export interface IButton {
     group?: IButtonGroup; // group buttons together
     id: string;
     order: number; // order of the button in the group
-    text: string;
-    icon: string;
+    text:  ko.Observable<string>;
+    icon:  ko.Observable<string>;
     enabled: ko.Observable<boolean>;
-    visible: boolean;
+    visible: ko.Observable<boolean>;
     onClick: any;
     tooltip: string;
-    type: ButtonType; // primary, secondary, destructive, save added to class
-    color: string | undefined;  // color of the button for emphasis
+    type: ko.Observable<any>; // primary, secondary, destructive, save added to class
+    color: ko.Observable<string | undefined> | undefined;  // color of the button for emphasis
     isOptimumPath: boolean; // is this button on the optimum path for css
     isSystemClosedPhase: boolean; // is this button on a closed phase for css
     isRemoved: boolean; // is this button on a removed phase for css
@@ -90,35 +88,59 @@ export function buildButtonsElement(buttons: IButton[], blade: TShareDoBlade): H
     let sortedButtons = buttons.sort((a, b) => a.order - b.order);
 
     sortedButtons.forEach(button => {
-        const newButtonElement = document.createElement("ASMaterialButton") as ASMaterialButton;
-        newButtonElement.classList.add("btn");
-        newButtonElement.classList.add(button.type);
+        
+        const newButtonElement = document.createElement("as-material-button") as ASMaterialButton;
+
+        console.log("newButtonElement as as-material-button :", newButtonElement);
+        (window as any).newButtonElement = newButtonElement;
+        (window as any).DASMaterialButton = ASMaterialButton;
+        
+        newButtonElement.options.style = button.type();
+        button.type.subscribe((type) => {
+            newButtonElement.options.style = type;
+        });
+        console.log(`${button.text()}.options.style :`, newButtonElement.options.style);
+
+        newButtonElement.options.clicked = button.onClick;
+        newButtonElement.options.disabled = !button.enabled();
+        newButtonElement.options.tooltip = button.tooltip;
+
+        // newButtonElement.classList.add("asbtn");
+        // newButtonElement.classList.add(button.type); moved to option style
         newButtonElement.id = button.id || "button_" + button.order;
-        newButtonElement.innerText = button.text;
+
+        newButtonElement.options.label = button.text();
+        button.text.subscribe((text) => {
+            newButtonElement.options.label = button.text();
+        });
         newButtonElement.addEventListener("click", button.onClick);
         
-        newButtonElement.disabled = !button.enabled();
-        newButtonElement.style.display = button.visible ? "block" : "none";
-        newButtonElement.title = button.tooltip;
+        // newButtonElement.options.disabled = !button.enabled();
+        newButtonElement.style.display = button.visible() ? "block" : "none";
+        button.visible.subscribe((visible) => {
+            newButtonElement.style.display = visible ? "block" : "none";
+        });
+        // newButtonElement.title = button.tooltip;
 
         applyButtonIsClasses(button, newButtonElement);
 
+        newButtonElement.options.disabled = !button.enabled();
         button.enabled.subscribe((enabled) => {
-            newButtonElement.disabled = !enabled;
-            applyButtonEmphasis(button, enabled, newButtonElement);
+             newButtonElement.options.disabled = !enabled;
+            // applyButtonEmphasis(button, enabled, newButtonElement);
         });
 
-        const icon = document.createElement("span");
-        icon.classList.add("icon");
-        icon.classList.add("fa");
-        icon.classList.add(button.icon);
-        icon.classList.add("fa-xl");
-        newButtonElement.appendChild(icon);
+        // const icon = document.createElement("span");
+        // icon.classList.add("icon");
+        // icon.classList.add("fa");
+        // icon.classList.add(button.icon);
+        // icon.classList.add("fa-xl");
+        // newButtonElement.appendChild(icon);
         buttonsElement.appendChild(newButtonElement);
     })
     return buttonsElement;
 
-    function applyButtonEmphasis(button: IButton, isValid: any, newButtonElement: HTMLButtonElement) {
+    function applyButtonEmphasis(button: IButton, isValid: any, newButtonElement: ASMaterialButton) {
         let boxShadow = `0 8px 8px -4px lightgray`;
         let boxShadowHover = `0px 0px 17px 4px lightgray`;
         if (button.color) {
@@ -147,7 +169,7 @@ export function buildButtonsElement(buttons: IButton[], blade: TShareDoBlade): H
     }
 }
 
-function applyButtonIsClasses(button: IButton, newButtonElement: HTMLButtonElement) {
+function applyButtonIsClasses(button: IButton, newButtonElement: ASMaterialButton) {
     if (button.isOpen) {
         newButtonElement.classList.add("toPhaseOpen");
     }
@@ -169,7 +191,7 @@ function applyButtonIsClasses(button: IButton, newButtonElement: HTMLButtonEleme
 
 }
 
-function runThroughColors(forColor: any, newButtonElement: HTMLButtonElement) {
+function runThroughColors(forColor: any, newButtonElement: ASMaterialButton) {
     for (let i = 0; i < forColor.length; i++) {
         setTimeout(() => {
             let rgb = "rgb(" + forColor[i].r + "," + forColor[i].g + "," + forColor[i].b + ")";

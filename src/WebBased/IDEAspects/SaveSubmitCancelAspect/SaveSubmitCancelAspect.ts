@@ -4,12 +4,13 @@ import { getPhasePlan } from "./SaveSubmitCancelAspectAgent";
 import * as ko from "knockout";
 import { convertTransitionToButton } from "./TransitionToButtonConverter";
 import { ButtonType, IButton, IButtonGroup, buildButtonGroupElement } from "./ButtonBuilder";
+import { ASMaterialDesignButtonStyles } from "alterspective-material-design-web-components";
 let thisWidgetSystemName = "SaveSubmitCancelAspect";
 
 
 //add style to head: https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css
 document.head.insertAdjacentHTML("beforeend", `<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">`);
-
+ 
 export interface Configuration {
     _host: Host;
     eventToFireSaveOn: any;
@@ -210,19 +211,22 @@ export class SaveSubmitCancel {
 
 
     private createSystemButtons() {
+        console.log(ASMaterialDesignButtonStyles.outlined)
+        let x = ASMaterialDesignButtonStyles.outlined;
+
         let retValue: IButton[] = [];
         let saveButton: IButton = {
             order: 1,
-            text: "Save",
+            text: ko.observable("Save"),
             onClick: () => {
                 this.saveClicked();
             },
             id: "",
-            icon: "fa-save",
+            icon: ko.observable("fa-save"),
             enabled: ko.observable(true),
-            visible: true,
+            visible: ko.observable(true),
             tooltip: "Save the current record",
-            type: ButtonType.save,
+            type: ko.observable(ASMaterialDesignButtonStyles.outlined),
             color: undefined,
             isOptimumPath: false,
             isSystemClosedPhase: false,
@@ -235,16 +239,16 @@ export class SaveSubmitCancel {
 
         let cancelButton: IButton = {
             order: 2,
-            text: "Cancel",
+            text: ko.observable("Cancel"),
             onClick: () => {
                 this.saveClicked();
             },
             id: "",
-            icon: "fa-times",
+            icon: ko.observable("fa-times"),
             enabled: ko.observable(true),
-            visible: true,
+            visible: ko.observable(true),
             tooltip: "Cancel the current record",
-            type: ButtonType.cancel,
+            type: ko.observable(ASMaterialDesignButtonStyles.text),
             color: undefined,
             isOptimumPath: false,
             isSystemClosedPhase: false,

@@ -1,6 +1,7 @@
 import * as ko from "knockout";
 import { Phase, Transition } from "../../../Typings/api/PhasePlan/PhasePlan";
-import { ButtonType, IButton } from "./ButtonBuilder";
+import {  IButton } from "./ButtonBuilder";
+import { ASMaterialDesignButtonStyles } from "alterspective-material-design-web-components";
 
 
 export function convertTransitionToButton (transitionsForButtons: Transition[], phasePlans:Phase[], options: any) : IButton[] {
@@ -20,14 +21,14 @@ export function convertTransitionToButton (transitionsForButtons: Transition[], 
         let button: IButton = {
             id: transition.systemName,
             order: i,
-            text: transition.name,
-            icon: toPhase.iconClass || "",
-            color: toPhase.colour || "",
+            text: ko.observable(transition.name),
+            icon: ko.observable(toPhase.iconClass) ,
+            color: ko.observable(toPhase.colour),
             enabled: ko.observable(true),
-            visible: true,
+            visible: ko.observable(true),
             onClick: options.onClick,
             tooltip: toPhase.description || `Progress to ${toPhase.name} phase`,
-            type: getButtonType(transition, toPhase),
+            type: ko.observable(getButtonType(transition, toPhase)),
             isOptimumPath: transition.isOptimumPath,
             isSystemClosedPhase: toPhase.isSystemClosedPhase,
             isRemoved: toPhase.isRemoved,
@@ -46,23 +47,23 @@ export function convertTransitionToButton (transitionsForButtons: Transition[], 
 
 }
 
-function getButtonType(transition: Transition, toPhase: Phase):ButtonType {
+function getButtonType(transition: Transition, toPhase: Phase):ASMaterialDesignButtonStyles {
     
-    let retValue = ButtonType.primary;
+    let retValue = ASMaterialDesignButtonStyles.text;
 
-    if(transition.isOptimumPath === false)
+    if(transition.isOptimumPath === true)
     {
-        retValue = ButtonType.secondary;
+        retValue = ASMaterialDesignButtonStyles.raised;
     }
 
     if(toPhase.isRemoved === true)
     {
-        retValue = ButtonType.destrustive;
+        retValue = ASMaterialDesignButtonStyles.text;
     }
 
     if(toPhase.isSystemClosedPhase === true)
     {
-        retValue = ButtonType.primary;
+        retValue = ASMaterialDesignButtonStyles.outlined;
     }
 
 

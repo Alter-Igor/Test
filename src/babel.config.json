@@ -1,0 +1,14 @@
+{
+    "presets": [
+    
+      "@babel/preset-typescript"
+    ],
+    "targets": {
+      "esmodules": false
+    },
+    "ignore": ["node_modules"],
+    "comments": true,
+    "minified": false,
+    "inputSourceMap": true,
+    "sourceMaps": true
+}

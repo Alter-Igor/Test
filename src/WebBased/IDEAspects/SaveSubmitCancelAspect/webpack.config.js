@@ -25,7 +25,7 @@ module.exports = [
       path: path.join(__dirname, outputLocation),
       filename: "[name].js",
     },
-    mode: 'production', 
+    mode: 'development', 
     plugins: [
       new CopyPlugin({
         patterns: [

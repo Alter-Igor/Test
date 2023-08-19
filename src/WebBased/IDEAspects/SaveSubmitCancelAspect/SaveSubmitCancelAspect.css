@@ -12,7 +12,7 @@
     width: 100%;
     padding: 10px;
     border: 1px solid #ccc;
-    background-color:#3D4852;
+    /* background-color:#3D4852; */
     flex-direction: column;
     align-content: stretch;
     flex-wrap: wrap;
@@ -26,58 +26,22 @@
     width: 100%;
     padding: 10px;
     border: 0.1px solid var(--color-primary);
-    background-color:#3D4852;
+    /* background-color:#3D4852; */
     flex-direction: row;
     flex-wrap: wrap;
     align-content: space-between;
+    
 }
 
-.save-submit-cancel
+
+.save-submit-cancel .button-groups .buttons as-material-button
 {
-  position: relative;
-}
-.save-submit-cancel:before
-{
-  z-index: -1;
-  position: absolute;
-  content: "";
-  bottom: 15px;
-  left: 10px;
-  width: 50%;
-  top: 80%;
-  max-width:300px;
-  background: #777;
-  -webkit-box-shadow: 0 15px 10px #777;
-  -moz-box-shadow: 0 15px 10px #777;
-  box-shadow: 0 15px 10px #777;
-  -webkit-transform: rotate(-3deg);
-  -moz-transform: rotate(-3deg);
-  -o-transform: rotate(-3deg);
-  -ms-transform: rotate(-3deg);
-  transform: rotate(-3deg);
+    margin:10px;
+    flex-grow: 1;
 }
 
 
 
-.save-submit-cancel .btn
-{
-    width: 200px;
-}
-
-.save-submit-cancel .icon
-{
-    margin: 5px;
-}
-
-.save-submit-cancel .btn.btn-primary
-{
-    border: blue 3px solid;
-}
-
-.save-submit-cancel .btn.success .icon
-{
-  color: var(--color-primary-on-dark-bg)
-}
 
 
 .save-submit-cancel .button-groups .buttons .toPhaseRemoved
@@ -116,4 +80,4 @@
   border: 1px solid var(--color-primary-on-dark-bg);
   color: var(--color-primary-on-dark-bg)
 }
-
+ */

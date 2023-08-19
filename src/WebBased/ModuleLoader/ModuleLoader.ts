@@ -8,7 +8,7 @@
  * within form builder add a 
  */
  
-import { BindingContext } from "../../../node_modules/knockout/build/types/knockout";
+import { BindingContext } from "knockout";
 import { IFormBuilderContext } from "../../Typings/FormBuilder/IFormBuilderContext";
 import { TShareDoBlade } from "../../Typings/ShareDoJS/AddEditSharedo";
 import { FormBuilder } from "./AlphacaAdapter";
