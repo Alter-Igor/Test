@@ -47,6 +47,17 @@
   flex-grow: 1;
 }
 
+.save-submit-cancel .button-groups .buttons .icon
+{
+  margin:10px;
+}
+
+.save-submit-cancel .button-group.disabled .icon
+{
+  color: grey!important;
+  transition: color 1250ms linear;
+}
+
 
 .save-submit-cancel .button-groups .buttons as-material-button::part(button) {
   /* color: rgb(var(--accessible-color), var(--accessible-color), var(--accessible-color)); */
@@ -55,36 +66,41 @@
 
 .save-submit-cancel .button-groups .buttons as-material-button.save::part(button) {
   border-color: color-mix(in srgb, var(--color-success), #fff 20%);
+    transition: border-color 1250ms linear;
+}
+
+
+.save-submit-cancel .button-group.disabled .buttons as-material-button.toPhaseRemoved::part(button) {
+  border-color: grey;
+    transition: border-color 1250ms linear;
+
 }
 
 
 .save-submit-cancel .button-groups .buttons as-material-button.toPhaseRemoved::part(button) {
   border-color: color-mix(in srgb, var(--color-danger), #fff 20%);
-
-  
-  /* background-color: color-mix(in srgb, var(--color-danger), #fff 20%); */
-  /* color: color-mix(in oklab, var(--color-danger) 25%, black); */
+  transition: border-color 1250ms linear;
 }
 
+.save-submit-cancel .button-group .buttons as-material-button::part(button) {
+  height: 50px
+
+}
+
+
+
 .save-submit-cancel .button-groups .buttons as-material-button.toPhaseOptimumPath::part(button) {
-  /* background-color: color-mix(in srgb, var(--color-success), #fff 20%); */
-  /* color: color-mix(in oklab, var(--color-success) 25%, black); */
+
 }
 
 .save-submit-cancel .button-groups .buttons .save:hover {
 
-  /* border: 1px solid var(--color-success); */
-
 }
 
 .save-submit-cancel .button-groups .buttons .cancel {
-  /* background-color: transparent; */
-  /* border: grey; */
-  /* color: var(--color-primary-on-dark-bg) */
+
 }
 
 .save-submit-cancel .button-groups .buttons .cancel:hover {
 
-  /* border: 1px solid var(--color-primary-on-dark-bg); */
-  /* color: var(--color-primary-on-dark-bg) */
 }

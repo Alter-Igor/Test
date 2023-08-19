@@ -1,5 +1,5 @@
 import { TShareDoBlade } from "../../../Typings/ShareDoJS/AddEditSharedo";
-import { ASMaterialButton, ASMaterialDesignButtonStyles } from "alterspective-material-design-web-components"
+import { ASMaterialButton, ASMaterialDesignButtonStyles, MaterialDesignIcons } from "alterspective-material-design-web-components"
 export interface IButtonGroup {
     name: ko.Observable<string>;
     showTitle: ko.Observable<boolean>;
@@ -27,6 +27,7 @@ export interface IButton {
     isOpen: boolean; // is this button on an open phase for css
     isStart: boolean; // is this button on a start phase for css
     isReportable: boolean; // is this button on a reportable phase for css
+    data:any | undefined;
 }
 
 export enum ButtonType {
@@ -113,6 +114,8 @@ export function buildButtonsElement(buttons: IButton[], blade: TShareDoBlade): H
         newButtonElement.options.disabled = !button.enabled();
         newButtonElement.options.tooltip = button.tooltip;
 
+        newButtonElement.options.additional_params = button.data;
+
         // newButtonElement.classList.add("asbtn");
         // newButtonElement.classList.add(button.type); moved to option style
         newButtonElement.id = button.id || "button_" + button.order;
@@ -140,15 +143,32 @@ export function buildButtonsElement(buttons: IButton[], blade: TShareDoBlade): H
             // applyButtonEmphasis(button, enabled, newButtonElement);
         });
 
-        // const icon = document.createElement("span");
-        // icon.classList.add("icon");
-        // icon.classList.add("fa");
-        // icon.classList.add(button.icon);
-        // icon.classList.add("fa-xl");
-        // newButtonElement.appendChild(icon);
+        
+        addIcon(button, newButtonElement);
+        button.icon.subscribe((icon) => {
+            addIcon(button, newButtonElement);
+        });
         buttonsElement.appendChild(newButtonElement);
+
     })
     return buttonsElement;
+
+    function addIcon(button: IButton, newButtonElement: ASMaterialButton) {
+        const div = document.createElement("div");
+        div.classList.add("icon-container");
+        newButtonElement.appendChild(div);
+
+        const icon = document.createElement("span");
+        icon.classList.add("icon");
+        icon.classList.add("fa");
+        icon.classList.add(button.icon());
+        icon.classList.add("fa-xl");
+        if(button.color && button.color()){
+            icon.style.color = button.color() || "";
+        }
+        // newButtonElement.options.icon = button.icon();
+        div.appendChild(icon);
+    }
 
     function applyButtonEmphasis(button: IButton, isValid: any, newButtonElement: ASMaterialButton) {
         let boxShadow = `0 8px 8px -4px lightgray`;

@@ -2,6 +2,7 @@ import * as ko from "knockout";
 import { Phase, Transition } from "../../../Typings/api/PhasePlan/PhasePlan";
 import {  ButtonType, IButton } from "./ButtonBuilder";
 import { ASMaterialDesignButtonStyles } from "alterspective-material-design-web-components";
+import { data } from "jquery";
 
 
 export function convertTransitionToButton (transitionsForButtons: Transition[], phasePlans:Phase[], options: any) : IButton[] {
@@ -24,7 +25,7 @@ export function convertTransitionToButton (transitionsForButtons: Transition[], 
             text: ko.observable(transition.name),
             icon: ko.observable(toPhase.iconClass),
             color: ko.observable(toPhase.colour),
-            enabled: ko.observable(true),
+            enabled: options.enabled || ko.observable(true),
             visible: ko.observable(true),
             onClick: options.onClick,
             tooltip: toPhase.description || `Progress to ${toPhase.name} phase`,
@@ -35,8 +36,18 @@ export function convertTransitionToButton (transitionsForButtons: Transition[], 
             isOpen: toPhase.isOpen,
             isStart: toPhase.isStart,
             isReportable: toPhase.isReportable,
-            actionType: undefined
+            actionType: undefined,
+            data: {
+                action: "transition",
+                transition: transition
+            }
         }
+
+        if(toPhase.isRemoved === true)
+        {
+            button.enabled = ko.observable(true);
+        }
+        
         buttons.push(button);
     });
 

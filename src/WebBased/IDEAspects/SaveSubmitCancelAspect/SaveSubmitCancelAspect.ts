@@ -1,10 +1,10 @@
 
-import { IPhasePlan, Transition } from "../../../Typings/api/PhasePlan/PhasePlan";
+import { IPhasePlan, Phase, Transition } from "../../../Typings/api/PhasePlan/PhasePlan";
 import { getPhasePlan } from "./SaveSubmitCancelAspectAgent";
 import * as ko from "knockout";
 import { convertTransitionToButton } from "./TransitionToButtonConverter";
 import { ButtonType, IButton, IButtonGroup, buildButtonGroupElement } from "./ButtonBuilder";
-import { ASMaterialDesignButtonStyles } from "alterspective-material-design-web-components";
+import { ASMaterialButton, ASMaterialDesignButtonStyles } from "alterspective-material-design-web-components";
 import { ColorTranslator } from 'colortranslator';
 
 let thisWidgetSystemName = "SaveSubmitCancelAspect";
@@ -12,14 +12,20 @@ let thisWidgetSystemName = "SaveSubmitCancelAspect";
 
 //add style to head: https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css
 document.head.insertAdjacentHTML("beforeend", `<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">`);
- 
+
 
 
 interface ConfigurationFromModeller {
-    backgroundColor: string ;
+    backgroundColor: string;
     debug: Debug | null | undefined;
 }
 
+
+interface IPhaseChangeConfiguration {
+    id: string;
+    toPhase: string;
+    suppressPhaseChangeEvent: boolean;
+}
 
 export interface Host {
     model: HostModel | null;
@@ -36,7 +42,7 @@ export interface HostModel {
     title: string;
     instanceId: string;
     parentSharedoId: string;
-    id: string;
+    id: ko.Observable<string | undefined>;
 }
 
 export interface Debug {
@@ -65,20 +71,20 @@ export class SaveSubmitCancel {
     private parentSharedoId?: string;
     private toolbarContext: any;
     private burgerContext: any;
-    private sharedoId: string | null | undefined;
+    private sharedoId: ko.Observable<string | undefined> | undefined;
     private sharedoTypeSystemName: string | null | undefined;
     private reloading?: boolean;
     private model: Model;
     private isValidTemp: any;
-    private phasePlan:  ko.Observable<IPhasePlan | undefined>;
+    private phasePlan: ko.Observable<IPhasePlan | undefined>;
     hostModel: HostModel | null;
-    currentPhaseSystemName: ko.Observable<string | undefined> |  undefined;
+    currentPhaseSystemName: ko.Observable<string | undefined> | undefined;
     buttonGroupElement: HTMLElement | undefined;
     buttonGroups: IButtonGroup[] | undefined;
     saveSubmitCancelElement: any;
     configuration: ConfigurationFromModeller;
     host: Host;
-    
+
 
     constructor(element: HTMLElement, configurationWithHost: ConfigurationWithHost, baseModel: any) {
         this.monitorHandlers();
@@ -96,13 +102,13 @@ export class SaveSubmitCancel {
             },
             backgroundColor: "white"
         }
-        
+
         configurationWithHost = $.extend(true, {}, defaults, configurationWithHost);
-        this.configuration =  configurationWithHost; //just so we have a some config to use without host
+        this.configuration = configurationWithHost; //just so we have a some config to use without host
         this.blade = configurationWithHost._host.blade;
         this.hostModel = configurationWithHost._host.model;
         this.host = configurationWithHost._host;
-        
+
         this.model =
         {
             // This is referencing a standard observable item from the main model
@@ -129,111 +135,177 @@ export class SaveSubmitCancel {
         this.parentSharedoId = this.hostModel?.parentSharedoId;
         this.toolbarContext = configurationWithHost._host.toolbarContext;
         this.burgerContext = configurationWithHost._host.burgerContext;
+
         this.sharedoId = this.hostModel?.id;
         this.reloading = false;
         this.sharedoTypeSystemName = this.blade.model.sharedoTypeSystemName()
-        this.currentPhaseSystemName = this.blade.model.phaseSystemName()
+        this.currentPhaseSystemName = this.blade.model.phaseSystemName
 
+        if (this.currentPhaseSystemName !== undefined) {
+            this.currentPhaseSystemName.subscribe(() => {
+                this.log("Current Phase Changed", "red", this.currentPhaseSystemName!());
+                this.loadAndBind();
+            });
+        };
         //add backgroundColor to element css var
-        
-        
-            if(this.configuration.backgroundColor.length === 0)
-            {
-                this.configuration.backgroundColor = "white";
-            }
-            const c = new ColorTranslator(this.configuration.backgroundColor);
-            console.log("ColorTranslator:" ,c);
-            this.element.style.setProperty('--nav-bar-background', this.configuration.backgroundColor);
-            this.element.style.setProperty('--nav-bar-background-red', c.R.toString());
-            this.element.style.setProperty('--nav-bar-background-green', c.G.toString());
-            this.element.style.setProperty('--nav-bar-background-blue', c.B.toString());
-       
-            console.log("background color set to " + this.configuration.backgroundColor);
 
-       
-        
-        
 
+        if (this.configuration.backgroundColor.length === 0) {
+            this.configuration.backgroundColor = "white";
+        }
+        const c = new ColorTranslator(this.configuration.backgroundColor);
+        console.log("ColorTranslator:", c);
+        this.element.style.setProperty('--nav-bar-background', this.configuration.backgroundColor);
+        this.element.style.setProperty('--nav-bar-background-red', c.R.toString());
+        this.element.style.setProperty('--nav-bar-background-green', c.G.toString());
+        this.element.style.setProperty('--nav-bar-background-blue', c.B.toString());
+
+        console.log("background color set to " + this.configuration.backgroundColor);
         this.addDebugIfRequired();
     }
 
     handlePhasePlanChange(phasePlan: IPhasePlan | undefined) {
         this.log("Phase Plan Changed", "red", phasePlan);
-
-        if(!phasePlan) {
+        this.buttonGroups = [];
+        if (!phasePlan) {
             return;
         }
         // get all the transitions for the current phase
-        let transitions : Transition[];
+        let transitions: Transition[];
+        let currentPhase: Phase | undefined;
 
-        if(this.currentPhaseSystemName !== undefined && this.currentPhaseSystemName() !== undefined)
-        {        
-             transitions = phasePlan.transitions.filter(t => t.fromPhaseSystemName == this.currentPhaseSystemName!());
+        if (this.currentPhaseSystemName !== undefined && this.currentPhaseSystemName() !== undefined) {
+            transitions = phasePlan.transitions.filter(t => t.fromPhaseSystemName == this.currentPhaseSystemName!());
+            currentPhase = phasePlan.phases.find(p => p.systemName == this.currentPhaseSystemName!());
         }
-        else
-        {
+        else {
             let startPhase = phasePlan.phases.find(p => p.isStart == true);
-            if(!startPhase)
-            {
-                this.log("No Start Phase","red");
+            if (!startPhase) {
+                this.log("No Start Phase", "red");
                 return;
             }
             transitions = phasePlan.transitions.filter(t => t.fromPhaseSystemName == startPhase?.systemName);
         }
 
         let options = {
-            onClick : (transition: Transition) => {
-                this.log("Transition Clicked", "red", transition);
-            }
+            onClick: (element: ASMaterialButton) => {
+
+                //element.target.options.additional_params.transition.toPhaseSystemName
+
+                if(!element.options)
+                {
+                    return;
+                }
+                let data = element.options.additional_params;
+                this.log("Transition Clicked", "red", data);
+
+               
+
+                if (data.action === "transition") {
+                    let transition = data.transition as Transition;
+
+                    // if(this.sharedoId === undefined || this.sharedoId() === undefined)
+                    // {
+                     
+                        
+                        if(this.sharedoId === undefined || this.sharedoId() === undefined)
+                        {
+                            let next = () => {
+                                this.log("Save Ran for New ShareDo", "red");
+                                let trans = () =>
+                                {
+                                    this.log("Fresh ShareDo now Transition Phase", "red", transition);
+                                    this.transitionPhase(transition);
+                                }
+                                this.blade.loadSharedo(trans);
+                                return;
+                            }
+                        }
+                        
+                        let next = () => {
+                            this.log("Save Ran for Existing ShareDo", "red");
+                            this.transitionPhase(transition);
+                        }
+                         
+                        this.blade.save(false,next)
+                        // return;
+                    // }
+
+                    
+                }
+
+            },
+            enabled: this.blade.isValid,
         };
 
         //Remove existing buttons
-        if(this.buttonGroupElement)
-        {
+        if (this.buttonGroupElement) {
             this.buttonGroupElement.remove();
         }
- 
+
         this.log("Transitions to convert", "green", transitions.length);
 
-        //Create Save and Cancel Buttons
-        let systemTransitionGroup : IButtonGroup = {
-            order: 0,
-            enabled: ko.observable(true),
-            showTitle: ko.observable(true),
-            name: ko.observable("System"),
-            buttons: this.createSystemButtons()
-        };
+        let systemGroup: IButtonGroup | undefined = undefined;
+        if (!currentPhase || currentPhase.isOpen) {
+            //Create Save and Cancel Buttons
+            systemGroup = {
+                order: 0,
+                enabled: ko.observable(true),
+                showTitle: ko.observable(true),
+                name: ko.observable("System"),
+                buttons: this.createSystemButtons(options)
+            };
+            this.buttonGroups.push(systemGroup);
+        }
 
         //Create Phase Plan Buttons
-        let buttonTransitionGroup : IButtonGroup = {
+        let buttonTransitionGroup: IButtonGroup = {
             order: 1,
             enabled: this.blade.isValid,
             showTitle: ko.observable(true),
             name: ko.observable("Phase Plan"),
-            buttons: convertTransitionToButton(transitions,phasePlan.phases,options)
+            buttons: convertTransitionToButton(transitions, phasePlan.phases, options)
         };
+        this.buttonGroups.push(buttonTransitionGroup);
         //Create Button Groups and add System and Phase Plan Buttons 
-        this.buttonGroups = [buttonTransitionGroup,systemTransitionGroup];
+
+
         //Generate Buttons Group Elements
         this.buttonGroupElement = buildButtonGroupElement(this.buttonGroups, this.blade);
         //Add Buttons to the Aspect
 
         //find save-submit-cancel class in this.element
         this.saveSubmitCancelElement = this.element!.querySelector(".save-submit-cancel");
-    
-        if(!this.saveSubmitCancelElement)
-        {
+
+        if (!this.saveSubmitCancelElement) {
             this.log("Save Submit Cancel Element Not Found", "red");
             return;
         }
         this.saveSubmitCancelElement.appendChild(this.buttonGroupElement);
-        
- 
+
+
     }
 
 
 
-    private createSystemButtons() {
+    private transitionPhase(transition: Transition) {
+        let config: IPhaseChangeConfiguration = {
+            id: this.sharedoId ? this.sharedoId() || "" : "",
+            toPhase: transition.toPhaseSystemName,
+            suppressPhaseChangeEvent: false
+        };
+        Sharedo.Core.Case.SharedoActions.changePhase(config, (result: any) => {
+            this.log("Phase Change Result", "red", result);
+            if (result.closeUI) {
+                $ui.stacks.cancelAll();
+            }
+            else {
+                this.loadAndBind();
+            }
+        });
+    }
+
+    private createSystemButtons(options: any) {
         console.log(ASMaterialDesignButtonStyles.outlined)
         let x = ASMaterialDesignButtonStyles.outlined;
 
@@ -257,7 +329,10 @@ export class SaveSubmitCancel {
             isRemoved: false,
             isOpen: false,
             isStart: false,
-            isReportable: false
+            isReportable: false,
+            data: {
+                "action": "save"
+            }
         };
         retValue.push(saveButton);
 
@@ -265,7 +340,7 @@ export class SaveSubmitCancel {
             order: 2,
             text: ko.observable("Cancel"),
             onClick: () => {
-                this.saveClicked();
+                this.cancelClicked();
             },
             id: "",
             icon: ko.observable("fa-times"),
@@ -280,48 +355,74 @@ export class SaveSubmitCancel {
             isRemoved: false,
             isOpen: false,
             isStart: false,
-            isReportable: false
+            isReportable: false,
+            data: {
+                "action": "cancel"
+            }
         };
         retValue.push(cancelButton);
 
         return retValue;
     }
 
+
     /**
      * Called by the UI framework after initial creation and binding to load data
      * into it's model
      */
     loadAndBind() {
+        this.blade.loadSharedo(this.afterLoadAndBind.bind(this));
+    };
+
+    afterLoadAndBind() {
         this.log("Load And Bind");
 
-        if(!this.sharedoTypeSystemName)
-        {
+        if (!this.sharedoTypeSystemName) {
             this.log("No Sharedo Type Name");
             return;
         }
         getPhasePlan(this.sharedoTypeSystemName).then((phasePlan) => {
-            this.log("Phase Plan Loaded","red",phasePlan);
+            this.log("Phase Plan Loaded", "red", phasePlan);
             this.phasePlan(phasePlan);
 
         });
-
-    };
+    }
 
     load(model: any) {
         this.log("Load");
-    }; 
+    };
 
     reload(model: any) {
         this.log("Reload");
     };
-  
- 
+
+
+    cancelClicked() {
+        console.log("Cancel Clicked");
+        $ui.stacks.cancelAll();
+        return;
+    }
+
     saveClicked(): void {
-        // ... as in your JavaScript code
+        console.log("Save Clicked");
+        this.save();
     }
 
     save(): void {
-        // ... as in your JavaScript code
+    this.model.saveRuns++;
+    this.log("----> Running Save", 'background: #222; color: #bada55');
+    //Store the validate function in temp
+    this.isValidTemp = this.blade.isValid;
+    //wait 500 ms then run the save - to give models time to load
+   
+        //override the validate function
+        this.blade.isValid = () => { return true };
+        this.blade.save(false, () => {
+            this.loadAndBind();
+            this.saveCompleted();
+        }, false, null);
+        this.blade.isValid = this.isValidTemp;
+
     }
 
     // ... rest of your methods as in your JavaScript code
@@ -334,7 +435,8 @@ export class SaveSubmitCancel {
         // ... as in your JavaScript code
     }
 
-    saveCompleted(): void {
+    async saveCompleted() {
+        console.log("Save Completed");
         // ... as in your JavaScript code
     }
 
