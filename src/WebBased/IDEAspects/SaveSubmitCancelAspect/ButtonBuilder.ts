@@ -1,4 +1,4 @@
-import invert, { RGB, RgbArray, HexColor, BlackWhite } from 'invert-color';
+
 import { TShareDoBlade } from '../../../Typings/ShareDoJS/AddEditSharedo';
 
 
@@ -90,12 +90,13 @@ export function buildButtonsElement(buttons: IButton[], blade: TShareDoBlade): H
     let sortedButtons = buttons.sort((a, b) => a.order - b.order);
 
     sortedButtons.forEach(button => {
-        const newButtonElement = document.createElement("button");
+        const newButtonElement = document.createElement("ASMaterialButton") as ASMaterialButton;
         newButtonElement.classList.add("btn");
         newButtonElement.classList.add(button.type);
         newButtonElement.id = button.id || "button_" + button.order;
         newButtonElement.innerText = button.text;
         newButtonElement.addEventListener("click", button.onClick);
+        
         newButtonElement.disabled = !button.enabled();
         newButtonElement.style.display = button.visible ? "block" : "none";
         newButtonElement.title = button.tooltip;

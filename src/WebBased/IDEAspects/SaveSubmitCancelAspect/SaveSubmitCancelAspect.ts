@@ -6,6 +6,10 @@ import { convertTransitionToButton } from "./TransitionToButtonConverter";
 import { ButtonType, IButton, IButtonGroup, buildButtonGroupElement } from "./ButtonBuilder";
 let thisWidgetSystemName = "SaveSubmitCancelAspect";
 
+
+//add style to head: https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css
+document.head.insertAdjacentHTML("beforeend", `<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">`);
+
 export interface Configuration {
     _host: Host;
     eventToFireSaveOn: any;
