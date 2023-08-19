@@ -181,6 +181,24 @@ Aspects.AutoSave.prototype.areAllAspectsLoaded = function () {
 
 Aspects.AutoSave.prototype.saveCompleted = function () {
     this.log("Save Completed", 'background: #222; color: #bada55');
+
+    // let sdid = this.sharedoId()
+    // let as = this.blade.aspects().find(a=>a.widget.base.systemName==="Sharedo.Core.Case.FormBuilder.Widgets.Aspect");
+    // let el = $(as.widget.element);
+    // let ap = $(".alpaca-form",el).alpaca();
+    // let knownC = ap.childrenByPropertyId['pr-instruction-known-client'];
+    // let koi = window.ko.contextFor(knownC.field[0]);
+    // let data = koi.$data;
+
+    // let viewCommand = 
+    // {
+    //     "config": `{"id":"${sdid}"}`,
+    //     "invoke": "Sharedo.Core.Case.Sharedo.AddEditSharedo",
+    //     "invokeType": "panel"
+    // };
+
+    // $ui.stacks.cancelAll();
+    // $ui.nav.invoke(viewCommand);
 }
 
 // function to list and subscribe to all events

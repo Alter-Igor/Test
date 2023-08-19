@@ -3,7 +3,7 @@ import { IFormBuilderContext } from "../../../../Typings/FormBuilder/IFormBuilde
 import { IShareDoOptionSet } from "../../../../Typings/OptionSets/IShareDoOptionSet";
 import { IOdsEntity } from "../../../../Typings/WidgetsOdsEntityPicker/IOdsEntity";
 import {  getAllRoleConfigForRole, searchForClients, searchForUsers } from "../../../Common/OdsHelper";
-import { executeGet } from "../../../Common/api/api";
+import { executeGet, executePost } from "../../../Common/api/api";
 import { FormBuilder } from "../../../ModuleLoader/AlphacaAdapter";
 import { IExpertMatter } from "../Typings/IExpertMatterData";
 
@@ -28,6 +28,8 @@ export function runMe(context: IFormBuilderContext) : boolean {
     
     if(context.workItemContext.id() !== undefined)
     {
+        ensureReadOnlyFields(context);
+       // validateTempMatterNumber(context);
         let exit = true;
         //if the work item is new or in draft dont exit
         if(context.workItemContext?.phaseName()?.toLowerCase().includes("draft") || !context.workItemContext?.phaseName())
@@ -45,13 +47,15 @@ export function runMe(context: IFormBuilderContext) : boolean {
         }
     }
 
+    
     (window as any).aspectDebuger = (window as any).aspectDebuger || {};
     (window as any).aspectDebuger.matterDetailsFormBuilder = matterDetails;
 
-    hideShowMatterDetails(matterDetails, expertMatterNumber, pipelineMatter);
+    hideShowMatterDetails(context,matterDetails, expertMatterNumber, pipelineMatter);
     //add a change event to the expert-matter-number
     addEventHandlers(context, matterDetails, expertMatterNumber, pipelineMatter);
-    generateTempMatterNumber(context);
+    //generateTempMatterNumber(context);
+    validateIfPipelineMatter(context,matterDetails);
 
     $ui.events.broadcast("script.matterDetailsLoaded", context);
     return true;
@@ -83,7 +87,7 @@ function addEventHandlers(context: IFormBuilderContext, matterDetails: FormBuild
     //add event handlet for expert-matter-number changed
     context.form.fieldsById[enumFields.expertMatterNumber]?.on("change", function (this: any, ev: any) {
         // hide or show the matter details field
-        hideShowMatterDetails(matterDetails, expertMatterNumber, pipelineMatter);
+        hideShowMatterDetails(context,matterDetails, expertMatterNumber, pipelineMatter);
         // update the matter details field
         updateMatterDetails(context,matterDetails, expertMatterNumber, pipelineMatter);
     });
@@ -91,7 +95,7 @@ function addEventHandlers(context: IFormBuilderContext, matterDetails: FormBuild
     //add event handlet for pipeline-matter changed
     context.form.fieldsById[enumFields.pipelineMatter]?.on("change", function (this: any, ev: any) {
         // hide or show the matter details field
-        hideShowMatterDetails(matterDetails, expertMatterNumber, pipelineMatter);
+        hideShowMatterDetails(context,matterDetails, expertMatterNumber, pipelineMatter);
         // update the matter details field
         updateMatterDetails(context,matterDetails, expertMatterNumber, pipelineMatter); 
     });
@@ -121,12 +125,12 @@ function addEventHandlers(context: IFormBuilderContext, matterDetails: FormBuild
 }
 
 // hide or show the matter details field
-function hideShowMatterDetails(matterDetails: FormBuilder , expertMatterNumber: FormBuilder, pipelineMatter: FormBuilder) {
-    setMatterDetailsState(matterDetails, pipelineMatter.getValue());
+function hideShowMatterDetails(context: IFormBuilderContext,matterDetails: FormBuilder , expertMatterNumber: FormBuilder, pipelineMatter: FormBuilder) {
+    setMatterDetailsState(context,matterDetails, pipelineMatter.getValue());
 }
 
 // make all child properties readonly
-function setMatterDetailsState(matterDetails: FormBuilder, status: boolean = true) {
+function setMatterDetailsState(context: IFormBuilderContext,matterDetails: FormBuilder, status: boolean = true) {
     if(!matterDetails.fields) throw new Error("No fields");
     if(!matterDetails.fieldsById) throw new Error("No fieldsById");
     // get all the child properties
@@ -138,6 +142,10 @@ function setMatterDetailsState(matterDetails: FormBuilder, status: boolean = tru
 
     // set the readonly status of the matter details sub area
     matterDetails.fieldsById[enumMatterDetailFields.matterDetailsIbLastChecked]?.hidden(true);
+
+    ensureReadOnlyFields(context);
+
+
 }
 
 // clear all the child properties of the matter details sub area of the form builder
@@ -317,7 +325,8 @@ function generateTempMatterNumber(context: IFormBuilderContext)
     let minute = date.getMinutes();
     let second = date.getSeconds();
     let millisecond = date.getMilliseconds();
-    let tempMatterNumber = `T${year}${month}${day}${hour}${minute}${second}${millisecond}`;
+   // let tempMatterNumber = `T${year}${month}${day}${hour}${minute}${second}${millisecond}`;
+   let tempMatterNumber = `T[${year}]`;
     context.form?.fieldsById[enumFields.tempMatterNumber]?.setValue(tempMatterNumber);
 }
 
@@ -368,3 +377,116 @@ function getPartnerOdsPicker(context: IFormBuilderContext) {
 function getClientOdsPicker(context: IFormBuilderContext) {
     return getAllRoleConfigForRole(context.blade, clientRoleSystemName);
 }
+
+function validateIfPipelineMatter(context: IFormBuilderContext,matterDetails: FormBuilder)
+{
+    //log color
+    console.log("%c [MatterDetails] validateIfPipelineMatter", "color: #green");
+    console.log("%c [MatterDetails] context.workItemContext()", " color: #green", context.workItemContext);
+
+    if(context.workItemContext.sharedoTypeSystemName()?.includes("pipeline") !== true)
+    {
+        return;
+    }
+    
+    let pipelineFormField = context.form?.fieldsById[enumFields.pipelineMatter];
+  
+    if(pipelineFormField)
+    {    
+        //ensure pipleine matter is readonly
+        
+        console.log("%c [MatterDetails] pipelineFormField.setValue(true)", " color: #green");   
+        pipelineFormField.setValue(true);
+    }
+
+      
+
+
+}
+
+function ensureReadOnlyFields(context: IFormBuilderContext)
+{
+    let pipelineFormField = context.form?.fieldsById[enumFields.pipelineMatter];
+    if(pipelineFormField)
+    {
+        pipelineFormField.readonly(true);
+        pipelineFormField.hidden(true);
+    }
+}
+
+
+// function validateTempMatterNumber(context: IFormBuilderContext) {
+
+//     //log color
+//     console.log("%c [MatterDetails] validateTempMatterNumber", "background: #222; color: #bada55");
+//     //exit is still new and matter not saved
+//     if(context.workItemContext.id()===undefined)
+//     {
+//         return;
+//     }
+
+//     //exit if the temp matter number is set
+//     let tempMatterNumber = context.form?.fieldsById[enumFields.tempMatterNumber]?.getValue();
+//     console.log("%c [MatterDetails] tempMatterNumber", "background: #222; color: #bada55", tempMatterNumber);
+//     if(tempMatterNumber != undefined && tempMatterNumber.startsWith("T["))
+//     {
+//         return;
+//     }
+
+//     //run every 500ms to check for a temp matter number
+//     let interval = setInterval(async () => {
+//         console.log("validateTempMatterNumber");
+//         let tempMatterNumber = await getPipelineMatterNumber(context.workItemContext.id());
+//         if(tempMatterNumber != undefined && tempMatterNumber.length > 0)
+//         {
+//             context.form?.fieldsById[enumFields.tempMatterNumber]?.setValue(tempMatterNumber);
+//             clearInterval(interval);
+//             return;
+//         }
+        
+//     },500);
+
+
+// }
+
+// async function getPipelineMatterNumber(id:string) : Promise<string>
+// {
+//     let api = `/api/v1/public/workItem/findByQuery`;
+//     let data = {
+//         "search": {
+//           "workItemIds": [
+//             id
+//           ]
+//         },
+//         "enrich": [
+    
+//                   {
+//                       "path": "form-custom-alt-ediscovery-instruction-matter-details.temp-matter-number"
+//                   }
+//         ]};
+
+//     return executePost<TGetPipelineMatterNumberResponse>(api,data).then((data) => {
+//          console.log("getPipelineMatterNumber",data);
+//          let retValue : string = data.results[0].data["form-custom-alt-ediscovery-instruction-matter-details.temp-matter-number"];
+       
+//         return retValue;
+//     });
+
+
+// }
+
+// type TGetPipelineMatterNumberResponse = {
+//         "totalCount": 1,
+//         "tookMs": 71,
+//         "results": [
+//             {
+//                 "score": 0,
+//                 "id": "4dd70e3f-b294-4479-902e-b057009e3e63",
+//                 "data": {
+//                     "form-custom-alt-ediscovery-instruction-matter-details.temp-matter-number": "T[2023]000007",
+//                     "title": "Gareth Jackson Ltd - ",
+//                     "phase.name": "Draft"
+//                 }
+//             }
+//         ]
+//     }

@@ -6,6 +6,7 @@ export type TChildrenByPropertyId = {
 };
 
 export interface IAlpacaField {
+    _events: { change?: () => void; };
     name: string ;
     parent: IAlpacaField;
     childrenByPropertyId: TChildrenByPropertyId ;

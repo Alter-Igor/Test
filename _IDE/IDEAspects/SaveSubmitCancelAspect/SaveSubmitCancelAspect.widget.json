@@ -1,0 +1,45 @@
+{
+    "id": "Aspects.SaveSubmitCancel",
+    "priority": 6000,
+    "designer":
+    {
+        "allowInPortalDesigner": false,
+        "allowInSharedoPortalDesigner": false,
+        "allowAspectAdapter": true,  
+        "title": "Save Submit Cancel Aspect",
+        "icon": "fa-cog",
+        "description": "Adds a save, submit and cancel button to the bottom of the form.",
+        "categories": 
+        [
+        ],
+        "isConfigurable": true,
+        "configurationWidget": null,
+        "defaultConfigurationJson": { 
+            "debug":
+            {
+                "enabled":false,
+                "logToConsole":false,
+                "showEvents":false,
+                "showInAspect":false
+            }
+    } 
+    },
+    "scripts":
+    [
+        "/_ideFiles/IDEAspects/SaveSubmitCancelAspect/SaveSubmitCancelAspect.js"
+    ],
+    "styles":
+    [
+        "/_ideFiles/IDEAspects/SaveSubmitCancelAspect/SaveSubmitCancelAspect.css"
+    ],
+    "templates":
+    [
+        "/_ideFiles/IDEAspects/SaveSubmitCancelAspect/SaveSubmitCancelAspect.html"
+    ],
+    "menuTemplates":
+    [
+    ],
+    "components":
+    [
+    ]
+}

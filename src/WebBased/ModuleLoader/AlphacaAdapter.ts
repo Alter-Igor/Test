@@ -55,6 +55,11 @@ export class FormBuilder {
     
     public setValue(value: any) {
         this.alpacaForm.setValue(value);
+      
+        if(this.alpacaForm._events.change){
+            this.alpacaForm._events.change();
+        }
+        this.alpacaForm.refresh();
     }
 
     public isValid(): boolean {

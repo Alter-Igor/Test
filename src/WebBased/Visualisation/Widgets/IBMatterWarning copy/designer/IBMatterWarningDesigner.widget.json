@@ -1,0 +1,27 @@
+{
+    "id": "eDiscovery.IBMatterWarningDesigner",
+    "priority": 6000,
+    "designer":
+    {
+        "allowInPortalDesigner": false,
+        "allowInSharedoPortalDesigner": false
+    },
+    "scripts":
+    [
+        "/_ideFiles/Visualisation/Widgets/IBMatterWarning/designer/IBMatterWarningDesigner.js"
+    ],
+    "styles":
+    [
+        "/_ideFiles/Visualisation/Widgets/IBMatterWarning/designer/IBMatterWarningDesigner.css"
+    ],
+    "templates":
+    [
+        "/_ideFiles/Visualisation/Widgets/IBMatterWarning/designer/IBMatterWarningDesigner.html"
+    ],
+    "menuTemplates":
+    [
+    ],
+    "components":
+    [
+    ]
+}

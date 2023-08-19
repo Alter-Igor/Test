@@ -1,0 +1,22 @@
+{
+    "id": "Blades.PreInstruction",
+    "priority": 6000, 
+    "width": 600,
+    "scripts":
+    [
+        "/_ideFiles/Blades/PreInstruction/PreInstruction.js"
+    ],
+    "styles":
+    [
+        "/_ideFiles/Blades/PreInstruction/PreInstruction.css"
+    ],
+    "templates":
+    [
+        "/_ideFiles/Blades/PreInstruction/PreInstruction.html"
+    ],
+    "components":
+    [
+        "Sharedo.UI.Framework.Components.RibbonBar",
+        "Sharedo.Core.Case.FormBuilder.Widgets.Aspect"
+    ]
+}

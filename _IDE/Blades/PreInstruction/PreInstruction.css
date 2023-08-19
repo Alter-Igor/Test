@@ -1,0 +1,63 @@
+div.Blades-PreInstruction
+{
+}
+
+
+.alpaca-field-object .formbuilder-select + .chosen-container {
+    width: 100% !important;
+}
+
+.alpaca-field-object .alpaca-icon-required.glyphicon-star {
+    display: none;
+}
+
+.alpaca-message {
+    padding: 0 15px;
+}
+
+.alpaca-indent {
+    position: relative;
+    left: 20px;
+}
+
+.alpaca-field.alpaca-field-object
+{
+    border: none;
+    padding: 0px;
+}
+
+legend.alpaca-container-label
+{
+    font-size: 1em;
+    font-weight: bold;
+    border: none;
+    background-color: #ddd;
+    text-transform: uppercase;
+    padding: 5px 8px;
+    margin: 15px 0px;
+    width: unset;
+}
+
+    .alpaca-field-object.alpaca-top legend.alpaca-container-label + div.alpaca-container
+    {
+        margin: -15px 0px 15px 0px;
+        padding: 5px 0px 5px 15px;
+        border-left: 10px solid #ddd;
+    }
+
+.alpaca-control.checkbox
+{
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.alpaca-field-memo textarea {
+    resize: vertical;
+}
+
+.formbuilder-select-container .input-group-addon {
+    padding: 0;
+}
+.formbuilder-select-container .input-group-addon .fa {
+    width: 30px;
+}

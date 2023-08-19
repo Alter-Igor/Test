@@ -26,7 +26,7 @@ module.exports = [
       path: path.join(__dirname, outputLocation),
       filename: "[name].js",
     },
-    mode: 'production', 
+    mode: 'development', 
     devtool: 'inline-source-map',
     module: {
       rules: [

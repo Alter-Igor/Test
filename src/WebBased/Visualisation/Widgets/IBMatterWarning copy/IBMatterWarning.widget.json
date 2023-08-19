@@ -1,0 +1,36 @@
+{
+    "id": "eDiscovery.IBMatterWarning",
+    "priority": 6000,
+    "designer": 
+    {
+        "allowInPortalDesigner": false,
+        "allowInSharedoPortalDesigner": true,
+        "title": "IBMatterWarning",
+        "icon": "fa-cog",
+        "description": "Information Barrier Warning",
+        "categories":
+        [
+            "eDiscovery"
+        ],
+        "isConfigurable": true,
+        "configurationWidget": "eDiscovery.IBMatterWarningDesigner"
+    },
+    "scripts":
+    [
+        "/_ideFiles/Visualisation/Widgets/IBMatterWarning/IBMatterWarning.js"
+    ],
+    "styles":
+    [
+        "/_ideFiles/Visualisation/Widgets/IBMatterWarning/IBMatterWarning.css"
+    ],
+    "templates":
+    [
+        "/_ideFiles/Visualisation/Widgets/IBMatterWarning/IBMatterWarning.html"
+    ],
+    "menuTemplates":
+    [
+    ],
+    "components":
+    [
+    ]
+}
