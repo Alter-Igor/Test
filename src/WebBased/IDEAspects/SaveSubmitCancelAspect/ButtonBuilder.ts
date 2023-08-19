@@ -18,7 +18,8 @@ export interface IButton {
     visible: ko.Observable<boolean>;
     onClick: any;
     tooltip: string;
-    type: ko.Observable<any>; // primary, secondary, destructive, save added to class
+    materialDesignButtonType: ko.Observable<any>; // primary, secondary, destructive, save added to class
+    actionType: ButtonType | undefined; // save, cancel, primary, secondary, destructive
     color: ko.Observable<string | undefined> | undefined;  // color of the button for emphasis
     isOptimumPath: boolean; // is this button on the optimum path for css
     isSystemClosedPhase: boolean; // is this button on a closed phase for css
@@ -95,11 +96,20 @@ export function buildButtonsElement(buttons: IButton[], blade: TShareDoBlade): H
         (window as any).newButtonElement = newButtonElement;
         (window as any).DASMaterialButton = ASMaterialButton;
         
-        newButtonElement.options.style = button.type();
-        button.type.subscribe((type) => {
+        newButtonElement.options.style = button.materialDesignButtonType();
+        button.materialDesignButtonType.subscribe((type) => {
             newButtonElement.options.style = type;
         });
         console.log(`${button.text()}.options.style :`, newButtonElement.options.style);
+
+       if(button.actionType)
+       {
+        newButtonElement.classList.add(button.actionType);
+        if(button.actionType === ButtonType.save)
+        {
+            newButtonElement.options.elevation = 21;
+        }
+       } 
 
         newButtonElement.options.clicked = button.onClick;
         newButtonElement.options.disabled = !button.enabled();
@@ -126,7 +136,9 @@ export function buildButtonsElement(buttons: IButton[], blade: TShareDoBlade): H
 
         newButtonElement.options.disabled = !button.enabled();
         button.enabled.subscribe((enabled) => {
+            console.log(`${button.text} enabled.subscribe enabled :`, enabled);
              newButtonElement.options.disabled = !enabled;
+             
             // applyButtonEmphasis(button, enabled, newButtonElement);
         });
 

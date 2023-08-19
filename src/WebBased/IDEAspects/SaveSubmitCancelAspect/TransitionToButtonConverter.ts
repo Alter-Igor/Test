@@ -1,6 +1,6 @@
 import * as ko from "knockout";
 import { Phase, Transition } from "../../../Typings/api/PhasePlan/PhasePlan";
-import {  IButton } from "./ButtonBuilder";
+import {  ButtonType, IButton } from "./ButtonBuilder";
 import { ASMaterialDesignButtonStyles } from "alterspective-material-design-web-components";
 
 
@@ -22,19 +22,20 @@ export function convertTransitionToButton (transitionsForButtons: Transition[], 
             id: transition.systemName,
             order: i,
             text: ko.observable(transition.name),
-            icon: ko.observable(toPhase.iconClass) ,
+            icon: ko.observable(toPhase.iconClass),
             color: ko.observable(toPhase.colour),
             enabled: ko.observable(true),
             visible: ko.observable(true),
             onClick: options.onClick,
             tooltip: toPhase.description || `Progress to ${toPhase.name} phase`,
-            type: ko.observable(getButtonType(transition, toPhase)),
+            materialDesignButtonType: ko.observable(getButtonType(transition, toPhase)),
             isOptimumPath: transition.isOptimumPath,
             isSystemClosedPhase: toPhase.isSystemClosedPhase,
             isRemoved: toPhase.isRemoved,
             isOpen: toPhase.isOpen,
             isStart: toPhase.isStart,
-            isReportable: toPhase.isReportable
+            isReportable: toPhase.isReportable,
+            actionType: undefined
         }
         buttons.push(button);
     });

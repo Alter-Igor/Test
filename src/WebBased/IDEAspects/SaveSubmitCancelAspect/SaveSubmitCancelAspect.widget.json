@@ -15,6 +15,7 @@
         "isConfigurable": true,
         "configurationWidget": null,
         "defaultConfigurationJson": { 
+            "backgroundColour": "#3D4852", //"#3D4852" for ShareDo default or empty for transparent,
             "debug":
             {
                 "enabled":false,

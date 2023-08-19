@@ -1,83 +1,88 @@
-.save-submit-cancel
-{
- 
-
-}
-
-.save-submit-cancel .button-groups
-{
-    display: flex;
-    justify-content: center;
-    align-items: stretch;
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    /* background-color:#3D4852; */
-    flex-direction: column;
-    align-content: stretch;
-    flex-wrap: wrap;
-}
-
-.save-submit-cancel .button-groups .buttons
-{
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    width: 100%;
-    padding: 10px;
-    border: 0.1px solid var(--color-primary);
-    /* background-color:#3D4852; */
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-content: space-between;
-    
-}
-
-
-.save-submit-cancel .button-groups .buttons as-material-button
-{
-    margin:10px;
-    flex-grow: 1;
+:root {
+  --nav-bar-background: transparent;
+  ---nav-bar-background-red: 28;
+  ---nav-bar-background-green: 150;
+  ---nav-bar-background-blue: 130;
+  /* --mdc-theme-secondary: var(--color-primary-on-dark-bg); */
+  /* --mdc-theme-primary: var(--color-primary); */
+  --accessible-color: calc(((((var(---nav-bar-background-red) * 299) + (var(---nav-bar-background-green) * 587) + (var(---nav-bar-background-blue) * 114)) / 1000) - 128) * -1000);
 }
 
 
 
-
-
-.save-submit-cancel .button-groups .buttons .toPhaseRemoved
-{
-  background-color: var(--color-danger);
+.save-submit-cancel {
+  background-color: var(--nav-bar-background);
 }
 
-.save-submit-cancel .button-groups .buttons .toPhaseOptimumPath
-{
-  background-color: var(--color-success);
+.save-submit-cancel .button-groups {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  /* background-color:#3D4852; */
+  flex-direction: column;
+  align-content: stretch;
+  flex-wrap: wrap;
 }
 
-.save-submit-cancel .button-groups .buttons .save
-{
-  background-color: transparent;
-  color: var(--color-success)
+.save-submit-cancel .button-groups .buttons {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+  padding: 10px;
+  border: 0.1px solid var(--color-primary);
+  /* background-color:#3D4852; */
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-content: space-between;
+
 }
 
-.save-submit-cancel .button-groups .buttons .save:hover
-{
 
-  border: 1px solid var(--color-success);
+.save-submit-cancel .button-groups .buttons as-material-button {
+  margin: 10px;
+  flex-grow: 1;
+}
+
+
+.save-submit-cancel .button-groups .buttons as-material-button::part(button) {
+  /* color: rgb(var(--accessible-color), var(--accessible-color), var(--accessible-color)); */
+}
+
+
+.save-submit-cancel .button-groups .buttons as-material-button.save::part(button) {
+  /* border-color: color-mix(in srgb, var(--color-success), #fff 20%); */
+}
+
+
+.save-submit-cancel .button-groups .buttons as-material-button.toPhaseRemoved::part(button) {
+
+  /* background-color: color-mix(in srgb, var(--color-danger), #fff 20%); */
+  /* color: color-mix(in oklab, var(--color-danger) 25%, black); */
+}
+
+.save-submit-cancel .button-groups .buttons as-material-button.toPhaseOptimumPath::part(button) {
+  /* background-color: color-mix(in srgb, var(--color-success), #fff 20%); */
+  /* color: color-mix(in oklab, var(--color-success) 25%, black); */
+}
+
+.save-submit-cancel .button-groups .buttons .save:hover {
+
+  /* border: 1px solid var(--color-success); */
 
 }
 
-.save-submit-cancel .button-groups .buttons .cancel
-{
-  background-color: transparent;
-  border: grey;
-  color: var(--color-primary-on-dark-bg)
+.save-submit-cancel .button-groups .buttons .cancel {
+  /* background-color: transparent; */
+  /* border: grey; */
+  /* color: var(--color-primary-on-dark-bg) */
 }
 
-.save-submit-cancel .button-groups .buttons .cancel:hover
-{
+.save-submit-cancel .button-groups .buttons .cancel:hover {
 
-  border: 1px solid var(--color-primary-on-dark-bg);
-  color: var(--color-primary-on-dark-bg)
+  /* border: 1px solid var(--color-primary-on-dark-bg); */
+  /* color: var(--color-primary-on-dark-bg) */
 }
- */

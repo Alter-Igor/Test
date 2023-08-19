@@ -21,6 +21,7 @@
     "@types/knockout.validation": "^0.0.39",
     "@types/vscode": "^1.80.0",
     "alterspective-material-design-web-components": "file:../Material-Design-Web-Components",
+    "colortranslator": "^3.0.2",
     "font-awesome": "^4.7.0",
     "knockout": "^3.5.1",
     "knockout.validation": "^2.0.4",
