@@ -17,6 +17,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@material/button": "^14.0.0",
     "@types/knockout.validation": "^0.0.39",
     "@types/vscode": "^1.80.0",
     "complementary-colors": "^1.0.6",
