@@ -11,7 +11,7 @@
 
 
 .save-submit-cancel {
-  background-color: var(--nav-bar-background);
+  /* background-color: var(--nav-bar-background); */
 }
 
 .save-submit-cancel .button-groups {
@@ -54,12 +54,14 @@
 
 
 .save-submit-cancel .button-groups .buttons as-material-button.save::part(button) {
-  /* border-color: color-mix(in srgb, var(--color-success), #fff 20%); */
+  border-color: color-mix(in srgb, var(--color-success), #fff 20%);
 }
 
 
 .save-submit-cancel .button-groups .buttons as-material-button.toPhaseRemoved::part(button) {
+  border-color: color-mix(in srgb, var(--color-danger), #fff 20%);
 
+  
   /* background-color: color-mix(in srgb, var(--color-danger), #fff 20%); */
   /* color: color-mix(in oklab, var(--color-danger) 25%, black); */
 }

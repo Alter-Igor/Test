@@ -1,5 +1,5 @@
 import { TShareDoBlade } from "../../../Typings/ShareDoJS/AddEditSharedo";
-import {ASMaterialButton, ASMaterialDesignButtonStyles} from "alterspective-material-design-web-components"
+import { ASMaterialButton, ASMaterialDesignButtonStyles } from "alterspective-material-design-web-components"
 export interface IButtonGroup {
     name: ko.Observable<string>;
     showTitle: ko.Observable<boolean>;
@@ -7,13 +7,13 @@ export interface IButtonGroup {
     order: number;
     buttons: IButton[];
 }
- 
+
 export interface IButton {
     group?: IButtonGroup; // group buttons together
     id: string;
     order: number; // order of the button in the group
-    text:  ko.Observable<string>;
-    icon:  ko.Observable<string>;
+    text: ko.Observable<string>;
+    icon: ko.Observable<string>;
     enabled: ko.Observable<boolean>;
     visible: ko.Observable<boolean>;
     onClick: any;
@@ -59,7 +59,7 @@ export function buildButtonGroupElement(buttonGroups: IButtonGroup[], blade: TSh
     sortedButtonGroups.forEach(group => {
         const groupElement = document.createElement("div");
         let cssGroupName = group.name().replace(/[^a-zA-Z0-9]/g, "");
-        
+
         groupElement.classList.add("button-group");
         groupElement.classList.add(cssGroupName);
         group.enabled.subscribe((enabled) => {
@@ -74,7 +74,7 @@ export function buildButtonGroupElement(buttonGroups: IButtonGroup[], blade: TSh
 }
 
 export function buildButtonsElement(buttons: IButton[], blade: TShareDoBlade): HTMLElement {
-    
+
     const buttonsElement = document.createElement("div");
     buttonsElement.classList.add("buttons");
     if (!buttons || buttons.length === 0) {
@@ -89,27 +89,25 @@ export function buildButtonsElement(buttons: IButton[], blade: TShareDoBlade): H
     let sortedButtons = buttons.sort((a, b) => a.order - b.order);
 
     sortedButtons.forEach(button => {
-        
+
         const newButtonElement = document.createElement("as-material-button") as ASMaterialButton;
 
         console.log("newButtonElement as as-material-button :", newButtonElement);
         (window as any).newButtonElement = newButtonElement;
         (window as any).DASMaterialButton = ASMaterialButton;
-        
+
         newButtonElement.options.style = button.materialDesignButtonType();
         button.materialDesignButtonType.subscribe((type) => {
             newButtonElement.options.style = type;
         });
         console.log(`${button.text()}.options.style :`, newButtonElement.options.style);
 
-       if(button.actionType)
-       {
-        newButtonElement.classList.add(button.actionType);
-        if(button.actionType === ButtonType.save)
-        {
-            newButtonElement.options.elevation = 21;
+        if (button.actionType) {
+            newButtonElement.classList.add(button.actionType);
+            if (button.actionType === ButtonType.save) {
+                newButtonElement.options.elevation = 3;
+            }
         }
-       } 
 
         newButtonElement.options.clicked = button.onClick;
         newButtonElement.options.disabled = !button.enabled();
@@ -124,7 +122,7 @@ export function buildButtonsElement(buttons: IButton[], blade: TShareDoBlade): H
             newButtonElement.options.label = button.text();
         });
         newButtonElement.addEventListener("click", button.onClick);
-        
+
         // newButtonElement.options.disabled = !button.enabled();
         newButtonElement.style.display = button.visible() ? "block" : "none";
         button.visible.subscribe((visible) => {
@@ -137,8 +135,8 @@ export function buildButtonsElement(buttons: IButton[], blade: TShareDoBlade): H
         newButtonElement.options.disabled = !button.enabled();
         button.enabled.subscribe((enabled) => {
             console.log(`${button.text} enabled.subscribe enabled :`, enabled);
-             newButtonElement.options.disabled = !enabled;
-             
+            newButtonElement.options.disabled = !enabled;
+
             // applyButtonEmphasis(button, enabled, newButtonElement);
         });
 
