@@ -15,7 +15,7 @@ document.head.insertAdjacentHTML("beforeend", `<link rel="stylesheet" href="http
 
 
 
-interface ConfigurationFromModeller {
+export interface ISaveSubmitCancel_ConfigurationFromModeller {
     backgroundColor: string;
     debug: Debug | null | undefined;
 }
@@ -36,7 +36,7 @@ export interface Host {
     _host: Host;
 }
 
-type ConfigurationWithHost = ConfigurationFromModeller & Host;
+type ConfigurationWithHost = ISaveSubmitCancel_ConfigurationFromModeller & Host;
 
 export interface HostModel {
     title: string;
@@ -82,7 +82,7 @@ export class SaveSubmitCancel {
     buttonGroupElement: HTMLElement | undefined;
     buttonGroups: IButtonGroup[] | undefined;
     saveSubmitCancelElement: any;
-    configuration: ConfigurationFromModeller;
+    configuration: ISaveSubmitCancel_ConfigurationFromModeller;
     host: Host;
 
 
@@ -91,7 +91,7 @@ export class SaveSubmitCancel {
         this.firedEvents = [];
         this.monitoredHandlers = [];
         this.readyForSave = false;
-        let defaults: ConfigurationFromModeller =
+        let defaults: ISaveSubmitCancel_ConfigurationFromModeller =
         {
             // Aspect widget config parameters
             debug: {
@@ -271,7 +271,7 @@ export class SaveSubmitCancel {
 
 
         //Generate Buttons Group Elements
-        this.buttonGroupElement = buildButtonGroupElement(this.buttonGroups, this.blade);
+        this.buttonGroupElement = buildButtonGroupElement(this.buttonGroups, this.blade, this.configuration);
         //Add Buttons to the Aspect
 
         //find save-submit-cancel class in this.element
@@ -337,8 +337,8 @@ export class SaveSubmitCancel {
         retValue.push(saveButton);
 
         let cancelButton: IButton = {
-            order: 2,
-            text: ko.observable("Cancel"),
+            order: 0,
+            text: ko.observable("Close Blade"),
             onClick: () => {
                 this.cancelClicked();
             },
@@ -346,7 +346,7 @@ export class SaveSubmitCancel {
             icon: ko.observable("fa-times"),
             enabled: ko.observable(true),
             visible: ko.observable(true),
-            tooltip: "Cancel the current record",
+            tooltip: "Close the blade (without saving)",
             actionType: ButtonType.cancel,
             materialDesignButtonType: ko.observable(ASMaterialDesignButtonStyles.text),
             color: undefined,

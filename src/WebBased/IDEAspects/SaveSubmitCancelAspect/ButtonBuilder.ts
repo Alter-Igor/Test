@@ -1,5 +1,7 @@
 import { TShareDoBlade } from "../../../Typings/ShareDoJS/AddEditSharedo";
-import { ASMaterialButton, ASMaterialDesignButtonStyles, MaterialDesignIcons } from "alterspective-material-design-web-components"
+import { ASMaterialButton } from "alterspective-material-design-web-components"
+import { ISaveSubmitCancel_ConfigurationFromModeller } from "./SaveSubmitCancelAspect";
+
 export interface IButtonGroup {
     name: ko.Observable<string>;
     showTitle: ko.Observable<boolean>;
@@ -51,7 +53,7 @@ function ensureButtonIds(buttons: IButton[]) {
  * @param blade 
  * @returns 
  */
-export function buildButtonGroupElement(buttonGroups: IButtonGroup[], blade: TShareDoBlade): HTMLElement {
+export function buildButtonGroupElement(buttonGroups: IButtonGroup[], blade: TShareDoBlade, configuration: ISaveSubmitCancel_ConfigurationFromModeller): HTMLElement {
     let buttonGroupElement = document.createElement("div");
 
     buttonGroupElement.classList.add("button-groups");
@@ -66,7 +68,7 @@ export function buildButtonGroupElement(buttonGroups: IButtonGroup[], blade: TSh
         group.enabled.subscribe((enabled) => {
             groupElement.classList.toggle("disabled", !enabled);
         });
-        let buttons = buildButtonsElement(group.buttons, blade);
+        let buttons = buildButtonsElement(group.buttons, blade,configuration);
         groupElement.appendChild(buttons);
         buttonGroupElement.appendChild(groupElement);
     });
@@ -74,7 +76,7 @@ export function buildButtonGroupElement(buttonGroups: IButtonGroup[], blade: TSh
     return buttonGroupElement;
 }
 
-export function buildButtonsElement(buttons: IButton[], blade: TShareDoBlade): HTMLElement {
+export function buildButtonsElement(buttons: IButton[], blade: TShareDoBlade,  configuration: ISaveSubmitCancel_ConfigurationFromModeller): HTMLElement {
 
     const buttonsElement = document.createElement("div");
     buttonsElement.classList.add("buttons");
@@ -90,64 +92,34 @@ export function buildButtonsElement(buttons: IButton[], blade: TShareDoBlade): H
     let sortedButtons = buttons.sort((a, b) => a.order - b.order);
 
     sortedButtons.forEach(button => {
-
-        const newButtonElement = document.createElement("as-material-button") as ASMaterialButton;
-
-        console.log("newButtonElement as as-material-button :", newButtonElement);
-        (window as any).newButtonElement = newButtonElement;
-        (window as any).DASMaterialButton = ASMaterialButton;
-
-        newButtonElement.options.style = button.materialDesignButtonType();
-        button.materialDesignButtonType.subscribe((type) => {
-            newButtonElement.options.style = type;
-        });
-        console.log(`${button.text()}.options.style :`, newButtonElement.options.style);
-
-        if (button.actionType) {
-            newButtonElement.classList.add(button.actionType);
-            if (button.actionType === ButtonType.save) {
-                newButtonElement.options.elevation = 3;
-            }
+        
+        if((button.actionType as any) === "neveravalue")
+        {
+            //this code tricks webpack into including the component
+            //this code never runs
+            let x = new ASMaterialButton();
         }
-
+        
+        const newButtonElement = document.createElement("as-material-button") as ASMaterialButton;
+        // if(configuration.debug?.enabled){
+            (window as any).newButtonElement = newButtonElement; //for debug only
+        // }
+        addButtonCSSForPhaseToBooleanOptions(button, newButtonElement);
+        addButtonStyle(newButtonElement, button);
+        addButtonCssForButtonActionType(button, newButtonElement);
+        generateToolTipElement(button, newButtonElement);
+        addButtonTextWithSubscription(newButtonElement, button);
+        setButtonVisabilityWithSubscription(newButtonElement, button);
+        setButtonIconWithSubscription(addIcon, button, newButtonElement);
+        setButtonEnabledStateWithSubscription(newButtonElement, button);
+        
         newButtonElement.options.clicked = button.onClick;
         newButtonElement.options.disabled = !button.enabled();
-        newButtonElement.options.tooltip = button.tooltip;
-
+        //Add additional params to the button which we can retrieve in the click event
         newButtonElement.options.additional_params = button.data;
-
-        // newButtonElement.classList.add("asbtn");
-        // newButtonElement.classList.add(button.type); moved to option style
         newButtonElement.id = button.id || "button_" + button.order;
-
-        newButtonElement.options.label = button.text();
-        button.text.subscribe((text) => {
-            newButtonElement.options.label = button.text();
-        });
         newButtonElement.addEventListener("click", button.onClick);
-
-        // newButtonElement.options.disabled = !button.enabled();
-        newButtonElement.style.display = button.visible() ? "block" : "none";
-        button.visible.subscribe((visible) => {
-            newButtonElement.style.display = visible ? "block" : "none";
-        });
-        // newButtonElement.title = button.tooltip;
-
-        applyButtonIsClasses(button, newButtonElement);
-
-        newButtonElement.options.disabled = !button.enabled();
-        button.enabled.subscribe((enabled) => {
-            console.log(`${button.text} enabled.subscribe enabled :`, enabled);
-            newButtonElement.options.disabled = !enabled;
-
-            // applyButtonEmphasis(button, enabled, newButtonElement);
-        });
-
-        
-        addIcon(button, newButtonElement);
-        button.icon.subscribe((icon) => {
-            addIcon(button, newButtonElement);
-        });
+    
         buttonsElement.appendChild(newButtonElement);
 
     })
@@ -170,36 +142,114 @@ export function buildButtonsElement(buttons: IButton[], blade: TShareDoBlade): H
         div.appendChild(icon);
     }
 
-    function applyButtonEmphasis(button: IButton, isValid: any, newButtonElement: ASMaterialButton) {
-        let boxShadow = `0 8px 8px -4px lightgray`;
-        let boxShadowHover = `0px 0px 17px 4px lightgray`;
-        if (button.color) {
-            boxShadow = `0 8px 8px -4px ${button.color}`;
-            boxShadowHover = `0px 0px 17px 4px ${button.color}`;
-        }
+  
+}
 
-        if (isValid) {
-            newButtonElement.style.boxShadow = boxShadow;
-            newButtonElement.onmouseover = function () {
-                newButtonElement.style.boxShadow = boxShadowHover;
-            }
-            newButtonElement.onmouseout = function () {
-                newButtonElement.style.boxShadow = boxShadow;
-            }
-        }
-        else {
-            newButtonElement.style.boxShadow = ``;
-            newButtonElement.onmouseover = function () {
-                newButtonElement.style.boxShadow = ``;
-            }
-            newButtonElement.onmouseout = function () {
-                newButtonElement.style.boxShadow = ``;
-            }
+function setButtonIconWithSubscription(addIcon: (button: IButton, newButtonElement: ASMaterialButton) => void, button: IButton, newButtonElement: ASMaterialButton) {
+    addIcon(button, newButtonElement);
+    button.icon.subscribe((icon) => {
+        addIcon(button, newButtonElement);
+    });
+}
+
+function setButtonEnabledStateWithSubscription(newButtonElement: ASMaterialButton, button: IButton) {
+    newButtonElement.options.disabled = !button.enabled();
+    button.enabled.subscribe((enabled) => {
+        console.log(`${button.text} enabled.subscribe enabled :`, enabled);
+        newButtonElement.options.disabled = !enabled;
+
+    });
+}
+
+function setButtonVisabilityWithSubscription(newButtonElement: ASMaterialButton, button: IButton) {
+    newButtonElement.style.display = button.visible() ? "block" : "none";
+    button.visible.subscribe((visible) => {
+        newButtonElement.style.display = visible ? "block" : "none";
+    });
+}
+
+function addButtonTextWithSubscription(newButtonElement: ASMaterialButton, button: IButton) {
+    newButtonElement.options.label = button.text();
+    button.text.subscribe((text) => {
+        newButtonElement.options.label = button.text();
+    });
+}
+
+function addButtonCssForButtonActionType(button: IButton, newButtonElement: ASMaterialButton) {
+    if (button.actionType) {
+        newButtonElement.classList.add(button.actionType);
+        if (button.actionType === ButtonType.save) {
+            newButtonElement.options.elevation = 3;
         }
     }
 }
 
-function applyButtonIsClasses(button: IButton, newButtonElement: ASMaterialButton) {
+function addButtonStyle(newButtonElement: ASMaterialButton, button: IButton) {
+    newButtonElement.options.style = button.materialDesignButtonType();
+    button.materialDesignButtonType.subscribe((type) => {
+        newButtonElement.options.style = type;
+    });
+    console.log(`${button.text()}.options.style :`, newButtonElement.options.style);
+}
+/**
+ * Generate the tooltip area and add it to the button
+ * Also add part areas so we can target the tooltip with css
+ * @param button 
+ * @param newButtonElement 
+ */
+function generateToolTipElement(button: IButton, newButtonElement: ASMaterialButton) {
+    const tooltipElement = document.createElement("div");
+    tooltipElement.classList.add("tooltip");
+
+    // const card = document.createElement("as-material-design-card") as ASMaterialDesignCard;
+
+    // let options : ASMaterialDesignCardOptions ={
+    //     title: `Information about ${button.text()}`,
+    // sub_title="TextBox",
+    // buttons?.push(
+    //     {
+    //         icon:MaterialDesignIcons.edit,
+    //         label:"edit"
+    //     }
+    // )
+    // }
+
+    // card.options.title = `Information about ${button.text()}`;
+    // card.options.sub_title = "Transition Action";
+    // card.options.buttons?.push(
+    //     {
+    //         icon: MaterialDesignIcons.edit,
+    //         label: "edit"
+    //     }
+    // )
+
+    const cardTitle = document.createElement("div");
+    cardTitle.classList.add("card-title");
+    cardTitle.setAttribute("part", "card-title");
+    cardTitle.innerHTML = `Information about ${button.text()}`;
+    tooltipElement.appendChild(cardTitle);
+
+    const cardBody = document.createElement("div");
+    cardBody.classList.add("card-body");
+    cardTitle.setAttribute("part", "card-body");
+    cardBody.innerHTML = button.tooltip;
+    tooltipElement.appendChild(cardBody);
+
+
+    newButtonElement.options.tooltip = tooltipElement;
+
+    // //Set the 
+    // newButtonElement.setAttribute("aria-describedby", newButtonElement.toolTipId());
+    // newButtonElement.setAttribute("data-tooltip-id", newButtonElement.toolTipId());
+
+}
+
+/**
+ * toPhaseOpen, toPhaseStart, toPhaseReportable, toPhaseRemoved, toPhaseSystemClosedPhase, toPhaseOptimumPath
+ * @param button 
+ * @param newButtonElement 
+ */
+function addButtonCSSForPhaseToBooleanOptions(button: IButton, newButtonElement: ASMaterialButton) {
     if (button.isOpen) {
         newButtonElement.classList.add("toPhaseOpen");
     }
@@ -219,14 +269,4 @@ function applyButtonIsClasses(button: IButton, newButtonElement: ASMaterialButto
         newButtonElement.classList.add("toPhaseOptimumPath");
     }
 
-}
-
-function runThroughColors(forColor: any, newButtonElement: ASMaterialButton) {
-    for (let i = 0; i < forColor.length; i++) {
-        setTimeout(() => {
-            let rgb = "rgb(" + forColor[i].r + "," + forColor[i].g + "," + forColor[i].b + ")";
-            console.log(`${i} :`, rgb);
-            newButtonElement.style.color = rgb;
-        }, (i + 1) * 2000);
-    }
 }

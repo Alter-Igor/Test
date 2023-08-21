@@ -39,7 +39,8 @@ export function convertTransitionToButton (transitionsForButtons: Transition[], 
             actionType: undefined,
             data: {
                 action: "transition",
-                transition: transition
+                transition: transition,
+                toPhase: toPhase
             }
         }
 
