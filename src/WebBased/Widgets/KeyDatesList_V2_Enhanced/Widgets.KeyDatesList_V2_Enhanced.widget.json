@@ -1,0 +1,30 @@
+﻿{
+    "designer": {
+        "allowInPortalDesigner": false,
+        "allowInSharedoPortalDesigner": true,
+        "title": "Key dates list V2 Enhanced",
+        "icon": "fa-calendar",
+        "description": "Displays a list of key dates for a case enhanced",
+      "categories": [
+        "Common Widgets",
+        "Work Item Data",
+        "Data lists"
+      ],
+        "isConfigurable": true,
+        "configurationWidget": "Widgets.KeyDatesListDesigner_V2_Enhanced"
+    },
+    "scripts": [
+        "/_ideFiles/Widgets/KeyDatesList_V2_Enhanced/widget.js",
+        "/_ideFiles/Widgets/KeyDatesList_V2_Enhanced/key-date-card-model.js"
+    ],
+    "styles": [
+        "/_ideFiles/Widgets/KeyDatesList_V2_Enhanced/widget.css"
+    ],
+    "templates": [
+        "/_ideFiles/Widgets/KeyDatesList_V2_Enhanced/widget.html",
+        "/_ideFiles/Widgets/KeyDatesList_V2_Enhanced/key-date-card-template.html"
+    ],
+    "menuTemplates": [
+        "/_ideFiles/Widgets/KeyDatesList_V2_Enhanced/widgetMenu.html"
+    ]
+}

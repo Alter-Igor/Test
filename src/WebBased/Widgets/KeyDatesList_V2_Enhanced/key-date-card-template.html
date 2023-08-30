@@ -1,0 +1,45 @@
+﻿<script type="text/html" id="key-date-card-template">
+    
+    <div class="card flex-row" data-bind="css: phaseCssClass">
+        
+        <div class="column-auto status-section text-center key-date-box">
+            <div class="day" data-bind="date: dueDate, format: 'D', timeZone: $ui.time.usersTimeZoneId"></div>
+            <div class="month-year" data-bind="date: dueDate, format: 'MMM YYYY', timeZone: $ui.time.usersTimeZoneId"></div>
+            <!-- ko if: $root.options.showTime && !dateOnly -->
+            <div class="time" data-bind="date: dueDate, format: 'HH:mm', timeZone: $ui.time.usersTimeZoneId"></div>
+            <!-- /ko -->
+        </div>
+
+        <div class="column-fit content-section allow-text-overflow">
+            <h4 class="title text-overflow">
+                <!-- ko if: $root.options.showInformationIcon && sharedoTypeDescription -->
+                <span class="fa fa-info-circle small kd-description" data-bind="attr: { title: sharedoTypeDescription }"></span>
+                <!-- /ko -->
+                <span data-bind="text: title, textAsTitle: true"></span>
+            </h4>
+            <!-- ko if: $root.options.showPhaseSummary -->
+            <p>
+                <span class="fa text-muted" data-bind="css: phaseIcon"></span> <span data-bind="text: phaseName"></span>
+            </p>
+            <!-- /ko -->
+            <!-- ko if: showParentSummary -->
+            <p class="text-overflow">
+                <!-- ko if: parentNavLinkEnabled && parentOpenCommand -->
+                <a href="#" data-bind="click: $root.openParentSharedo.bind($root)">
+                    <span data-bind="text: parentReferenceAndTitle, textAsTitle: true"></span>
+                </a>
+                <!-- /ko -->
+                <!-- ko ifnot: parentNavLinkEnabled && parentOpenCommand -->
+                <span data-bind="text: parentReferenceAndTitle, textAsTitle: true"></span>
+                <!-- /ko -->
+            </p>
+            <!-- /ko -->
+        </div>
+
+        <div class="column-auto menu-section">
+            <a href="#" class="fa fa-edit" data-bind="click: $root.openKeyDate.bind($root, $data)" title="Edit"></a>
+        </div>
+
+    </div>
+    
+</script>

@@ -1,0 +1,5 @@
+Concept : WIP
+
+Allow users to select a template first,
+View it in a preview mode,
+And then select the matter and generate the document.

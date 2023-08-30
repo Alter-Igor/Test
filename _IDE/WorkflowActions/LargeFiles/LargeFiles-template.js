@@ -1,17 +1,20 @@
 function getEmailAttachments() {
+  logHeading("getEmailAttachments");
   let retValue = new Array();
   let outboundEmailWorkTypeId = ctx["outboundEmailWorkTypeId"];
 
   // outboundEmailWorkTypeId = "0986b02d-8d16-4995-b514-b042006c2d0d"; //for testing
 
   var relatedDocumentsResult = sharedo.http.get("/api/sharedo/".concat(outboundEmailWorkTypeId, "/relatedDocuments"));
-  log.Information("result: " + JSON.stringify(relatedDocumentsResult));
+  logHeading("relatedDocumentsResult");
+  log.Information(JSON.stringify(relatedDocumentsResult));
   if (!relatedDocumentsResult.success) {
     log.Error("failed to get related documents");
     log.Information("result: " + JSON.stringify(relatedDocumentsResult));
     return retValue;
   }
-  log.Information("result.body: " + JSON.stringify(relatedDocumentsResult.body));
+  logHeading("relatedDocumentsResult.body");
+  log.Information(JSON.stringify(relatedDocumentsResult.body));
   let relatedDocument = relatedDocumentsResult.body;
   if (relatedDocument.length === 0) {
     log.Information("No related document found");
@@ -21,12 +24,15 @@ function getEmailAttachments() {
   //Loop through the related documents and remove them from the work item
   for (let i = 0; i < relatedDocument.length; i++) {
     let relatedDoc = relatedDocument[i];
+    logHeading("relatedDoc");
+    log.Information(JSON.stringify(relatedDoc));
 
     //https://demo-aus.sharedo.tech/api/sharedo/9723e792-4948-460d-9ecf-b013006589c9/relatedDocuments/batch-delete
 
     //get related document file url
     let fileUrlResponse = sharedo.http.get("/api/relatedDocument/".concat(relatedDoc.id));
     if (!fileUrlResponse.success) {
+      logHeading("/api/relatedDocument/ -  Failed");
       log.Error("failed to get file url for related document: " + relatedDoc.id);
       log.Information("result: " + JSON.stringify(fileUrlResponse));
       //continue;
@@ -58,5 +64,10 @@ for (let i = 0; i < emailAttachments.length; i++) {
   let emailBody = ctx["emailBody"];
   emailBody = emailBody + "<br/><br/>" + fileTitle + "<br/>" + fileUrl;
   ctx["emailBody"] = emailBody;
+}
+function logHeading(heading) {
+  log.Information("-------------------------------------");
+  log.Information(heading);
+  log.Information("-------------------------------------");
 }
 //# sourceMappingURL=LargeFiles-template.js.map

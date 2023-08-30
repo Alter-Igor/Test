@@ -1,0 +1,30 @@
+﻿{
+    "id":  "Custom.WorkflowActions.Search", 
+    "designer":
+    {
+        "allowInPortalDesigner": false,
+        "allowInSharedoPortalDesigner": false
+    },
+    "scripts":
+    [
+        "/_ideFiles/WorkflowActions/Search/designer/widget.js"
+    ],
+    "styles":
+    [
+    ],
+    "templates":
+    [
+        "/_ideFiles/WorkflowActions/Search/designer/widget.html"
+    ],
+    "menuTemplates":
+    [
+    ],
+    "components":
+    [
+      "Sharedo.Core.Case.Components.SharedoTypePicker",
+      "Sharedo.UI.Framework.Components.Toggle",
+      "Sharedo.UI.Framework.Components.IconPicker",
+      "Sharedo.UI.Framework.Components.SyntaxEditor",
+      "Sharedo.Core.Case.Menus.CommandEditorComponent"
+    ]
+}

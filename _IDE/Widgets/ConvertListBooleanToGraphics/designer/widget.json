@@ -1,0 +1,27 @@
+{
+    "id": "Widget.ConvertListBooleanToGraphicsDesigner",
+    "priority": 6000,
+    "designer":
+    {
+        "allowInPortalDesigner": false,
+        "allowInSharedoPortalDesigner": false
+    },
+    "scripts":
+    [ 
+        "/_ideFiles/Widgets/ConvertListBooleanToGraphics/designer/ConvertListBooleanToGraphicsDesigner.js"
+    ],
+    "styles":
+    [
+        "/_ideFiles/Widgets/ConvertListBooleanToGraphics/designer/widget.css"
+    ],
+    "templates":
+    [
+        "/_ideFiles/Widgets/ConvertListBooleanToGraphics/designer/widget.html"
+    ],
+    "menuTemplates":
+    [
+    ],
+    "components":
+    [
+    ]
+}

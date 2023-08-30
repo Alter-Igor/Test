@@ -1,6 +1,6 @@
 
 import { IPhasePlan, Phase, Transition } from "../../../Typings/api/PhasePlan/PhasePlan";
-import { getPhasePlan } from "./SaveSubmitCancelAspectAgent";
+import { getFeatureFlag, getPhasePlan } from "./SaveSubmitCancelAspectAgent";
 import * as ko from "knockout";
 import { convertTransitionToButton } from "./TransitionToButtonConverter";
 import { ButtonType, IButton, IButtonGroup, buildButtonGroupElement } from "./ButtonBuilder";
@@ -17,6 +17,7 @@ document.head.insertAdjacentHTML("beforeend", `<link rel="stylesheet" href="http
 
 export interface ISaveSubmitCancel_ConfigurationFromModeller {
     backgroundColor: string;
+    featureToOpenPortalOn:string;
     debug: Debug | null | undefined;
 }
 
@@ -84,6 +85,7 @@ export class SaveSubmitCancel {
     saveSubmitCancelElement: any;
     configuration: ISaveSubmitCancel_ConfigurationFromModeller;
     host: Host;
+    featureToOpenPortalOn: string;
 
 
     constructor(element: HTMLElement, configurationWithHost: ConfigurationWithHost, baseModel: any) {
@@ -100,7 +102,8 @@ export class SaveSubmitCancel {
                 showEvents: false,
                 showInAspect: false
             },
-            backgroundColor: "white"
+            backgroundColor: "white",
+            featureToOpenPortalOn:"ud-open-the-portal-on-transition-into-this-stage"
         }
 
         configurationWithHost = $.extend(true, {}, defaults, configurationWithHost);
@@ -108,7 +111,7 @@ export class SaveSubmitCancel {
         this.blade = configurationWithHost._host.blade;
         this.hostModel = configurationWithHost._host.model;
         this.host = configurationWithHost._host;
-
+        
         this.model =
         {
             // This is referencing a standard observable item from the main model
@@ -128,6 +131,7 @@ export class SaveSubmitCancel {
         // }
 
         // Every widget gets this
+        this.featureToOpenPortalOn = configurationWithHost.featureToOpenPortalOn;
         this.enabled = configurationWithHost._host.blade.enabled;
         this.instanceId = this.hostModel?.instanceId;
         this.element = element;
@@ -192,46 +196,43 @@ export class SaveSubmitCancel {
 
                 //element.target.options.additional_params.transition.toPhaseSystemName
 
-                if(!element.options)
-                {
+                if (!element.options) {
                     return;
                 }
                 let data = element.options.additional_params;
                 this.log("Transition Clicked", "red", data);
 
-               
+
 
                 if (data.action === "transition") {
                     let transition = data.transition as Transition;
 
                     // if(this.sharedoId === undefined || this.sharedoId() === undefined)
                     // {
-                     
-                        
-                        if(this.sharedoId === undefined || this.sharedoId() === undefined)
-                        {
-                            let next = () => {
-                                this.log("Save Ran for New ShareDo", "red");
-                                let trans = () =>
-                                {
-                                    this.log("Fresh ShareDo now Transition Phase", "red", transition);
-                                    this.transitionPhase(transition);
-                                }
-                                this.blade.loadSharedo(trans);
-                                return;
-                            }
-                        }
-                        
+
+
+                    if (this.sharedoId === undefined || this.sharedoId() === undefined) {
                         let next = () => {
-                            this.log("Save Ran for Existing ShareDo", "red");
-                            this.transitionPhase(transition);
+                            this.log("Save Ran for New ShareDo", "red");
+                            let trans = () => {
+                                this.log("Fresh ShareDo now Transition Phase", "red", transition);
+                                this.transitionPhase(transition);
+                            }
+                            this.blade.loadSharedo(trans);
+                            return;
                         }
-                         
-                        this.blade.save(false,next)
-                        // return;
+                    }
+
+                    let next = () => {
+                        this.log("Save Ran for Existing ShareDo", "red");
+                        this.transitionPhase(transition);
+                    }
+
+                    this.blade.save(false, next)
+                    // return;
                     // }
 
-                    
+
                 }
 
             },
@@ -300,7 +301,28 @@ export class SaveSubmitCancel {
                 $ui.stacks.cancelAll();
             }
             else {
-                this.loadAndBind();
+                this.log("getFeatureFlag", "blue");
+
+                getFeatureFlag(this.sharedoTypeSystemName!,transition.toPhaseSystemName).then((phaseFeatures) => {
+                    this.log("getFeatureFlag result", "blue",phaseFeatures);
+                    if (!phaseFeatures) {
+                        this.log("No Phase Features", "red");
+                        this.loadAndBind();
+                        return;
+                    }
+
+                    console.log("Phase Features", phaseFeatures);
+                    if(phaseFeatures.find(f => f.systemName === this.featureToOpenPortalOn)?.enabled)
+                    {
+                        console.log("Open Portal");
+                        window.location.href = `/sharedo/${this.sharedoId!()}`;
+                    }
+                    
+                    this.loadAndBind();
+                    return;
+                });
+
+
             }
         });
     }
@@ -409,12 +431,12 @@ export class SaveSubmitCancel {
     }
 
     save(): void {
-    this.model.saveRuns++;
-    this.log("----> Running Save", 'background: #222; color: #bada55');
-    //Store the validate function in temp
-    this.isValidTemp = this.blade.isValid;
-    //wait 500 ms then run the save - to give models time to load
-   
+        this.model.saveRuns++;
+        this.log("----> Running Save", 'background: #222; color: #bada55');
+        //Store the validate function in temp
+        this.isValidTemp = this.blade.isValid;
+        //wait 500 ms then run the save - to give models time to load
+
         //override the validate function
         this.blade.isValid = () => { return true };
         this.blade.save(false, () => {

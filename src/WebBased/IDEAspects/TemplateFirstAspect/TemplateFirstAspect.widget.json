@@ -1,0 +1,46 @@
+{
+    "id": "Aspects.TemplateFirst",
+    "priority": 6000,
+    "designer":
+    {
+        "allowInPortalDesigner": false,
+        "allowInSharedoPortalDesigner": false,
+        "allowAspectAdapter": true,  
+        "title": "Save Submit Cancel Aspect",
+        "icon": "fa-cog",
+        "description": "Adds a save, submit and cancel button to the bottom of the form.",
+        "categories": 
+        [
+        ],
+        "isConfigurable": true,
+        "configurationWidget": null,
+        "defaultConfigurationJson": { 
+            "backgroundColour": "#3D4852", //"#3D4852" for ShareDo default or empty for transparent,
+            "debug":
+            {
+                "enabled":false,
+                "logToConsole":false,
+                "showEvents":false,
+                "showInAspect":false
+            }
+    } 
+    },
+    "scripts":
+    [
+        "/_ideFiles/IDEAspects/TemplateFirstAspect/TemplateFirstAspect.js"
+    ],
+    "styles":
+    [
+        "/_ideFiles/IDEAspects/TemplateFirstAspect/TemplateFirstAspect.css"
+    ],
+    "templates":
+    [
+        "/_ideFiles/IDEAspects/TemplateFirstAspect/TemplateFirstAspect.html"
+    ],
+    "menuTemplates":
+    [
+    ],
+    "components":
+    [
+    ]
+}

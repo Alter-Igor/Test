@@ -11,6 +11,7 @@ export interface IButtonGroup {
 }
 
 export interface IButton {
+    element?: ASMaterialButton; //added when button is created
     group?: IButtonGroup; // group buttons together
     id: string;
     order: number; // order of the button in the group
@@ -32,6 +33,7 @@ export interface IButton {
     data:any | undefined;
 }
 
+
 export enum ButtonType {
     destrustive = "destructive",
     primary = "primary",
@@ -40,13 +42,7 @@ export enum ButtonType {
     cancel = "cancel"
 }
 
-function ensureButtonIds(buttons: IButton[]) {
-    buttons.forEach(button => {
-        if (!button.id) {
-            button.id = "button_" + button.order;
-        }
-    });
-}
+
 /**
  * Creates the button group elements 
  * @param buttonGroups 
@@ -101,6 +97,9 @@ export function buildButtonsElement(buttons: IButton[], blade: TShareDoBlade,  c
         }
         
         const newButtonElement = document.createElement("as-material-button") as ASMaterialButton;
+        
+        button.element = newButtonElement;
+        
         // if(configuration.debug?.enabled){
             (window as any).newButtonElement = newButtonElement; //for debug only
         // }
@@ -140,6 +139,7 @@ export function buildButtonsElement(buttons: IButton[], blade: TShareDoBlade,  c
         }
         // newButtonElement.options.icon = button.icon();
         div.appendChild(icon);
+       
     }
 
   
@@ -200,6 +200,7 @@ function addButtonStyle(newButtonElement: ASMaterialButton, button: IButton) {
 function generateToolTipElement(button: IButton, newButtonElement: ASMaterialButton) {
     const tooltipElement = document.createElement("div");
     tooltipElement.classList.add("tooltip");
+    tooltipElement.setAttribute("part", "tooltip");
 
     // const card = document.createElement("as-material-design-card") as ASMaterialDesignCard;
 
@@ -231,11 +232,13 @@ function generateToolTipElement(button: IButton, newButtonElement: ASMaterialBut
 
     const cardBody = document.createElement("div");
     cardBody.classList.add("card-body");
-    cardTitle.setAttribute("part", "card-body");
+    cardBody.setAttribute("part", "card-body");
     cardBody.innerHTML = button.tooltip;
     tooltipElement.appendChild(cardBody);
 
 
+
+    // newButtonElement.appendChild(tooltipElement);
     newButtonElement.options.tooltip = tooltipElement;
 
     // //Set the 
@@ -269,4 +272,11 @@ function addButtonCSSForPhaseToBooleanOptions(button: IButton, newButtonElement:
         newButtonElement.classList.add("toPhaseOptimumPath");
     }
 
+}
+function ensureButtonIds(buttons: IButton[]) {
+    buttons.forEach(button => {
+        if (!button.id) {
+            button.id = "button_" + button.order;
+        }
+    });
 }

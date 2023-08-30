@@ -1,0 +1,45 @@
+
+[data-key-date-widget-v2] div.card .status-section {
+    padding-top: 0;
+}
+
+    [data-key-date-widget-v2] div.card .status-section .day {
+        font-weight: bold;
+        font-size: 1.9em;
+    }
+
+    [data-key-date-widget-v2] div.card .status-section .month-year {
+        margin-top: -3px;
+        font-weight: bold;
+        font-size: 0.8em;
+    }
+
+    [data-key-date-widget-v2] div.card .status-section .time {
+        font-weight: bold;
+        font-size: 0.8em;
+    }
+
+[data-key-date-widget-v2] div.card {
+    border-left: 5px solid;
+}
+
+[data-key-date-widget-v2] div.card .content-section {
+    padding: 0 10px;
+}
+
+    [data-key-date-widget-v2] div.card .content-section .title {
+        font-weight: bold;
+    }
+
+[data-key-date-widget-v2] [data-group] h3 {
+    max-width: 82%;
+}
+
+[data-key-date-widget-v2] [data-group].is-expanded h3 {
+    max-width: 90%;
+}
+
+[data-key-date-widget-v2] .kd-description {
+    vertical-align: middle;
+    color: var(--color-info-dark);
+}

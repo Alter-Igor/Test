@@ -3,11 +3,11 @@ interface IEmailAttachments {
   relatedDocument: IRelatedDocument
   link: string
 
-}
-
+} 
+   
  
 function getEmailAttachments(): Array<IEmailAttachments> {
-
+  logHeading("getEmailAttachments");
   let retValue = new Array<IEmailAttachments>();
 
   let outboundEmailWorkTypeId = ctx["outboundEmailWorkTypeId"];
@@ -16,7 +16,8 @@ function getEmailAttachments(): Array<IEmailAttachments> {
 
   var relatedDocumentsResult = sharedo.http.get("/api/sharedo/".concat(outboundEmailWorkTypeId, "/relatedDocuments"));
 
-  log.Information("result: " + JSON.stringify(relatedDocumentsResult));
+  logHeading("relatedDocumentsResult");
+  log.Information(JSON.stringify(relatedDocumentsResult));
 
   if (!relatedDocumentsResult.success) {
     log.Error("failed to get related documents");
@@ -25,8 +26,8 @@ function getEmailAttachments(): Array<IEmailAttachments> {
   }
 
 
-
-  log.Information("result.body: " + JSON.stringify(relatedDocumentsResult.body));
+  logHeading("relatedDocumentsResult.body");
+  log.Information(JSON.stringify(relatedDocumentsResult.body));
 
   let relatedDocument: IRelatedDocument[] = relatedDocumentsResult.body;
 
@@ -40,6 +41,8 @@ function getEmailAttachments(): Array<IEmailAttachments> {
   //Loop through the related documents and remove them from the work item
   for (let i = 0; i < relatedDocument.length; i++) {
     let relatedDoc = relatedDocument[i];
+    logHeading("relatedDoc");
+    log.Information(JSON.stringify(relatedDoc));
 
    //https://demo-aus.sharedo.tech/api/sharedo/9723e792-4948-460d-9ecf-b013006589c9/relatedDocuments/batch-delete
 
@@ -48,6 +51,7 @@ function getEmailAttachments(): Array<IEmailAttachments> {
    let fileUrlResponse = sharedo.http.get("/api/relatedDocument/".concat(relatedDoc.id));
 
    if(!fileUrlResponse.success) {
+    logHeading("/api/relatedDocument/ -  Failed");
       log.Error("failed to get file url for related document: " + relatedDoc.id);
       log.Information("result: " + JSON.stringify(fileUrlResponse));
       //continue;
@@ -56,6 +60,8 @@ function getEmailAttachments(): Array<IEmailAttachments> {
         "redirectTo": "https://slicedbreaduk.sharepoint.com/sites/sharedo…ic%20Info.docx&action=default&mobileredirect=true"
       }
     }
+
+    
 
     let fileUrl = fileUrlResponse.body.redirectTo;
 
@@ -94,4 +100,10 @@ for(let i = 0; i < emailAttachments.length; i++) {
   ctx["emailBody"] = emailBody;
 
 
+}
+
+function logHeading(heading:string) {
+  log.Information("-------------------------------------");
+  log.Information(heading);
+  log.Information("-------------------------------------");
 }

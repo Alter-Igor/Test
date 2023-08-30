@@ -16,6 +16,7 @@
         "configurationWidget": null,
         "defaultConfigurationJson": { 
             "backgroundColour": "#3D4852", //"#3D4852" for ShareDo default or empty for transparent,
+            "featureToOpenPortalOn":"ud-open-the-portal-on-transition-into-this-stage",
             "debug":
             {
                 "enabled":false,

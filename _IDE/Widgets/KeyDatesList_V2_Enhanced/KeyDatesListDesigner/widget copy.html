@@ -1,0 +1,181 @@
+﻿<!-- SCOPE -->
+<div class="widget" data-bind="accordion: ui.querySettingsExpanded, accordiontarget: 'DIV.widget-body'">
+    <div class="widget-title">
+
+        <h3><span class="fa fa-exchange"></span> Query Settings</h3>
+        <nav class="widget-menu">
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a class="btn" data-bind="toggle:ui.querySettingsExpanded">
+                        <span class="fa" data-bind="switchCss:{ value: ui.querySettingsExpanded, whenTrue: 'fa-angle-up', whenFalse: 'fa-angle-down'}"></span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <div class="widget-body">
+
+        <div class="form-group">
+            <label for="limitResultsTo">Limit results to:</label>
+            <input id="limitResultsTo" type="text" class="form-control" data-bind="integer: model.limitResultsTo" />
+            <span class="text-danger" data-bind="visible: validation.limitResultsTo, text:validation.limitResultsTo"></span>
+            <span class="text-danger" data-bind="visible: validation.limitResultsToMin, text:validation.limitResultsToMin"></span>
+            <span class="text-danger" data-bind="visible: validation.limitResultsToMax, text:validation.limitResultsToMax"></span>
+        </div>
+        <div class="alert alert-warning" data-bind="visible: validation.openClosedStates">
+            <b class="text-danger">WARNING:</b> <span class="text-danger" data-bind="text:validation.openClosedStates"></span>
+        </div>
+        <div class="form-group">
+            <label for="includeClosed">Include closed key dates:</label>
+            <div class="input-group">
+                <input id="includeClosed" type="checkbox" class="form-control" data-bind="toggleSwitch: model.includeClosed" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="includeOpen">Include open key dates:</label>
+            <div class="input-group">
+                <input id="includeOpen" type="checkbox" class="form-control" data-bind="toggleSwitch: model.includeOpen" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="dexcludePhaseSystemName">Exclude where Phase System Name is (comma seporated)</label>
+            <div class="input-group">
+                <input id="dexcludePhaseSystemName" type="text" class="form-control" data-bind="textInput: model.excludePhaseSystemName" />
+            </div>
+        </div>
+        <!-- <div class="form-group">
+            <label for="excludePhaseSystemName">Load sharedo attributes:</label>
+            <select id="excludePhaseSystemName" multiple
+                    data-bind="options: lov.excludePhaseSystemName,
+                    selectedOptions: model.excludePhaseSystemName,
+                    valueAllowUnset: true,
+                    chosen:{ inherit_select_classes: true, asTags: true}"></select>
+        </div> -->
+
+        <div class="alert alert-info">
+            <span class="fa fa-info-circle"></span>
+            Specify the key date types to be returned, if no types are specified then all key dates regardless of type will be returned.
+        </div>
+        <div class="form-group">
+            <label>Key date work type paths:</label>
+            <!-- ko component: { name: "sharedo-type-picker", params: ui.pickers.keyDateTypes } -->
+            <!-- /ko -->
+        </div>
+        <div class="form-group">
+            <label for="includeDescendentsKeyDates">Include descendants key dates:</label>
+            <div class="input-group">
+                <input id="includeDescendentsKeyDates" type="checkbox" class="form-control" data-bind="toggleSwitch: model.includeDescendentsKeyDates" />
+            </div>
+        </div>
+        <div class="alert alert-info">
+            <span class="fa fa-info-circle"></span>
+            Optionally use the <strong>nearest ancestor of the specified type(s)</strong> as the search context.
+            If not specified, uses the current sharedo.
+        </div>
+        <div class="form-group">
+            <label>Use closest ancestor of this type for search context:</label>
+            <!-- ko component: { name: "sharedo-type-picker", params: ui.pickers.closestKeyDateAncestorTypes } -->
+            <!-- /ko -->
+        </div>
+        <div class="alert alert-info">
+            <span class="fa fa-info-circle"></span>
+            Optionally reduce key dates being displayed by limiting them to a parent type(s).
+        </div>
+        <div class="form-group">
+            <label>Key date parent sharedo types:</label>
+            <!-- ko component: { name: "sharedo-type-picker", params: ui.pickers.keyDateParentTypes } -->
+            <!-- /ko -->
+        </div>
+    </div>
+</div>
+
+<div class="widget" data-bind="accordion: ui.cardDisplaySettingsExpanded, accordiontarget: 'DIV.widget-body'">
+    <div class="widget-title">
+
+        <h3><span class="fa fa-list-alt"></span> Card Display settings</h3>
+        <nav class="widget-menu">
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a class="btn" data-bind="toggle:ui.cardDisplaySettingsExpanded">
+                        <span class="fa" data-bind="switchCss:{ value: ui.cardDisplaySettingsExpanded, whenTrue: 'fa-angle-up', whenFalse: 'fa-angle-down'}"></span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <div class="widget-body">
+
+        <div class="form-group">
+            <label for="showTime">Show time:</label>
+            <div class="input-group">
+                <input id="showTime" type="checkbox" class="form-control" data-bind="toggleSwitch: model.showTime" />
+            </div>
+        </div>
+        <div class="alert alert-info">
+            <span class="fa fa-info-circle"></span>
+            Specify the circumstances in which a link is displayed to the key dates parent. You can specify that the link is only shown when the context differs from the current context.
+        </div>
+        <div class="form-group">
+            <label for="view">Show parent:</label>
+            <select id="parentDisplayMode" class="form-control" data-bind="value:model.parentDisplayMode">
+                <option value="always">Always</option>
+                <option value="never">Never</option>
+                <option value="different-context">When not in current context</option>
+            </select>
+        </div>
+        <div class="alert alert-info">
+            <span class="fa fa-info-circle"></span>
+            Specify whether the current phase of the key date should be shown.
+        </div>
+        <div class="form-group">
+            <label for="showInformationIcon">Show information icon:</label>
+            <div class="input-group">
+                <input id="showInformationIcon" type="checkbox" class="form-control" data-bind="toggleSwitch: model.showInformationIcon" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="showPhaseSummary">Show phase summary:</label>
+            <div class="input-group">
+                <input id="showPhaseSummary" type="checkbox" class="form-control" data-bind="toggleSwitch: model.showPhaseSummary" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="widget" data-bind="accordion: ui.listDisplaySettingsExpanded, accordiontarget: 'DIV.widget-body'">
+    <div class="widget-title">
+
+        <h3><span class="fa fa-table"></span> List Display settings</h3>
+        <nav class="widget-menu">
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a class="btn" data-bind="toggle:ui.listDisplaySettingsExpanded">
+                        <span class="fa" data-bind="switchCss:{ value: ui.listDisplaySettingsExpanded, whenTrue: 'fa-angle-up', whenFalse: 'fa-angle-down'}"></span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <div class="widget-body">
+
+        <div class="alert alert-info">
+            <span class="fa fa-info-circle"></span>
+            Choose whether the key date list should be grouped by work item or displayed in a flat list of cards.
+        </div>
+        <div class="form-group">
+            <label for="cardDisplayStyle">Display style:</label>
+            <select id="cardDisplayStyle" class="form-control" data-bind="value:model.cardDisplayStyle">
+                <option value="card">Card</option>
+                <option value="grouped">Card grouped by work item</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="cardGroupDisplay">Group display:</label>
+            <select id="cardGroupDisplay" class="form-control" data-bind="value:model.cardGroupDisplay">
+                <option value="title">Title</option>
+                <option value="reference">Reference</option>
+                <option value="title-and-reference">Title and reference</option>
+            </select>
+        </div>
+    </div>
+</div>

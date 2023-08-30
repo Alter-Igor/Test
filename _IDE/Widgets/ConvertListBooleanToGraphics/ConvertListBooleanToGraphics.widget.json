@@ -1,0 +1,37 @@
+﻿{
+    "id": "Widgets.ConvertListBooleanToGraphics",
+    "priority": 6000,
+    "designer":
+    {
+        "allowInPortalDesigner": true,
+        "allowInSharedoPortalDesigner": true,
+        "title": "Convert List Boolean To Graphics",
+      "icon": "fa-cog",
+      "description": "Converts a list of boolean values to a list of graphics",
+      "categories":
+      [
+          "User Defined"
+      ],
+        "isConfigurable": true,
+        "configurationWidget": "Widgets.ConvertListBooleanToGraphicsDesigner"
+    },
+    "scripts":
+    [
+        "/_ideFiles/Widgets/ConvertListBooleanToGraphics/ConvertListBooleanToGraphics.js"
+    ],
+    "styles":
+    [
+        "/_ideFiles/Widgets/ConvertListBooleanToGraphics/ConvertListBooleanToGraphics.css"
+    ],
+    "templates":
+    [
+        "/_ideFiles/Widgets/ConvertListBooleanToGraphics/ConvertListBooleanToGraphics.html"
+    ],
+    "menuTemplates":
+    [
+        "/_ideFiles/Widgets/ConvertListBooleanToGraphics/ConvertListBooleanToGraphicsMenu.html"
+    ],
+    "components":
+    [
+    ]
+}

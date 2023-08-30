@@ -1,6 +1,7 @@
 const path = require("path");
 const CopyPlugin = require("copy-webpack-plugin");
 const { library } = require("webpack");
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 let outputLocation = "../../../../_IDE/IDEAspects/SaveSubmitCancelAspect";
 
@@ -26,7 +27,9 @@ module.exports = [
       filename: "[name].js",
     },
     mode: 'development', 
+     devtool: 'inline-source-map',
     plugins: [
+        new BundleAnalyzerPlugin(),
       new CopyPlugin({
         patterns: [
           {
@@ -47,7 +50,7 @@ module.exports = [
         ],
       }),
     ],
-    devtool: 'inline-source-map',
+    
     module: {
       rules: [
         {

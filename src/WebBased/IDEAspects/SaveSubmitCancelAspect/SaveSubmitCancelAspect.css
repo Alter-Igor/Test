@@ -21,7 +21,7 @@
   width: 100%;
   padding: 5px;
   border: 1px solid #ccc;
-  background-color:#3D4852;
+  background-color: #3D4852;
   flex-direction: column;
   align-content: stretch;
   flex-wrap: wrap;
@@ -44,17 +44,16 @@
 
 .save-submit-cancel .button-groups .buttons as-material-button {
   margin: 5px;
-  flex-grow: 1;
+  min-width: 200px;
+  /* flex-grow: 1;  --cannot use, cause tooltip to fail */
 }
 
-.save-submit-cancel .button-groups .buttons .icon
-{
-  margin:15px;
+.save-submit-cancel .button-groups .buttons .icon {
+  margin: 15px;
 }
 
-.save-submit-cancel .button-group.disabled .icon
-{
-  color: grey!important;
+.save-submit-cancel .button-group as-material-button.disabled .icon {
+  color: grey !important;
   transition: color 1250ms linear;
 }
 
@@ -66,13 +65,13 @@
 
 .save-submit-cancel .button-groups .buttons as-material-button.save::part(button) {
   border-color: color-mix(in srgb, var(--color-success), #fff 20%);
-    transition: border-color 1250ms linear;
+  transition: border-color 1250ms linear;
 }
 
 
 .save-submit-cancel .button-group.disabled .buttons as-material-button.toPhaseRemoved::part(button) {
   border-color: grey;
-    transition: border-color 1250ms linear;
+  transition: border-color 1250ms linear;
 
 }
 
@@ -83,24 +82,56 @@
 }
 
 .save-submit-cancel .button-group .buttons as-material-button::part(button) {
-  height: 50px
+  /* height: 50px */
+}
 
+.save-submit-cancel .button-groups .buttons as-material-button::part(tooltip) {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  flex-direction: column;
+  align-content: stretch;
+  flex-wrap: wrap;
+  text-align: left;
+  color: #6e6e6e;
+
+    padding-top: 12px;
+  padding-bottom: 8px;
+  padding-left: 16px;
+  padding-right: 16px;
+
+  /* font Roboto */
+  font-family: Roboto;
+}
+
+.save-submit-cancel .button-groups .buttons as-material-button::part(card-title) {
+  /* https://m3.material.io/components/tooltips/specs#7e9be46b-8949-4039-949f-42589aa2446d */
+  line-height: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  padding-bottom: 4px;
+}
+
+.save-submit-cancel .button-groups .buttons as-material-button::part(card-body) {
+
+/* https://m3.material.io/components/tooltips/specs#7e9be46b-8949-4039-949f-42589aa2446d */
+  
+  /* Work Sans Regular 12 Sentence case */
+  font-family: Work Sans;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  padding-bottom: 12px;
+  line-height: 20px;
+  font-weight: 400;
 }
 
 
+.save-submit-cancel .button-groups .buttons as-material-button.toPhaseOptimumPath::part(button) {}
 
-.save-submit-cancel .button-groups .buttons as-material-button.toPhaseOptimumPath::part(button) {
+.save-submit-cancel .button-groups .buttons .save:hover {}
 
-}
+.save-submit-cancel .button-groups .buttons .cancel {}
 
-.save-submit-cancel .button-groups .buttons .save:hover {
+.save-submit-cancel .button-groups .buttons .cancel:hover {}
 
-}
-
-.save-submit-cancel .button-groups .buttons .cancel {
-
-}
-
-.save-submit-cancel .button-groups .buttons .cancel:hover {
-
-}

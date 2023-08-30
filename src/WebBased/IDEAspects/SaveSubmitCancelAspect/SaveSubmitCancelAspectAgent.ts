@@ -33,26 +33,28 @@ export const getPhasePlan = async function (workTypeSystemName: string) : Promis
             return undefined;
         });
 }
-//https://morae-vnext.sharedo.tech/api/featureframework/flags/subFeatures/ud-pre-instruction/ud-pre-instruction-plan-drafting
-// export const getFeatureFlag = async function (featureSystemName: string) : Promise<IPhaseFeatures> {
-//     return executeGet<IPhaseFeatures>(`/api/featureframework/flags/subFeatures/${featureSystemName}`) .then(data => {
+
+export const getFeatureFlag = async function (phasePlanName: string, phaseName: string) : Promise<IPhaseFeatures[] | undefined> {
+    console.log("API - getFeatureFlag featureSystemName",phasePlanName);
+    ///api/featureframework/flags/subFeatures/ud-pre-instruction/ud-pre-instruction-plan-drafting
+    return executeGet<IPhaseFeatures[]>(`/api/featureframework/flags/subFeatures/${phasePlanName}/${phaseName}`) .then(data => {
         
-//         //log color
-//         console.log("%c loadWorkItem", "color: #ff0000");
-//         console.log(data);
+        //log color
+        console.log("%c IPhaseFeatures", "color: #ff0000");
+        console.log(data);
         
-//         if (!data) {
-//                 throw new Error("Not found");
-//             }
-//             else {
-//                 return data as IPhaseFeatures;
-//             }
-//         })
-//         .catch((error) => {
-//             console.error('Error:', error);
-//             return false;
-//         });
-// }
+        if (!data) {
+                throw new Error("Not found");
+            }
+            else {
+                return data as IPhaseFeatures[];
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            return undefined;
+        });
+}
 
 export const saveAspect = async function (id: string, data:any) : Promise<void> {
       executePut<any>(`/api/v1/public/workItem/${id}`, data).then((data) => {

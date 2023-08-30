@@ -1,0 +1,37 @@
+{
+    "id": "Widgets.ShowAspectWidget",
+    "priority": 6000,
+    "designer":
+    {
+        "allowInPortalDesigner": true,
+        "allowInSharedoPortalDesigner": true,
+        "title": "ShowAspect Widget Widget",
+        "icon": "fa-cog",
+        "description": "ShowAspect Widget Widget - used to displace aspect in a portal",
+        "categories":
+        [
+            "Custom"
+        ],
+        "isConfigurable": false,
+        "configurationWidget": "Visualisation.Widgets.ShowAspectWidgetDesigner"
+    },
+    "scripts":
+    [
+        "/_ideFiles/Widgets/ShowAspectWidget/ShowAspectWidget.js"
+    ],
+    "styles":
+    [
+        "/_ideFiles/Widgets/ShowAspectWidget/ShowAspectWidget.css"
+    ],
+    "templates":
+    [
+        "/_ideFiles/Widgets/ShowAspectWidget/ShowAspectWidget.html"
+    ],
+    "menuTemplates":
+    [
+        "/_ideFiles/Widgets/ShowAspectWidget/ShowAspectWidgetMenu.html"
+    ],
+    "components":
+    [
+    ]
+}

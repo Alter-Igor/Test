@@ -1,0 +1,27 @@
+{
+    "id": "Widgets.ShowAspectWidgetDesigner",
+    "priority": 6000,
+    "designer":
+    {
+        "allowInPortalDesigner": false,
+        "allowInSharedoPortalDesigner": false
+    },
+    "scripts":
+    [
+        "/_ideFiles/Widgets/ShowAspectWidget/designer/ShowAspectWidgetDesigner.js"
+    ],
+    "styles":
+    [
+        "/_ideFiles/Widgets/ShowAspectWidget/designer/ShowAspectWidgetDesigner.css"
+    ],
+    "templates":
+    [
+        "/_ideFiles/Widgets/ShowAspectWidget/designer/ShowAspectWidgetDesigner.html"
+    ],
+    "menuTemplates":
+    [
+    ],
+    "components":
+    [
+    ]
+}

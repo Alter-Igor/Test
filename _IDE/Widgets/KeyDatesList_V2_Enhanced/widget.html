@@ -1,0 +1,46 @@
+﻿<div data-key-date-widget-v2 style="display: none" data-bind="style: { display: loaded ? 'block' : 'none' }">
+
+    <p data-bind="visible: noKeyDates">
+        No key dates found
+    </p>
+
+    <div class="alert alert-warning" data-bind="visible: keyDateLimitReached" style="">
+        <span class="fa fa-info-circle"></span> <strong>Note:</strong> The configured limit for key dates to display has been reached
+    </div>
+
+    <!-- ko ifnot: inGroupedMode -->
+    <!-- ko foreach: keyDates -->
+    <div data-bind="template: { name: 'key-date-card-template', data: $data }"></div>
+    <!-- /ko -->
+    <!-- /ko -->
+    <!-- ko if: inGroupedMode -->
+    <!-- ko foreach: groupedKeyDates -->
+    <div class="widget nested-widget" data-bind="accordion: isExpanded, accordiontarget: 'DIV.widget-body', css: {'is-expanded': isExpanded }" data-group>
+        <div class="widget-title">
+            <h3 class="text-overflow" data-bind="text: heading, textAsTitle: true"></h3>
+
+            <nav class="widget-menu">
+                <ul class="nav navbar-nav navbar-right">
+
+                    <!-- ko ifnot: isExpanded -->
+                    <li>
+                        <div class="btn btn-info btn-xs" data-bind="toggle:isExpanded, text: $data.totalKeyDates, attr: { title: $data.totalKeyDatesText }"></div>
+                    </li>
+                    <!-- /ko -->
+
+                    <li><a class="btn" data-bind="toggle: isExpanded"><span data-bind="switchCss: {value: isExpanded, whenTrue: 'fa-angle-up', whenFalse: 'fa-angle-down'}" class="fa fa-angle-up"></span></a></li>
+
+                </ul>
+
+            </nav>
+        </div>
+
+        <div class="widget-body">
+            <!-- ko foreach: keyDates -->
+            <div data-bind="template: { name: 'key-date-card-template', data: $data }"></div>
+            <!-- /ko -->
+        </div>
+    </div>
+    <!-- /ko -->
+    <!-- /ko -->
+</div>

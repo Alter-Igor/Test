@@ -2,6 +2,8 @@
   "compilerOptions": {   
     "outDir": "./dist/",
     "isolatedModules": false,
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact",
     "target": "ES6",
     "module": "ESNext",
     "allowJs": true,

@@ -1,0 +1,23 @@
+﻿{
+    "designer": {
+        "allowInPortalDesigner": false,
+        "allowInSharedoPortalDesigner": false
+    },
+    "scripts": [
+        "/_ideFiles/Widgets/KeyDatesList_V2_Enhanced/KeyDatesListDesigner/widget.js"
+    ],
+    "styles": [
+        "/_ideFiles/Widgets/KeyDatesList_V2_Enhanced/KeyDatesListDesigner/widget.css"
+    ],
+    "templates": [
+        "/_ideFiles/Widgets/KeyDatesList_V2_Enhanced/KeyDatesListDesigner/widget.html"
+    ],
+    "menuTemplates": [
+    ],
+    "components": [
+        "Sharedo.UI.Framework.Components.TreeSelectDropdown",
+        "Sharedo.UI.Framework.Components.Toggle",
+        "Sharedo.UI.Framework.Components.AutoComplete",
+        "Sharedo.Core.Case.Components.SharedoTypePicker"
+    ]
+}
