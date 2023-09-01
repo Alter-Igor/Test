@@ -1,0 +1,28 @@
+{
+    "id": "WKExpressWidgetDesigner",
+    "priority": 6000,
+    "designer":
+    {
+        "allowInPortalDesigner": false,
+        "allowInSharedoPortalDesigner": false
+    },
+    "scripts":
+    [
+        "/_ideFiles/WKExpressWidget/designer/WKExpressWidgetDesigner.js"
+    ],
+    "styles":
+    [
+        "/_ideFiles/WKExpressWidget/designer/WKExpressWidgetDesigner.css"
+    ],
+    "templates":
+    [
+        "/_ideFiles/WKExpressWidget/designer/WKExpressWidgetDesigner.html"
+    ],
+    "menuTemplates":
+    [
+    ],
+    "components":
+    [
+        "Sharedo.Core.Case.TextEditor.Component"
+    ]
+}

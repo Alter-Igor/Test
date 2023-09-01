@@ -1,0 +1,175 @@
+
+import * as ko from "knockout";
+import { v4 as uuid4 } from "uuid";
+import { AspectData } from "../Typings/ShareDo/IWorkTypeContext";
+
+let thisWidgetSystemName = "FormWidget";
+
+export interface IFormWidget_ConfigurationFromModeller {
+    debug: Debug | null | undefined;
+}
+
+export interface Host {
+    model: HostModel | null;
+    blade: any | null;
+    enabled: boolean | null;
+    toolbarContext?: any | null;
+    burgerContext?: any | null;
+    _host: Host;
+}
+
+type ConfigurationWithHost = IFormWidget_ConfigurationFromModeller & Host;
+
+export interface HostModel {
+    title: string;
+    instanceId: string;
+    parentSharedoId: string;
+    id: ko.Observable<string | undefined>;
+    aspectData: AspectData;
+}
+
+export interface Debug {
+    enabled?: boolean | null;
+    logToConsole?: boolean | null;
+    showEvents?: boolean | null;
+    showInAspect?: boolean | null;
+}
+
+type Model = {
+    title: string | null | undefined;
+    saveRuns: number;
+};
+
+export class FormWidget {
+
+    firedEvents: any[];
+    monitoredHandlers: any[];
+    readyForSave: boolean;
+    options?: ConfigurationWithHost;
+    disposables?: any[];
+    enabled?: boolean;
+    instanceId?: string;
+    element?: HTMLElement;
+    blade: any;
+    parentSharedoId?: string;
+    toolbarContext: any;
+    burgerContext: any;
+    sharedoId: ko.Observable<string | undefined> | undefined;
+    sharedoTypeSystemName: string | null | undefined;
+    reloading?: boolean;
+    model: Model;
+    isValidTemp: any;
+    hostModel: HostModel | null;
+    currentPhaseSystemName: ko.Observable<string | undefined> | undefined;
+    thisWidgetElement: any;
+    configuration: IFormWidget_ConfigurationFromModeller;
+    host: Host;
+
+
+
+    constructor(element: HTMLElement, configurationWithHost: ConfigurationWithHost, baseModel: any) {
+
+        this.firedEvents = [];
+        this.monitoredHandlers = [];
+        this.readyForSave = false;
+        let defaults: IFormWidget_ConfigurationFromModeller =
+        {
+            // Aspect widget config parameters
+            debug: {
+                enabled: false,
+                logToConsole: false,
+                showEvents: false,
+                showInAspect: false
+            }
+        }
+
+        this.options = $.extend(true, {}, defaults, configurationWithHost);
+        this.configuration = this.options;
+        this.blade = configurationWithHost._host.blade;
+        this.hostModel = configurationWithHost._host.model;
+        this.host = configurationWithHost._host; 
+
+        this.model =
+        {
+            // This is referencing a standard observable item from the main model
+            title: configurationWithHost._host?.model?.title,
+            // This is the configured message against the aspect instance
+            saveRuns: 0,
+        };
+
+        this.log("----> Constructing", 'background: #222; color: #bada55', configurationWithHost);
+        this.enabled = configurationWithHost._host.blade.enabled;
+        this.instanceId = this.hostModel?.instanceId;
+        this.element = element;
+        this.blade = configurationWithHost._host.blade
+        this.parentSharedoId = this.hostModel?.parentSharedoId;
+        this.toolbarContext = configurationWithHost._host.toolbarContext;
+        this.burgerContext = configurationWithHost._host.burgerContext;
+
+        this.sharedoId = this.hostModel?.id;
+        this.reloading = false;
+        this.sharedoTypeSystemName = this.blade.model.sharedoTypeSystemName()
+        this.currentPhaseSystemName = this.blade.model.phaseSystemName
+
+        if (this.currentPhaseSystemName !== undefined) {
+            this.currentPhaseSystemName.subscribe(() => {
+                this.log("Current Phase Changed", "red", this.currentPhaseSystemName!());
+                this.loadAndBind();
+            });
+        };
+        this.addDebugIfRequired();
+    }
+
+    /**
+     * 
+     * @returns Return the formbuilder data on this matter if it exists
+     */
+    formbuilder() : any | undefined
+    {
+        return this.blade.model.aspectData.formBuilder.formData;
+    }
+
+
+    /**
+     * Called by the UI framework after initial creation and binding to load data
+     * into it's model
+     */
+    loadAndBind() {
+
+        
+          
+    };
+
+    load(model: any) {
+        this.log("Load");
+    };
+
+    reload(model: any) {
+        this.log("Reload");
+    };
+
+
+
+    onSave(): void {
+        this.log("onSave");
+        
+    }
+
+
+    log(message: string, color?: string, data?: any): void {
+        if (this.configuration.debug?.enabled) {
+            if (this.configuration.debug.logToConsole) {
+                console.log(`%c ${thisWidgetSystemName} - ${message}`, color, data);
+            }
+        }
+    }
+
+    private addDebugIfRequired() {
+        if (this.configuration.debug?.enabled) {
+            (window as any).aspectDebug = (window as any).aspectDebug || {};
+            (window as any).aspectDebug[thisWidgetSystemName] = this;
+        }
+    }
+}
+
+

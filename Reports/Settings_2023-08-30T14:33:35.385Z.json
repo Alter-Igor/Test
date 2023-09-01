@@ -1,0 +1,7 @@
+{
+ "url": "https://wk-vnext.sharedo.tech/",
+ "clientId": "VsCodeApp",
+ "clientSecret": "not a secret",
+ "impersonateUser": "wendy",
+ "impersonateProvider": "idsrv"
+}

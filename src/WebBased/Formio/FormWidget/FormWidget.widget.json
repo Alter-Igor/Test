@@ -1,0 +1,37 @@
+﻿{
+    "id": "Widgets.FormWidget",
+    "priority": 6000,
+    "designer":
+    {
+        "allowInPortalDesigner": true,
+        "allowInSharedoPortalDesigner": true,
+        "title": "Form IO Widget",
+      "icon": "fa-cog",
+      "description": "Converts a list of boolean values to a list of graphics",
+      "categories":
+      [
+          "Forms"
+      ],
+        "isConfigurable": true,
+        "configurationWidget": "Widgets.FormWidgetDesigner"
+    },
+    "scripts":
+    [
+        "/_ideFiles/Widgets/FormWidget/FormWidget.js"
+    ],
+    "styles":
+    [
+        "/_ideFiles/Widgets/FormWidget/FormWidget.css"
+    ],
+    "templates":
+    [
+        "/_ideFiles/Widgets/FormWidget/FormWidget.html"
+    ],
+    "menuTemplates":
+    [
+        "/_ideFiles/Widgets/FormWidget/FormWidgetMenu.html"
+    ],
+    "components":
+    [
+    ]
+}

@@ -1,0 +1,38 @@
+{
+    "id": "WKExpressWidget",
+    "priority": 6000,
+    "designer":
+    {
+        "allowInPortalDesigner": true,
+        "allowInSharedoPortalDesigner": true,
+        "title": "W+K Express Recoveries Platform",
+        "icon": "fa-cog",
+        "description": "widget that creates an instruction type for W+K ",
+        "categories":
+        [
+            "WK Express Widget"
+        ],
+        "isConfigurable": true,
+        "configurationWidget": "WKExpressWidgetDesigner"
+    },
+    "scripts":
+    [
+        "/_ideFiles/WKExpressWidget/WKExpressWidgetAgent.js",
+        "/_ideFiles/WKExpressWidget/WKExpressWidget.js"
+    ],
+    "styles":
+    [
+        "/_ideFiles/WKExpressWidget/WKExpressWidget.css"
+    ],
+    "templates":
+    [
+        "/_ideFiles/WKExpressWidget/WKExpressWidget.html"
+    ],
+    "menuTemplates":
+    [
+        "/_ideFiles/WKExpressWidget/WKExpressWidgetMenu.html"
+    ],
+    "components":
+    [
+    ]
+}

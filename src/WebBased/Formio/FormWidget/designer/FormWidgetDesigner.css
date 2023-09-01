@@ -1,0 +1,45 @@
+div.Widgets-FormWidgetDesigner
+{
+}
+
+.Widgets-FormWidgetDesigner .formbuilder-editor-json {
+    margin-bottom: 20px;
+    height: calc(100% - 20px)
+}
+.Widgets-FormWidgetDesigner .formbuilder-editor-json .form-control {
+        height: 100%;
+        min-height: 100%;
+    }
+
+
+.Widgets-FormWidgetDesigner .participants
+{
+    height: 300px;
+}
+.Widgets-FormWidgetDesigner .key-dates
+{
+    height: 300px;
+}
+.Widgets-FormWidgetDesigner .aspectData
+{
+    height: 300px;
+}
+.Widgets-FormWidgetDesigner .work-item
+{
+    height: 300px;
+}
+
+.Widgets-FormWidgetDesigner .form-def
+{
+    height: 800px;
+}
+
+.Widgets-FormWidgetDesigner .modal-content, 
+.Widgets-FormWidgetDesigner .modal-dialog
+{
+    width: 100%;
+}
+.Widgets-FormWidgetDesigner .modal-body
+{
+    padding: 10px;;
+}

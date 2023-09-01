@@ -23,6 +23,7 @@
     "alterspective-material-design-web-components": "file:../Material-Design-Web-Components",
     "colortranslator": "^3.0.2",
     "font-awesome": "^4.7.0",
+    "formiojs": "^4.16.0",
     "knockout": "^3.5.1",
     "knockout.validation": "^2.0.4",
     "moment": "^2.29.4"

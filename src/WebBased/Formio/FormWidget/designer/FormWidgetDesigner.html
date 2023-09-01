@@ -1,0 +1,79 @@
+<div class="Widgets-FormWidgetDesigner">
+    
+    <div data-bind="widgetChrome:{ icon: 'fa-cog', title: 'formio configuration' }">
+
+        <div class="modal fade" id="tcsmodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                       
+                    </div>
+                    <div class="modal-body">
+                       <div id="formio-designer"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group form-def">
+            <label for="todo">Enter the form.io definition:</label>
+            <a data-toggle="modal" id="TCLink"  data-target="#tcsmodal" data-bind="click: checkComplex">Edit in Designer</a>
+            <div class="col-sm-12 formbuilder-editor-json" >
+                <div id="formBuilderDefinition" class="form-control textarea" data-bind="syntaxEditor: model.formBuilderDefinition, enable: true, event: { focusout: onFocusOut }"></div>
+            </div>
+        </div>
+        <div class="form-group toggle-form-group">
+            <label for="broadcastOnSubmit">Should the widget broadcast when the submit button is pressed:</label>
+            <div class="input-group">
+                <input id="broadcastOnSubmit"   type="checkbox" data-bind="toggleSwitch:model.broadcastOnSubmit"/>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="broadcastOnSubmitEventName">Name of the event to broadcase on submit</label>
+            <input id="broadcastOnSubmitEventName"  class="form-control" type="text" data-bind="textInput:model.broadcastOnSubmitEventName"/>
+        </div>
+      <!-- syntaxEditor: formJson, enable: true -->
+
+        <div class="form-group toggle-form-group">
+            <label for="createWorkTypeOnSubmit">Create work-item on Submit?</label>
+            <div class="input-group">
+                <input id="createWorkTypeOnSubmit"  type="checkbox" data-bind="toggleSwitch:model.createWorkTypeOnSubmit"/>
+            </div>
+        </div>
+
+        <div class="form-group work-item">
+            <label for="workItem">Work Item:</label>
+            <div class="col-sm-12 formbuilder-editor-json">
+                <div id="workItem" class="form-control textarea" data-bind="syntaxEditor: model.workItem, enable: true, event: { focusout: onFocusOut }"></div>
+            </div>
+        </div>
+
+        <div class="form-group aspectData">
+            <label for="aspectData">Aspect Data:</label>
+            <div class="col-sm-12 formbuilder-editor-json">
+                <div id="aspectData" class="form-control textarea" data-bind="syntaxEditor: model.aspectData, enable: true, event: { focusout: onFocusOut }"></div>
+            </div>
+        </div>
+
+        <div class="form-group key-dates">
+            <label for="keyDates">Key Dates:</label>
+            <div class="col-sm-12 formbuilder-editor-json">
+                <div id="keyDates" class="form-control textarea" data-bind="syntaxEditor: model.keyDates, enable: true, event: { focusout: onFocusOut }"></div>
+            </div>
+        </div>
+
+        <div class="form-group participants">
+            <label for="participants">Participants:</label>
+            <div class="col-sm-12 formbuilder-editor-json">
+                <div id="participants" class="form-control textarea" data-bind="syntaxEditor: model.participants, enable: true, event: { focusout: onFocusOut }"></div>
+            </div>
+        </div>
+        
+    </div>
+
+</div>

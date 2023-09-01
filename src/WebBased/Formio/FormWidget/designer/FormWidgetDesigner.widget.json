@@ -1,0 +1,37 @@
+{
+    "id": "Widgets.FormWidgetDesigner",
+    "priority": 6000,
+    "designer":
+    {
+        "allowInPortalDesigner": true,
+        "allowInSharedoPortalDesigner": true,
+        "title": "Form Question Designer",
+        "icon": "fa-cog",
+        "description": "to do",
+        "categories":
+        [
+            "Forms"
+        ]
+    },
+    "scripts":
+    [
+        "/_ideFiles/Widgets/FormWidget/designer/FormWidgetDesigner.js"
+    ],
+    "styles":
+    [
+        "/_ideFiles/Widgets/FormWidget/designer/FormWidgetDesigner.css"
+    ],
+    "templates":
+    [
+        "/_ideFiles/Widgets/FormWidget/designer/FormWidgetDesigner.html"
+    ],
+    "menuTemplates":
+    [
+    ],
+    "components":
+    [
+        "Sharedo.Core.Case.TextEditor.Component",
+        "Sharedo.UI.Framework.Components.SyntaxEditor",
+        "Sharedo.UI.Framework.Components.Toggle"
+    ]
+}

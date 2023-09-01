@@ -1,0 +1,13 @@
+{
+    "scripts":
+    [
+        "/_ideFiles/GlobalScripts/ImmersionTheme/ImmersionTheme.js"
+    ],
+    "styles":
+    [
+        "/_ideFiles/GlobalScripts/ImmersionTheme/ImmersionTheme.css"
+    ],
+    "widgets":
+    [
+    ]
+}

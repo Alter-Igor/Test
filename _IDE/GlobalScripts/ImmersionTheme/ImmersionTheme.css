@@ -1,0 +1,14 @@
+.navbar-brand
+{
+    /* Set body to faded out */
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+
+} 
+
+.navbar-brand.loaded
+{
+    /* Set body to faded in */
+    opacity: 1;
+    transition: opacity 0.2s ease-in-out;
+}

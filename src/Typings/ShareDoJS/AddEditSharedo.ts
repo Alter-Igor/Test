@@ -2,7 +2,8 @@ import { IAspect } from "../Aspect/IAspect";
 
 
 export type TShareDoBlade  = 
-{   
+{
+    model: ISharedoBladeModel;   
     element : HTMLElement
     isMaximised : () => boolean
     options : {
@@ -22,7 +23,7 @@ export type TShareDoBlade  =
 
     sharedoTypeIcon : ko.Observable
     sharedoTypeName : ko.Observable
-    title : ko.Observable
+    title : ko.Observable | undefined
 
     displayTitle :ko.Observable
     aspects : ko.ObservableArray<IAspect<any>>
@@ -32,3 +33,7 @@ export type TShareDoBlade  =
     eventSubscriptions : []
 
 };
+
+export interface ISharedoBladeModel {
+    title: ko.Observable<string>
+}
