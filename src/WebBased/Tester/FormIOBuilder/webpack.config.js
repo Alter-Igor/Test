@@ -53,10 +53,10 @@ module.exports = [
     node: {
       __dirname: false,
     },
-    // externals: {
-    //   jquery: 'jQuery',
-    //   knockout: 'ko',
-    //   moment: 'moment',
-    // },
+    externals: {
+      jquery: 'jQuery',
+      knockout: 'ko',
+      // moment: 'moment',
+    },
   }
 ];

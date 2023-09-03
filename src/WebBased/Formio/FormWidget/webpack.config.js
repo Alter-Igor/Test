@@ -25,8 +25,7 @@ module.exports = [
     entry: {
       "FormWidget":`./${widgetName}.ts`,
       "./designer/FormWidgetDesigner": `${outputWidgetDesignerName}` + ".ts",
-      "./designer/designer/FormWidgetDesignerDesigner": "./designer/designer/designer.ts",
-      "./FormIOBuilder/page": "./FormIOBuilder/page.ts",
+      "./designer/designer/FormWidgetDesignerDesigner": "./designer/designer/designer.ts"
          },
     
     output: { 

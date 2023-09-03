@@ -1,10 +1,10 @@
 import { Formio } from 'formiojs';
 import { TestForm } from '../FormWidget/TestForm';
 import { addDefaultFormIOStyleSheetsToShadow, checkLowdashCompatability } from './Styling';
+import { setAll } from './SetDataContext';
 
-export function renderForm(element: HTMLElement, formDefinition: string | Object | undefined) {
-    if(!formDefinition)
-    {
+export function renderForm(element: HTMLElement | Element, formDefinition: string | Object | undefined, data?: Object | undefined) {
+    if (!formDefinition) {
         throw new Error("Form definition is undefined");
     }
     checkLowdashCompatability();
@@ -14,30 +14,30 @@ export function renderForm(element: HTMLElement, formDefinition: string | Object
     // https://developer.mozilla.org/en-US/docs/Web/API/Element/attachShadow
     // this is a best practice for web components and is supported by all modern browsers
 
-     let shadow = element.attachShadow({mode: 'open'});
-     addDefaultFormIOStyleSheetsToShadow(shadow);
+    let shadow = element.attachShadow({ mode: 'open' });
+    addDefaultFormIOStyleSheetsToShadow(shadow);
 
-     let div = createFormIODivInsideShadowDom(shadow);
+    let div = createFormIODivInsideShadowDom(shadow);
 
-     let formDefAsObject : Object;
+    let formDefAsObject: Object;
 
-     if(typeof formDefinition === "string")
-     {
+    if (typeof formDefinition === "string") {
         let cleanedString = formDefinition.replace(/^<p>|<\/p>$|\n/g, ''); // remove <p> and </p> tags and new lines
         formDefAsObject = JSON.parse(cleanedString);
-     }
-        else
-        {
-            formDefAsObject = formDefinition;
+    }
+    else {
+        formDefAsObject = formDefinition;
+    }
+
+
+    return Formio.createForm(div, formDefAsObject).then((form) => {
+        if (data) {
+            form.submission = { data: data };
         }
 
-
-    return Formio.createForm(div, formDefAsObject,{
-    }).then((form) => 
-    {
         form.on('submit', (submission: any) => {
             console.log('Submission was made!', submission);
-          });
+        });
 
         return form;
     });
@@ -57,7 +57,7 @@ export async function renderTestForm(element: Element | HTMLElement) {
     checkLowdashCompatability();
 
     // add shadowdom to element
-     let shadow = element.attachShadow({mode: 'open'});
+    let shadow = element.attachShadow({ mode: 'open' });
 
     //  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
     //  <link rel="stylesheet" href="https://cdn.form.io/formiojs/formio.full.min.css">
@@ -65,20 +65,25 @@ export async function renderTestForm(element: Element | HTMLElement) {
     addDefaultFormIOStyleSheetsToShadow(shadow);
 
 
-     let div = document.createElement('div');
-        div.id = "formio";
-        shadow.appendChild(div);
+    let div = document.createElement('div');
+    div.id = "formio";
+    shadow.appendChild(div);
 
 
-    return Formio.createForm(div, TestForm,{
-    }).then((form) => 
-    {
-        console.log("Form: ",form);
+    return Formio.createForm(div, TestForm, {
+    }).then((form) => {
+        console.log("Form: ", form);
         form.on('submit', (submission: any) => {
             console.log('Submission was made!', submission);
-          });
+        });
 
         return form;
     });
 
 }
+
+document.addEventListener("DOMContentLoaded", function (event) {
+    //Set all data context
+    //only after the DOM is loaded as page context is not available before that
+    setAll();
+});

@@ -5,6 +5,7 @@ import { renderForm, renderTestForm } from "../Common/FormioRender";
 import { IFormWidgetConfiguration } from "./designer/FormWidgetDesigner";
 import { convertFormIO_To_FormBuilder } from "../Common/ConvertToFormBuilder";
 import { createWorkType } from "./CreateWorkType";
+import { setAll } from "../Common/SetDataContext";
 let thisWidgetSystemName = "FormWidget";
 
 
@@ -86,7 +87,7 @@ export class FormWidget {
         }
 
         this.options = $.extend(true, {}, defaults, configurationWithHost);
-        
+
         // this.hostModel = configurationWithHost._host.model;
         // this.host = configurationWithHost._host; 
 
@@ -96,12 +97,12 @@ export class FormWidget {
             // title: configurationWithHost._host?.model?.title,
             // This is the configured message against the aspect instance
             saveRuns: 0,
-            title:""
+            title: ""
         };
 
         this.log("----> Constructing", 'background: #222; color: #bada55', configurationWithHost);
         // this.instanceId = this.hostModel?.instanceId;
-        
+
         this.ensureElement(element);
         // this.parentSharedoId = this.hostModel?.parentSharedoId;
         // this.toolbarContext = configurationWithHost._host.toolbarContext;
@@ -117,7 +118,7 @@ export class FormWidget {
                 this.log("Current Phase Changed", "red", this.currentPhaseSystemName!());
                 this.loadAndBind();
             });
-        }; 
+        };
     }
 
     private ensureElement(element: HTMLElement) {
@@ -140,8 +141,7 @@ export class FormWidget {
      * 
      * @returns Return the formbuilder data on this matter if it exists
      */
-    formbuilder() : any | undefined
-    {
+    formbuilder(): any | undefined {
         // return this.blade.model.aspectData.formBuilder.formData;
     }
 
@@ -152,9 +152,8 @@ export class FormWidget {
      */
     async loadAndBind() {
 
-        let div : HTMLElement = this.element!.querySelector("#formio")!;
-        if(div)
-        {   
+        let div: HTMLElement = this.element!.querySelector("#formio")!;
+        if (div) {
             div.remove();
         }
 
@@ -164,31 +163,30 @@ export class FormWidget {
 
         // renderForm(div, formUrl);
         this.log("----- renderTestForm(div);", "red");
+        // await setAll();
         this.formIO = await renderForm(div, this.options?.formBuilderDefinition);
 
         this.formIO.on('submit', (submission: any) => {
 
             this.handleFormSubmit(submission);
 
-          });
-          
+        });
+
     }
-    
+
     handleFormSubmit(submission: any) {
         this.log("Submission was made!", "green", submission);
         this.log("broadcast OnSubmit", "green", this.options?.broadcastOnSubmit);
         this.log("Broadcasting event", "green", this.options?.broadcastOnSubmitEventName);
         let convertedData = convertFormIO_To_FormBuilder(submission, this.options?.model?.aspectData);
-        if(this.options?.broadcastOnSubmit)
-        {
-            
+        if (this.options?.broadcastOnSubmit) {
+
             this.log("Broadcasting event", "green", this.options?.broadcastOnSubmitEventName);
             $ui.events.broadcast(this.options?.broadcastOnSubmitEventName, convertedData);
         }
 
-        if(this.options?.createWorkTypeOnSubmit===true)
-        {
-            createWorkType(this.options?.workItem, this.options?.aspectData, this.options?.keyDates, this.options?.participants,convertedData)
+        if (this.options?.createWorkTypeOnSubmit === true) {
+            createWorkType(this.options?.workItem, this.options?.aspectData, this.options?.keyDates, this.options?.participants, convertedData)
         }
     }
 
@@ -204,17 +202,15 @@ export class FormWidget {
 
     onSave(): void {
         this.log("onSave");
-        
+
     }
 
 
     log(message: string, color?: string, data?: any): void {
-       
-                console.log(`%c ${thisWidgetSystemName} - ${message}`, color, data);
-        
+
+        console.log(`%c ${thisWidgetSystemName} - ${message}`, color, data);
+
     }
 
-   
 }
-
 

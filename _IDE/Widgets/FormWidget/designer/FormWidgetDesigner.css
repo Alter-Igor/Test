@@ -43,3 +43,24 @@ div.Widgets-FormWidgetDesigner
 {
     padding: 10px;;
 }
+
+.Widgets-FormWidgetDesigner .formio-builder-iframe
+{
+    opacity: 0.0;
+}
+
+.Widgets-FormWidgetDesigner .formio-builder-iframe.loaded
+{
+    opacity: 1.0;
+    /* add fade in */
+    -webkit-transition: opacity 1s ease-in-out;
+    -moz-transition: opacity 1s ease-in-out;
+    -o-transition: opacity 1s ease-in-out;
+    transition: opacity 1s ease-in-out;
+}
+.Widgets-FormWidgetDesigner.modal{
+        position: absolute;
+    z-index: 1000;
+     width: 100%;
+    top: 0px;
+}

@@ -1,11 +1,12 @@
 import { FormBuilder, Formio } from 'formiojs';
-
+import { DeferredPromise } from "../../Common/DifferedPromise";
+import { exampleFormComponents } from '../../Formio/Common/FormioBuilder';
 let formBuilder: FormBuilder;
 
 
 
 document.addEventListener("DOMContentLoaded", () => {
-    build();
+    
     let formiolocation = document.querySelector("#formio")!;
 
     //create a button
@@ -20,26 +21,40 @@ document.addEventListener("DOMContentLoaded", () => {
     formiolocation.parentElement?.appendChild(button);
 });
 
-function build() {
-    let formiolocation = document.querySelector("#formio")!;
-    // formBuilder = new FormBuilder(formiolocation, undefined, undefined);
-    
+function build(deferred: DeferredPromise<FormBuilder>, schema: string | undefined) {
 
-    formBuilder = new FormBuilder(formiolocation, {}, {
-        builder: {
-            basic: true,
-            advanced: true,
-            data: false, 
-        },
-        editForm: {
-            textfield: [
-                {
-                    key: 'api',
-                    ignore: true
-                }
-            ]
-        } 
-    });
+    let schemaObj: any;
+    if (schema) {
+        try {
+            schemaObj = schema ? JSON.parse(schema) : undefined;
+        }
+        catch (e) {
+            console.error(e);
+        }
+    }
+
+    let formiolocation = document.querySelector("#formio")!;
+    
+    formBuilder = new FormBuilder(formiolocation, {
+        components: schemaObj.component
+    }
+        , {
+            builder: {
+                resource: false,
+                advanced: false,
+                premium: false
+            }
+        });
+
 
     (window as any).formBuilder = formBuilder;
+    deferred.resolve(formBuilder);
 }
+
+function buildWithExample(deferred: DeferredPromise<FormBuilder>)
+{
+    build(new DeferredPromise<FormBuilder>(), JSON.stringify(exampleFormComponents, null, 2));
+}
+
+(window as any).build = build;
+(window as any).buildWithExample = buildWithExample

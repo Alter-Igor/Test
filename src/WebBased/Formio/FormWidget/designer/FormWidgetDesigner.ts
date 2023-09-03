@@ -4,6 +4,7 @@ import { camelize, cleanJSON } from "../../../BaseClasses/Utility";
 import { DEFAULT_FORM } from "./DefaultForm";
 import { TShareDoBlade } from "../../../../Typings/ShareDoJS/AddEditSharedo";
 import { createFormBuilderPage } from "../../Common/FormioBuilder";
+import { setAll } from "../../Common/SetDataContext";
 
 
 export function FormWidgetDesigner(element: HTMLElement, configuration: any, baseModel: any): FormWidgetDesignerClass {
@@ -50,6 +51,9 @@ export class FormWidgetDesignerClass {
     textEditorParticipants: any;
     element: HTMLElement;
     formBuilder: any | undefined;
+    designerCreated: boolean = false;
+    modelDialog: HTMLElement;
+    designerDiv: HTMLDivElement;
 
 
     constructor(element: HTMLElement, configuration: ConfgurationAndBlade, baseModel: IWidgetBase) {
@@ -118,6 +122,15 @@ export class FormWidgetDesignerClass {
             return 0;
         });
 
+        let id = "#formio-designer";
+        this.designerDiv = this.element.querySelector(id) as HTMLDivElement;
+        
+        this.modelDialog = this.element.querySelector(".Widgets-FormWidgetDesigner.modal") as HTMLElement;
+        // move model dialog to the body
+        document.body.appendChild(this.modelDialog);
+
+        
+
     }
 
     onDestroy(): void {
@@ -146,27 +159,29 @@ export class FormWidgetDesignerClass {
 
     };
 
-    checkComplex() {
-        let id = "#formio-designer";
-        let div = this.element.querySelector(id);
+    checkComplex() { 
 
-        if (!div) {
-            throw new Error("Could not find element with id " + id);
-
+        if(this.designerCreated) {
+            // return;
         }
-        createFormBuilderPage(div,this.formBuilderDefinition()).promise.then((formBuilder) => {
+
+        this.designerCreated = true;
+        this.designerDiv.innerHTML
+        
+        createFormBuilderPage(this.designerDiv,this.formBuilderDefinition()).promise.then((formBuilder) => {
             this.formBuilder = formBuilder;
             (window as any).formBuilder = formBuilder;
             formBuilder.instance.on('change', () => {
                 this.formBuilderDefinition(JSON.stringify(formBuilder.instance.schema, null, 2));
             });
         });
+      
+
         // window.open("http://127.0.0.1:5500/src/WebBased/Tester/FormIOBuilder/page.html", "_blank");
 
 
     }
 
 }
-
 
 
