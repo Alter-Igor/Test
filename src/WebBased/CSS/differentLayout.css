@@ -1,0 +1,24 @@
+
+.form-group
+{
+    display:flex;
+    flex-direction:column;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.form-group > div,
+.form-group > label
+{
+    flex-grow: 1;
+    width:100%!important;
+    
+}
+
+.form-group .col-sm-10
+{
+    width:100%!important;
+    flex-grow:1;
+}

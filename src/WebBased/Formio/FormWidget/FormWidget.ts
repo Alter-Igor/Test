@@ -1,11 +1,11 @@
 
 import * as ko from "knockout";
 import { AspectData } from "../../../Typings/ShareDo/IWorkTypeContext";
-import { renderForm, renderTestForm } from "../Common/FormioRender";
+import { renderForm } from "../Common/FormioRender";
 import { IFormWidgetConfiguration } from "./designer/FormWidgetDesigner";
-import { convertFormIO_To_FormBuilder } from "../Common/ConvertToFormBuilder";
+import { convertFormIOData_To_FormBuilderData } from "../Common/Converter";
 import { createWorkType } from "./CreateWorkType";
-import { setAll } from "../Common/SetDataContext";
+
 let thisWidgetSystemName = "FormWidget";
 
 
@@ -83,7 +83,9 @@ export class FormWidget {
             workItem: "",
             aspectData: "",
             keyDates: "",
-            participants: ""
+            participants: "",
+            formData:{},
+            showPreview: false,
         }
 
         this.options = $.extend(true, {}, defaults, configurationWithHost);
@@ -178,7 +180,7 @@ export class FormWidget {
         this.log("Submission was made!", "green", submission);
         this.log("broadcast OnSubmit", "green", this.options?.broadcastOnSubmit);
         this.log("Broadcasting event", "green", this.options?.broadcastOnSubmitEventName);
-        let convertedData = convertFormIO_To_FormBuilder(submission, this.options?.model?.aspectData);
+        let convertedData = convertFormIOData_To_FormBuilderData(submission, this.options?.model?.aspectData);
         if (this.options?.broadcastOnSubmit) {
 
             this.log("Broadcasting event", "green", this.options?.broadcastOnSubmitEventName);

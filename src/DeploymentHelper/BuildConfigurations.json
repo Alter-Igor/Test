@@ -1,0 +1,49 @@
+{
+    "defaultModulesToExtract":[
+        {
+            "modules":["lodash"],
+            "extractedFileName": "lodash.js"
+        }
+    ],
+    "typeDefaults": {
+        "globals": {
+            "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/Globals",
+            "sourcePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/Globals",
+            "modulesToExtract": [
+                {
+                    "modules":["jquery","axios"],
+                    "extractedFileName": "utils.js"
+                }
+            ],
+            "enabled": true
+
+        },
+        "widgets": {
+            "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/Widgets",
+            "sourcePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/Widgets",
+            "enabled": true
+        },
+        "ideAspects": {
+            "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/IDEAspects",
+            "sourcePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/IDEAspects",
+            "enabled": true
+        },
+        "workflowActions": {
+            "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/WorkflowActions",
+            "sourcePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions",
+            "enabled": true
+        }
+    },
+    "targets": {
+        "ideAspects": {
+            "ODSPicker": {
+                "modulesToExtract": [ ]
+            }
+        },
+        "workflowActions": {
+            "LargeFiles": {
+                "enabled": false
+            }
+        }
+    }
+}

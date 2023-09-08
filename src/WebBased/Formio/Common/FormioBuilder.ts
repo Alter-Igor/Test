@@ -35,14 +35,14 @@ export function createFormBuilderPage(element: Element,schema: string) : Deferre
     });
 
     //get current window height
-    let screenHeight = element.clientHeight;;
+    let screenHeight = window.screen.width
     iframe.setAttribute("height", screenHeight.toString());
 
     //monitor screen height and resize iframe
     window.addEventListener("resize", function () {
         
         if (!iframe) { return; }
-        let screenHeight = element.clientHeight;;
+        let screenHeight =window.screen.width
         iframe.setAttribute("height", screenHeight.toString());
     });
 
@@ -108,7 +108,7 @@ export const exampleFormComponents={
                         "key": "tab1",
                         "components": [
                             {
-                                "label": "Claim Reference/No.",
+                                "label": "Example Claim Reference/No.",
                                 "widget": "",
                                 "applyMaskOn": "change",
                                 "autoExpand": false,
@@ -329,7 +329,7 @@ export const exampleFormComponents={
                                 "tableView": true,
                                 "dataSrc": "custom",
                                 "data": {
-                                    "custom": "return Widgets.getOptionSet(\"jurisdictions\")\n"
+                                    "custom": "return dataContext.getOptionSet(\"jurisdictions\")\n"
                                 },
                                 "valueProperty": "name",
                                 "template": "<span>{{ item.name }}</span>",
@@ -342,7 +342,7 @@ export const exampleFormComponents={
                                 "label": "Your Organisation",
                                 "applyMaskOn": "change",
                                 "tableView": true,
-                                "customDefaultValue": "console.log(\"-----=======--------======\",Widgets.userOrganisation());\nreturn Widgets.userOrganisation().name;",
+                                "customDefaultValue": "return dataContext.userOrganisation().name;",
                                 "key": "yourOrganisation",
                                 "type": "textfield",
                                 "input": true
@@ -351,7 +351,7 @@ export const exampleFormComponents={
                                 "label": "User Name",
                                 "applyMaskOn": "change",
                                 "tableView": true,
-                                "customDefaultValue": "return Widgets.user().username()",
+                                "customDefaultValue": "return dataContext.user().username()",
                                 "key": "userName",
                                 "type": "textfield",
                                 "input": true
@@ -371,7 +371,7 @@ export const exampleFormComponents={
                                 "tableView": true,
                                 "dataSrc": "custom",
                                 "data": {
-                                    "custom": "return Widgets.getCountries()"
+                                    "custom": "return dataContext.getCountries()"
                                 },
                                 "idPath": "systemName",
                                 "valueProperty": "name",

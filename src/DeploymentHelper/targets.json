@@ -1,0 +1,43 @@
+[
+    {
+        "name": "ODSPicker",
+        "sourcePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/IDEAspects/ODSPicker",
+        "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/IDEAspects/ODSPicker",
+        "type": "widget",
+        "entryTSFile": "/Users/igorsharedo/Desktop/Test/src/WebBased/IDEAspects/ODSPicker/ODSPicker.ts",
+        "designerPath": "",
+        "valid": true,
+        "manifest": "/Users/igorsharedo/Desktop/Test/src/WebBased/IDEAspects/ODSPicker/OdsPicker.widget.json",
+        "modulesToExtract": [
+            {
+                "modules": [
+                    "lodash"
+                ],
+                "extractedFileName": "lodash.js"
+            }
+        ],
+        "bundleAnalyzer": false,
+        "enabled": true
+    },
+    {
+        "name": "LargeFiles",
+        "sourcePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/LargeFiles",
+        "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/WorkflowActions/LargeFiles",
+        "type": "wf-action",
+        "entryTSFile": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/LargeFiles/LargeFiles.ts",
+        "designerPath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/LargeFiles/Designer",
+        "valid": true,
+        "manifest": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/LargeFiles/LargeFiles.wf-action.json",
+        "modulesToExtract": [
+            {
+                "modules": [
+                    "lodash"
+                ],
+                "extractedFileName": "lodash.js"
+            }
+        ],
+        "designerManifest": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/LargeFiles/Designer/manifest.widget.json",
+        "bundleAnalyzer": false,
+        "enabled": true
+    }
+]

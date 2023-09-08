@@ -1,6 +1,8 @@
 
 
 import * as ko from "knockout";
+import { checkLowdashCompatability } from "./Styling";
+
 
 export const userOrganisation = ko.observable();
 export const userTeam = ko.observable();
@@ -10,7 +12,7 @@ export const userDetails = ko.observable();
 export const workItem = ko.observable();
 export const workItemAttributes = ko.observable();
 
-
+let thisModule = this;
 
 export function getOptionSet(name: string) {
 
@@ -25,26 +27,32 @@ export function getOptionSet(name: string) {
 
 export function getOrg(id:any)
 {
-    return wrapInPromise($ajax.get("api/v2/public/organisation/" + id));
+
+    console.log("getOrg", id);
+    if(!id)
+    {
+        console.error("----- No Organisation ID ----");
+    }
+    return wrapInPromise($ajax.get("/api/v2/public/organisation/" + id));
 }
 
 // export function  getTeamsID(id:any)
 // {
-//     return wrapInPromise($ajax.get("api/public/v1/teams/" + id));
+//     return wrapInPromise($ajax.get("/api/public/v1/teams/" + id));
 //     // return $ajax.get("/api/public/v1/people/" + id);
 // }
 
 // /api/v2/public/people/{id}
 export function getPeople(id:any)
 {
-    return wrapInPromise($ajax.get("api/v2/public/people/" + id));
+    return wrapInPromise($ajax.get("/api/v2/public/people/" + id));
     // return $ajax.get("/api/public/v1/people/" + id);
 }
 
 // /api/v1/public/workItem//{workItemId}
 export function getWorkItem(id:any)
 {
-    return wrapInPromise($ajax.get("api/v2/public/workItem/" + id));
+    return wrapInPromise($ajax.get("/api/v1/public/workItem/" + id));
     // return $ajax.get("/api/public/v1/people/" + id);
 }
 
@@ -61,7 +69,7 @@ export function getCountries() {
 // /api/v1/public/workItem/{workItemId}/attributes
 export function getWorkItemAttributes(id:any)
 {
-    return wrapInPromise($ajax.get("api/v2/public/workItem/" + id + "/attributes"));
+    return wrapInPromise($ajax.get("/api/v2/public/workItem/" + id + "/attributes"));
     // return $ajax.get("/api/public/v1/people/" + id);
 }
 
@@ -75,7 +83,7 @@ function wrapInPromise(data: any) {
 
 
 
- function setUserOrganisation()
+function setUserOrganisation()
 {
     return getOrg($ui.pageContext.user.organisationId()).then(function(value){
         console.log("Organisation", value);
@@ -131,16 +139,19 @@ function setWorkItemAttributes() {
     });
 }
 
-export function setAll() {
-    console.log("---- Setting up the data ------");
+export async function setDataContext() {
 
-    if(!$ && !$ui && !$ui.pageContext && !$ui.pageContext.user)
+    console.log("---- Setting up the data ------");
+    checkLowdashCompatability();
+
+
+    if(typeof $ === "undefined" || typeof $ui === "undefined" || !$ui?.pageContext || !$ui.pageContext.user)
     {
         console.log("No $, $ui or $ui.pageContext.user");
         return;
     }
 
-    user($ui.pageContext.user);
+    user(JSON.parse(ko.toJSON($ui.pageContext.user)));
 
     let pArray = new Array<Promise<any>>();
     pArray.push(setUserOrganisation());
@@ -150,25 +161,30 @@ export function setAll() {
     pArray.push(setWorkItem());
     pArray.push(setWorkItemAttributes());
 
-    return Promise.all(pArray).then(function(values) {
+    let done = false;
+
+    let retValue = await Promise.all(pArray).then((values) => {
+        // let dataContext = (window as any).dataContext || {};
+        // (window as any).dataContext = thisModule;
+        done = true;
         console.log("All Promises", values);
         console.log("---- Data is ready ------");
     });
+
+    return retValue;
+ 
+
 };
 
-document.addEventListener("DOMContentLoaded", function(event) {
+// document.addEventListener("DOMContentLoaded", function(event) {
 
 
-    if(!$ && !$ui && !$ui.pageContext && !$ui.pageContext.user)
-    {
-        console.log("No $, $ui or $ui.pageContext.user");
-        return;
-    }
+    
 
-    if($ui.pageContext.user === undefined)
-
-    setAll();
-});
+//     setAll();
+//     console.log("---- Setting up the data ------",this);
+    
+// });
 
 
 //  /api/v2/public/people/{id}

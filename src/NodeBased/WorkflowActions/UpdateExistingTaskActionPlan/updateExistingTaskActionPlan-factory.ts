@@ -1,4 +1,6 @@
-﻿(function()
+﻿import * as ko from "knockout";
+
+(function()
 {
     var createModel = function(actionModel: any, actionOptions: any, wfModel: any, stepModel: any)
     {

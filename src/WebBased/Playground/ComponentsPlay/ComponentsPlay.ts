@@ -1,13 +1,10 @@
 import * as ko from "knockout";
-import * as moment from "moment";
-import { ISharedoCoreCaseOdsEntityPicker } from "../../../Typings/components/sharedo-core-case-ods-entity-picker";
 import { IAutoCompleteFindCard } from "../../../Typings/components/auto-complete";
-
+import { Sharedo } from "../../../Typings/ShareDo/Sharedo";
 
 export function ComponentsPlay(element: HTMLElement, configuration: any, baseModel: any): ComponentsPlayClass {
     return new ComponentsPlayClass(element, configuration, baseModel);
 }
-
 
 
 class ComponentsPlayClass {
@@ -47,6 +44,7 @@ class ComponentsPlayClass {
 
     }
     setupAutoComplete() {
+    
         this.autoComplete = new Sharedo.UI.Framework.Components.AutoCompleteHandler(
             {
                 enabled: true,

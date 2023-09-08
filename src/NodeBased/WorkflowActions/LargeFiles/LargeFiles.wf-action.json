@@ -20,7 +20,7 @@
     "factoryScript": "/_ideFiles/WorkflowActions/LargeFiles/LargeFiles-factory.js",
 
     // The template for generating the code for this type
-    "templateScript": "/_ideFiles/WorkflowActions/LargeFiles/LargeFiles-template.js",
+    "templateScript": "/_ideFiles/WorkflowActions/LargeFiles/LargeFiles.js",
 
     // Any additional helper scripts to load and run before the main generated script runs
     "helperScripts":  [],

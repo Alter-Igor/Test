@@ -2,9 +2,12 @@ import * as ko from "knockout";
 import { IWidgetBase } from "../../../../Typings/Widgets/IWidget";
 import { camelize, cleanJSON } from "../../../BaseClasses/Utility";
 import { DEFAULT_FORM } from "./DefaultForm";
-import { TShareDoBlade } from "../../../../Typings/ShareDoJS/AddEditSharedo";
+import { TShareDoBlade } from "../../../../Typings/SharedoAspectModels/TShareDoBlade";
 import { createFormBuilderPage } from "../../Common/FormioBuilder";
-import { setAll } from "../../Common/SetDataContext";
+import { renderForm } from "../../Common/FormioRender";
+import { FormPreviewSettings } from "./FormSettings";
+import { checkLowdashCompatability } from "../../Common/Styling";
+import { setDataContext } from "../../Common/SetDataContext";
 
 
 export function FormWidgetDesigner(element: HTMLElement, configuration: any, baseModel: any): FormWidgetDesignerClass {
@@ -20,6 +23,8 @@ export interface IFormWidgetConfiguration {
     aspectData: string;
     keyDates: string;
     participants: string;
+    showPreview: boolean;
+    formData: any; //formbuilder data
 }
 
 export interface IFormWidgetDesignerModel {
@@ -31,6 +36,7 @@ export interface IFormWidgetDesignerModel {
     aspectData: ko.Observable<string>
     keyDates: ko.Observable<string>
     participants: ko.Observable<string>
+    showPreview: ko.Observable<boolean>
 
 }
 
@@ -51,19 +57,29 @@ export class FormWidgetDesignerClass {
     textEditorParticipants: any;
     element: HTMLElement;
     formBuilder: any | undefined;
+
+    formPreview: any;
+    formSettings: any;
+
     designerCreated: boolean = false;
-    modelDialog: HTMLElement;
-    designerDiv: HTMLDivElement;
+    designerDiv: HTMLDivElement | undefined;
+    previewDiv: HTMLDivElement | undefined;
+    previewSettingsDiv: HTMLDivElement | undefined;
+    previewAreaDiv: HTMLDivElement | undefined;
+    modelDialog: HTMLElement | undefined | undefined;
 
 
     constructor(element: HTMLElement, configuration: ConfgurationAndBlade, baseModel: IWidgetBase) {
+        checkLowdashCompatability(); // this is required for formio to work
         this.title = configuration?.blade?.model?.title || baseModel.title
         this.element = element;
         const defaults: IFormWidgetConfiguration = {
             formBuilderDefinition: JSON.stringify(DEFAULT_FORM, null, 4),
             broadcastOnSubmit: true,
+            formData: {},
             broadcastOnSubmitEventName: `${baseModel.systemName}.${camelize(this.title())}.onSubmit`,
             createWorkTypeOnSubmit: false,
+            showPreview: true,
             workItem: JSON.stringify({
                 sharedoTypeSystemName: "instruction-b2b-dispute-plaintiff",
                 titleIsUserProvided: false,
@@ -95,6 +111,7 @@ export class FormWidgetDesignerClass {
                     odsType: "person",
                     odsId: $ui.pageContext.user.userid()
                 },
+            
             ], null, 4)
         };
 
@@ -110,27 +127,76 @@ export class FormWidgetDesignerClass {
             workItem: ko.observable(options.workItem),
             aspectData: ko.observable(options.aspectData),
             keyDates: ko.observable(options.keyDates),
-            participants: ko.observable(options.participants)
-
+            participants: ko.observable(options.participants),
+            showPreview: ko.observable(options.showPreview)
         };
 
         this.title.subscribe((newValue) => {
             this.model.broadcastOnSubmitEventName(`${baseModel.systemName}.${camelize(newValue)}.onSubmit`);
         });
 
+
+
+
         this.validationErrorCount = ko.pureComputed(() => {
             return 0;
         });
 
+
+        this.showHidePreview(this.model.showPreview());
+
+        this.model.showPreview.subscribe((newValue) => {
+            if(!this.previewAreaDiv)
+                {
+                    console.error("this.previewAreaDiv not set");
+                    return;
+                }
+
+            this.showHidePreview(newValue);
+        });
+
+
+    }
+
+    private showHidePreview(newValue: boolean) {
+        
+        if(!this.previewAreaDiv)
+        {  
+            console.error("this.previewAreaDiv not set");
+            return;
+        }
+        
+        if (newValue === true) {
+
+            this.previewAreaDiv.classList.remove("hidden");
+        }
+
+        else {
+            this.previewAreaDiv.classList.add("hidden");
+        }
+    }
+
+    private getDivs() {
+
+        if(this.designerDiv && this.previewDiv && this.previewSettingsDiv)
+        {
+            return;
+        }
+
         let id = "#formio-designer";
         this.designerDiv = this.element.querySelector(id) as HTMLDivElement;
-        
-        this.modelDialog = this.element.querySelector(".Widgets-FormWidgetDesigner.modal") as HTMLElement;
-        // move model dialog to the body
-        document.body.appendChild(this.modelDialog);
 
-        
+        let previewId = "#formio-preview";
+        this.previewDiv = this.element.querySelector(previewId) as HTMLDivElement;
 
+        let previewSettingsId = "#formio-preview-settings";
+        this.previewSettingsDiv = this.element.querySelector(previewSettingsId) as HTMLDivElement;
+
+        let previewAreaDivId = "#formio-preview-area";
+        this.previewAreaDiv = this.element.querySelector(previewAreaDivId) as HTMLDivElement;
+
+        let ModalDialogId = ".Widgets-FormWidgetDesigner.modal";
+        this.modelDialog = this.element.querySelector(ModalDialogId) as HTMLElement;
     }
 
     onDestroy(): void {
@@ -138,7 +204,7 @@ export class FormWidgetDesignerClass {
     }
 
     loadAndBind(): void {
-        // ...
+
     }
 
     getModel() {
@@ -159,29 +225,95 @@ export class FormWidgetDesignerClass {
 
     };
 
-    checkComplex() { 
+    checkComplex() {
 
-        if(this.designerCreated) {
-            // return;
+        this.getDivs();
+
+        if (!this.designerDiv) {
+            console.error("this.designerDiv not set");
+            return
         }
 
+        if (!this.designerCreated) {
+            //Do this last so the query selectors work
+            this.modelDialog = this.element.querySelector(".Widgets-FormWidgetDesigner.modal") as HTMLElement;
+            // // move model dialog to the body
+            document.body.appendChild(this.modelDialog);
+        }
+
+        if (!this.modelDialog) {
+            console.error("this.modelDialog not set");
+            return
+        }
+        (window as any).testD = $(this.modelDialog)
+
         this.designerCreated = true;
-        this.designerDiv.innerHTML
-        
-        createFormBuilderPage(this.designerDiv,this.formBuilderDefinition()).promise.then((formBuilder) => {
+
+        createFormBuilderPage(this.designerDiv, this.formBuilderDefinition()).promise.then((formBuilder) => {
             this.formBuilder = formBuilder;
             (window as any).formBuilder = formBuilder;
+            this.renderPreview();
+            this.renderPreviewSettingsForm();
             formBuilder.instance.on('change', () => {
+                this.renderPreview();
                 this.formBuilderDefinition(JSON.stringify(formBuilder.instance.schema, null, 2));
             });
         });
-      
+
+
+
 
         // window.open("http://127.0.0.1:5500/src/WebBased/Tester/FormIOBuilder/page.html", "_blank");
 
 
     }
 
+
+
+    async renderPreviewSettingsForm() {
+
+        let shareDoId;
+
+        if (!this.previewSettingsDiv) {
+            console.error("this.previewSettingsDiv not set");
+            return;
+        }
+
+        if (this.formSettings) {
+            return; //dont render again
+        }
+
+        // if ($ui && $ui.pageContext && $ui.pageContext.shareDoId) {
+        //     shareDoId = $ui.pageContext.shareDoId; //when testing witin a ShareDo instance
+        // }
+        renderForm(this.previewSettingsDiv, FormPreviewSettings, { "shareDoId": shareDoId }).then((form) => {
+            this.formSettings = form;
+            form.on('submit', (submission: any) => {
+                console.log('Submission was made!', submission);
+                let shareDoId = submission.data.shareDoId;
+
+            });
+        });
+
+
+    }
+
+    async renderPreview() {
+
+        if (!this.previewDiv) {
+            console.error("this.previewDiv not set");
+            return;
+        }
+
+        await setDataContext();
+
+        if (this.formPreview) {
+            this.formPreview.setForm(this.formBuilder.instance.schema);
+            return;
+        }
+
+        renderForm(this.previewDiv, this.formBuilder.instance.schema).then((form) => {
+            this.formPreview = form;
+        });
+    }
 }
-
-

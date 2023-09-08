@@ -1,6 +1,6 @@
 import * as ko from "knockout";
 import {  IWorkTypeContext } from "../ShareDo/IWorkTypeContext";
-import { TShareDoBlade } from "../ShareDoJS/AddEditSharedo";
+import { TShareDoBlade } from "../SharedoAspectModels/TShareDoBlade";
 import { FormBuilder } from "../../WebBased/ModuleLoader/AlphacaAdapter";
 import { IAspect } from "../Aspect/IAspect";
 

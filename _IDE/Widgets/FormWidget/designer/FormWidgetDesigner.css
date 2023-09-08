@@ -1,56 +1,51 @@
-div.Widgets-FormWidgetDesigner
-{
-}
+div.Widgets-FormWidgetDesigner {}
 
 .Widgets-FormWidgetDesigner .formbuilder-editor-json {
     margin-bottom: 20px;
     height: calc(100% - 20px)
 }
+
 .Widgets-FormWidgetDesigner .formbuilder-editor-json .form-control {
-        height: 100%;
-        min-height: 100%;
-    }
+    height: 100%;
+    min-height: 100%;
+}
 
 
-.Widgets-FormWidgetDesigner .participants
-{
-    height: 300px;
-}
-.Widgets-FormWidgetDesigner .key-dates
-{
-    height: 300px;
-}
-.Widgets-FormWidgetDesigner .aspectData
-{
-    height: 300px;
-}
-.Widgets-FormWidgetDesigner .work-item
-{
+.Widgets-FormWidgetDesigner .participants {
     height: 300px;
 }
 
-.Widgets-FormWidgetDesigner .form-def
-{
+.Widgets-FormWidgetDesigner .key-dates {
+    height: 300px;
+}
+
+.Widgets-FormWidgetDesigner .aspectData {
+    height: 300px;
+}
+
+.Widgets-FormWidgetDesigner .work-item {
+    height: 300px;
+}
+
+.Widgets-FormWidgetDesigner .form-def {
     height: 800px;
 }
 
-.Widgets-FormWidgetDesigner .modal-content, 
-.Widgets-FormWidgetDesigner .modal-dialog
-{
+.Widgets-FormWidgetDesigner .modal-content,
+.Widgets-FormWidgetDesigner .modal-dialog {
     width: 100%;
 }
-.Widgets-FormWidgetDesigner .modal-body
-{
-    padding: 10px;;
+
+.Widgets-FormWidgetDesigner .modal-body {
+    padding: 10px;
+    ;
 }
 
-.Widgets-FormWidgetDesigner .formio-builder-iframe
-{
+.Widgets-FormWidgetDesigner .formio-builder-iframe {
     opacity: 0.0;
 }
 
-.Widgets-FormWidgetDesigner .formio-builder-iframe.loaded
-{
+.Widgets-FormWidgetDesigner .formio-builder-iframe.loaded {
     opacity: 1.0;
     /* add fade in */
     -webkit-transition: opacity 1s ease-in-out;
@@ -58,9 +53,34 @@ div.Widgets-FormWidgetDesigner
     -o-transition: opacity 1s ease-in-out;
     transition: opacity 1s ease-in-out;
 }
-.Widgets-FormWidgetDesigner.modal{
-        position: absolute;
+
+.Widgets-FormWidgetDesigner.modal {
+    position: absolute;
     z-index: 1000;
-     width: 100%;
+    width: 100%;
     top: 0px;
+}
+
+
+
+.Widgets-FormWidgetDesigner .container {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    display: flex;
+}
+
+.Widgets-FormWidgetDesigner .container div {
+    flex-grow: 1;
+    width: 100%;
+}
+.Widgets-FormWidgetDesigner .formio-preview-area {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+}
+.Widgets-FormWidgetDesigner .formio-preview-area.hidden{
+    display: none;
 }

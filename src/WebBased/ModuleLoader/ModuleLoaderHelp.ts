@@ -10,7 +10,7 @@
 
 import { BindingContext } from "knockout";
 import { IFormBuilderContext } from "../../Typings/FormBuilder/IFormBuilderContext";
-import { TShareDoBlade } from "../../Typings/ShareDoJS/AddEditSharedo";
+import { TShareDoBlade } from "../../Typings/SharedoAspectModels/TShareDoBlade";
 import { FormBuilder } from "./AlphacaAdapter";
 
 //log to the screen that this file has been loaed into the browser

@@ -1,13 +1,15 @@
 import { Formio } from 'formiojs';
 import { TestForm } from '../FormWidget/TestForm';
 import { addDefaultFormIOStyleSheetsToShadow, checkLowdashCompatability } from './Styling';
-import { setAll } from './SetDataContext';
+import * as DataContext from './SetDataContext';
 
-export function renderForm(element: HTMLElement | Element, formDefinition: string | Object | undefined, data?: Object | undefined) {
+export async function renderForm(element: HTMLElement | Element, formDefinition: string | Object | undefined, data?: Object | undefined) {
     if (!formDefinition) {
         throw new Error("Form definition is undefined");
     }
     checkLowdashCompatability();
+    await ensureDataContext();
+   
     // add shadowdom to element, this will allow us to encapsulate the form and its styles
     // so that it does not interfere with the rest of the page or vice versa
     // https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_shadow_DOM
@@ -16,6 +18,9 @@ export function renderForm(element: HTMLElement | Element, formDefinition: strin
 
     let shadow = element.attachShadow({ mode: 'open' });
     addDefaultFormIOStyleSheetsToShadow(shadow);
+
+    addChoicesJsToShadow(shadow);
+    addChoicesJsToPage(document);
 
     let div = createFormIODivInsideShadowDom(shadow);
 
@@ -29,6 +34,7 @@ export function renderForm(element: HTMLElement | Element, formDefinition: strin
         formDefAsObject = formDefinition;
     }
 
+  
 
     return Formio.createForm(div, formDefAsObject).then((form) => {
         if (data) {
@@ -43,7 +49,13 @@ export function renderForm(element: HTMLElement | Element, formDefinition: strin
     });
 }
 
+async function ensureDataContext() {
 
+    console.log("---- ensureDataContext ------");
+    await DataContext.setDataContext();
+    (window as any)["dataContext"] = DataContext;
+    console.log("---- ensureDataContext End ------",DataContext);
+}
 
 function createFormIODivInsideShadowDom(shadow: ShadowRoot) {
     let div = document.createElement('div');
@@ -55,10 +67,12 @@ function createFormIODivInsideShadowDom(shadow: ShadowRoot) {
 export async function renderTestForm(element: Element | HTMLElement) {
 
     checkLowdashCompatability();
+    await ensureDataContext();
+   
 
     // add shadowdom to element
     let shadow = element.attachShadow({ mode: 'open' });
-
+    addChoicesJsToShadow(shadow);
     //  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
     //  <link rel="stylesheet" href="https://cdn.form.io/formiojs/formio.full.min.css">
 
@@ -68,6 +82,7 @@ export async function renderTestForm(element: Element | HTMLElement) {
     let div = document.createElement('div');
     div.id = "formio";
     shadow.appendChild(div);
+
 
 
     return Formio.createForm(div, TestForm, {
@@ -82,8 +97,30 @@ export async function renderTestForm(element: Element | HTMLElement) {
 
 }
 
-document.addEventListener("DOMContentLoaded", function (event) {
-    //Set all data context
-    //only after the DOM is loaded as page context is not available before that
-    setAll();
-});
+function addChoicesJsToShadow(shadow: ShadowRoot) {
+ 
+    ///_ideFiles/Libs/choices/choices.min.js
+
+    // let script = document.createElement("script");
+    // script.src = "_ideFiles/Libs/choices/choices.min.js";
+    // shadow.appendChild(script);
+
+    // let link = document.createElement("link");
+    // link.rel = "stylesheet";
+    // link.href = "_ideFiles/Libs/choices/choices.min.css";
+    // shadow.appendChild(link);
+}
+
+function addChoicesJsToPage(page: Document) {
+    // let script = document.createElement("script");
+    // script.src = "_ideFiles/Libs/choices/choices.min.js";
+    // page.head.appendChild(script);
+
+    // let link = document.createElement("link");
+    // link.rel = "stylesheet";
+    // link.href = "_ideFiles/Libs/choices/choices.min.css";
+    // page.head.appendChild(link);
+ 
+ 
+}
+

@@ -1,4 +1,5 @@
-﻿(() => {
+﻿
+(() => {
     log.Information("---- updateExistingTaskActionPlan-template ----");
     let taskId = ctx["$model.Configuration.taskId;"];
     if (!taskId) {

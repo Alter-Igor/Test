@@ -1,0 +1,35 @@
+{
+    "id": "Aspects.OdsPickerDesigner",
+    "priority": 6000,
+    "designer":
+    {
+        "allowInPortalDesigner": true,
+        "allowInSharedoPortalDesigner": true,
+         "title": "Custom Ods Picker Designer",
+      "icon": "fa-cog",
+      "description": "Select an ODS from a list of available ODSs Designer",
+      "categories":
+      [
+          "User Defined"
+      ],
+        "isConfigurable": false
+    },
+    "scripts":
+    [
+        "/_ideFiles/IDEAspects/OdsPicker/designer/OdsPickerDesigner.js"
+    ],
+    "styles":
+    [
+        "/_ideFiles/IDEAspects/OdsPicker/designer/OdsPickerDesigner.css"
+    ],
+    "templates":
+    [
+        "/_ideFiles/IDEAspects/OdsPicker/designer/OdsPickerDesigner.html"
+    ],
+    "menuTemplates":
+    [
+    ],
+    "components":
+    [
+    ]
+}

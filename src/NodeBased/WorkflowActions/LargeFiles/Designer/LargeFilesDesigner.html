@@ -1,0 +1,23 @@
+﻿<div data-bind="widgetChrome:{ icon: 'fa-list', title: 'Action configuration' }">
+
+    <div class="form-group">
+        <label for="name">Action name:</label>
+        <input id="name" type="text" class="form-control" data-bind="textInput:action.name" />
+        <div class="text-danger" data-bind="visible:action.validation.name, text:action.validation.name"></div>
+    </div>
+
+</div>
+
+
+
+<div data-bind="widgetChrome:{ icon: 'fa-list', title: 'Action plan' }">
+    <div class="form-group">
+        <label for="actionPlanTitle">Size of file to be considered large:</label>
+        <!-- ko component: { name: "core-wf-token-input", params: { value: action.config.largeSize, rootModel: model } } -->
+        <!-- /ko -->
+        <div class="text-danger" data-bind="visible:action.validation.largeSize, text:action.validation.largeSize"></div>
+    </div>
+
+   
+</div>
+

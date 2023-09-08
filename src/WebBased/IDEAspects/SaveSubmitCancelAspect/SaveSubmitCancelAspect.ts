@@ -6,6 +6,7 @@ import { convertTransitionToButton } from "./TransitionToButtonConverter";
 import { ButtonType, IButton, IButtonGroup, buildButtonGroupElement } from "./ButtonBuilder";
 import { ASMaterialButton, ASMaterialDesignButtonStyles } from "alterspective-material-design-web-components";
 import { ColorTranslator } from 'colortranslator';
+import { Sharedo } from "../../../Typings/ShareDo/Sharedo";
 
 let thisWidgetSystemName = "SaveSubmitCancelAspect";
 

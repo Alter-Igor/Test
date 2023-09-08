@@ -1,4 +1,4 @@
-import { TShareDoBlade } from "../../../Typings/ShareDoJS/AddEditSharedo";
+import { TShareDoBlade } from "../../../Typings/SharedoAspectModels/TShareDoBlade";
 import { ASMaterialButton } from "alterspective-material-design-web-components"
 import { ISaveSubmitCancel_ConfigurationFromModeller } from "./SaveSubmitCancelAspect";
 

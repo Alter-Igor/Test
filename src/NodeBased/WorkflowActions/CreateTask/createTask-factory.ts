@@ -1,4 +1,7 @@
-﻿(function()
+﻿import * as ko from "knockout";
+import { Sharedo } from "../../../Typings/ShareDo/Sharedo";
+
+(function()
 { 
     var createModel = function(actionModel: any, actionOptions: any, wfModel: any, stepModel: any)
     {
