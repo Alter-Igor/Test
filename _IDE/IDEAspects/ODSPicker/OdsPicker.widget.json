@@ -1,0 +1,51 @@
+﻿{
+    "id": "Aspects.OdsPicker",
+    "priority": 6000,
+    "designer": {
+        "allowInPortalDesigner": false,
+        "allowInSharedoPortalDesigner": false,
+        "allowAspectAdapter": true,
+        "title": "Ods Picker",
+        "icon": "fa-cog",
+        "description": "Custom ODS Picker.",
+        "categories": [],
+        "isConfigurable": true,
+        "configurationWidget": "Aspects.OdsPickerDesigner",
+        "defaultConfigurationJson": {
+            "showPreSharedo": true,
+            "showPostSharedo": true,
+            "narrowLabel": false,
+            "noOdsEntityMessage": "No ODS Entity Found",
+            "noOdsEntityRequiredMessage": "No ODS Entity Found - Please select an ODS Entity",
+            "roleConfigModels": [
+                {
+                    "roleSystemName": "client",
+                    "required": true,
+                    "showSearchOds": true,
+                    "defaultToCurrentUser": false,
+                    "displayName": "Client"
+                },
+                {
+                    "roleSystemName": "matter-party",
+                    "required": false,
+                    "showSearchOds": true,
+                    "defaultToCurrentUser": false,
+                    "displayName": "Matter Party"
+                }
+            ]
+        }
+    },
+    "scripts": [
+        "/_ideFiles/IDEAspects/OdsPicker/OdsPicker.js"
+    ],
+    "styles": [
+        "/_ideFiles/IDEAspects/OdsPicker/OdsPicker.css"
+    ],
+    "templates": [
+        "/_ideFiles/IDEAspects/OdsPicker/OdsPicker.html"
+    ],
+    "menuTemplates": [],
+    "components": [
+
+    ]
+}

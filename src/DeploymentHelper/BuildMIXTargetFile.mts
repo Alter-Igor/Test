@@ -1,5 +1,7 @@
 import * as fs from 'fs';
-import * as JSONConfigFile from './BuildConfigurations.json'  // Ensure the correct path is provided
+// import  JSONConfigFile from './BuildConfigurations.json' assert { type: "json" };  // Ensure the correct path is provided
+import  JSONConfigFile from './BuildConfigurations.json' assert { type: "json" };  // Ensure the correct path is provided
+
 import { l } from './Log.mjs';
 import { logConfigurationDefaults } from './DefaultSetter/LogDefaultSettings.mjs';
 import { mergeDefaultsWithTargets, logOutMergedTargetSettings } from './DefaultSetter/MergeDefaultWithSettings.mjs';
@@ -23,6 +25,7 @@ import { IBuildConfiguration } from './Interfaces/IBuildConfiguration';
     logOutMergedTargetSettings(targets);
 
     //write to targets to a file
+    l(`Writing targets to file ./targets.json`.red.bgGreen)
     fs.writeFileSync('./targets.json', JSON.stringify(targets, null, 4));
     return true;
 }

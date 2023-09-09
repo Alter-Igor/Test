@@ -21,26 +21,6 @@
         "enabled": true
     },
     {
-        "name": "DatePickerAspect",
-        "sourcePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/IDEAspects/DatePickerAspect",
-        "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/IDEAspects/DatePickerAspect",
-        "type": "widget",
-        "entryTSFile": "/Users/igorsharedo/Desktop/Test/src/WebBased/IDEAspects/DatePickerAspect/DatePickerAspect.ts",
-        "designerPath": "",
-        "valid": true,
-        "manifest": "/Users/igorsharedo/Desktop/Test/src/WebBased/IDEAspects/DatePickerAspect/DatePickerAspect.widget.json",
-        "modulesToExtract": [
-            {
-                "modules": [
-                    "lodash"
-                ],
-                "extractedFileName": "lodash.js"
-            }
-        ],
-        "bundleAnalyzer": false,
-        "enabled": false
-    },
-    {
         "name": "LargeFiles",
         "sourcePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/LargeFiles",
         "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/WorkflowActions/LargeFiles",
@@ -59,6 +39,6 @@
         ],
         "designerManifest": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/LargeFiles/Designer/manifest.widget.json",
         "bundleAnalyzer": false,
-        "enabled": false
+        "enabled": true
     }
 ]

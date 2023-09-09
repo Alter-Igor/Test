@@ -1,0 +1,8 @@
+
+.widgets-odspicker #ods-entity-picker {
+    margin-bottom: 15px;
+}
+
+.widgets-odspicker #ods-entity-picker .permission-warning {
+        margin: -15px -15px 15px;
+    }

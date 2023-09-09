@@ -1,32 +1,15 @@
-import * as ko from "knockout";
-import {IODSPickerConfiguration} from "./IOdsPickerConfig"
-import { BaseIDEAspect } from "../BaseClasses/BaseIDEAspect";
-
-interface OdsEntityModel {
-    roleName: string;
-    label: string;
-    roleSystemName: ko.Observable<string>;
-    participantType: ko.Observable<string>;
-    odsId: ko.Observable<string>;
-    odsName: ko.Observable<string>;
-    status: ko.Observable<boolean>;
-    icon: ko.Observable<string>;
-    selected: ko.Observable<boolean>;
-    showSearchOds: boolean;
-    required: ko.Observable<boolean>;
-    addMenuOptions: ko.ObservableArray<any>;
-}
 
 
-// export function OdsPicker(element: HTMLElement, configuration: Configuration, baseModel: any): OdsPickerClass {
-//     return new OdsPickerClass(element, configuration, baseModel);
-// }
+
+console.log("=========================== ODSPICKER ===========================");
+
+export class OdsPicker {
+    defaults: { roleConfigModels: never[]; showPreSharedo: boolean; showPostSharedo: boolean; noOdsEntityMessage: string; noOdsEntityRequiredMessage: string; narrowLabel: boolean; debug: { enabled: boolean; logToConsole: boolean; showInAspect: boolean; }; };
  
-export class OdsPicker extends BaseIDEAspect<IODSPickerConfiguration, any> {
- 
-    constructor(element: HTMLElement, configuration: IODSPickerConfiguration, baseModel: any) {
 
-        let defaults = {
+    constructor(element: HTMLElement, configuration: any, baseModel: any) {
+
+        this.defaults = {
             roleConfigModels: [],
             showPreSharedo: true,
             showPostSharedo: true,
@@ -40,7 +23,7 @@ export class OdsPicker extends BaseIDEAspect<IODSPickerConfiguration, any> {
             }
 
         };
-        super("OdsPicker", "aspectData.odsEntityPicker", element, configuration, baseModel,defaults )
+        // super("OdsPicker", "aspectData.odsEntityPicker", element, configuration, baseModel,defaults )
         
 
     }
@@ -54,12 +37,11 @@ export class OdsPicker extends BaseIDEAspect<IODSPickerConfiguration, any> {
         
     // }
 
-    // override loadAndBind(): void {
+     loadAndBind(): void {
 
-    //     this.log("Loading data (model) passed in", "green");
-    //     super.loadAndBind();
+        console.log("OdsPicker loadAndBind");
 
-    // };
+    };
 
 
 

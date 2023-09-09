@@ -1,0 +1,70 @@
+<div class="widgets-odspicker">
+<form class="form-horizontal" id="ods-entity-picker" data-bind="if: loaded">
+    <!-- ko if: $root.showAspect -->
+    <!-- ko foreach: odsEntities -->
+    <div class="form-group">
+        <label for="selectClient" class="control-label" data-bind="label: label || roleName, switchCss: {value: $root.options.narrowLabel, whenTrue:'col-sm-2', whenFalse:'col-md-3'}"></label>
+
+        <div class="remove-horizontal-padding" data-bind="switchCss: {value: $root.options.narrowLabel, whenTrue:'col-sm-10', whenFalse:'col-md-9'}">
+            <div class="entity-card card" id="selectClient"
+                 data-bind="css: { 'card-warning': !required() && !selected(), 'card-error': required() && !selected() }">
+                <div class="status-section">
+                    <i class="fa" data-bind="switchCss: {value: selected, whenTrue:icon, whenFalse:'fa-exclamation-triangle'}"></i>
+                </div>
+
+                <!-- ko if: selected -->
+                <div class="content-section">
+                    <div class="entity-header">
+                        <h4 class="entity-header__title" data-bind="visible: selected(), text: odsName"></h4>
+                    </div>
+                </div>
+                <!-- /ko -->
+                <!-- ko ifnot: selected -->
+                <div class="content-section card-message"
+                     data-bind="css: { 'card-warning': !required() && !selected(), 'card-error': required() && !selected() }">
+                    <span data-bind="visible: required(), text: roleName + ' required'" class="card-message-text"></span>
+                    <span data-bind="visible: !required(), text: roleName + ' recommended'" class="card-message-text"></span>
+                </div>
+                <!-- /ko -->
+
+                <div class="menu-section" data-bind="visible: $root.enabled">
+                    <div class="dropdown inline" data-bind="visible: !selected()">
+                        <span data-bind="visible: addMenuOptions().length > 0">
+                            <!-- ko if: addMenuOptions().length === 1 -->
+                            <a href="#" data-bind="click: addMenuOptions()[0].callback"><span class="fa fa-plus action-icon"></span></a>
+                            <!-- /ko -->
+                            <!-- ko if: addMenuOptions().length > 1 -->
+                            <span class="dropdown">
+                                <a href="#" data-toggle="dropdown"><span class="fa fa-plus action-icon"></span></a>
+                                <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                                    <!-- ko foreach: addMenuOptions -->
+                                    <!-- ko if: options.length === 0 -->
+                                    <li>
+                                        <a href="#" data-bind="click: callback, attr: { title: alt }">
+                                            <span data-bind="text: title"></span>
+                                        </a>
+                                    </li>
+                                    <!-- /ko -->
+                                    <!-- ko if: options.length > 0 -->
+                                    <li data-bind="text: title" class="dropdown-header"></li>
+                                    <li data-bind="foreach: options">
+                                        <a href="#" data-bind="click: callback, attr: { title: alt }"><span data-bind="text: title"></span></a>
+                                    </li>
+                                    <!-- /ko -->
+                                    <!-- /ko -->
+                                </ul>
+                            </span>
+                            <!-- /ko -->
+                        </span>
+                    </div>
+                    <a href="#" class="fa fa-unlink text-primary" data-bind="visible: selected, click: $root.removeParticipant.bind($root, $data)" title="Remove"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- /ko -->
+    <!-- /ko -->
+</form>
+
+</div>

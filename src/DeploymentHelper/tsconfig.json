@@ -20,6 +20,6 @@
     "lib": [ "ES2020" ]
     
     },
-  "include": ["./**/*.ts", "Log.mts", "Validation/ValidationResults.mts", "Validation/TargetSettingsValidator.mts", "mixRun/webpack.mix.cjs"],
+  "include": ["./**/*.ts", "Log.mts", "Validation/ValidationResults.mts", "Validation/TargetSettingsValidator.mts", "mixRun/webpack.mix.cjs", "BuildMIXTargetFile.mts", "../WP/wp.js"],
 
 }

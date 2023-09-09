@@ -8,14 +8,18 @@ let outputLocation = "../../../../_IDE/IDEAspects/OdsPicker";
 
 console.log("__dirname:", __dirname);
 
+
+
+let p = x;
 module.exports = [
   {
     watch: true,
     target: "web",
     entry: {
-      "OdsPicker": "./widget.ts",
+      "OdsPicker": "./OdsPicker.ts",
       // "designer/OdsPickerDesigner": "./designer/widget.ts"
     },
+   
     output: {
       globalObject: 'self',
       publicPath: '',
@@ -27,31 +31,30 @@ module.exports = [
       path: path.join(__dirname, outputLocation),
       filename: "[name].js",
     },
-    mode: 'development',
-    devtool: 'inline-source-map',
+    mode: 'development', 
+     devtool: 'inline-source-map',
     plugins: [
-      new BundleAnalyzerPlugin(),
       new CopyPlugin({
         patterns: [
           {
             from: "**/*.json",
             context: path.resolve(__dirname),
             to: path.resolve(outputLocation),
-          },
+          },     
           {
             from: "**/*.css",
             context: path.resolve(__dirname),
             to: path.resolve(outputLocation),
-          },
+          }, 
           {
             from: "**/*.html",
             context: path.resolve(__dirname),
             to: path.resolve(outputLocation),
-          },
+          },  
         ],
       }),
     ],
-
+    
     module: {
       rules: [
         {
@@ -62,7 +65,7 @@ module.exports = [
       ],
     },
     resolve: {
-      extensions: ['.tsx', '.ts', '.js'],
+      extensions: ['.tsx','.ts', '.js'],
     },
     target: "web",
     node: {

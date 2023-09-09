@@ -9,7 +9,7 @@ const colors = require('colors');
 
 colors.enable();
 
-run();
+ run();
 
  function run() {
 
@@ -46,61 +46,91 @@ run();
             return;
         }
         l(idString + `Deleting Folder : ${target.deployPath}`.blue.bold)
-         //deleteFolder(target.deployPath);
+        // deleteFolder(target.deployPath).finally(() => {
 
 
+         let dist = "dist/" + target.name; 
         l(idString + `creating mix`.blue.bold)
         l("entryTSFile :" + target.entryTSFile);
         l("deployPath  :" + target.deployPath);
-        const mx = mix.ts(target.entryTSFile, target.deployPath);
+        l("dist  :" + dist);
+
+       
        
 
-        // mx.setResourceRoot(target.sourcePath);
-        // mx.setPublicPath(target.deployPath);
+        // mix.setResourceRoot(target.sourcePath);
+        // mix.setPublicPath(target.deployPath);
 
         l(idString + `mix clean`.blue.bold);
-        mx.clean();
+        // mix.;
         if (target.modulesToExtract) {
             l(idString + `adding extract modules`.blue.bold);
             target.modulesToExtract.forEach(extract => {
-                mx.extract(extract.modules, extract.extractedFileName);
+                mix.extract(extract.modules, extract.extractedFileName);
             });
         }
-        //  mx.extract();
+         mix.extract();
+         mix.autoload
         if (target.bundleAnalyzer === true) {
             l(idString + `adding bundle analyzer`.blue.bold);
-            mx.webpackConfig({
+            mix.webpackConfig({
                 plugins: [
                     new BundleAnalyzerPlugin()
                 ]
             });
         }
+
+        mix.override(webpackConfig => {
+            webpackConfig.output = {
+                globalObject: 'self',
+                publicPath: '',
+                library: {
+                  name: 'Look',
+                  type: 'assign-properties',
+                  umdNamedDefine: true,
+                }
+              };
+        });
+        
+
+        // output: {
+        //     globalObject: 'self',
+        //     publicPath: '',
+        //     library: {
+        //       name: 'Aspects',
+        //       type: 'assign-properties',
+        //       umdNamedDefine: true,
+        //     },
+        //     path: path.join(__dirname, outputLocation),
+        //     filename: "[name].js",
+        //   },
+
         l(idString + `copying files to ${target.deployPath}`.blue.bold);
-        mx.copy('*.html', target.deployPath);
-        mx.copy('*.json', target.deployPath);
-        mx.copy('*.css', target.deployPath);
-
-
-
-        mx.setPublicPath(target.deployPath);
-        // mx.copy(devDist, destinationPath);
-        // mx.sourceMaps();
-        // mx.copy('*.html', devDist);
-        // mx.browserSync({
+        // mix.copy(target.sourcePath,dist);
+        mix.copy(target.sourcePath + '/*.html',dist);
+        mix.copy(target.sourcePath + '/*.json',dist);
+        mix.copy(target.sourcePath + '/*.css',dist);
+        mix.sourceMaps();
+        // mix.browserSync({
         //     server: "./dist"
         // });
-        // mx.copy(devDist, destinationPath);
+
 
         l("------- building".blue.bold)
        
-
-        mx.then(() => {
+        mix.ts(target.entryTSFile, dist);
+        mix.copy(dist,target.deployPath);
+        mix.then(() => {
+            
             l(idString + `mix done....`.blue.bold);
         });
+
+       
+
         // // Using async/await
 
 
-
+   // })
 
     }
 }

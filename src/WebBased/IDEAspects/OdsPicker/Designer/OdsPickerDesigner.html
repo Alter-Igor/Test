@@ -1,0 +1,123 @@
+<style>
+    .toggle-form-group + .toggle-form-group {
+        margin-top: 20px;
+    }
+</style>
+<div class="modal-header">
+    <div class="flex-row">
+
+        <div class="column-fit title-container">
+            <div class="flex-row">
+
+                <div class="column-fit">
+                    <h4 class="modal-title">Configure 'Ods Entity Picker' Aspect</h4>
+                </div>
+
+                <span type="button" title="Save" class="top-button" 
+                      data-bind="css: { 'disabled': hasValidationErrors }, click: saveAndClose.bind($data, false), visible: !options.aspectIsReadOnly"><i class="fa fa-check" aria-hidden="true"></i></span>
+
+                <span type="button" title="Close" class="top-button"><i class="fa fa-times" aria-hidden="true" data-bind="click: discard"></i></span>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal-body nano">
+    <div class="nano-content remove-vertical-padding remove-horizontal-padding">
+        <!-- ko if: loaded -->
+        <div class="widget">
+            <div class="widget-title">
+                <h3>Display</h3>
+            </div>
+            <div class="widget-body" style="padding-bottom: 20px;">
+                <div class="form-group toggle-form-group">
+                    <label for="odsentitypicker-show-pre">Show before sharedo has been saved:</label>
+                    <div class="pull-right">
+                        <input id="odsentitypicker-show-pre" type="checkbox" data-bind="toggleSwitch: model.showPreSharedo">
+                    </div>
+                </div>
+                <div class="form-group toggle-form-group">
+                    <label for="odsentitypicker-show-post">Show after sharedo has been saved:</label>
+                    <div class="pull-right">
+                        <input id="odsentitypicker-show-post" type="checkbox" data-bind="toggleSwitch: model.showPostSharedo">
+                    </div>
+                </div>
+                <div class="form-group toggle-form-group">
+                    <label for="odsentitypicker-label">Use Narrow Label (tasks)</label>
+                    <div class="pull-right">
+                        <input id="odsentitypicker-label" type="checkbox" data-bind="toggleSwitch: model.narrowLabel">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="widget">
+            <div class="widget-title">
+                <h3>Roles</h3>
+                <nav class="widget-menu">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a class="btn" data-bind="click: addRole" title="Add role"><span class="fa fa-plus-circle"></span></a></li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="widget-body">
+                <!-- ko if: model.roleConfigModels().length === 0 -->
+                <div class="alert alert-info">
+                    <span class="fa fa-info-circle"></span>
+                    <strong>No roles have been added</strong>
+                </div>
+                <!-- /ko -->
+                <div data-bind="foreach: model.roleConfigModels">
+                    <div class="panel panel-default">
+                        <div class="panel-heading clearfix">
+                            <a class="pull-right text-danger" title="Remove this role"
+                               href="#" data-bind="click: $root.removeRole.bind($root, $data)">
+                                <span class="fa fa-trash"></span>
+                            </a>
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label>Role:</label>
+                                <select class="form-value form-control"
+                                        data-bind="options: $root.lovs.roles,
+                                               optionsCaption: 'Select...',
+                                               optionsText: 'participantRoleTypeName',
+                                               optionsValue: 'participantRoleType',
+                                               valueAllowUnset: true,
+                                               value: roleSystemName">
+                                </select>
+                                <span class="text-danger" data-bind="visible: validation.roleSystemName, text:validation.roleSystemName"></span>
+                            </div>
+                            <div class="form-group">
+                                <label>Override label:</label>
+                                <div>
+                                    <input type="text" name="label" class="form-control input-sm" placeholder="Leave empty for default" data-bind="textInput: label" />
+                                </div>
+                            </div>
+                            <div class="form-group toggle-form-group">
+                                <label>Required:</label>
+                                <div class="pull-right">
+                                    <input type="checkbox" data-bind="toggleSwitch: required">
+                                </div>
+                            </div>
+                            <div class="form-group toggle-form-group">
+                                <label>Can search:</label>
+                                <div class="pull-right">
+                                    <input type="checkbox" data-bind="toggleSwitch: showSearchOds">
+                                </div>
+                            </div>
+                            <div class="form-group toggle-form-group">
+                                <label>Default to current user:</label>
+                                <div class="pull-right">
+                                    <input type="checkbox" data-bind="toggleSwitch: defaultToCurrentUser">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /ko -->
+    </div>
+</div>
+
