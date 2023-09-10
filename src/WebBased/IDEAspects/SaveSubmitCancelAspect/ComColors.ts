@@ -1,5 +1,5 @@
 
-import * as Color from 'color';
+import Color from 'color';
 
 
 // Define the ComplementaryColors class
@@ -10,7 +10,7 @@ class ComplementaryColors {
 
   // Define the constructor
   constructor(colorInput: string | object) {
-    this.color = Color(colorInput);
+    this.color =  Color(colorInput);
     this.hslColor = Color(this.color.hsl());
   }
 

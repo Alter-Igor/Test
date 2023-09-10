@@ -3,8 +3,7 @@
 //this is so we can allow for deprication of the Alpaca API
 //Adapter for Alpaca API
 
-import { IAlpacaField, TChildrenByPropertyId } from "../../Typings/FormBuilder/IAlpacaForm";
-
+import { IAlpacaField } from "../../Interfaces/FormBuilder/IAlpacaForm";
 
 export type TFormBuilderFields = { 
     [key:string]: FormBuilder | undefined

@@ -1,7 +1,9 @@
-import { IFormBuilderContext } from "../../../../Typings/FormBuilder/IFormBuilderContext";
 
 //This function is called from the module-loader webcomponent in the form builder
 //it is called when the form is loaded
+
+import { IFormBuilderContext } from "../../../../Interfaces/FormBuilder/IFormBuilderContext";
+
 //It checks the current phase is in anything except draft it makes the fomr readonly.
 export async function runMe(context: IFormBuilderContext) {
     

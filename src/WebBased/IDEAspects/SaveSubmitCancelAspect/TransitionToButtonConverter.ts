@@ -1,8 +1,7 @@
 import * as ko from "knockout";
-import { Phase, Transition } from "../../../Typings/api/PhasePlan/PhasePlan";
-import {  ButtonType, IButton } from "./ButtonBuilder";
+import {  IButton } from "./ButtonBuilder";
 import { ASMaterialDesignButtonStyles } from "alterspective-material-design-web-components";
-import { data } from "jquery";
+import { Phase, Transition } from "../../../Interfaces/api/PhasePlan/PhasePlan";
 
 
 export function convertTransitionToButton (transitionsForButtons: Transition[], phasePlans:Phase[], options: any) : IButton[] {

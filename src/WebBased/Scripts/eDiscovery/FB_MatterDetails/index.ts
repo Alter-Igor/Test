@@ -1,12 +1,15 @@
 
-import { IFormBuilderContext } from "../../../../Typings/FormBuilder/IFormBuilderContext";
-import { IShareDoOptionSet } from "../../../../Typings/OptionSets/IShareDoOptionSet";
-import { IOdsEntity } from "../../../../Typings/WidgetsOdsEntityPicker/IOdsEntity";
+// import { IFormBuilderContext } from "../../../../Typings/FormBuilder/IFormBuilderContext";
+// import { IShareDoOptionSet } from "../../../../Typings/OptionSets/IShareDoOptionSet";
+// import { IOdsEntity } from "../../../../Typings/WidgetsOdsEntityPicker/IOdsEntity";
 import {  getAllRoleConfigForRole, searchForClients, searchForUsers } from "../../../Common/OdsHelper";
 import { executeGet, executePost } from "../../../Common/api/api";
 import { FormBuilder } from "../../../ModuleLoader/AlphacaAdapter";
 
-import { IExpertMatter } from "../Typings/IExpertMatterData";
+import { IExpertMatter } from "../../../../Interfaces/IExpertMatterData";
+import { IFormBuilderContext } from "../../../../Interfaces/FormBuilder/IFormBuilderContext";
+import { IShareDoOptionSet } from "../../../../Interfaces/OptionSets/IShareDoOptionSet";
+import { IOdsEntity } from "../../../../Interfaces/WidgetsOdsEntityPicker/IOdsEntity";
 
 type OdsWidget = {
     [key:string]: any

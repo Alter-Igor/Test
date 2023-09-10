@@ -1,6 +1,7 @@
 import * as ko from "knockout";
-import { IAutoCompleteFindCard } from "../../../Typings/components/auto-complete";
-import { Sharedo } from "../../../Typings/ShareDo/Sharedo";
+import { Sharedo } from "../../../Interfaces/ShareDo/Sharedo";
+import { IAutoCompleteFindCard } from "../../../Interfaces/components/auto-complete";
+
 
 export function ComponentsPlay(element: HTMLElement, configuration: any, baseModel: any): ComponentsPlayClass {
     return new ComponentsPlayClass(element, configuration, baseModel);

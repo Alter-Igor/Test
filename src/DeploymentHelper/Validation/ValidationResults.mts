@@ -14,7 +14,9 @@ export function validationResults(newTarget: IFinalTargetSettings) {
     }
     else {
         newTarget.valid = false;
-        log(`        Will build from: ` + `Invalid ! No Value Set`.red.bold)
+        let errMessage = `        Will build from: ` + `Invalid ! No Value Set`.red.bold;
+        newTarget.erros.push(errMessage);
+        log(`        ` + errMessage)
     }
 
     if (newTarget.deployPath) {
@@ -30,7 +32,9 @@ export function validationResults(newTarget: IFinalTargetSettings) {
     }
     else {
         newTarget.valid = false;
-        log(`        Entry File: ` + `Invalid ! No Value Set`.red.bold)
+        let errMessage = `Entry File: ` + `Invalid ! No Value Set`.red.bold;
+        log(`        `+ errMessage)
+        newTarget.erros.push(errMessage);
     }
 
     if (newTarget.type) {

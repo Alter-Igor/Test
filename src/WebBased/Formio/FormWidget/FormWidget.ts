@@ -1,10 +1,10 @@
 
 import * as ko from "knockout";
-import { AspectData } from "../../../Typings/ShareDo/IWorkTypeContext";
 import { renderForm } from "../Common/FormioRender";
 import { IFormWidgetConfiguration } from "./designer/FormWidgetDesigner";
 import { convertFormIOData_To_FormBuilderData } from "../Common/Converter";
 import { createWorkType } from "./CreateWorkType";
+import { AspectData } from "../../../Interfaces/OdsList/IODSOrganisationResult";
 
 let thisWidgetSystemName = "FormWidget";
 

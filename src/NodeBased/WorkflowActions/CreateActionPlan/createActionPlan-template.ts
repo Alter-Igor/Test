@@ -1,4 +1,5 @@
-﻿
+﻿import { IActionPlan } from "../../../Interfaces/Workflows/IActionPlan";
+
 let actionPlan : IActionPlan ={
     type: "",
     mandatory: undefined,

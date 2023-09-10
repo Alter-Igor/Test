@@ -1,8 +1,6 @@
-import { IPhasePlan } from "../../../Typings/api/PhasePlan/PhasePlan";
-import { IPhaseFeatures } from "../../../Typings/api/PhasePlan/PhaseFeatures";
-
-
-import { executeGet, executePost, executePut } from "../../Common/api/api";
+import { IPhaseFeatures } from "../../../Interfaces/api/PhasePlan/PhaseFeatures";
+import { IPhasePlan } from "../../../Interfaces/api/PhasePlan/PhasePlan";
+import { executeGet, executePut } from "../../Common/api/api";
 
 
 export interface Data {

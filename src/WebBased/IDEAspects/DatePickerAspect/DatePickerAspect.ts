@@ -2,7 +2,7 @@
 import * as ko from "knockout";
 import { TempusDominus } from '@eonasdan/tempus-dominus';
 import { v4 as uuid4 } from "uuid";
-import { AspectData } from "../../../Typings/ShareDo/IWorkTypeContext";
+import { AspectData } from "../../../Interfaces/OdsList/IODSOrganisationResult";
 
 let thisWidgetSystemName = "DatePickerAspect";
 

@@ -1,4 +1,5 @@
-﻿
+﻿import { ICallToAction } from "../../../Interfaces/Workflows/ICallToAction";
+
 let cta : ICallToAction = {
     title: undefined,
     styles: undefined,

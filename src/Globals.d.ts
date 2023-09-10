@@ -13,6 +13,16 @@ declare var $ajax: any;
 declare var $ui = any;
 
 
+export declare namespace Sharedo {
+
+	import * as CoreNamespace from "./Core/Sharedo.Core";
+	import * as UINamespace from "./UI/Sharedo.UI";
+
+    export import Core = CoreNamespace.Core;
+    export import UI = UINamespace.UI;
+}
+
+
 declare module UI.Striping {
 	export interface Model {
 		callbacks: any[];  // Specify the actual type if known

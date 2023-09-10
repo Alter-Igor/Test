@@ -1,7 +1,9 @@
 
- import colors from 'colors'
-colors.enable()
+import colors from 'colors';
 
+
+colors.enable();
+console.log(colors.enabled)
 
 let l = console.log
 export  {l} 

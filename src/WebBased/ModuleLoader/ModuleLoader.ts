@@ -9,9 +9,9 @@
  */
  
 import { BindingContext } from "knockout";
-import { IFormBuilderContext } from "../../Typings/FormBuilder/IFormBuilderContext";
-import { TShareDoBlade } from "../../Typings/SharedoAspectModels/TShareDoBlade";
 import { FormBuilder } from "./AlphacaAdapter";
+import { IFormBuilderContext } from "../../Interfaces/FormBuilder/IFormBuilderContext";
+import { TShareDoBlade } from "../../Interfaces/SharedoAspectModels";
 
 //log to the screen that this file has been loaed into the browser
 console.log("%c [ModuleLoader] module-loader webcomponent loaded", "background: #222; color: #bada55", this);

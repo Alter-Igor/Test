@@ -1,5 +1,5 @@
 ﻿{
-    "id": "Aspects.OdsPicker",
+    "id": "IDEAspects.OdsPicker",
     "priority": 6000,
     "designer": {
         "allowInPortalDesigner": false,
@@ -10,7 +10,7 @@
         "description": "Custom ODS Picker.",
         "categories": [],
         "isConfigurable": true,
-        "configurationWidget": "Aspects.OdsPickerDesigner",
+        "configurationWidget": "IDEAspects.OdsPickerDesigner",
         "defaultConfigurationJson": {
             "showPreSharedo": true,
             "showPostSharedo": true,
@@ -46,6 +46,6 @@
     ],
     "menuTemplates": [],
     "components": [
-
+        "Sharedo.Core.Case.Participants.AddParticipantService""
     ]
 }

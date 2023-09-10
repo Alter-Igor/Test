@@ -1,4 +1,6 @@
-﻿
+﻿import { IActionPlan } from "../../../Interfaces/Workflows/IActionPlan";
+import { ICallToAction } from "../../../Interfaces/Workflows/ICallToAction";
+
 let connections = $model.Connections;
 let taskId = Guid.NewGuid();
 let dueOn = DateTime.Now;

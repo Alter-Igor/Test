@@ -1,5 +1,6 @@
 ﻿import * as ko from "knockout";
-import { Sharedo } from "../../../Typings/ShareDo/Sharedo";
+import { Sharedo } from "../../../Interfaces/ShareDo/Sharedo";
+
 
 (function()
 { 

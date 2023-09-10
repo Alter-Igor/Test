@@ -4,8 +4,8 @@ interface IEmailAttachments {
   link: string
 
 } 
-   
- 
+      
+  
 function getEmailAttachments(): Array<IEmailAttachments> {
   logHeading("getEmailAttachments");
   let retValue = new Array<IEmailAttachments>();

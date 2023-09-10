@@ -1,4 +1,8 @@
-﻿
+﻿import { IActionPlan } from "../../../Interfaces/Workflows/IActionPlan";
+import { ICallToAction } from "../../../Interfaces/Workflows/ICallToAction";
+import { IShareDoActionPlan } from "../../../Interfaces/Workflows/IShareDoActionPlan";
+import { IShareDoGetResponse } from "../../../Interfaces/Workflows/IShareDoGetResponse";
+
 (() => {
     log.Information("---- updateExistingTaskActionPlan-template ----");
     let taskId = ctx["$model.Configuration.taskId;"];

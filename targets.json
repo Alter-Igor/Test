@@ -1,0 +1,74 @@
+[
+    {
+        "name": "OdsPicker",
+        "sourcePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/IDEAspects/OdsPicker",
+        "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/IDEAspects/OdsPicker",
+        "type": "widget",
+        "entryTSFile": "/Users/igorsharedo/Desktop/Test/src/WebBased/IDEAspects/OdsPicker/OdsPicker.ts",
+        "designerPath": "/Users/igorsharedo/Desktop/Test/src/WebBased/IDEAspects/OdsPicker/Designer",
+        "valid": true,
+        "manifest": "/Users/igorsharedo/Desktop/Test/src/WebBased/IDEAspects/OdsPicker/OdsPicker.widget.json",
+        "modulesToExtract": [
+            {
+                "modules": [
+                    "lodash"
+                ],
+                "extractedFileName": "lodash.js"
+            }
+        ],
+        "designerManifest": "/Users/igorsharedo/Desktop/Test/src/WebBased/IDEAspects/OdsPicker/Designer/OdsPickerDesigner.widget.json",
+        "bundleAnalyzer": false,
+        "enabled": true,
+        "namespace": "IDEAspects",
+        "erros": []
+    },
+    {
+        "name": "DatePickerAspect",
+        "sourcePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/IDEAspects/DatePickerAspect",
+        "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/IDEAspects/DatePickerAspect",
+        "type": "widget",
+        "entryTSFile": "/Users/igorsharedo/Desktop/Test/src/WebBased/IDEAspects/DatePickerAspect/DatePickerAspect.ts",
+        "designerPath": "",
+        "valid": false,
+        "manifest": "/Users/igorsharedo/Desktop/Test/src/WebBased/IDEAspects/DatePickerAspect/DatePickerAspect.widget.json",
+        "modulesToExtract": [
+            {
+                "modules": [
+                    "lodash"
+                ],
+                "extractedFileName": "lodash.js"
+            }
+        ],
+        "bundleAnalyzer": false,
+        "enabled": true,
+        "namespace": "IDEAspects",
+        "erros": [
+            "Invalid ! Namespace in manifest is Aspects.DatePickerAspect but should be IDEAspects.DatePickerAspect"
+        ]
+    },
+    {
+        "name": "LargeFiles",
+        "sourcePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/LargeFiles",
+        "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/WorkflowActions/LargeFiles",
+        "type": "wf-action",
+        "entryTSFile": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/LargeFiles/LargeFiles.ts",
+        "designerPath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/LargeFiles/Designer",
+        "valid": false,
+        "manifest": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/LargeFiles/LargeFiles.wf-action.json",
+        "modulesToExtract": [
+            {
+                "modules": [
+                    "lodash"
+                ],
+                "extractedFileName": "lodash.js"
+            }
+        ],
+        "designerManifest": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/LargeFiles/Designer/manifest.widget.json",
+        "bundleAnalyzer": false,
+        "enabled": true,
+        "namespace": "WorkflowActions",
+        "erros": [
+            "Invalid ! Namespace in manifest is LargeFiles but should be WorkflowActions.LargeFiles"
+        ]
+    }
+]

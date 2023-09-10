@@ -1,6 +1,6 @@
-import { TShareDoBlade } from "../../../Typings/SharedoAspectModels/TShareDoBlade";
 import { ASMaterialButton } from "alterspective-material-design-web-components"
 import { ISaveSubmitCancel_ConfigurationFromModeller } from "./SaveSubmitCancelAspect";
+import { TShareDoBlade } from "../../../Interfaces/SharedoAspectModels";
 
 export interface IButtonGroup {
     name: ko.Observable<string>;

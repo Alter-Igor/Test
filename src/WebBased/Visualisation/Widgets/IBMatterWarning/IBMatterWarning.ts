@@ -89,7 +89,7 @@ class IBMatterWarningClass {
             setInterval(() => {
                 if(this.model.lastCheckDate())
                 {
-                    this.model.lastCheckDateFormatted(moment(this.model.lastCheckDate()).fromNow());
+                    this.model.lastCheckDateFormatted(moment.default(this.model.lastCheckDate()).fromNow());
                 }
             }   , 5000);
 

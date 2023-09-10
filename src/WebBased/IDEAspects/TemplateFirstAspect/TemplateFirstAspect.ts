@@ -1,10 +1,7 @@
-
-import { IPhasePlan, Phase, Transition } from "../../../Typings/api/PhasePlan/PhasePlan";
 import { getTemplates } from "./TemplateFirstAspectAgent";
 import * as ko from "knockout";
-import { ASMaterialButton, ASMaterialDesignButtonStyles } from "alterspective-material-design-web-components";
-import { ColorTranslator } from 'colortranslator';
 import { ITemplatesListViewResult } from "./ITemplates";
+import { IPhasePlan } from "../../../Interfaces/api/PhasePlan/PhasePlan";
 
 let thisWidgetSystemName = "TemplateFirstAspect";
 

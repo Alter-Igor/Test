@@ -1,13 +1,38 @@
 {
+  "name": "sharedo_ide",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/app.js",
+  "types": "src/Typings",
+  "scripts": {
+    "build": "node wp.js",
+    "build-watch": "ts-node-esm buildWatcher.mts",
+    "start": "tsc && node dist/app.js",
+    "lint": "eslint . --ext .ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
     "@eonasdan/tempus-dominus": "^6.7.13",
     "@popperjs/core": "^2.11.8",
     "ace": "^1.3.0",
+    "colors": "^1.4.0",
+    "comment-json": "^4.2.3",
+    "copy-webpack-plugin": "^11.0.0",
+    "knockout": "^3.5.1",
+    "knockout.validation": "^2.0.4",
+    "moment": "^2.29.4",
+    "node-watch": "^0.7.4",
+    "ts-loader": "^9.4.4",
     "tsparticles-basic": "^2.12.0",
     "tsparticles-engine": "^2.12.0",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "webpack-bundle-analyzer": "^4.9.1"
   },
   "devDependencies": {
+    "@types/jquery": "^3.5.18",
     "@types/uuid": "^9.0.2",
     "@types/webpack-bundle-analyzer": "^4.6.0",
     "laravel-mix": "^6.0.49"

@@ -1,12 +1,9 @@
 import * as ko from "knockout";
-import { IAspect } from "../../../Typings/Aspect/IAspect";
-import { TShareDoBlade } from "../../../Typings/SharedoAspectModels/TShareDoBlade";
+import { Sharedo } from "../../../Interfaces/ShareDo/Sharedo";
+import { ISharedoBladeModel, TShareDoBlade, IConfigurationHost } from "../../../Interfaces/SharedoAspectModels";
 import { IDebug } from "./IDebug";
 import { toObservableObject } from "./KOConverter";
-import { setNestedProperty, getNestedProperty } from "./ObjectHelpers";
-
-import { IConfigurationHost, ISharedoBladeModel, IAspectBaseModel } from "../../../Typings/SharedoAspectModels";
-import { Sharedo } from "../../../Typings/ShareDo/Sharedo";
+import { getNestedProperty, setNestedProperty } from "./ObjectHelpers";
 
 
 
@@ -45,7 +42,7 @@ export class BaseIDEAspect<TConfig, TPersitance>  {
     sharedoTypeSystemName: ko.Observable<string>;
     validation: any;
     validationErrorCount: ko.Observable<number>;
-    baseModel: IAspectBaseModel;
+    baseModel: Sharedo.Core.Case.Sharedo.Models.Sharedo;
     thisComponentName: string | undefined;
     data: TPersitance | undefined;
     LocationToSaveOrLoadData: string; //The location to load and save the data from
@@ -164,6 +161,7 @@ export class BaseIDEAspect<TConfig, TPersitance>  {
         if (this.configuration.debug?.enabled) {
             if (this.configuration.debug.logToConsole) {
                 if (!color) color = "black";
+                // let lineNo = extractLineNumberFromStack((new Error()).stack);
                 console.log(`%c ${this.thisComponentName} - ${message}`, `color:${color}`, data);
             }
         }

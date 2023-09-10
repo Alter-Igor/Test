@@ -1,12 +1,13 @@
 
-import { IPhasePlan, Phase, Transition } from "../../../Typings/api/PhasePlan/PhasePlan";
 import { getFeatureFlag, getPhasePlan } from "./SaveSubmitCancelAspectAgent";
 import * as ko from "knockout";
 import { convertTransitionToButton } from "./TransitionToButtonConverter";
 import { ButtonType, IButton, IButtonGroup, buildButtonGroupElement } from "./ButtonBuilder";
 import { ASMaterialButton, ASMaterialDesignButtonStyles } from "alterspective-material-design-web-components";
 import { ColorTranslator } from 'colortranslator';
-import { Sharedo } from "../../../Typings/ShareDo/Sharedo";
+import { Sharedo } from "../../../Interfaces/ShareDo/Sharedo";
+import { IPhasePlan, Phase, Transition } from "../../../Interfaces/api/PhasePlan/PhasePlan";
+
 
 let thisWidgetSystemName = "SaveSubmitCancelAspect";
 

@@ -2,14 +2,15 @@
  * This file contains helper functions for working with the ODS API
  * _search is a wrapper around the ODS search endpoint
  */
-import { IAspect } from "../../Typings/Aspect/IAspect";
-import { IODSOrganisationResult } from "../../Typings/OdsList/IODSOrganisationResult";
-import { IODSPersonResult } from "../../Typings/OdsList/IODSPeopleSearchResult";
-import { IODSearchResult } from "../../Typings/OdsList/IODSSearchResult";
-import { Sharedo } from "../../Typings/ShareDo/Sharedo";
-import { TShareDoBlade } from "../../Typings/SharedoAspectModels/TShareDoBlade";
-import { IRoleConfigModels } from "../../Typings/WidgetsOdsEntityPicker/IRoleConfigModels";
-import { IOdsWidget, IOdsWidgetODSEntities } from "../../Typings/WidgetsOdsEntityPicker/IWidgetOdsEntityPicker";
+
+import { Sharedo } from "../../Interfaces/ShareDo/Sharedo";
+import { IAspect } from "../../Interfaces/Aspect/IAspect";
+import { IODSOrganisationResult } from "../../Interfaces/OdsList/IODSOrganisationResult";
+import { IODSPersonResult } from "../../Interfaces/OdsList/IODSPeopleSearchResult";
+import { IODSearchResult } from "../../Interfaces/OdsList/IODSSearchResult";
+import { TShareDoBlade } from "../../Interfaces/SharedoAspectModels";
+import { IRoleConfigModels } from "../../Interfaces/WidgetsOdsEntityPicker/IRoleConfigModels";
+import { IOdsWidgetODSEntities, IOdsWidget } from "../../Interfaces/WidgetsOdsEntityPicker/IWidgetOdsEntityPicker";
 import { _search } from "./api/ods/search";
 
 

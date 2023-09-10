@@ -7,7 +7,7 @@ import * as f from "flatpickr-formio"
 let formBuilder: FormBuilder;
 let formPreview: any;
 let formSettings: any;
-
+import * as Ace from "ace-builds";
 
 
 Formio.baseUrl = 'http://127.0.0.1:5500/_IDE';
@@ -21,22 +21,22 @@ declare global {
     }
   }
   
-  const Ace = require("ace-builds/src-noconflict/ace");
+  // const Ace = require("ace-builds/src-noconflict/ace");
   
-  const modeHtmlFile = require("ace-builds/src-noconflict/mode-html.js");
-  Ace.config.setModuleUrl("ace/mode/html", modeHtmlFile);
+  // const modeHtmlFile = require("ace-builds/src-noconflict/mode-html.js");
+  // Ace.config.setModuleUrl("ace/mode/html", modeHtmlFile);
   
-  const modeJsonFile = require("ace-builds/src-noconflict/mode-json.js");
-  Ace.config.setModuleUrl("ace/mode/json", modeJsonFile);
+  // const modeJsonFile = require("ace-builds/src-noconflict/mode-json.js");
+  // Ace.config.setModuleUrl("ace/mode/json", modeJsonFile);
   
-  const xcodeFile = require("ace-builds/src-noconflict/theme-xcode.js");
-  Ace.config.setModuleUrl("ace/theme/xcode", xcodeFile);
+  // const xcodeFile = require("ace-builds/src-noconflict/theme-xcode.js");
+  // Ace.config.setModuleUrl("ace/theme/xcode", xcodeFile);
   
-  const htmlWorkerFile = require("ace-builds/src-noconflict/worker-html.js");
-  Ace.config.setModuleUrl("ace/mode/html_worker", htmlWorkerFile);
+  // const htmlWorkerFile = require("ace-builds/src-noconflict/worker-html.js");
+  // Ace.config.setModuleUrl("ace/mode/html_worker", htmlWorkerFile);
   
-  const jsonWorkerFile = require("ace-builds/src-noconflict/worker-json.js");
-  Ace.config.setModuleUrl("ace/mode/json_worker", jsonWorkerFile);
+  // const jsonWorkerFile = require("ace-builds/src-noconflict/worker-json.js");
+  // Ace.config.setModuleUrl("ace/mode/json_worker", jsonWorkerFile);
   
   Ace.config.set("basePath", "ace/");
   Ace.config.set("loadWorkerFromBlob", true);

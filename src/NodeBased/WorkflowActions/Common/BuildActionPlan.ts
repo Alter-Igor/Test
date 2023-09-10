@@ -1,3 +1,5 @@
+import { IActionPlan } from "../../../Interfaces/Workflows/IActionPlan";
+import { ICallToAction } from "../../../Interfaces/Workflows/ICallToAction";
 
 export function buildActionPlan(actionPlanModel: IActionPlan): any
 {

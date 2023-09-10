@@ -8,7 +8,7 @@ import { mergeDefaultsWithTargets, logOutMergedTargetSettings } from './DefaultS
 import { IBuildConfiguration } from './Interfaces/IBuildConfiguration';
 
 
- function runBuild() {
+ export async function runBuild() {
 
     let config: IBuildConfiguration = JSONConfigFile as IBuildConfiguration;
 
@@ -16,13 +16,13 @@ import { IBuildConfiguration } from './Interfaces/IBuildConfiguration';
     logConfigurationDefaults(config);
 
     l(`Building Targets using defaults and target settings:`.red.bgBlack)
-    let targets = mergeDefaultsWithTargets(config);
+    let targets = await mergeDefaultsWithTargets(config);
 
     if (!targets) {
         l(`No targets found in config`.red.bold);
         return false;
     }
-    logOutMergedTargetSettings(targets);
+    await logOutMergedTargetSettings(targets);
 
     //write to targets to a file
     l(`Writing targets to file ./targets.json`.red.bgGreen)
@@ -44,4 +44,4 @@ async function deleteFolder(folderPath: string): Promise<void> {
     }
 }
 
-runBuild();
+// runBuild();

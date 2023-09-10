@@ -1,13 +1,13 @@
 import * as ko from "knockout";
-import { IWidgetBase } from "../../../../Typings/Widgets/IWidget";
-import { camelize, cleanJSON } from "../../../BaseClasses/Utility";
+import { camelize} from "../../../BaseClasses/Utility";
 import { DEFAULT_FORM } from "./DefaultForm";
-import { TShareDoBlade } from "../../../../Typings/SharedoAspectModels/TShareDoBlade";
 import { createFormBuilderPage } from "../../Common/FormioBuilder";
 import { renderForm } from "../../Common/FormioRender";
 import { FormPreviewSettings } from "./FormSettings";
 import { checkLowdashCompatability } from "../../Common/Styling";
 import { setDataContext } from "../../Common/SetDataContext";
+import { TShareDoBlade } from "../../../../Interfaces/SharedoAspectModels";
+import { IWidgetBase } from "../../../../Interfaces/Widgets/IWidget";
 
 
 export function FormWidgetDesigner(element: HTMLElement, configuration: any, baseModel: any): FormWidgetDesignerClass {

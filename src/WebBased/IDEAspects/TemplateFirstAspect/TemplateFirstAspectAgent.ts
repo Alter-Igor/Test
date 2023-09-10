@@ -1,8 +1,4 @@
-import { IPhasePlan } from "../../../Typings/api/PhasePlan/PhasePlan";
-import { IPhaseFeatures } from "../../../Typings/api/PhasePlan/PhaseFeatures";
-
-
-import { executeGet, executePost, executePut } from "../../Common/api/api";
+import { executePost, executePut } from "../../Common/api/api";
 import { ITemplatesListViewResult } from "./ITemplates";
 
 

@@ -1,5 +1,5 @@
 import * as ko from "knockout";
-
+import * as $ from "jquery";
 
 export function ConvertListBooleanToGraphicsDesigner(element: HTMLElement, configuration: any, baseModel: any): ConvertListBooleanToGraphicsDesignerClass {
     return new ConvertListBooleanToGraphicsDesignerClass(element, configuration, baseModel);

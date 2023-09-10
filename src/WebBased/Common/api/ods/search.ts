@@ -1,5 +1,6 @@
-import { IODSSearchPostBody } from "../../../../Typings/api/ods/_search";
-import { IODSearchResult } from "../../../../Typings/OdsList/IODSSearchResult";
+
+import { IODSSearchPostBody } from "../../../../Interfaces/api/ods/_search";
+import { IODSearchResult } from "../../../../Interfaces/OdsList/IODSSearchResult";
 import { executePost } from "../api";
 
 
