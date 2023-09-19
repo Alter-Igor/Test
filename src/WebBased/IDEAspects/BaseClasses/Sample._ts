@@ -1,0 +1,52 @@
+
+import { BaseIDEAspect } from "../BaseClasses/BaseIDEAspect";
+import { ISingleValueAspectConfiguration } from "./SingleValueAspectConfig";
+
+let thisWidgetSystemName = "SingleValueAspect";
+
+export class SingleValueAspect extends BaseIDEAspect<ISingleValueAspectConfiguration, any> {
+
+    constructor(element: HTMLElement, configuration: ISingleValueAspectConfiguration, baseModel: any) {
+
+        let defaults = {
+            valuePath: "Title",
+            title: "Title Value",
+            debug: {
+                enabled: false,
+                logToConsole: false,
+                showInAspect: false
+            }
+
+        };
+        super("SingleValueAspect", "aspectData.odsEntityPicker", element, configuration, baseModel, defaults)
+
+        // Base properties
+
+        this.setup();
+    }
+
+
+    // private initialise() {//! Note: UI framework looks for this method name and if found behaves differently and wont call loadAndBind
+
+    private setup() {
+        // Map the roleConfigModels
+
+
+    }
+
+    override loadAndBind(): void {
+
+        this.log("Loading data (model) passed in", "green");
+        super.loadAndBind();
+
+
+    };
+
+
+    override onSave(model: any): void {
+
+        this.log("Saving data (model) passed in", "green");
+        super.onSave(model);
+
+    };
+} 

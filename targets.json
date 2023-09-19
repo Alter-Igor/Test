@@ -4,10 +4,11 @@
         "sourcePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/IDEAspects/OdsPicker",
         "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/IDEAspects/OdsPicker",
         "type": "widget",
-        "entryTSFile": "/Users/igorsharedo/Desktop/Test/src/WebBased/IDEAspects/OdsPicker/OdsPicker.ts",
         "designerPath": "/Users/igorsharedo/Desktop/Test/src/WebBased/IDEAspects/OdsPicker/Designer",
         "valid": true,
-        "manifest": "/Users/igorsharedo/Desktop/Test/src/WebBased/IDEAspects/OdsPicker/OdsPicker.widget.json",
+        "manifestFilePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/IDEAspects/OdsPicker/OdsPicker.widget.json",
+        "manifestFileName": "OdsPicker.widget.json",
+        "designerManifestFilePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/IDEAspects/OdsPicker/Designer/OdsPickerDesigner.widget.json",
         "modulesToExtract": [
             {
                 "modules": [
@@ -16,21 +17,109 @@
                 "extractedFileName": "lodash.js"
             }
         ],
-        "designerManifest": "/Users/igorsharedo/Desktop/Test/src/WebBased/IDEAspects/OdsPicker/Designer/OdsPickerDesigner.widget.json",
         "bundleAnalyzer": false,
         "enabled": true,
         "namespace": "IDEAspects",
-        "erros": []
+        "erros": [],
+        "widgetTSFileName": "OdsPicker.ts",
+        "widgetTSFilePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/IDEAspects/OdsPicker/OdsPicker.ts",
+        "factoryTSFileName": "",
+        "factoryTSFilePath": "",
+        "templateTsFileName": "",
+        "templateTsFilePath": "",
+        "cssFiles": [],
+        "htmlFiles": [],
+        "designerTSFileName": "OdsPickerDesigner.ts",
+        "designerTSFilePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/IDEAspects/OdsPicker/Designer/OdsPickerDesigner.ts",
+        "designerCSSFiles": [],
+        "designerHTMLFiles": [],
+        "manifestJSON": {
+            "id": "IDEAspects.OdsPicker",
+            "priority": 6000,
+            "designer": {
+                "allowInPortalDesigner": false,
+                "allowInSharedoPortalDesigner": false,
+                "allowAspectAdapter": true,
+                "title": "Ods Picker",
+                "icon": "fa-cog",
+                "description": "Custom ODS Picker.",
+                "categories": [],
+                "isConfigurable": true,
+                "configurationWidget": "IDEAspects.OdsPickerDesigner",
+                "defaultConfigurationJson": {
+                    "showPreSharedo": true,
+                    "showPostSharedo": true,
+                    "narrowLabel": false,
+                    "noOdsEntityMessage": "No ODS Entity Found",
+                    "noOdsEntityRequiredMessage": "No ODS Entity Found - Please select an ODS Entity",
+                    "roleConfigModels": [
+                        {
+                            "roleSystemName": "client",
+                            "required": true,
+                            "showSearchOds": true,
+                            "defaultToCurrentUser": false,
+                            "displayName": "Client"
+                        },
+                        {
+                            "roleSystemName": "matter-party",
+                            "required": false,
+                            "showSearchOds": true,
+                            "defaultToCurrentUser": false,
+                            "displayName": "Matter Party"
+                        }
+                    ]
+                }
+            },
+            "scripts": [
+                "/_ideFiles/IDEAspects/OdsPicker/OdsPicker.js"
+            ],
+            "styles": [
+                "/_ideFiles/IDEAspects/OdsPicker/OdsPicker.css"
+            ],
+            "templates": [
+                "/_ideFiles/IDEAspects/OdsPicker/OdsPicker.html"
+            ],
+            "menuTemplates": [],
+            "components": [
+                "Sharedo.Core.Case.Participants.AddParticipantService"
+            ]
+        },
+        "designerManifestJSON": {
+            "id": "IDEAspects.OdsPickerDesigner",
+            "priority": 6000,
+            "designer": {
+                "allowInPortalDesigner": true,
+                "allowInSharedoPortalDesigner": true,
+                "title": "Custom Ods Picker Designer",
+                "icon": "fa-cog",
+                "description": "Select an ODS from a list of available ODSs Designer",
+                "categories": [
+                    "User Defined"
+                ],
+                "isConfigurable": false
+            },
+            "scripts": [
+                "/_ideFiles/IDEAspects/OdsPicker/designer/OdsPickerDesigner.js"
+            ],
+            "styles": [
+                "/_ideFiles/IDEAspects/OdsPicker/designer/OdsPickerDesigner.css"
+            ],
+            "templates": [
+                "/_ideFiles/IDEAspects/OdsPicker/designer/OdsPickerDesigner.html"
+            ],
+            "menuTemplates": [],
+            "components": []
+        }
     },
     {
         "name": "DatePickerAspect",
         "sourcePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/IDEAspects/DatePickerAspect",
         "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/IDEAspects/DatePickerAspect",
         "type": "widget",
-        "entryTSFile": "/Users/igorsharedo/Desktop/Test/src/WebBased/IDEAspects/DatePickerAspect/DatePickerAspect.ts",
         "designerPath": "",
-        "valid": false,
-        "manifest": "/Users/igorsharedo/Desktop/Test/src/WebBased/IDEAspects/DatePickerAspect/DatePickerAspect.widget.json",
+        "valid": true,
+        "manifestFilePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/IDEAspects/DatePickerAspect/DatePickerAspect.widget.json",
+        "manifestFileName": "DatePickerAspect.widget.json",
         "modulesToExtract": [
             {
                 "modules": [
@@ -42,19 +131,77 @@
         "bundleAnalyzer": false,
         "enabled": true,
         "namespace": "IDEAspects",
-        "erros": [
-            "Invalid ! Namespace in manifest is Aspects.DatePickerAspect but should be IDEAspects.DatePickerAspect"
-        ]
+        "erros": [],
+        "widgetTSFileName": "DatePickerAspect.ts",
+        "widgetTSFilePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/IDEAspects/DatePickerAspect/DatePickerAspect.ts",
+        "factoryTSFileName": "",
+        "factoryTSFilePath": "",
+        "templateTsFileName": "",
+        "templateTsFilePath": "",
+        "cssFiles": [],
+        "htmlFiles": [],
+        "designerTSFileName": "",
+        "designerTSFilePath": "",
+        "designerCSSFiles": [],
+        "designerHTMLFiles": [],
+        "manifestJSON": {
+            "id": "IDEAspects.DatePickerAspect",
+            "priority": 6000,
+            "designer": {
+                "allowInPortalDesigner": false,
+                "allowInSharedoPortalDesigner": false,
+                "allowAspectAdapter": true,
+                "title": null,
+                "icon": "fa-cog",
+                "description": null,
+                "categories": [],
+                "isConfigurable": true,
+                "configurationWidget": null,
+                "defaultConfigurationJson": {
+                    "formBuilderField": "eDiscoveryUpdatePlannedDate",
+                    "title": "Updated planned due date:",
+                    "pickerEnabled": true,
+                    "eventsToFireOnUpdate": [
+                        "IDEAspects.DatePickerAspect.Update"
+                    ],
+                    "defaultDateFromNowHours": 24,
+                    "datePickerOptions": {
+                        "display": {
+                            "inline": true,
+                            "sideBySide": true,
+                            "theme": "light"
+                        }
+                    },
+                    "debug": {
+                        "enabled": true,
+                        "logToConsole": true,
+                        "showEvents": false,
+                        "showInAspect": true
+                    }
+                }
+            },
+            "scripts": [
+                "/_ideFiles/IDEAspects/DatePickerAspect/DatePickerAspect.js"
+            ],
+            "styles": [
+                "/_ideFiles/IDEAspects/DatePickerAspect/DatePickerAspect.css"
+            ],
+            "templates": [
+                "/_ideFiles/IDEAspects/DatePickerAspect/DatePickerAspect.html"
+            ],
+            "menuTemplates": [],
+            "components": []
+        }
     },
     {
-        "name": "LargeFiles",
-        "sourcePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/LargeFiles",
-        "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/WorkflowActions/LargeFiles",
-        "type": "wf-action",
-        "entryTSFile": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/LargeFiles/LargeFiles.ts",
-        "designerPath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/LargeFiles/Designer",
-        "valid": false,
-        "manifest": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/LargeFiles/LargeFiles.wf-action.json",
+        "name": "SingleValueAspect",
+        "sourcePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/IDEAspects/SingleValueAspect",
+        "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/IDEAspects/SingleValueAspect",
+        "type": "widget",
+        "designerPath": "",
+        "valid": true,
+        "manifestFilePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/IDEAspects/SingleValueAspect/SingleValueAspect.widget.json",
+        "manifestFileName": "SingleValueAspect.widget.json",
         "modulesToExtract": [
             {
                 "modules": [
@@ -63,12 +210,354 @@
                 "extractedFileName": "lodash.js"
             }
         ],
-        "designerManifest": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/LargeFiles/Designer/manifest.widget.json",
+        "bundleAnalyzer": false,
+        "enabled": true,
+        "namespace": "IDEAspects",
+        "erros": [],
+        "widgetTSFileName": "SingleValueAspect.ts",
+        "widgetTSFilePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/IDEAspects/SingleValueAspect/SingleValueAspect.ts",
+        "factoryTSFileName": "",
+        "factoryTSFilePath": "",
+        "templateTsFileName": "",
+        "templateTsFilePath": "",
+        "cssFiles": [],
+        "htmlFiles": [],
+        "designerTSFileName": "",
+        "designerTSFilePath": "",
+        "designerCSSFiles": [],
+        "designerHTMLFiles": [],
+        "manifestJSON": {
+            "id": "IDEAspects.SingleValueAspect",
+            "priority": 6000,
+            "designer": {
+                "allowInPortalDesigner": false,
+                "allowInSharedoPortalDesigner": false,
+                "allowAspectAdapter": true,
+                "title": "Single Value Aspect",
+                "icon": "fa-cog",
+                "description": "Single Value Aspect",
+                "categories": [],
+                "isConfigurable": true,
+                "configurationWidget": null,
+                "defaultConfigurationJson": {
+                    "fieldPath": "formbuilderName.fieldName",
+                    "title": "Single Value Aspect",
+                    "searchParents": false,
+                    "maxDepth": 0,
+                    "valueOnNotFound": "Not Found",
+                    "formatter": "value;",
+                    "debug": {
+                        "enabled": true,
+                        "logToConsole": false,
+                        "showInAspect": true
+                    }
+                }
+            },
+            "scripts": [
+                "/_ideFiles/IDEAspects/SingleValueAspect/SingleValueAspect.js"
+            ],
+            "styles": [
+                "/_ideFiles/IDEAspects/SingleValueAspect/SingleValueAspect.css"
+            ],
+            "templates": [
+                "/_ideFiles/IDEAspects/SingleValueAspect/SingleValueAspect.html"
+            ],
+            "menuTemplates": [],
+            "components": []
+        }
+    },
+    {
+        "name": "LargeFiles",
+        "sourcePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/LargeFiles",
+        "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/WorkflowActions/LargeFiles",
+        "type": "wf-action",
+        "designerPath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/LargeFiles/Designer",
+        "valid": false,
+        "manifestFilePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/LargeFiles/LargeFiles.wf-action.json",
+        "manifestFileName": "LargeFiles.wf-action.json",
+        "designerManifestFilePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/LargeFiles/Designer/manifest.widget.json",
+        "modulesToExtract": [
+            {
+                "modules": [
+                    "lodash"
+                ],
+                "extractedFileName": "lodash.js"
+            }
+        ],
         "bundleAnalyzer": false,
         "enabled": true,
         "namespace": "WorkflowActions",
         "erros": [
             "Invalid ! Namespace in manifest is LargeFiles but should be WorkflowActions.LargeFiles"
-        ]
+        ],
+        "widgetTSFileName": "",
+        "widgetTSFilePath": "",
+        "factoryTSFileName": "LargeFiles-factory.ts",
+        "factoryTSFilePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/LargeFiles/LargeFiles-factory.ts",
+        "templateTsFileName": "",
+        "templateTsFilePath": "",
+        "cssFiles": [],
+        "htmlFiles": [],
+        "designerTSFileName": "LargeFilesDesigner.ts",
+        "designerTSFilePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/LargeFiles/Designer/LargeFilesDesigner.ts",
+        "designerCSSFiles": [],
+        "designerHTMLFiles": [],
+        "manifestJSON": {
+            "systemName": "LargeFiles",
+            "category": "Email",
+            "name": "Remove Large Files",
+            "icon": "fa-cog",
+            "description": "Removes large files from an email message.",
+            "configWidget": null,
+            "factoryIncludes": [],
+            "factoryScript": "/_ideFiles/WorkflowActions/LargeFiles/LargeFiles-factory.js",
+            "templateScript": "/_ideFiles/WorkflowActions/LargeFiles/LargeFiles.js",
+            "helperScripts": [],
+            "requiredTypes": []
+        },
+        "designerManifestJSON": {
+            "id": "LargeFilesDesigner",
+            "designer": {
+                "allowInPortalDesigner": false,
+                "allowInSharedoPortalDesigner": false
+            },
+            "scripts": [
+                "/_ideFiles/WorkflowActions/LargeFiles/Designer/LargeFilesDesigner.js"
+            ],
+            "styles": [],
+            "templates": [
+                "/_ideFiles/WorkflowActions/LargeFiles/Designer/LargeFilesDesigner.html"
+            ],
+            "menuTemplates": [],
+            "components": [
+                "Sharedo.Core.Case.Components.SharedoTypePicker",
+                "Sharedo.UI.Framework.Components.Toggle",
+                "Sharedo.UI.Framework.Components.IconPicker",
+                "Sharedo.UI.Framework.Components.SyntaxEditor",
+                "Sharedo.Core.Case.Menus.CommandEditorComponent"
+            ]
+        }
+    },
+    {
+        "name": "CustomProgressMilestone",
+        "sourcePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/CustomProgressMilestone",
+        "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/WorkflowActions/CustomProgressMilestone",
+        "type": "wf-action",
+        "designerPath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/CustomProgressMilestone/Designer",
+        "valid": true,
+        "manifestFilePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/CustomProgressMilestone/CustomProgressMilestone.wf-action.json",
+        "manifestFileName": "CustomProgressMilestone.wf-action.json",
+        "designerManifestFilePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/CustomProgressMilestone/Designer/manifest.widget.json",
+        "modulesToExtract": [
+            {
+                "modules": [
+                    "lodash"
+                ],
+                "extractedFileName": "lodash.js"
+            }
+        ],
+        "bundleAnalyzer": false,
+        "enabled": true,
+        "namespace": "WorkflowActions",
+        "erros": [],
+        "widgetTSFileName": "",
+        "widgetTSFilePath": "",
+        "factoryTSFileName": "CustomProgressMilestone-factory.ts",
+        "factoryTSFilePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/CustomProgressMilestone/CustomProgressMilestone-factory.ts",
+        "templateTsFileName": "CustomProgressMilestone-template.ts",
+        "templateTsFilePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/CustomProgressMilestone/CustomProgressMilestone-template.ts",
+        "cssFiles": [],
+        "htmlFiles": [],
+        "designerTSFileName": "CustomProgressMilestoneDesigner.ts",
+        "designerTSFilePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/CustomProgressMilestone/Designer/CustomProgressMilestoneDesigner.ts",
+        "designerCSSFiles": [],
+        "designerHTMLFiles": [],
+        "manifestJSON": {
+            "systemName": "WorkflowActions.CustomProgressMilestone",
+            "category": "Actions",
+            "name": "Custom Dynamic Progress milestone",
+            "icon": "fa-forward",
+            "description": "Transition a work item to another phase with Dynamic values",
+            "configWidget": "WorkflowActions.CustomProgressMilestoneDesigner",
+            "factoryIncludes": [],
+            "factoryScript": "/_ideFiles/WorkflowActions/CustomProgressMilestone/CustomProgressMilestone-factory.js",
+            "templateScript": "/_ideFiles/WorkflowActions/CustomProgressMilestone/CustomProgressMilestone-template.js",
+            "helperScripts": [
+                "PhaseHelpers",
+                "StringHelpers"
+            ],
+            "requiredTypes": [
+                "/Identifier/Work Type Identifier"
+            ]
+        },
+        "designerManifestJSON": {
+            "id": "WorkflowActions.CustomProgressMilestoneDesigner",
+            "priority": 6000,
+            "designer": {
+                "allowInPortalDesigner": false,
+                "allowInSharedoPortalDesigner": false
+            },
+            "scripts": [
+                "/_ideFiles/WorkflowActions/CustomProgressMilestone/Designer/CustomProgressMilestoneDesigner.js"
+            ],
+            "styles": [
+                "/_ideFiles/WorkflowActions/CustomProgressMilestone/Designer/CustomProgressMilestoneDesigner.css"
+            ],
+            "templates": [
+                "/_ideFiles/WorkflowActions/CustomProgressMilestone/Designer/CustomProgressMilestoneDesigner.html"
+            ],
+            "menuTemplates": [],
+            "components": [
+                "Sharedo.Core.Case.Components.SharedoTypePicker"
+            ]
+        }
+    },
+    {
+        "name": "IsSharedoInPhaseWithFeature",
+        "sourcePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/IsSharedoInPhaseWithFeature",
+        "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/WorkflowActions/IsSharedoInPhaseWithFeature",
+        "type": "wf-action",
+        "designerPath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/IsSharedoInPhaseWithFeature/Designer",
+        "valid": true,
+        "manifestFilePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/IsSharedoInPhaseWithFeature/IsSharedoInPhaseWithFeature.wf-action.json",
+        "manifestFileName": "IsSharedoInPhaseWithFeature.wf-action.json",
+        "designerManifestFilePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/IsSharedoInPhaseWithFeature/Designer/manifest.widget.json",
+        "modulesToExtract": [
+            {
+                "modules": [
+                    "lodash"
+                ],
+                "extractedFileName": "lodash.js"
+            }
+        ],
+        "bundleAnalyzer": false,
+        "enabled": true,
+        "namespace": "WorkflowActions",
+        "erros": [],
+        "widgetTSFileName": "",
+        "widgetTSFilePath": "",
+        "factoryTSFileName": "IsSharedoInPhaseWithFeature-factory.ts",
+        "factoryTSFilePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/IsSharedoInPhaseWithFeature/IsSharedoInPhaseWithFeature-factory.ts",
+        "templateTsFileName": "IsSharedoInPhaseWithFeature-template.ts",
+        "templateTsFilePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/IsSharedoInPhaseWithFeature/IsSharedoInPhaseWithFeature-template.ts",
+        "cssFiles": [],
+        "htmlFiles": [],
+        "designerTSFileName": "IsSharedoInPhaseWithFeatureDesigner.ts",
+        "designerTSFilePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/IsSharedoInPhaseWithFeature/Designer/IsSharedoInPhaseWithFeatureDesigner.ts",
+        "designerCSSFiles": [],
+        "designerHTMLFiles": [],
+        "manifestJSON": {
+            "systemName": "WorkflowActions.IsSharedoInPhaseWithFeature",
+            "category": "Actions",
+            "name": "Is Sharedo In Phase With Feature",
+            "icon": "fa-forward",
+            "description": "Checks if a Sharedo is in a phase with a specific feature.",
+            "configWidget": "WorkflowActions.IsSharedoInPhaseWithFeatureDesigner",
+            "factoryIncludes": [],
+            "factoryScript": "/_ideFiles/WorkflowActions/IsSharedoInPhaseWithFeature/IsSharedoInPhaseWithFeature-factory.js",
+            "templateScript": "/_ideFiles/WorkflowActions/IsSharedoInPhaseWithFeature/IsSharedoInPhaseWithFeature-template.js",
+            "helperScripts": [
+                "PhaseHelpers",
+                "StringHelpers"
+            ],
+            "requiredTypes": [
+                "/Identifier/Work Type Identifier"
+            ]
+        },
+        "designerManifestJSON": {
+            "id": "WorkflowActions.IsSharedoInPhaseWithFeatureDesigner",
+            "priority": 6000,
+            "designer": {
+                "allowInPortalDesigner": false,
+                "allowInSharedoPortalDesigner": false
+            },
+            "scripts": [
+                "/_ideFiles/WorkflowActions/IsSharedoInPhaseWithFeature/Designer/IsSharedoInPhaseWithFeatureDesigner.js"
+            ],
+            "styles": [
+                "/_ideFiles/WorkflowActions/IsSharedoInPhaseWithFeature/Designer/IsSharedoInPhaseWithFeatureDesigner.css"
+            ],
+            "templates": [
+                "/_ideFiles/WorkflowActions/IsSharedoInPhaseWithFeature/Designer/IsSharedoInPhaseWithFeatureDesigner.html"
+            ],
+            "menuTemplates": [],
+            "components": [
+                "Sharedo.Core.Case.Components.SharedoTypePicker"
+            ]
+        }
+    },
+    {
+        "name": "RecursiveFindAttribute",
+        "sourcePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/RecursiveFindAttribute",
+        "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/WorkflowActions/RecursiveFindAttribute",
+        "type": "wf-action",
+        "designerPath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/RecursiveFindAttribute/Designer",
+        "valid": true,
+        "manifestFilePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/RecursiveFindAttribute/RecursiveFindAttribute.wf-action.json",
+        "manifestFileName": "RecursiveFindAttribute.wf-action.json",
+        "designerManifestFilePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/RecursiveFindAttribute/Designer/manifest.widget.json",
+        "modulesToExtract": [
+            {
+                "modules": [
+                    "lodash"
+                ],
+                "extractedFileName": "lodash.js"
+            }
+        ],
+        "bundleAnalyzer": false,
+        "enabled": true,
+        "namespace": "WorkflowActions",
+        "erros": [],
+        "widgetTSFileName": "",
+        "widgetTSFilePath": "",
+        "factoryTSFileName": "RecursiveFindAttribute-factory.ts",
+        "factoryTSFilePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/RecursiveFindAttribute/RecursiveFindAttribute-factory.ts",
+        "templateTsFileName": "RecursiveFindAttribute-template.ts",
+        "templateTsFilePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/RecursiveFindAttribute/RecursiveFindAttribute-template.ts",
+        "cssFiles": [],
+        "htmlFiles": [],
+        "designerTSFileName": "RecursiveFindAttributeDesigner.ts",
+        "designerTSFilePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/RecursiveFindAttribute/Designer/RecursiveFindAttributeDesigner.ts",
+        "designerCSSFiles": [],
+        "designerHTMLFiles": [],
+        "manifestJSON": {
+            "systemName": "WorkflowActions.RecursiveFindAttribute",
+            "category": "Custom Data",
+            "name": "Recursive Find Attribute Value",
+            "icon": "fa-forward",
+            "description": "Recursively find an attribute value from a parent/child case or work item",
+            "configWidget": "WorkflowActions.RecursiveFindAttributeDesigner",
+            "factoryIncludes": [],
+            "factoryScript": "/_ideFiles/WorkflowActions/RecursiveFindAttribute/RecursiveFindAttribute-factory.js",
+            "templateScript": "/_ideFiles/WorkflowActions/RecursiveFindAttribute/RecursiveFindAttribute-template.js",
+            "helperScripts": [
+                "PhaseHelpers",
+                "StringHelpers"
+            ],
+            "requiredTypes": [
+                "/Identifier/Work Type Identifier"
+            ]
+        },
+        "designerManifestJSON": {
+            "id": "WorkflowActions.RecursiveFindAttributeDesigner",
+            "priority": 6000,
+            "designer": {
+                "allowInPortalDesigner": false,
+                "allowInSharedoPortalDesigner": false
+            },
+            "scripts": [
+                "/_ideFiles/WorkflowActions/RecursiveFindAttribute/Designer/RecursiveFindAttributeDesigner.js"
+            ],
+            "styles": [
+                "/_ideFiles/WorkflowActions/RecursiveFindAttribute/Designer/RecursiveFindAttributeDesigner.css"
+            ],
+            "templates": [
+                "/_ideFiles/WorkflowActions/RecursiveFindAttribute/Designer/RecursiveFindAttributeDesigner.html"
+            ],
+            "menuTemplates": [],
+            "components": [
+                "Sharedo.Core.Case.Components.SharedoTypePicker"
+            ]
+        }
     }
 ]

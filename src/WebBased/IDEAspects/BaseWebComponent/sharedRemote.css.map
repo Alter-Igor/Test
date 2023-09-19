@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "AAEA,OAAO,CAAC,4DAAI;AAGZ,OAAO,CAAC,0DAAI;AACZ,OAAO,CAAC,iEAAI;AANZ,IAAI,CAAJ,mCAAI",
+    "sources": [
+        "sharedRemote.scss"
+    ],
+    "names": [],
+    "file": "sharedRemote.css"
+}

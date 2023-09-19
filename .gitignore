@@ -1,2 +1,9 @@
+
 node_modules
-_IDE/Libs
+build
+server-build
+build-tsc
+build-server-tsc
+build-client-tsc
+dist
+./dist

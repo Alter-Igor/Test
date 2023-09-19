@@ -1,5 +1,3 @@
-// Namespacing
-// namespace("");
 
 
 window.Custom = window.Custom || {};

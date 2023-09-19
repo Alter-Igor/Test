@@ -1,5 +1,5 @@
 {
-    "id": "Aspects.DatePickerAspect",
+    "id": "IDEAspects.DatePickerAspect",
     "priority": 6000,
     "designer":
     {
@@ -14,7 +14,20 @@
         ],
         "isConfigurable": true,
         "configurationWidget": null,
+        
         "defaultConfigurationJson": { 
+            "formBuilderField":"eDiscoveryUpdatePlannedDate",
+            "title":"Updated planned due date:",
+            "pickerEnabled": true,
+            "eventsToFireOnUpdate":["IDEAspects.DatePickerAspect.Update"],
+            "defaultDateFromNowHours":24,
+            "datePickerOptions": {
+                "display": {
+                    "inline": true,
+                    "sideBySide": true,
+                    "theme": "light"
+                }
+            },
             "debug":
             {
                 "enabled":true,

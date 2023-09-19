@@ -1,0 +1,80 @@
+<div class="Sharedo-Core-Case-WorkflowEditor-NodeTypes-ProgressMilestoneDesigner">
+
+    <div data-bind="widgetChrome:{ icon: 'fa-list', title: 'Action configuration' }">
+        <div class="form-group">
+            <label for="name">Action name:</label>
+            <input id="name" type="text" class="form-control" data-bind="textInput:action.name" />
+            <div class="text-danger" data-bind="visible:action.validation.name, text:action.validation.name"></div>
+        </div>
+    </div>
+
+    <div data-bind="widgetChrome:{ icon: 'fa-forward', title: 'Find Attribute' }">
+
+        <div class="form-group">
+            Use this action to find an attribute on a work item and if required keep searching though its parents until the value is found or to a maximun depth as specified below<br>
+            <br>
+            <b>NOTE:</b> This action will only search through the parents of the work item if the attribute is not found on the work item itself.
+            <br>
+            
+        </div>
+        <div class="form-group">
+            <label>Id of work item to check:</label>
+            
+            <!-- ko component: { name: "core-wf-variable-selector", params:action.ui.workItemIdVariable } -->
+            <!-- /ko -->
+            <div class="text-danger"
+                data-bind="visible:action.validation.workItemIdVariable, text:action.validation.workItemIdVariable">
+            </div>
+          
+        </div>
+
+
+
+       
+        <div class="form-group">
+            <label>Attribute Name/Path to search for:</label>
+            <!-- ko component: { name: "core-wf-token-input", params: { value: action.config.attribute, rootModel: model } } -->
+            <!-- /ko -->
+        
+            <!-- <button class="btn btn-info" onclick="toggleInfo">Info</button> -->
+        
+            <div id="infoContent" style="display:none;">
+                <p>This is the name of the attribute to search for. This could be a custom attribute or a standard attribute such as "Title" or "Description."</p>
+                <p>In the case of a custom attribute, the path to the attribute can be specified using the dot notation, e.g., "formbuilderName.fieldName".</p>
+                <p>For an option set on a form builder field, the path to the option set can be specified using the dot notation, e.g., "formbuilderName.fieldName.meaningCode".</p>
+
+            </div>
+        
+            <div class="text-danger" data-bind="visible:action.validation.attribute, text:action.validation.attribute"></div>
+        </div>
+        
+       
+ 
+        <div class="form-group">
+            <label for="parents">Search through parents:</label>
+            <div>
+                <input type="checkbox" id="parents" data-bind="toggleSwitch: action.config.parents, toggleOptions: { on: 'Yes', off: 'No' }">
+            </div>
+        </div>
+
+
+        <div class="form-group" data-bind="visible:action.config.parents()">
+            <label>Max distance (empty for no max):</label>
+            <!-- ko component: { name: "core-wf-token-input", params: { value: action.config.max, rootModel: model } } -->
+            <!-- /ko -->
+
+            <div class="text-danger"
+                data-bind="visible:action.validation.max, text:action.validation.max"></div>
+        </div>
+
+        <div data-bind="widgetChrome:{ icon: 'fa-arrow-left', title: 'Output' }">
+            <div class="form-group">
+                <label>Store found value in variable:</label>
+                <!-- ko component: { name: "core-wf-variable-selector", params:action.ui.outputVariable } -->
+                <!-- /ko -->
+            </div>
+        </div>
+
+    </div>
+
+</div>

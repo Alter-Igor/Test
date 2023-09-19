@@ -1,12 +1,7 @@
 import { FormBuilder, Formio } from 'formiojs';
 import { DeferredPromise } from "../../../Common/DifferedPromise";
 import { exampleFormComponents } from '../../Common/FormioBuilder';
-import { renderForm } from '../../Common/FormioRender';
-import {FormPreviewSettings} from '../designer/FormSettings';
-import * as f from "flatpickr-formio"
 let formBuilder: FormBuilder;
-let formPreview: any;
-let formSettings: any;
 import * as Ace from "ace-builds";
 
 

@@ -1,5 +1,6 @@
 {
   "compilerOptions": {   
+    "allowUmdGlobalAccess": true,
     "outDir": "./dist/",
     "isolatedModules": false,
     "resolveJsonModule": true,
@@ -19,8 +20,7 @@
     // "types": [],                /* Type declaration files to be included in compilation. */
     "lib": [ "dom"],
     },
-  "include": [
-    "./src/**/*.**"],
+    "include": ["./src/**/*.ts", "**/*.d.ts","global.d.ts", "__to_delete_ShareDo/t.ts", "src/helpers/paths_ts"],
     "exclude": ["/Users/igorsharedo/Desktop/Test/src/DeploymentHelper"]
   
 }

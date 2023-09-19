@@ -46,6 +46,6 @@
     ],
     "menuTemplates": [],
     "components": [
-        "Sharedo.Core.Case.Participants.AddParticipantService""
+        "Sharedo.Core.Case.Participants.AddParticipantService"
     ]
 }

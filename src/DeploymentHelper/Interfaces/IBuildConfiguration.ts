@@ -1,17 +1,22 @@
 
 export interface IBuildConfiguration {
-    defaultModulesToExtract: IExtract[] | undefined;
-    typeDefaults: ITypeDefaults | undefined;
+    defaults: IDefaults;
     targets: ITargets | undefined;
+}
+
+export interface IDefaults {
+    ideRoot: string;
+    defaultModulesToExtract: IExtract[] | undefined,
+    typeDefaults: ITypeDefaults | undefined;
 }
 
 
 export interface ITypeDefaults {
     [key: string]: ISettingDefaults;
-  }
-  
+}
+
 export interface ITargets {
-  [key: string]: ITargetEntry;
+    [key: string]: ITargetEntry;
 }
 
 export interface ITargetEntry {
@@ -20,20 +25,22 @@ export interface ITargetEntry {
 
 
 export interface ISettingDefaults {
-  deployPath: string;
-  sourcePath: string;
-  modulesToExtract?: IExtract[]
+    enabled: boolean;
+    deployPath: string;
+    sourcePath: string;
+    modulesToExtract?: IExtract[]
 }
 
 export interface ISetting {
+    enabled?: boolean;
     deployPath?: string;
     sourcePath?: string;
     modulesToExtract?: IExtract[]
-  }
+}
 
 export interface IExtract {
-  modules: string[];
-  extractedFileName: string;
+    modules: string[];
+    extractedFileName: string;
 }
 
 
@@ -41,45 +48,60 @@ export interface IExtract {
 
 //Test the JSON Config against the interfaces here
 let test: IBuildConfiguration = {
-    defaultModulesToExtract: [
-        {
-            modules: ["lodash"],
-            extractedFileName: "lodash.js"
-        }
-    ],
-    typeDefaults: {
-            "globals": {
+    "defaults":
+    {
+        "ideRoot": "_ideFiles",
+        "defaultModulesToExtract": [
+            {
+                "modules": ["lodash"],
+                "extractedFileName": "lodash.js"
+            }
+        ],
+        "typeDefaults": {
+            "Globals": {
+                "enabled": true,
                 "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/Globals",
                 "sourcePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/Globals",
                 "modulesToExtract": [
                     {
-                        "modules":["jquery","axios"],
+                        "modules": ["jquery", "axios"],
                         "extractedFileName": "utils.js"
                     }
                 ]
+
+
             },
-            "widgets": {
+            "Widgets": {
                 "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/Widgets",
-                "sourcePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/Widgets"
+                "sourcePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/Widgets",
+                "enabled": true
             },
-            "ideAspects": {
+            "IDEAspects": {
                 "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/IDEAspects",
-                "sourcePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/IDEAspects"
+                "sourcePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/IDEAspects",
+                "enabled": true
             },
-            "workflowActions": {
-                "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/WorkflowsActions}",
-                "sourcePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions"
-            }
-        },
-    targets: {
-        
-            "ideAspects": {
-                "ODSPicker": {
-                    "modulesToExtract": [ ]
-                }
-            },
-            "workflowActions": {
-                "LargeFiles": {}
+            "WorkflowActions": {
+                "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/WorkflowActions",
+                "sourcePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions",
+                "enabled": true
             }
         }
+    },
+    "targets": {
+        "IDEAspects": {
+            "OdsPicker": {
+                "modulesToExtract": []
+            },
+            "DatePickerAspect": {}
+        },
+        "WorkflowActions": {
+            "LargeFiles": {
+                "enabled": false
+            },
+            "CustomProgressMilestone": {
+                "enabled": true
+            }
+        }
+    }
 }

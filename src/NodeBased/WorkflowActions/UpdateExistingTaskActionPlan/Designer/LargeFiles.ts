@@ -5,7 +5,7 @@
 window.Custom = window.Custom || {};
 window.Custom.WorkflowActions = window.Custom.WorkflowActions || {};
 
-  
+
 // View model
 window.Custom.WorkflowActions.UpdateExistingTaskActionPlan = function (element:any, configuration: any, base: any) 
 {

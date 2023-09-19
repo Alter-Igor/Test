@@ -1,5 +1,4 @@
 import * as ko from "knockout";
-import { Sharedo } from "../../../Interfaces/ShareDo/Sharedo";
 import { ISharedoBladeModel, TShareDoBlade, IConfigurationHost } from "../../../Interfaces/SharedoAspectModels";
 import { IDebug } from "./IDebug";
 import { toObservableObject } from "./KOConverter";

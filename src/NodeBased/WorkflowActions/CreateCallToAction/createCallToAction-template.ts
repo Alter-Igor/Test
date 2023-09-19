@@ -11,6 +11,7 @@ let cta : ICallToAction = {
     css: undefined
 };
 
+
 cta.title=sharedo.buildString("$model.Configuration.title;");
 // $ifNotNull.Configuration.styles
 cta.styles=sharedo.buildString("$model.Configuration.styles;");

@@ -1,0 +1,28 @@
+{
+    "id":  "WorkflowActions.RecursiveFindAttributeDesigner",
+    "priority": 6000, 
+    "designer":
+    {
+        "allowInPortalDesigner": false,
+        "allowInSharedoPortalDesigner": false
+    },
+    "scripts":
+    [
+        "/_ideFiles/WorkflowActions/RecursiveFindAttribute/Designer/RecursiveFindAttributeDesigner.js"
+    ],
+    "styles":
+    [
+        "/_ideFiles/WorkflowActions/RecursiveFindAttribute/Designer/RecursiveFindAttributeDesigner.css"
+    ],
+    "templates":
+    [
+        "/_ideFiles/WorkflowActions/RecursiveFindAttribute/Designer/RecursiveFindAttributeDesigner.html"
+    ],
+    "menuTemplates":
+    [
+    ],
+    "components":
+    [
+        "Sharedo.Core.Case.Components.SharedoTypePicker"
+    ]
+}

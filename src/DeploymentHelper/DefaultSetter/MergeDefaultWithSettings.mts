@@ -10,7 +10,7 @@ export async function mergeDefaultsWithTargets(config: IBuildConfiguration) {
         return;
     }
 
-    if (!config.typeDefaults) {
+    if (!config.defaults.typeDefaults) {
         l(`Warining! - No typeDefaults found in config`.cyan.bold);
 
     }
@@ -29,20 +29,21 @@ export async function mergeDefaultsWithTargets(config: IBuildConfiguration) {
         let indent = " ".repeat(indentValue);
         let targetEntries = config.targets![targetTypeName]
         let targetEntriesNames = Object.keys(config.targets![targetTypeName])
-        let defaultValue = config.typeDefaults ? config.typeDefaults[targetTypeName] : undefined;
+        let defaultValue = config.defaults.typeDefaults ? config.defaults.typeDefaults[targetTypeName] : undefined;
 
         if (!defaultValue) {
             defaultValue = {
                 deployPath: "",
                 sourcePath: "",
-                modulesToExtract: []
+                modulesToExtract: [],
+                enabled: true
             }
         }
 
         defaultValue.modulesToExtract = defaultValue.modulesToExtract ? defaultValue.modulesToExtract : [];
-        if (config.defaultModulesToExtract) {
+        if (config.defaults.defaultModulesToExtract) {
             let type = defaultValue.modulesToExtract;
-            let global = config.defaultModulesToExtract;
+            let global = config.defaults.defaultModulesToExtract;
             defaultValue.modulesToExtract = Object.assign(type, global);
         }
 
@@ -65,7 +66,7 @@ export async function mergeDefaultsWithTargets(config: IBuildConfiguration) {
             // let targetEntry = targetEntries[key];
 
             l(` ----- Processing Target ${key} ----`.blue.bold);
-            let newTarget: IFinalTargetSettings = await validateAndBuildTargetSettings(targetTypeName, targetEntries, key, defaultValue);
+            let newTarget: IFinalTargetSettings = await validateAndBuildTargetSettings(config.defaults,targetTypeName, targetEntries, key, defaultValue);
             // newTarget.namespace = targetTypeName;
             finalTargetSettings.push(newTarget);
 
@@ -95,6 +96,7 @@ export function logOutMergedTargetSettings(targets: IFinalTargetSettings[]) {
         else
         {
             l(`    - valid:` + ` ${target.valid}`.red.bold);
+            l(target.erros)
         }
     });
 }

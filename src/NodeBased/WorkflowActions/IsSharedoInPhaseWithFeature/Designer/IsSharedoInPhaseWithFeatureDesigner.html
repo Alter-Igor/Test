@@ -1,0 +1,38 @@
+
+<div class="Sharedo-Core-Case-WorkflowEditor-NodeTypes-ProgressMilestoneDesigner">
+
+    <div data-bind="widgetChrome:{ icon: 'fa-list', title: 'Action configuration' }">
+        <div class="form-group">
+            <label for="name">Action name:</label>
+            <input id="name" type="text" class="form-control" data-bind="textInput:action.name" />
+            <div class="text-danger" data-bind="visible:action.validation.name, text:action.validation.name"></div>
+        </div>
+    </div>
+
+    <div data-bind="widgetChrome:{ icon: 'fa-forward', title: 'Progress milestone' }">
+
+        <div class="form-group">
+            <label>Id of work item to check:</label>
+            <!-- ko component: { name: "core-wf-variable-selector", params:action.ui.workItemIdVariable } -->
+            <!-- /ko -->
+            <div class="text-danger" data-bind="visible:action.validation.workItemIdVariable, text:action.validation.workItemIdVariable"></div>
+        </div>
+
+  
+        <div class="form-group" >
+            <label>Phase feature to validate against:</label>
+            <!-- ko if: !featuresLoading() --> 
+            <select data-bind="
+                        value:action.config.phaseFeature, 
+                        options: phaseFeatures,
+                        optionsText: 'displayName',
+                        optionsValue:'systemName'" class="form-control">
+            </select>
+            <!-- /ko -->
+            <div class="form-control" data-bind="visible:phasesFeaturesLoading"><span class="fa fa-spin fa-spinner"></span></div>
+            <div class="text-danger" data-bind="visible:action.validation.phaseFeature, text:action.validation.phaseFeature"></div>
+        </div>
+
+    </div>
+
+</div>

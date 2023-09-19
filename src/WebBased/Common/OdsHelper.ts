@@ -3,7 +3,6 @@
  * _search is a wrapper around the ODS search endpoint
  */
 
-import { Sharedo } from "../../Interfaces/ShareDo/Sharedo";
 import { IAspect } from "../../Interfaces/Aspect/IAspect";
 import { IODSOrganisationResult } from "../../Interfaces/OdsList/IODSOrganisationResult";
 import { IODSPersonResult } from "../../Interfaces/OdsList/IODSPeopleSearchResult";

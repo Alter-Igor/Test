@@ -5,7 +5,6 @@ import { convertTransitionToButton } from "./TransitionToButtonConverter";
 import { ButtonType, IButton, IButtonGroup, buildButtonGroupElement } from "./ButtonBuilder";
 import { ASMaterialButton, ASMaterialDesignButtonStyles } from "alterspective-material-design-web-components";
 import { ColorTranslator } from 'colortranslator';
-import { Sharedo } from "../../../Interfaces/ShareDo/Sharedo";
 import { IPhasePlan, Phase, Transition } from "../../../Interfaces/api/PhasePlan/PhasePlan";
 
 

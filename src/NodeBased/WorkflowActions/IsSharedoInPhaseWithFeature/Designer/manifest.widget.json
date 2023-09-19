@@ -1,0 +1,28 @@
+{
+    "id":  "WorkflowActions.IsSharedoInPhaseWithFeatureDesigner",
+    "priority": 6000, 
+    "designer":
+    {
+        "allowInPortalDesigner": false,
+        "allowInSharedoPortalDesigner": false
+    },
+    "scripts":
+    [
+        "/_ideFiles/WorkflowActions/IsSharedoInPhaseWithFeature/Designer/IsSharedoInPhaseWithFeatureDesigner.js"
+    ],
+    "styles":
+    [
+        "/_ideFiles/WorkflowActions/IsSharedoInPhaseWithFeature/Designer/IsSharedoInPhaseWithFeatureDesigner.css"
+    ],
+    "templates":
+    [
+        "/_ideFiles/WorkflowActions/IsSharedoInPhaseWithFeature/Designer/IsSharedoInPhaseWithFeatureDesigner.html"
+    ],
+    "menuTemplates":
+    [
+    ],
+    "components":
+    [
+        "Sharedo.Core.Case.Components.SharedoTypePicker"
+    ]
+}

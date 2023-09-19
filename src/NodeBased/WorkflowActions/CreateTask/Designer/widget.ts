@@ -1,11 +1,11 @@
 // Namespacing
 // namespace("Sharedo.Core.Case.WorkflowEditor.NodeTypes");
 
-window.Custom = window.Custom || {};
-window.Custom.WorkflowActions = window.Custom.WorkflowActions || {};
+(window as any).Custom = (window as any).Custom || {};
+(window as any).Custom.WorkflowActions = (window as any).Custom.WorkflowActions || {};
 
 // View model
-window.Custom.WorkflowActions.CreateTaskDesigner = function (element: any, configuration: any, base: any) {
+(window as any).Custom.WorkflowActions.CreateTaskDesigner = function (element: any, configuration: any, base: any) {
     var self = this;
     var defaults =
     {
@@ -55,7 +55,7 @@ window.Custom.WorkflowActions.CreateTaskDesigner = function (element: any, confi
     ];
 };
 
-window.Custom.WorkflowActions.CreateTaskDesigner.prototype.loadAndBind = function() {
+(window as any).Custom.WorkflowActions.CreateTaskDesigner.prototype.loadAndBind = function() {
     const self = this;
 
     $ajaxMutex.getOnce("/api/ods/optionsets/work-priority")

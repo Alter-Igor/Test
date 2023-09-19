@@ -1,2 +1,0 @@
-
-//# sourceMappingURL=myFunction.js.map

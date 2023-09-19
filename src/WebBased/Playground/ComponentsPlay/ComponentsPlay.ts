@@ -1,6 +1,5 @@
 import * as ko from "knockout";
-import { Sharedo } from "../../../Interfaces/ShareDo/Sharedo";
-import { IAutoCompleteFindCard } from "../../../Interfaces/components/auto-complete";
+import { IAutoCompleteFindCardOptions } from "../../../Interfaces/components/IAutoCompleteFindCardOptions";
 
 
 export function ComponentsPlay(element: HTMLElement, configuration: any, baseModel: any): ComponentsPlayClass {
@@ -90,7 +89,7 @@ class ComponentsPlayClass {
 
         this.log("autoCompleteFinder: ", v);
         let search = v.toLowerCase();
-        let results: Array<IAutoCompleteFindCard> = [];
+        let results: Array<Sharedo.UI.Framework.Components.AutoCompleteFindCard> = [];
 
         //create 100 records of fake contact data
         let fakeData = [];
@@ -117,22 +116,26 @@ class ComponentsPlayClass {
 
         //create a result for each fake data item
         fakeData.forEach(item => {
-            results.push(new Sharedo.UI.Framework.Components.AutoCompleteFindCard({
+            let options : IAutoCompleteFindCardOptions ={
                 type: "result",
                 id: item,
                 data:item,
                 icon: "fa-users",
                 text: item.firstName + " " + item.lastName,
-            }));
+            }
+            results.push(new Sharedo.UI.Framework.Components.AutoCompleteFindCard(options));
         });
         
 
         if (results.length > 0) {
-            results.splice(0, 0, new Sharedo.UI.Framework.Components.AutoCompleteFindCard({
+
+            let options : IAutoCompleteFindCardOptions = {
                 type: "message",
                 icon: "fa-check text-success",
                 text: "Found " + results.length + " teams"
-            }));
+            }
+
+            results.splice(0, 0, new Sharedo.UI.Framework.Components.AutoCompleteFindCard(options));
         }
 
         return results;
