@@ -5,9 +5,19 @@ import { toObservableObject } from "./KOConverter";
 import { getNestedProperty, setNestedProperty } from "./ObjectHelpers";
 import { v4 as uuid } from 'uuid';
 import { TSharedo } from "../../../Interfaces/TSharedo";
-import { IWidgetJson} from "./IWidgetJson";
+import { IWidgetJson, I_IDE_Aspect_Modeller_Configuration} from "./IWidgetJson";
+import { ShareDoEvent, fireEvent } from "../../Common/EventsHelper";
 
-export type Defaults<T> = T & { debug: IDebug }
+export type IDefaultSettings<T> = T & 
+{ 
+    debug: IDebug,
+    eventsToReactTo: Array<EventToReactTo>
+}
+
+interface EventToReactTo{
+    eventPath: string;
+    methodToCall: string;
+}
 
 interface IDEAspectConfiguration {
     model: ISharedoBladeModel;
@@ -20,9 +30,6 @@ type Observableify<T> = {
 
 export type ObservableConfigurationOptions<TConfig> = { [K in keyof IBaseIDEAspectConfiguration<TConfig>]: ko.Observable<IBaseIDEAspectConfiguration<TConfig>[K]>; }
 
-export type I_IDE_Aspect_Modeller_Configuration<TConfig> = TConfig & {
-    debug: IDebug;
-}
 
 export type IBaseIDEAspectConfiguration<TConfig> = IConfigurationHost & I_IDE_Aspect_Modeller_Configuration<TConfig>;
 // abstract class Creator<TConfig> {
@@ -40,26 +47,27 @@ type ObservablePerson<TConfig> = Observableify<IBaseIDEAspectConfiguration<TConf
 
 export abstract class BaseIDEAspect<TConfig, TPersitance>  {
     _data:any; //non model data storage
-    originalConfiguration: TConfig;
-    configuration: IBaseIDEAspectConfiguration<TConfig>;
-    defaults: Defaults<TConfig> | undefined;
-    element: HTMLElement;
+    originalConfiguration!: TConfig;
+    configuration!: IBaseIDEAspectConfiguration<TConfig>;
+    defaults: IDefaultSettings<TConfig> | undefined;
+    element!: HTMLElement;
     model: any;
-    enabled: boolean;
-    blade: TShareDoBlade;
-    loaded: ko.Observable<boolean>;
+    enabled!: boolean;
+    blade!: TShareDoBlade;
+    loaded!: ko.Observable<boolean>;
     sharedoId: any;
-    sharedoTypeSystemName: ko.Observable<string>;
+    sharedoTypeSystemName!: ko.Observable<string>;
     validation: any;
-    validationErrorCount: ko.Observable<number>;
-    baseModel: TSharedo<any>;
-    thisComponentName: string;
+    validationErrorCount!: ko.Observable<number>;
+    baseModel!: TSharedo<any>;
+    thisComponentName!: string;
     LocationToSaveOrLoadData: string | undefined; //The location to load and save the data from
-    options: ObservableConfigurationOptions<TConfig>
-    uniqueId: string;
-    widgetSettings: IWidgetJson ;
+    options!: ObservableConfigurationOptions<TConfig>
+    uniqueId!: string;
+    widgetSettings!: IWidgetJson<TConfig> ;
 
-    
+
+
    
     /**
      * Base Constructor for all IDEAspects, forces the implementation of the load and save methods
@@ -70,18 +78,43 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
      * @param baseModel //The base model passed in from the blade
      * @param defaults //The defaults passed in from the widget to set incase of bad configuration or missing configuration
      */
-    constructor(element: HTMLElement, configuration: TConfig, baseModel: TSharedo<any>) {
+    constructor();
+    constructor(element: HTMLElement, configuration: TConfig, baseModel: TSharedo<any>) 
+    public constructor(...arr: any[]) 
+    {
 
         this.widgetSettings = this.setWidgetJsonSettings();
-        this.uniqueId = uuid();
-        this.LocationToSaveOrLoadData = this.setLocationOfDataToLoadAndSave();
         this.thisComponentName = this.setThisComponentName();
+        this.defaults = this.setDefaults(); //setup the default by calling the abstract method in the child class
+        this.LocationToSaveOrLoadData = this.setLocationOfDataToLoadAndSave();
+        
+        if(arr.length === 0)
+        {
+            //This is the base constructor
+            return;
+        }
+
+        if(arr.length === 3)
+        {
+            //This is the constructor that is called by the IDE
+            this._initialise(arr[0], arr[1], arr[2]);
+            
+            this.fireEvent("onSetup", this.model);
+            this.setup();
+            this.fireEvent("afterSetup", this.model);
+            return;
+        }
+
+    }
+
+    _initialise(element: HTMLElement, configuration: I_IDE_Aspect_Modeller_Configuration<TConfig>, baseModel: TSharedo<any>)
+    {
+        this.uniqueId = uuid();
         this.element = element;
         //ShareDo passes the config as well as other stuff, so we need to extract the config
         this.originalConfiguration = configuration as IBaseIDEAspectConfiguration<TConfig>;
         this.baseModel = baseModel;
-        this.defaults = this.setDefaults(); //setup the default by calling the abstract method in the child class
-       
+        
         // this.data = undefined;
         // Merge the configuration with the defaults
         this.configuration = $.extend(this.defaults, this.originalConfiguration) as IBaseIDEAspectConfiguration<TConfig>;
@@ -109,12 +142,8 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
 
         this.LocationToSaveOrLoadData = this.setLocationOfDataToLoadAndSave(); //setup the location to load and save the data from by calling the abstract method in the child class
 
-
+        this.fireEvent("onInitialise", this.model);
     }
-
-
-  
-
 
 
     get data() : TPersitance | undefined {
@@ -153,6 +182,8 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
         // }
         this.log("Setting data at location", "green",valueToSet);
         setNestedProperty(this.model, this.LocationToSaveOrLoadData, valueToSet);
+        this.fireEvent("onDataChanged", this.model);
+
     }
 
 
@@ -165,7 +196,7 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
      * @abstract
      * 
      */
-    abstract setDefaults(): Defaults<TConfig>;
+    abstract setDefaults(): IDefaultSettings<TConfig>;
 
     // /**
     //  * ! important: Mandatory method to be implemented by the child class to set the defaults for the widget.json
@@ -188,6 +219,7 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
      */
     abstract setThisComponentName(): string; 
 
+
     /**
      * !IMPORTANT - This is the first method once the class has been constructed, default contructor logic should be placed here
      */
@@ -197,7 +229,7 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
     /**
      * !IMPORTANT - This is the settings for the widget.json that will be generated
      */
-    abstract setWidgetJsonSettings(): IWidgetJson
+    abstract setWidgetJsonSettings(): IWidgetJson<TConfig>;
 
 
 
@@ -214,6 +246,7 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
      * model as required.
      */
     public onSave(model: any): void {
+        this.fireEvent("onSave", model);
         this.log("Saving, model passed in we need to persist to", "green", this.data);
 
         if(this.LocationToSaveOrLoadData === undefined)
@@ -236,6 +269,7 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
         }
         this.log(`New data to persist to location ${this.LocationToSaveOrLoadData} :`, "blue", dataToPersist);
         setNestedProperty(model, this.LocationToSaveOrLoadData, dataToPersist);
+        
     };
 
 
@@ -243,6 +277,7 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
 
     onDestroy(model?: any) {
         this.log("IDEAspects.Example : onDestroy");
+        this.fireEvent("onDestroy", model);
     };
 
     /**
@@ -253,6 +288,7 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
         this.log("IDEAspects.Example : loadAndBind");
         this.log("Loading data (model:any) passed in", "green");
         this.log("Loading data based on location to save", "green", this.LocationToSaveOrLoadData);
+        this.fireEvent("onLoad", this.model);
     };
 
     /**
@@ -260,6 +296,7 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
      */
     onBeforeSave(model: Sharedo.Core.Case.Sharedo.Models.Sharedo) {
         this.log("IDEAspects.Example : onBeforeSave");
+        this.fireEvent("onBeforeSave", model);
     }
 
 
@@ -268,6 +305,7 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
      */
     onAfterSave(model: Sharedo.Core.Case.Sharedo.Models.Sharedo) {
         this.log("IDEAspects.Example : onAfterSave");
+        this.fireEvent("onAfterSave", model);
     }
 
     /**
@@ -275,7 +313,7 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
      */
     onReload(model: Sharedo.Core.Case.Sharedo.Models.Sharedo) {
         this.log("IDEAspects.Example : onReload");
-
+        this.fireEvent("onReload", model);
     }
 
 
@@ -295,6 +333,16 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
         }
     }
 
+    fireEvent(eventName: string, data: any) {
+        let event: ShareDoEvent = {
+            eventPath: this.thisComponentName + "." + eventName,
+            eventName: eventName,
+            source: this,
+            data: data
+        }
+        fireEvent(event);
+    }
+    
 
     /**
      * 

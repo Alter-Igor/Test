@@ -1,39 +1,33 @@
 import { IWidgetJson } from "../BaseClasses/IWidgetJson";
-
-export const Settings: IWidgetJson =
+import { Default, IExternalMatterSearchConfiguration } from "./ExternalMatterSearchInterface";
+ 
+export const Settings: IWidgetJson<IExternalMatterSearchConfiguration> =
 {
+    type: "widget",
     "priority": 6000,
-    "designer":
-    {
+    "designer": {
         "allowInPortalDesigner": false,
         "allowInSharedoPortalDesigner": false,
         "allowAspectAdapter": true,
         "title": "External Matter Search",
         "icon": "fa-cog",
         "description": "External Matter Search",
-        "categories":
-            [],
+        "categories": [],
         "isConfigurable": true,
-        "configurationWidget": null
+        "configurationWidget": null,
+        defaultConfigurationJson:Default
     },
-    "scripts":
-        [
-            "/_ideFiles/IDEAspects/ExternalMatterSearch/ExternalMatterSearch.js"
-        ],
-    "styles":
-        [
-            "/_ideFiles/IDEAspects/ExternalMatterSearch/ExternalMatterSearch.css"
-        ],
-    "templates":
-        [
-            "/_ideFiles/IDEAspects/ExternalMatterSearch/ExternalMatterSearch.html"
-        ],
-    "menuTemplates":
-        [
-        ],
-    "components":
-        [
-            "Sharedo.UI.Framework.Components.AutoComplete"
-        ]
+    "scripts": [
+    ],
+    "styles": [
+        "ExternalMatterSearch.css"
+    ],
+    "templates": [
+        "ExternalMatterSearch.html"
+    ],
+    "menuTemplates": [],
+    "components": [
+        "Sharedo.UI.Framework.Components.AutoComplete"
+    ]
 }
 

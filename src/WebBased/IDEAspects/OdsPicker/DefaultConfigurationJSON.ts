@@ -1,26 +1,32 @@
-import {IODSPickerConfiguration} from './IOdsPickerConfig';
-export const exampleODSPickerDefaultConfigurationJSON:IODSPickerConfiguration =
-{
-    "showPreSharedo": true,
-    "showPostSharedo": true,
-    "narrowLabel": false,
-    noOdsEntityMessage: '',
-    noOdsEntityRequiredMessage: '',
-    "roleConfigModels": [
-        {
-            "roleSystemName": "client",
-            "required": true,
-            "showSearchOds": true,
-            "defaultToCurrentUser": false,
-            "displayName": "Client"
-        },
-        {
-            "roleSystemName": "matter-party",
-            "required": false,
-            "showSearchOds": true,
-            "defaultToCurrentUser": false,
-            "displayName": "Matter Party"
-        }
-    ]
+import { IWidgetJson } from '../BaseClasses/IWidgetJson';
+import {Default, IODSPickerConfiguration} from './IOdsPickerConfig';
 
+
+export const Settings : IWidgetJson<IODSPickerConfiguration> = {
+    type: 'widget',
+    "priority": 6000,
+    "designer": {
+        "allowInPortalDesigner": false,
+        "allowInSharedoPortalDesigner": false,
+        "allowAspectAdapter": true,
+        "title": "Ods Picker",
+        "icon": "fa-cog",
+        "description": "Custom ODS Picker.",
+        "categories": [],
+        "isConfigurable": true,
+        "configurationWidget": "IDEAspects.OdsPickerDesigner",
+        "defaultConfigurationJson": Default
+    },
+    "scripts": [
+    ],
+    "styles": [
+        "OdsPicker.css"
+    ],
+    "templates": [
+        "OdsPicker.html"
+    ],
+    "menuTemplates": [],
+    "components": [
+        "Sharedo.Core.Case.Participants.AddParticipantService"
+    ]
 }

@@ -1,7 +1,8 @@
 import { DateTime, TempusDominus } from '@eonasdan/tempus-dominus';
 //https://getdatepicker.com/6/options/display.html
-import { IDatePickerAspectOptions } from "./IConfiguration";
-import { BaseIDEAspect, Defaults, getFormBuilderFieldPath } from "../BaseClasses/BaseIDEAspect";
+import { IDatePickerAspectOptions, setting} from "./DatePickerAspectConfiguration";
+import { BaseIDEAspect, IDefaultSettings, getFormBuilderFieldPath } from "../BaseClasses/BaseIDEAspect";
+import { IWidgetJson} from '../BaseClasses/IWidgetJson';
 
 let thisWidgetSystemName = "DatePickerAspect";
 
@@ -10,16 +11,30 @@ let thisWidgetSystemName = "DatePickerAspect";
 document.head.insertAdjacentHTML("beforeend", `<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">`);
 
 export class DatePickerAspect extends BaseIDEAspect<IDatePickerAspectOptions, any> {
+  
     
     datePickerDiv: HTMLDivElement | undefined;
     dateTimePicker: TempusDominus | undefined;
     
-    constructor(element: HTMLElement, configuration: IDatePickerAspectOptions, baseModel: any) {
-        super("SingleValueAspect", "aspectData.odsEntityPicker", element, configuration, baseModel)
-    }
+    // constructor(element: HTMLElement, configuration: IDatePickerAspectOptions, baseModel: any) {
+    //     super("SingleValueAspect", "aspectData.odsEntityPicker", element, configuration, baseModel)
+    // }
 
     //Abstract methods - must be implemented by the derived class
-    setDefaults(): Defaults<IDatePickerAspectOptions> {
+
+    setThisComponentName(): string {
+        return "DatePickerAspect";
+    }
+    setup(): void {
+        
+    }
+    
+    setWidgetJsonSettings(): IWidgetJson<IDatePickerAspectOptions> {
+        return setting;
+    }
+   
+
+    setDefaults(): IDefaultSettings<IDatePickerAspectOptions> {
         return {
             // Aspect widget config parameters
             title: undefined,
@@ -38,7 +53,8 @@ export class DatePickerAspect extends BaseIDEAspect<IDatePickerAspectOptions, an
                 enabled: false,
                 logToConsole: false,
                 showInAspect: false
-            }
+            },
+            eventsToReactTo: []
         }
     }
 

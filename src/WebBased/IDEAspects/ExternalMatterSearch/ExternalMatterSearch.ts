@@ -1,7 +1,7 @@
 import { AUTOCOMPLETE_MODE, AUTOCOMPLETE_CARD_TYPE} from "../../../Interfaces/components/IAutoCompleteFindCardOptions";
 import { setAllFieldsToNull } from "../../Common/ObjectHelper";
 import { executeGet } from "../../Common/api/api";
-import { BaseIDEAspect, Defaults} from "../BaseClasses/BaseIDEAspect";
+import { BaseIDEAspect, IDefaultSettings} from "../BaseClasses/BaseIDEAspect";
 import { Default, IExternalMatterSearchConfiguration } from "./ExternalMatterSearchInterface";
 import { IWidgetJson} from "../BaseClasses/IWidgetJson";
 import ko, { Observable } from "knockout";
@@ -14,12 +14,11 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
     selectedDiv: any;
     selectedMatter: Observable<any> = ko.observable<any>();
     
-    
     // constructor(element: HTMLElement, configuration: IExternalMatterSearchConfiguration, baseModel: any) {
     //     super(thisWidgetSystemName, "aspectData.odsEntityPicker", element, configuration, baseModel)
     // }
 
-    setWidgetJsonSettings(): IWidgetJson {
+    setWidgetJsonSettings(): IWidgetJson<IExternalMatterSearchConfiguration>{
         return Settings
     }
    
@@ -27,7 +26,7 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
         return "ExternalMatterSearch";
     }
 
-    setDefaults(): Defaults<IExternalMatterSearchConfiguration> {
+    setDefaults(): IDefaultSettings<IExternalMatterSearchConfiguration> {
         return Default
     }
 
@@ -120,7 +119,7 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
             model.client = response.client?.name;
             model.partner = response.partner?.name;
             model.status = response.status;
-            model.isSecure = response.secure;
+            model.isSecure = response.isSecure;
         }).catch((error: any) => {
             setAllFieldsToNull(model);
         }).finally(() => {
@@ -169,23 +168,17 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
 
     };
 
-   
 
     autoCompleteFinder(v: string, handler: any) {
-
         var search = v.toLowerCase();
         var result = $.Deferred();
-
-        //if (!self.sharedoId()) return;
 
         this.log("Searching for: " + search, "green");
         let url = this.options.searchApiUrl();
 
-        //replace any {0} with the search term
         if (url.indexOf("{searchTerm}") > -1) {
             url = url.replace("{searchTerm}", search);
         }
-
         executeGet(url).then((data: any) => {
             let cards = new Array<Sharedo.UI.Framework.Components.AutoCompleteFindCard>();
             data.externalMatterProviderSearchResults.forEach((d: any) => {
@@ -253,6 +246,12 @@ function addVisualExtension(matterModel: any) {
     //add css class
     if(matterModel.isSecure){
         matterModel.cssClass += " secure-matter";
+        matterModel.isSecureIcon = "fa-solid fa-shield text-danger";
+    }
+    else
+    {
+        matterModel.isSecureIcon = "fa-solid fa-file text-success";
+
     }
 
 

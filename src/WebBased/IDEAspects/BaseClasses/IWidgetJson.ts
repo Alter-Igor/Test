@@ -1,8 +1,15 @@
+import { IDebug } from "./IDebug";
 
-export interface IWidgetJson {
+export type I_IDE_Aspect_Modeller_Configuration<TConfig> = TConfig & {
+  debug: IDebug;
+}
+
+
+
+export interface IWidgetJson<TConfigurationSettings> {
   type: "wf-action" | "widget";
   priority: number;
-  designer: IWidgetJsonDesigner;
+  designer: IWidgetJsonDesigner<I_IDE_Aspect_Modeller_Configuration<TConfigurationSettings>>;
   scripts: string[];
   styles: string[];
   templates: string[];
@@ -10,7 +17,7 @@ export interface IWidgetJson {
   components: string[];
 }
 
-export interface IWidgetJsonDesigner {
+export interface IWidgetJsonDesigner<TConfigurationSettingsWithCommon> {
   allowInPortalDesigner: boolean;
   allowInSharedoPortalDesigner: boolean;
   allowAspectAdapter: boolean;
@@ -20,4 +27,5 @@ export interface IWidgetJsonDesigner {
   categories: any[];
   isConfigurable: boolean;
   configurationWidget?: any;
+  defaultConfigurationJson:TConfigurationSettingsWithCommon
 }

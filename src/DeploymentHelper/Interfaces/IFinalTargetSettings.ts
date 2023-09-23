@@ -1,12 +1,22 @@
+import { ITargetTSFile } from "../Validation/TSFileFinder.mjs";
+import { IManifestInfo } from "../Validation/TargetSettingsValidator.mjs";
 import { IExtract } from "./IBuildConfiguration";
 
 export interface IFinalTargetSettings {
-    manifestFileName: string;
-    designerManifestJSON: any;
-    manifestJSON: any;
+    publicPath: any;
     designerTSFilePath: string;
     designerTSFileName: string;
-    widgetTSFilePath: string;
+    designerManifestJSON: any;
+    tsFileInfo: ITargetTSFile;
+    manifestInfo: IManifestInfo;
+    designerManifestInfo: IManifestInfo;
+    // manifestFileName: string;
+    // designerManifestJSON: any;
+    // manifestJSON: any;
+    tsDesignerFileInfo: ITargetTSFile;
+    // designerTSFilePath: string;
+    // designerTSFileName: string;
+    // widgetTSFilePath: string;
     templateTsFilePath: string;
     factoryTSFilePath: string;
     templateTsFileName: string;

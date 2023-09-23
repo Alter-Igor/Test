@@ -1,35 +1,27 @@
 import { formatValue } from "../../../helpers/Formatter";
 import { searchForAttributeRecursive } from "../../Common/api/searchForAttributeWithParents";
-import { BaseIDEAspect, Defaults } from "../BaseClasses/BaseIDEAspect";
-import { ISingleValueAspectConfiguration } from "./SingleValueAspectConfig";
+import { BaseIDEAspect, IDefaultSettings } from "../BaseClasses/BaseIDEAspect";
+import { IWidgetJson } from "../BaseClasses/IWidgetJson";
+import { Default, ISingleValueAspectConfiguration, WidgetSettings } from "./SingleValueAspectConfig";
 
 let thisWidgetSystemName = "SingleValueAspect";
 
-
 export class SingleValueAspect extends BaseIDEAspect<ISingleValueAspectConfiguration, any> {
+    setThisComponentName(): string {
+        return "SingleValueAspect";
+    }
+    setWidgetJsonSettings(): IWidgetJson<ISingleValueAspectConfiguration> {
+        return WidgetSettings;
+    }
 
-    setDefaults(): Defaults<ISingleValueAspectConfiguration> {
-        return  {
-            fieldPath: "Title",
-            title: "Title Value",
-            calculatedValue: "",
-            calculatedTitle: "",
-            valueOnNotFound: "Not Found",
-            searchParents: false,
-            maxDepth: 0,
-            formatter: "value",
-            debug: {
-                enabled: false,
-                logToConsole: false,
-                showInAspect: false
-            }
-        };
+    setDefaults(): IDefaultSettings<ISingleValueAspectConfiguration> {
+        return  Default
     }
     
-    constructor(element: HTMLElement, configuration: ISingleValueAspectConfiguration, baseModel: any) {
-        super("SingleValueAspect", "aspectData.odsEntityPicker", element, configuration, baseModel)
-        this.setup();
-    }
+    // constructor(element: HTMLElement, configuration: ISingleValueAspectConfiguration, baseModel: any) {
+    //     super("SingleValueAspect", "aspectData.odsEntityPicker", element, configuration, baseModel)
+    //     this.setup();
+    // }
 
     setLocationOfDataToLoadAndSave(): string | undefined {
         return undefined;
@@ -37,7 +29,7 @@ export class SingleValueAspect extends BaseIDEAspect<ISingleValueAspectConfigura
 
     // private initialise() {//! Note: UI framework looks for this method name and if found behaves differently and wont call loadAndBind
 
-    private setup() {
+    setup() {
         
         this.data = {
             value: "",
@@ -90,9 +82,6 @@ export class SingleValueAspect extends BaseIDEAspect<ISingleValueAspectConfigura
             }
         });
     };
-
-    
-     
 
     override onSave(model: any): void {
 

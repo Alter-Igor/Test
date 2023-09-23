@@ -1,3 +1,6 @@
+import { IDefaultSettings } from "../BaseClasses/BaseIDEAspect";
+import { DEBUG_DEFAULT } from "../BaseClasses/IDebug";
+
 export interface IODSPickerConfiguration {
   showPreSharedo: boolean;
   showPostSharedo: boolean;
@@ -21,3 +24,32 @@ export interface IValidation {
   hasErrors: boolean;
 }
 
+
+export const Default: IDefaultSettings<IODSPickerConfiguration>= 
+  {
+      "showPreSharedo": true,
+      "showPostSharedo": true,
+      "narrowLabel": false,
+      noOdsEntityMessage: '',
+      noOdsEntityRequiredMessage: '',
+      "roleConfigModels": [
+          {
+              "roleSystemName": "client",
+              "required": true,
+              "showSearchOds": true,
+              "defaultToCurrentUser": false,
+              "displayName": "Client"
+          },
+          {
+              "roleSystemName": "matter-party",
+              "required": false,
+              "showSearchOds": true,
+              "defaultToCurrentUser": false,
+              "displayName": "Matter Party"
+          }
+      ],
+      debug:DEBUG_DEFAULT,
+      eventsToReactTo: []
+  
+  }
+  

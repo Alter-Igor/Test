@@ -2,7 +2,7 @@ import { Configuration } from 'webpack';
 import webpack from 'webpack';
 // import targetsJson from './targets.json' assert { type: "json" };;
 import * as path from 'path';
-import { clearSec, err, imp, l, lh, lh1, runTest, suc } from './src/DeploymentHelper/Log.mjs';
+import { clearSec, err, imp, l, lh, lh1, lh3, runTest, suc, wrn } from './src/DeploymentHelper/Log.mjs';
 import CopyPlugin from 'copy-webpack-plugin';
 import { runBuild } from './src/DeploymentHelper/BuildMIXTargetFile.mjs';
 import { IFinalTargetSettings } from './src/DeploymentHelper/Interfaces/IFinalTargetSettings';
@@ -11,6 +11,7 @@ import { IBuildConfiguration } from './src/DeploymentHelper/Interfaces/IBuildCon
 import * as esbuild from 'esbuild'
 import Color from 'color';
 import { copy } from 'esbuild-plugin-copy';
+import fs from 'fs';
 //copy
 // esbuild-copy-static-files
 runTest();
@@ -30,7 +31,8 @@ let esBuildWatchContextArray = new Array<Promise<esbuild.BuildContext<ESBuildWat
 
 
 
-async function run() {
+async function run() 
+{
 
   console.clear();
   l("Starting Build Process".blue.underline.bold)
@@ -46,62 +48,100 @@ async function run() {
   }
 
 
-  let targetSummary = new Array<{target:IFinalTargetSettings,result:boolean}>();
+
+  let targetSummary = new Array<{target:IFinalTargetSettings,result:boolean,errors:string[]}>();
 
   // targets.forEach((target, idx) => {
   for (let idx = 0; idx < targets.length; idx++) //No foreach as we need to await the build
   {
     
     const target = targets[idx];
-    let newTargetSummary = {target:target,result:false};
+    let newTargetSummary = {target:target,result:false,errors: target.erros};
     targetSummary.push(newTargetSummary);
 
-    // l('-'.repeat(100).bgBlue.bold)
-    let sec = lh1(`Processing  ${target.name}`)
-    // l('-'.repeat(100).bgBlue.bold)
 
-    const step = getStepLogger(idx);
+    // try
+    // {
+      // l('-'.repeat(100).bgBlue.bold)
+      let sec = lh1(`Processing  ${target.name}`)
+      // l('-'.repeat(100).bgBlue.bold)
 
-    if (!target.enabled) {
-      sec.l(step() + `-----> Skipping ${target.name} enabled is false!`.bgCyan.bold);
-      continue;
-    }
+      const step = getStepLogger(idx);
 
-    if (!target.valid) {
-      sec.l(step() + `------> Skipping ${target.name} as configuration is not valid!`.red.bold);
-      continue;
-    }
+      if (!target.enabled) {
+        sec.l(step() + `-----> Skipping ${target.name} enabled is false!`.bgCyan.bold);
+        continue;
+      }
+
+      if (!target.valid) {
+        sec.l(step() + `------> Skipping ${target.name} as configuration is not valid!`.red.bold);
+        continue;
+      }
 
 
 
-    sec.l(step() + `Building Config File ${target.name}`.green.bold)
-    sec.l(' '.repeat(10) + `  -  from: `.blue.bold + `${target.sourcePath}`.gray)
-    sec.l(' '.repeat(10) + `  -  to: `.green.bold + `${target.deployPath}`.grey)
+      sec.l(step() + `Building Config File ${target.name}`.green.bold)
+      sec.l(' '.repeat(10) + `  -  from: `.blue.bold + `${target.sourcePath}`.gray)
+      sec.l(' '.repeat(10) + `  -  to: `.green.bold + `${target.deployPath}`.grey)
 
-    sec.l(step() + `Creating Configuration ${target.name}`.bgGreen.bold);
-    let configItem = configureWebpackConfiguration(target, step);
-    sec.l(step() + `Configuration ${target.name} created`.bgGreen.bold);
-    webpackConfigs.push(configItem);
+      sec.l(step() + `Creating Configuration ${target.name}`.bgGreen.bold);
+      let configItem = configureWebpackConfiguration(target, step);
+      sec.l(step() + `Configuration ${target.name} created`.bgGreen.bold);
+      webpackConfigs.push(configItem);
 
-    if (target.factoryTSFileName && target.factoryTSFileName.length > 0) {
-      esBuildWatchContextArray.push(createEsBuildWatchContext(target, target.factoryTSFilePath, target.name + "-factory.js"))
-      esBuildWatchContextArray.push(createEsBuildWatchContext(target, target.templateTsFilePath, target.name + "-template.js"));
-    }
+
+      if (target.factoryTSFileName && target.factoryTSFileName.length > 0) {
+        esBuildWatchContextArray.push(createEsBuildWatchContext(target, target.factoryTSFilePath, target.name + "-factory.js"))
+        esBuildWatchContextArray.push(createEsBuildWatchContext(target, target.templateTsFilePath, target.name + "-template.js"));
+      }
+  // }
+  // catch(ex)
+  // {
+  //   newTargetSummary.errors.push(ex);
+  //   newTargetSummary.result = false;
+  // }
+
 
     newTargetSummary.result = true;
   };
+
+
 
   l(`targetSummary ${targetSummary.length}`);
 
   clearSec();
   lh("Summary")
-  targetSummary.forEach((target) => {
+
+  for(let i = 0; i < targetSummary.length; i++)
+  {
+    const target = targetSummary[i];
     if (target.result) {
       l(suc(`Target ${target.target.name} built successfully`));
     }
     else {
-      l(err(`Target ${target.target.name} failed to build`));
-    }
+      l(wrn(`Target ${target.target.name} failed to build`));
+
+      for(let i = 0; i < target.errors.length; i++)
+      {
+        l(`      -> ` + err(target.errors[i]));
+      }
+  };
+  }
+
+  let validTargets = targets.filter((target) => target.valid===true);
+  validTargets.forEach((target) => {
+    lh3(`Target ${target.name} is valid - Building Manifest File`);
+    
+    //write the manifest file to the deploy path
+    let manifestFilePath = path.resolve(target.deployPath,`${target.name}.${target.manifestInfo.type}.json`);
+    let manifestFileContents = JSON.stringify(target.manifestInfo.manifest, null, 2);
+
+    
+    l(manifestFilePath);
+    l("Writing manifest file");
+    fs.writeFileSync(manifestFilePath, manifestFileContents);
+
+    
   });
   
   ("- - ".repeat(1000).blue.underline.bold)
@@ -250,7 +290,7 @@ function configureWebpackConfiguration(target: IFinalTargetSettings, step: () =>
   config.output.path = target.deployPath;
   // config.output.publicPath = target.deployPath; //! this caused issue with loading chunks - should be /
   ///_ideFiles/IDEAspects/DatePickerAspect/vendors-node_modules_popperjs_core_lib_index_js.js
-  config.output.publicPath = `/_ideFiles/${target.namespace}/${target.name}/`;
+  config.output.publicPath = target.publicPath;
   config.output.filename = "[name].js";
 
   // let lib : webpack.LibraryOptions = {
@@ -293,7 +333,7 @@ function configureWebpackConfiguration(target: IFinalTargetSettings, step: () =>
   }
   else {
     config.entry = {
-      [target.name]: target.widgetTSFilePath,
+      [target.name]: target.tsFileInfo.tsFilePath!,
 
     };
   }

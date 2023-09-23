@@ -1,8 +1,10 @@
 import * as ko from "knockout";
-import {IODSPickerConfiguration} from "./IOdsPickerConfig"
-import { BaseIDEAspect, Defaults } from "../BaseClasses/BaseIDEAspect";
+import { IODSPickerConfiguration } from "./IOdsPickerConfig"
+import { BaseIDEAspect, IDefaultSettings } from "../BaseClasses/BaseIDEAspect";
+import { IWidgetJson } from "../BaseClasses/IWidgetJson";
+import { Settings } from "./DefaultConfigurationJSON";
 
- 
+
 interface OdsEntityModel {
     roleName: string;
     label: string;
@@ -24,13 +26,19 @@ interface OdsEntityModel {
 // }
 
 export class OdsPicker extends BaseIDEAspect<IODSPickerConfiguration, any> {
+    setThisComponentName(): string {
+        return "OdsPicker";
+    }
+    setWidgetJsonSettings(): IWidgetJson<IODSPickerConfiguration> {
+        return Settings
+    }
     setLocationOfDataToLoadAndSave(): string | undefined {
         return undefined;
     }
-    odsEntities: ko.ObservableArray<any>;
+    odsEntities!: ko.ObservableArray<any>    ;
     showAspect: ko.PureComputed<boolean> | undefined;
 
-    setDefaults(): Defaults<IODSPickerConfiguration> {
+    setDefaults(): IDefaultSettings<IODSPickerConfiguration> {
         return {
             roleConfigModels: [],
             showPreSharedo: true,
@@ -42,29 +50,31 @@ export class OdsPicker extends BaseIDEAspect<IODSPickerConfiguration, any> {
                 enabled: false,
                 logToConsole: false,
                 showInAspect: false
-            }
+            },
+            eventsToReactTo: []
 
         };
     }
-    
 
-    constructor(element: HTMLElement, configuration: IODSPickerConfiguration, baseModel: any) {
 
-        super("OdsPicker", "aspectData.odsEntityPicker", element, configuration, baseModel )
+    // constructor(element: HTMLElement, configuration: IODSPickerConfiguration, baseModel: any) {
 
-        // Base properties
-        this.odsEntities = ko.observableArray();
-        this.setup();
-    } 
-  
+    //     super("OdsPicker", "aspectData.odsEntityPicker", element, configuration, baseModel )
+
+    //     // Base properties
+    //     this.odsEntities = ko.observableArray();
+    //     this.setup();
+    // } 
+
 
     // private initialise() {//! Note: UI framework looks for this method name and if found behaves differently and wont call loadAndBind
 
-        private setup() {
-        // Map the roleConfigModels
+    setup() {
+        this.odsEntities = ko.observableArray();
 
+        // Map the roleConfigModels
         this.options.roleConfigModels().forEach(roleConfigModel => {
-            this.odsEntities.push(this.getOdsEntityModel(roleConfigModel));
+            this.odsEntities?.push(this.getOdsEntityModel(roleConfigModel));
         });
 
         this.showAspect = ko.pureComputed(() => {
@@ -93,9 +103,9 @@ export class OdsPicker extends BaseIDEAspect<IODSPickerConfiguration, any> {
 
         if (this.model.aspectData.odsEntityPicker) {
             _.each(this.odsEntities(),
-                 (odsEntity:any) =>{
+                (odsEntity: any) => {
                     let data = _.find(this.model.aspectData.odsEntityPicker.odsEntities,
-                         (item:any) => {
+                        (item: any) => {
                             return item.roleSystemName === odsEntity.roleSystemName();
                         });
                     if (data && data.odsId) {
@@ -121,9 +131,9 @@ export class OdsPicker extends BaseIDEAspect<IODSPickerConfiguration, any> {
         this.log("Loading add options", "green");
         let models = ko.unwrap(this.options.roleConfigModels());
 
-        models.forEach( (model:any)=> {
+        models.forEach((model: any) => {
             let selectedEntity = ko.observable();
-  
+
             model.addMenuOptions = [];
             let c = Sharedo.Core.Case.Participants.AddParticipantService;
             let p = new c({
@@ -141,7 +151,7 @@ export class OdsPicker extends BaseIDEAspect<IODSPickerConfiguration, any> {
                 defaultToSearch: model.showSearchOds
             });
 
-            selectedEntity.subscribe( (entity)=> {
+            selectedEntity.subscribe((entity) => {
                 let match = this.odsEntities().find(x => {
                     return ko.unwrap(x.roleSystemName) === ko.unwrap(model.roleSystemName);
                 });
@@ -161,17 +171,17 @@ export class OdsPicker extends BaseIDEAspect<IODSPickerConfiguration, any> {
         });
 
         let loaders = models
-            .map( (model:any) => {
+            .map((model: any) => {
                 return model.addService.load();
             });
 
         $.when.apply($, loaders)
-            .always( () => {
-                models.forEach( (model:any) => {
+            .always(() => {
+                models.forEach((model: any) => {
                     let menu = model.addService.getAddMenu();
                     model.addMenuOptions = menu;
 
-                    let entity = _.find(this.odsEntities(),  (x:any) => {
+                    let entity = _.find(this.odsEntities(), (x: any) => {
                         return ko.unwrap(x.roleSystemName) === ko.unwrap(model.roleSystemName);
                     });
 
@@ -187,7 +197,7 @@ export class OdsPicker extends BaseIDEAspect<IODSPickerConfiguration, any> {
 
 
         let validationErrorCount = _.filter(this.odsEntities(),
-             (entity:any) =>{
+            (entity: any) => {
                 return (entity.required() === true) && (entity.selected() === false);
             });
         if (!validationErrorCount) this.validation(0);
@@ -247,7 +257,7 @@ export class OdsPicker extends BaseIDEAspect<IODSPickerConfiguration, any> {
 
 
         let data = _.find(this.odsEntities(),
-             (item:any) => {
+            (item: any) => {
                 return item.roleSystemName() === removee.roleSystemName();
             });
 
@@ -273,7 +283,7 @@ export class OdsPicker extends BaseIDEAspect<IODSPickerConfiguration, any> {
 
         $ajax.get("/api/ods/" + odsId + "/type",
             {},
-             (odsData:any) => {
+            (odsData: any) => {
                 if (odsData.type === 1) {
                     // Person
                     item.icon("fa-male");   // TODO get from config.participantTypes.iconClass
@@ -291,9 +301,9 @@ export class OdsPicker extends BaseIDEAspect<IODSPickerConfiguration, any> {
                 $ui.stopWaitingFor('odsEntityDetails');
 
             });
-  
+
     };
-   
+
     override onSave(model: any): void {
 
         this.log("Saving, model passed in we need to persist to", "green", this.data);
@@ -302,7 +312,7 @@ export class OdsPicker extends BaseIDEAspect<IODSPickerConfiguration, any> {
             model.aspectData.odsEntityPicker = { odsEntities: [] };
 
         let entities = model.aspectData.odsEntityPicker.odsEntities;
-        odsEntities.forEach( (x) => {
+        odsEntities.forEach((x) => {
             entities.push(x);
         });
     };

@@ -1,11 +1,10 @@
-import { I_IDE_Aspect_Modeller_Configuration } from "../BaseClasses/BaseIDEAspect";
+import { IDefaultSettings } from "../BaseClasses/BaseIDEAspect";
 
 export interface IExternalMatterSearchConfiguration {
     fackMode: boolean;
     searchApiUrl: string; ///"api/externalMatterProvider/query/{0}"
     loadApiUrl: string; //"api/externalMatterProvider/details/{data.code}" 
     // searchResultTemplate: string; // "code,description"
-
     dataMapping: IDataMapping[],
     fackSearchDataIDEPath: string | undefined;
     fackLoadDataIDEPath: string | undefined;
@@ -16,25 +15,26 @@ export interface IDataMapping {
     searchResultField: string;
 }
 
-export const Default: I_IDE_Aspect_Modeller_Configuration<IExternalMatterSearchConfiguration> = {
+export const Default: IDefaultSettings<IExternalMatterSearchConfiguration>= {
     fackMode: false,
-    searchApiUrl: "api/externalMatterProvider/query/{0}",
-    loadApiUrl: "api/externalMatterProvider/details/{data.code}",
+    searchApiUrl: "api/externalMatterProvider/query/{searchTerm}",
+    loadApiUrl: "api/externalMatterProvider/details/{code}",
     dataMapping: [
-        { formBuilderField: "matterNumber", searchResultField: "matterCode" },
+        { formBuilderField: "matterNumber", searchResultField: "code" },
         { formBuilderField: "matterShortName", searchResultField: "shortName" },
         { formBuilderField: "matterClient{*}", searchResultField: "client.{*}" },
         { formBuilderField: "matterPartnerName", searchResultField: "partner.name" },
-        { formBuilderField: "matterPartnerEmail", searchResultField: "partner.name" },
+        { formBuilderField: "matterPartnerEmail", searchResultField: "partner.email" },
     ],
     fackSearchDataIDEPath: undefined,
     fackLoadDataIDEPath: undefined,
     debug:
     {
-        enabled: false,
-        logToConsole: false,
-        showInAspect: false
-    }
+        enabled: true,
+        logToConsole: true,
+        showInAspect: true
+    },
+    eventsToReactTo: []
 }
 
 
