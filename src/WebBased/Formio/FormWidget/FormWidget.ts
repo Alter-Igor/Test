@@ -169,9 +169,7 @@ export class FormWidget {
         this.formIO = await renderForm(div, this.options?.formBuilderDefinition);
 
         this.formIO.on('submit', (submission: any) => {
-
             this.handleFormSubmit(submission);
-
         });
 
     }

@@ -1,6 +1,8 @@
 import * as ko from 'knockout';
+import { IAspect } from './Aspect/IAspect';
+import { IWidget } from './Widgets/IWidget';
 //for Sharedo.Core.Case.Sharedo.Models.Sharedo
-export interface TSharedo {
+export interface TSharedo<T extends IWidget> {
     instanceId: ko.Observable<string>;
     id: ko.Observable<any>;
     parentSharedoId: ko.Observable<any>;
@@ -18,9 +20,11 @@ export interface TSharedo {
     priorityId: ko.Observable<any>;
     currencyCode: ko.Observable<string>;
     timeZone: ko.Observable<string>;
-    aspectData: Record<string, any>;
+    aspectData: IAspect<T>;
 
-    map(data: TSharedo): void;
-    clone(): TSharedo;
+    map(data: TSharedo<T>): void;
+    clone(): TSharedo<T>;
 }
+
+
 

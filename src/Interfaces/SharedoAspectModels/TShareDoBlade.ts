@@ -29,6 +29,7 @@ export type TShareDoBlade  =
     displayTitle :ko.Observable
     aspects : ko.ObservableArray<IAspect<any>>
     aspectDefinitions : ko.Observable
+    
     validationErrorCount : ko.Observable
     isValid :ko.Observable
     eventSubscriptions : []

@@ -29,11 +29,17 @@
         "IDEAspects": {
             "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/IDEAspects",
             "sourcePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/IDEAspects",
-            "enabled": true
+            "enabled": true,
+            "generatDefaultConfigurationJson":true
         },
         "WorkflowActions": {
             "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/WorkflowActions",
             "sourcePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions",
+            "enabled": true
+        },
+        "PortalWidgets": {
+            "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/PortalWidgets",
+            "sourcePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/PortalWidgets",
             "enabled": true
         }
     }
@@ -41,10 +47,16 @@
     "targets": {
         "IDEAspects": {
             "OdsPicker": {
+                "enabled": false,
                 "modulesToExtract": [ ]
             },
-            "DatePickerAspect" :{},
-            "SingleValueAspect":{}
+            "DatePickerAspect" :{
+                "enabled": false
+            },
+            "SingleValueAspect":{
+                "enabled": false
+            },
+            "ExternalMatterSearch":{}
         },
         "WorkflowActions": {
             "LargeFiles": {
@@ -57,6 +69,15 @@
                 "enabled":true
             },
             "RecursiveFindAttribute":{
+                "enabled":true
+            },
+            "CreateTaskv2":{
+                "enabled":true
+            }
+            
+        },
+        "PortalWidgets":{
+            "RefreshWatcher":{
                 "enabled":true
             }
         }

@@ -3,12 +3,14 @@ import { TestForm } from '../FormWidget/TestForm';
 import { addDefaultFormIOStyleSheetsToShadow, checkLowdashCompatability } from './Styling';
 import * as DataContext from './SetDataContext';
 
-export async function renderForm(element: HTMLElement | Element, formDefinition: string | Object | undefined, data?: Object | undefined) {
+
+
+export async function renderForm(element: HTMLElement | Element, formDefinition: string | Object | undefined, data?: Object | undefined, additionalContext?:any) {
     if (!formDefinition) {
         throw new Error("Form definition is undefined");
     }
     checkLowdashCompatability();
-    await ensureDataContext();
+    await ensureDataContext(additionalContext);
    
     // add shadowdom to element, this will allow us to encapsulate the form and its styles
     // so that it does not interfere with the rest of the page or vice versa
@@ -49,12 +51,12 @@ export async function renderForm(element: HTMLElement | Element, formDefinition:
     });
 }
 
-async function ensureDataContext() {
+async function ensureDataContext(additionalContext?:any) {
 
     console.log("---- ensureDataContext ------");
-    await DataContext.setDataContext();
-    (window as any)["dataContext"] = DataContext;
-    console.log("---- ensureDataContext End ------",DataContext);
+    let dc = await DataContext.setDataContext(additionalContext);
+    (window as any)["dataContext"] = dc;
+    console.log("---- ensureDataContext End ------",dc);
 }
 
 function createFormIODivInsideShadowDom(shadow: ShadowRoot) {

@@ -1,7 +1,7 @@
 import * as ko from "knockout";
 import {IODSPickerConfiguration} from "./IOdsPickerConfig"
-import { BaseIDEAspect } from "../BaseClasses/BaseIDEAspect";
- 
+import { BaseIDEAspect, Defaults } from "../BaseClasses/BaseIDEAspect";
+
  
 interface OdsEntityModel {
     roleName: string;
@@ -24,12 +24,14 @@ interface OdsEntityModel {
 // }
 
 export class OdsPicker extends BaseIDEAspect<IODSPickerConfiguration, any> {
+    setLocationOfDataToLoadAndSave(): string | undefined {
+        return undefined;
+    }
     odsEntities: ko.ObservableArray<any>;
     showAspect: ko.PureComputed<boolean> | undefined;
 
-    constructor(element: HTMLElement, configuration: IODSPickerConfiguration, baseModel: any) {
-
-        let defaults = {
+    setDefaults(): Defaults<IODSPickerConfiguration> {
+        return {
             roleConfigModels: [],
             showPreSharedo: true,
             showPostSharedo: true,
@@ -43,7 +45,12 @@ export class OdsPicker extends BaseIDEAspect<IODSPickerConfiguration, any> {
             }
 
         };
-        super("OdsPicker", "aspectData.odsEntityPicker", element, configuration, baseModel,defaults )
+    }
+    
+
+    constructor(element: HTMLElement, configuration: IODSPickerConfiguration, baseModel: any) {
+
+        super("OdsPicker", "aspectData.odsEntityPicker", element, configuration, baseModel )
 
         // Base properties
         this.odsEntities = ko.observableArray();

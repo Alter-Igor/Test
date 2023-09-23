@@ -1,13 +1,15 @@
-import { l } from "../Log.mjs";
+import { inf, l, nv } from "../Log.mjs";
 import { IFinalTargetSettings } from "../Interfaces/IFinalTargetSettings";
 import { validationResults } from "./ValidationResults.mjs";
 import * as path from 'path';
 import * as fs from 'fs';
-import { IDefaults, ISetting, ISettingDefaults, ITargetEntry } from "../Interfaces/IBuildConfiguration";
+import { IDefaults, ISetting, ITargetEntry } from "../Interfaces/IBuildConfiguration";
 import { getStringContentsFromfileUri } from "../../helpers/FileHelper.mjs";
 import { parse } from "comment-json";
+import { getTargetTSFileName } from "./TSFileFinder.mjs";
+import { mergeValues } from "./ObjectMerger.mjs";
 
-export async function validateAndBuildTargetSettings(defaultSettings: IDefaults, targetTypeName: string, target: ITargetEntry, key: string, defaultValue: ISettingDefaults | undefined) {
+export async function validateAndBuildTargetSettings(defaultSettings: IDefaults, targetTypeName: string, target: ITargetEntry, key: string, defaultValue: ISetting) {
     let targetValue = target[key];
 
 
@@ -20,19 +22,24 @@ export async function validateAndBuildTargetSettings(defaultSettings: IDefaults,
     //     targetValue = Object.assign(targetValue, defaultValue); //Merge the target with the default values
     // }
 
-    l("Key".green.bold)
-    l(key);
+    nv("Key",key);
 
-    l("defaultValue from JSON Configuration".black.bold)
-    l(defaultValue);
+    l("defaultValue from JSON Configuration",defaultValue);
+    l(`targetValue from JSON Configuration for ${key}`,targetValue);
 
-    l(`targetValue from JSON Configuration for ${key}`.black.bold)
-    l(targetValue);
 
-    let mergedSettings = Object.assign(targetValue, defaultValue); //Merge the target with the default values
+    //merge targetValue  and defaultValue giving priority to targetValue
+
+
+
+
+   // let mergedSettings = Object.assign(targetValue,defaultValue); //Merge the target with the default values
+
+    targetValue = mergeValues(targetValue,defaultValue);
+
 
     l("mergedSettings".magenta.bold)
-    l(JSON.stringify(mergedSettings, null, 2).bgYellow);
+    l(JSON.stringify(targetValue, null, 2).bgYellow);
 
     let newTarget: IFinalTargetSettings = {
         name: key,
@@ -71,6 +78,13 @@ export async function validateAndBuildTargetSettings(defaultSettings: IDefaults,
 
     newTarget = Object.assign(newTarget, targetValue); //copy the object to a new object
 
+    if(newTarget.enabled === false)
+    {
+        newTarget.valid = false;
+        newTarget.erros.push("Target is disabled");
+        return newTarget;
+    }
+
     if (!newTarget.sourcePath) {
         l(`        No sourcePath created - Need to have either a default for the type or a specific for the target !`.red.bold);
         newTarget.valid = false;
@@ -85,7 +99,7 @@ export async function validateAndBuildTargetSettings(defaultSettings: IDefaults,
 
     validateTypeAndManifest(newTarget,targetValue);
   
-    await validateManifest(newTarget);
+    await validateManifest(newTarget,targetValue);
     //check the sourcePath a directory called Designer
     if (newTarget.type === "widget") {
         extractWidgetFilePaths(newTarget, targetValue);
@@ -99,39 +113,53 @@ export async function validateAndBuildTargetSettings(defaultSettings: IDefaults,
     //Log out the outcome results
     validationResults(newTarget);
 
-    l(`End Result: `.green.bold)
-    l(newTarget);
+    // l(`End Result: `.green.bold)
+    // l(newTarget);
 
     return newTarget;
 }
 
 
 function extractWidgetFilePaths(newTarget: IFinalTargetSettings, targetValue: ISetting) {
-    if(!targetValue.sourcePath)
-    {
-        l(`        No sourcePath found`.red.bold);
-        newTarget.erros.push(`No sourcePath found`);
-        newTarget.valid = false;
-        return;
-    }
-
-    let mainEntryFileName = newTarget.name + ".ts";
-    let widgetMainPath = path.join(targetValue.sourcePath, mainEntryFileName);
-
-
-    l(`        Checking for ${mainEntryFileName} File in ${mainEntryFileName}`.blue.bold);
-    if (fs.existsSync(widgetMainPath)) {
-        newTarget.widgetTSFileName = mainEntryFileName;
-        newTarget.widgetTSFilePath = widgetMainPath;
+    let tsFile = getTargetTSFileName(targetValue, newTarget);
+    if (tsFile.success) {
+        newTarget.widgetTSFileName = tsFile.tsFileName!;
+        newTarget.widgetTSFilePath = tsFile.tsFilePath!;
     }
     else {
         newTarget.valid = false;
-        l(`        No Main File ${mainEntryFileName} Found`.red.bold);
-        newTarget.erros.push(`No Main File ${mainEntryFileName} Found`);
+        newTarget.erros.push(tsFile.error!);
     }
 }
 
-async function validateManifest(newTarget: IFinalTargetSettings) {
+
+async function validateManifest(newTarget: IFinalTargetSettings, targetValue: ISetting) {
+
+    let tsFiles = getTargetTSFileName(targetValue, newTarget);
+    
+    if(targetValue.generatDefaultConfigurationJson && targetValue.generatDefaultConfigurationJson === true)
+    {
+        l(inf(`Generating Default Configuration Json`));
+
+       
+
+        //TODO: Generate the class and get the settings using  tsFiles.tsFileName 
+        let $ui = {};
+        const importedModule: any = await import(tsFiles.tsFilePath!);
+
+        
+        let module = await import(tsFiles.tsFilePath!)
+         
+            let settings = module.default;
+            l(settings);
+            l(JSON.stringify(settings,null,2));
+        
+        
+
+
+    }
+
+
     l(`Reading Manifest File: ${newTarget.manifestFilePath}`.blue.bold);
     l(`        :${newTarget.manifestFilePath}`.blue.bold);
     
@@ -202,6 +230,14 @@ function validateTypeAndManifest(newTarget: IFinalTargetSettings,targetValue :IS
 
 
      //search in the newTarget.sourcePath for either a .widget.json or a .wf-action.json
+
+     if(targetValue.generatDefaultConfigurationJson && targetValue.generatDefaultConfigurationJson === true)
+     {
+        l(`        Type: ` + `Default Configuration Json`.blue.bold);
+        newTarget.type = "defaultConfigurationJson";
+        return;
+     }
+
      let widgetJsonPath = findFileByExtension(".widget.json", targetValue.sourcePath);
      let wfActionJsonPath = findFileByExtension(".wf-action.json", targetValue.sourcePath);
      l(`        Checking for .widget.json  in ${widgetJsonPath}`.blue.bold);

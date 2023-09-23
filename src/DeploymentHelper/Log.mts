@@ -3,7 +3,7 @@ import clc from 'cli-color';
 import chalk, { ChalkInstance } from 'chalk';
 
 chalk.level = 3;
-let mode: ChalkInstance = chalk.reset;
+let defaultMode: ChalkInstance = chalk.reset;
 
 colors.enable();
 let cwidth = clc.windowSize.width;
@@ -20,7 +20,12 @@ export function lcol(heading: Array<string>, data: Array<Array<string>>) {
 }
 
 export function clearSec() {
-    lastSec = new Section("Root", mode);
+    lastSec = new Section("Root", defaultMode);
+}
+
+export function secBackOne()
+{
+    lastSec = lastSec?.parent;
 }
 
 export class Section {
@@ -40,7 +45,7 @@ export class Section {
         this.parent = section;
     }
     log(...args: any[]) {
-        console.log(mode(args));
+        console.log(defaultMode(args));
     }
     lh1(heading: string) {
         return lh1(this.indentPad + heading, this)
@@ -60,6 +65,7 @@ export function l(...args: any[]) {
 
     let sec: Section | undefined = lastSec;
     let firstArg: string | undefined;
+    let firstArgModifed: string | undefined;
     args.forEach((arg) => {
         if (arg instanceof Section) {
             sec = arg;
@@ -75,48 +81,26 @@ export function l(...args: any[]) {
     })
 
 
-    let c = sec?.c || mode;
+    // let c = sec?.c || mode;
+    let c = defaultMode;
     let indentPad = sec?.indentPad || "";
 
     if (!firstArg) {
         firstArg = "";
     }
+    firstArgModifed = firstArg;
 
-
-    firstArg = indentPad + firstArg;
+    firstArgModifed = indentPad + firstArg;
     //remove color formatting from first arg
-    let totLen = firstArg.length - firstArg.replace(/\u001b\[.*?m/g, '').length - 2;
+    let totLen = firstArgModifed.length - firstArgModifed.replace(/\u001b\[.*?m/g, '').length - 2;
 
 
-    console.log(c("|" + firstArg.padEnd(cwidth + totLen, " ") + "|"));
+    console.log(c("|" + firstArgModifed.padEnd(cwidth + totLen, " ") + "|"));
 
     //removed Section from args
 
     args.forEach((arg) => {
-
-        // let argAsString = JSON.stringify(arg, null, 2);
-
-        console.log(c("=".repeat(cwidth)));
-        //console.log(arg);
-
-        //is arg a string or an object
-        if (arg.constructor.name === "String") {
-            l(c(arg),sec);
-        }
-        else if (arg.constructor.name === "Array") {
-            arg.forEach((item:any) => {
-                l(c(item),sec);
-            })
-        }
-        else if (arg.constructor.name === "Object") {
-
-
-            Object.keys(arg).forEach((key) => {
-                l(c(key.padEnd(30, " ")) + " : " + c(arg[key]), sec);
-            });
-        };
-
-        console.log(c("=".repeat(cwidth)));
+        console.log(arg);
     })
 
 
@@ -148,25 +132,25 @@ function logHeadingSection(c: ChalkInstance, heading: string, section?: Section)
 
     //position the heading in the middle of the screen
     // console.log(c(heading.padStart((cwidth / 2) + (heading.length / 2), " ").padEnd(cwidth, " ")));
-    console.log(c.red(path.padStart((cwidth / 2) + (path.length / 2), " ").padEnd(cwidth, " ")));
-    console.log(c.red(`at ${time}`.padStart((cwidth / 2) + (`at ${time}`.length / 2), " ").padEnd(cwidth, " ")));
+    console.log(c(path.padStart((cwidth / 2) + (path.length / 2), " ").padEnd(cwidth, " ")));
+    console.log(c(`at ${time}`.padStart((cwidth / 2) + (`at ${time}`.length / 2), " ").padEnd(cwidth, " ")));
 
     console.log(c("".padStart(cwidth, "-")));
     return sec;
 }
 
 export function lh1(heading: string, section: Section | undefined = lastSec) {
-    let c = chalk.bgHex("#000000");
+    let c = chalk.bgBlack.greenBright.bold;
     return logHeadingSection(c, heading, section);
 }
 
 export function lh2(heading: string, section: Section | undefined = lastSec) {
-    let c = chalk.bgHex("#31332b");
+    let c = chalk.bgGray.cyanBright.bold;
     return logHeadingSection(c, heading, section);
 }
 
 export function lh3(heading: string, section: Section | undefined = lastSec) {
-    let c = chalk.bgHex("#5e5151");
+    let c = chalk.bgGray.magentaBright.bold;
     return logHeadingSection(c, heading, section);
 }
 
@@ -175,23 +159,28 @@ export const lh = lh1;
 
 
 export const imp = (text: string) => {
-    return text.red.bold;
+    let c = chalk.red.bold.bgBlack;
+    return c(text);
 }
 
 export const inf = (text: string) => {
-    return text.blue.bold;
+    let c = chalk.blue.bold;
+    return c(text);
 }
 
 export const wrn = (text: string) => {
-    return text.yellow.bold;
+    let c = chalk.yellow.bold;
+    return c(text);
 }
 
 export const err = (text: string) => {
-    return text.red.bold;
+    let c = chalk.red.bold;
+    return c(text);
 }
 
 export const suc = (text: string) => {
-    return text.green.bold;
+    let c = chalk.green.bold;
+    return c(text);
 }
 
 export const hl = (text: string) => {
@@ -206,7 +195,22 @@ export const nv = (name: string, value: string) => {
     return chalk.bgBlueBright(name.padEnd(30, " ")) + " : " + chalk.cyanBright(value);
 }
 
+
+let exampleJSon =  
+{
+    "name": "test",
+    "age": 10,
+    "address": {
+        "street": "123 Fake Street",
+        "city": "London",
+        "postcode": "SW1A 1AA"
+    }
+}
+
 export function runTest() {
+
+
+    console.log("-- test --")
 
     let sec = lh1("Test Heading 1")
     l(imp("Auto Sec - This is something important"))
@@ -265,10 +269,14 @@ export function runTest() {
     l(nv("Example Name", "http://www.example.com"))
     l(nv("Example Name", "http://www.example.com"))
 
+  
+
+    l("Test JSON:",exampleJSon);
 
 }
 
 
 
+runTest()
 
 // export {colors};

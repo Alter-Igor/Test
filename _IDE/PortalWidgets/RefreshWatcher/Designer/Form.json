@@ -1,0 +1,256 @@
+{
+    "_id": "650cc8d5e4f0d54921a6c8ec",
+    "title": "Designer",
+    "name": "designer",
+    "path": "designer",
+    "type": "form",
+    "display": "form",
+    "tags": [],
+    "access": [
+        {
+            "type": "create_own",
+            "roles": []
+        },
+        {
+            "type": "create_all",
+            "roles": []
+        },
+        {
+            "type": "read_own",
+            "roles": []
+        },
+        {
+            "type": "read_all",
+            "roles": [
+                "650cc833523213eb8b726e9c",
+                "650cc833523213eb8b726ea0",
+                "650cc833523213eb8b726ea4"
+            ]
+        },
+        {
+            "type": "update_own",
+            "roles": []
+        },
+        {
+            "type": "update_all",
+            "roles": []
+        },
+        {
+            "type": "delete_own",
+            "roles": []
+        },
+        {
+            "type": "delete_all",
+            "roles": []
+        },
+        {
+            "type": "team_read",
+            "roles": []
+        },
+        {
+            "type": "team_write",
+            "roles": []
+        },
+        {
+            "type": "team_admin",
+            "roles": []
+        }
+    ],
+    "submissionAccess": [
+        {
+            "type": "create_own",
+            "roles": []
+        },
+        {
+            "type": "create_all",
+            "roles": []
+        },
+        {
+            "type": "read_own",
+            "roles": []
+        },
+        {
+            "type": "read_all",
+            "roles": []
+        },
+        {
+            "type": "update_own",
+            "roles": []
+        },
+        {
+            "type": "update_all",
+            "roles": []
+        },
+        {
+            "type": "delete_own",
+            "roles": []
+        },
+        {
+            "type": "delete_all",
+            "roles": []
+        },
+        {
+            "type": "team_read",
+            "roles": []
+        },
+        {
+            "type": "team_write",
+            "roles": []
+        },
+        {
+            "type": "team_admin",
+            "roles": []
+        }
+    ],
+    "owner": "650cc76ee4f0d54921a6b4df",
+    "components": [
+        {
+            "label": "Use Interval ( refresh every x seconds )",
+            "tableView": false,
+            "key": "useIntervalRefreshEveryXSeconds",
+            "type": "checkbox",
+            "input": true,
+            "defaultValue": false
+        },
+        {
+            "label": "Interval (seconds)",
+            "applyMaskOn": "change",
+            "mask": false,
+            "tableView": false,
+            "delimiter": false,
+            "requireDecimal": false,
+            "inputFormat": "plain",
+            "truncateMultipleSpaces": false,
+            "key": "intervalSeconds",
+            "conditional": {
+                "show": true,
+                "conjunction": "all",
+                "conditions": [
+                    {
+                        "component": "useIntervalRefreshEveryXSeconds",
+                        "operator": "isEqual",
+                        "value": true
+                    }
+                ]
+            },
+            "type": "number",
+            "input": true
+        },
+        {
+            "label": "Refresh on events",
+            "tableView": false,
+            "key": "refreshOnEvents",
+            "type": "checkbox",
+            "input": true,
+            "defaultValue": false
+        },
+        {
+            "label": "Events To Listen To",
+            "reorder": false,
+            "addAnotherPosition": "bottom",
+            "layoutFixed": false,
+            "enableRowGroups": false,
+            "initEmpty": false,
+            "tableView": true,
+            "defaultValue": [
+                {
+                    "eventName": ""
+                }
+            ],
+            "key": "eventsToListenTo",
+            "conditional": {
+                "show": true,
+                "conjunction": "all",
+                "conditions": [
+                    {
+                        "component": "refreshOnEvents",
+                        "operator": "isEqual",
+                        "value": true
+                    }
+                ]
+            },
+            "type": "datagrid",
+            "columnWeight": 0,
+            "hideColumnByDefault": false,
+            "disableSortingAndFiltering": false,
+            "input": true,
+            "components": [
+                {
+                    "label": "Event Name",
+                    "applyMaskOn": "change",
+                    "columnWeight": 0,
+                    "hideColumnByDefault": false,
+                    "disableSortingAndFiltering": false,
+                    "tableView": true,
+                    "key": "eventName",
+                    "type": "textfield",
+                    "input": true
+                }
+            ]
+        },
+        {
+            "label": "Widgets To Refresh",
+            "reorder": false,
+            "addAnother": "Add",
+            "addAnotherPosition": "bottom",
+            "layoutFixed": false,
+            "enableRowGroups": false,
+            "initEmpty": false,
+            "tableView": false,
+            "defaultValue": [
+                {
+                    "typeName": "",
+                    "methodToExecute": ""
+                }
+            ],
+            "key": "widgets",
+            "type": "datagrid",
+            "input": true,
+            "components": [
+                {
+                    "label": "Type Name",
+                    "placeholder": "Shardo.Core.Case.Menus.Widgets.WorkItemRibbon",
+                    "applyMaskOn": "change",
+                    "columnWeight": 0,
+                    "hideColumnByDefault": false,
+                    "disableSortingAndFiltering": false,
+                    "tableView": true,
+                    "key": "typeName",
+                    "type": "textfield",
+                    "input": true
+                },
+                {
+                    "label": "Method to Execute",
+                    "placeholder": "loadAndBind",
+                    "applyMaskOn": "change",
+                    "columnWeight": 0,
+                    "hideColumnByDefault": false,
+                    "disableSortingAndFiltering": false,
+                    "tableView": true,
+                    "key": "methodToExecute",
+                    "type": "textfield",
+                    "input": true
+                }
+            ]
+        },
+        {
+            "type": "button",
+            "label": "Submit",
+            "key": "submit",
+            "disableOnInvalid": true,
+            "input": true,
+            "tableView": false
+        }
+    ],
+    "settings": {},
+    "properties": {},
+    "project": "650cc833523213eb8b726e95",
+    "controller": "",
+    "revisions": "",
+    "submissionRevisions": "",
+    "_vid": 0,
+    "created": "2023-09-21T22:51:01.111Z",
+    "modified": "2023-09-21T23:19:53.813Z",
+    "machineName": "rpoeptekzqtgopm:designer",
+    "plan": "trial"
+}

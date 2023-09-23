@@ -19,5 +19,5 @@ export interface IAutoCompleteOptions {
         selectedValue: any; // Replace 'any' with the appropriate type if known
         onLoad: (v?: any) => void; // You might want to refine this function type further
     };
-    onFind: (v?: any) => void; // You might want to refine this function type further
+    onFind: (v?: any, handler?:any) => void; // You might want to refine this function type further
 }

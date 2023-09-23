@@ -1,6 +1,6 @@
+import { formatValue } from "../../../helpers/Formatter";
 import { searchForAttributeRecursive } from "../../Common/api/searchForAttributeWithParents";
-import { BaseIDEAspect } from "../BaseClasses/BaseIDEAspect";
-import { IDebug } from "../BaseClasses/IDebug";
+import { BaseIDEAspect, Defaults } from "../BaseClasses/BaseIDEAspect";
 import { ISingleValueAspectConfiguration } from "./SingleValueAspectConfig";
 
 let thisWidgetSystemName = "SingleValueAspect";
@@ -8,11 +8,8 @@ let thisWidgetSystemName = "SingleValueAspect";
 
 export class SingleValueAspect extends BaseIDEAspect<ISingleValueAspectConfiguration, any> {
 
- 
-    
-    constructor(element: HTMLElement, configuration: ISingleValueAspectConfiguration, baseModel: any) {
-
-        let defaults : ISingleValueAspectConfiguration & { debug:IDebug} = {
+    setDefaults(): Defaults<ISingleValueAspectConfiguration> {
+        return  {
             fieldPath: "Title",
             title: "Title Value",
             calculatedValue: "",
@@ -26,23 +23,27 @@ export class SingleValueAspect extends BaseIDEAspect<ISingleValueAspectConfigura
                 logToConsole: false,
                 showInAspect: false
             }
-
         };
-        super("SingleValueAspect", "aspectData.odsEntityPicker", element, configuration, baseModel, defaults)
-
-        this.data = {
-            value: "",
-            title: this.options.title() || "Title Value"
-        };
-        // Base properties
-
+    }
+    
+    constructor(element: HTMLElement, configuration: ISingleValueAspectConfiguration, baseModel: any) {
+        super("SingleValueAspect", "aspectData.odsEntityPicker", element, configuration, baseModel)
         this.setup();
     }
 
+    setLocationOfDataToLoadAndSave(): string | undefined {
+        return undefined;
+    }
 
     // private initialise() {//! Note: UI framework looks for this method name and if found behaves differently and wont call loadAndBind
 
     private setup() {
+        
+        this.data = {
+            value: "",
+            title: this.options.title() || "Title Value"
+        };
+
         // Map the roleConfigModels
         this.options.fieldPath.subscribe((newValue) => {
             this.log("Field path changed", "green",newValue);
@@ -84,24 +85,18 @@ export class SingleValueAspect extends BaseIDEAspect<ISingleValueAspectConfigura
             }
             else
             {
-                let formattedValue = this.formatValue(data.value, this.options.formatter() || "value");
-
+                let formattedValue = formatValue(data.value, this.options.formatter() || "value");
                 this.options.calculatedValue(formattedValue || "");
             }
         });
     };
 
-    formatValue(value: any, formatter: string): any {
-        // Create a new function based on the formatter
-        const dynamicFunc = new Function('value', `return (${formatter});`);
-        // Invoke the function with the given value
-        return dynamicFunc(value);
-    }
+    
      
 
     override onSave(model: any): void {
 
-        this.log("Saving data (model) passed in", "green");
+        this.log("No Save Implemented", "green");
         // super.onSave(model);
 
     };

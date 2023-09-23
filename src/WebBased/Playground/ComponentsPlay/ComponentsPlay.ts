@@ -1,5 +1,5 @@
 import * as ko from "knockout";
-import { IAutoCompleteFindCardOptions } from "../../../Interfaces/components/IAutoCompleteFindCardOptions";
+import { AUTOCOMPLETE_CARD_TYPE, IAutoCompleteFindCardOptions } from "../../../Interfaces/components/IAutoCompleteFindCardOptions";
 
 
 export function ComponentsPlay(element: HTMLElement, configuration: any, baseModel: any): ComponentsPlayClass {
@@ -117,7 +117,7 @@ class ComponentsPlayClass {
         //create a result for each fake data item
         fakeData.forEach(item => {
             let options : IAutoCompleteFindCardOptions ={
-                type: "result",
+                type: AUTOCOMPLETE_CARD_TYPE.RESULT,
                 id: item,
                 data:item,
                 icon: "fa-users",
@@ -130,7 +130,7 @@ class ComponentsPlayClass {
         if (results.length > 0) {
 
             let options : IAutoCompleteFindCardOptions = {
-                type: "message",
+                type: AUTOCOMPLETE_CARD_TYPE.MESSAGE,
                 icon: "fa-check text-success",
                 text: "Found " + results.length + " teams"
             }
@@ -147,7 +147,7 @@ class ComponentsPlayClass {
         
         return new Sharedo.UI.Framework.Components.AutoCompleteDisplayCard({
             id: v,
-            type: "result",
+            type: AUTOCOMPLETE_CARD_TYPE.RESULT,
             icon: "fa-users",
             data: v,
             text: v.firstName + " - " + v.lastName

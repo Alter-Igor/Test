@@ -1,7 +1,7 @@
 
 
 let x = new Sharedo.UI.Framework.Components.AutoCompleteDisplayCard({
-    type: "message",
+    type: undefined,
     data: undefined,
     text: ""
 })

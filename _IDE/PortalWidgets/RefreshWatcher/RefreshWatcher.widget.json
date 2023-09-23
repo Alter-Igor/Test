@@ -1,0 +1,27 @@
+﻿{
+    "id": "PortalWidgets.RefreshWatcher",
+    "designer": {
+        "allowInPortalDesigner": false,
+        "allowInSharedoPortalDesigner": true,
+        "title": "Refresh Watcher",
+        "icon": "fa-calendar",
+        "description": "Refreshes specified components on events or at specified intervals.",
+      "categories": [
+        "Custom Widgets"
+      ],
+        "isConfigurable": true,
+        "configurationWidget": "PortalWidgets.RefreshWatcherDesigner"
+    },
+    "scripts": [
+        "/_ideFiles/PortalWidgets/RefreshWatcher/RefreshWatcher.js"
+    ],
+    "styles": [
+        "/_ideFiles/PortalWidgets/RefreshWatcher/RefreshWatcher.css"
+    ],
+    "templates": [
+        "/_ideFiles/PortalWidgets/RefreshWatcher/RefreshWatcher.html"
+    ],
+    "menuTemplates": [
+       
+    ]
+}

@@ -1,7 +1,6 @@
 import * as fs from 'fs';
 // import  JSONConfigFile from './BuildConfigurations.json' assert { type: "json" };  // Ensure the correct path is provided
-
-import { l, lh1 } from './Log.mjs';
+import { clearSec, l, lh1, lh2 } from './Log.mjs';
 import { logConfigurationDefaults } from './DefaultSetter/LogDefaultSettings.mjs';
 import { mergeDefaultsWithTargets, logOutMergedTargetSettings } from './DefaultSetter/MergeDefaultWithSettings.mjs';
 import { IBuildConfiguration } from './Interfaces/IBuildConfiguration';
@@ -11,9 +10,10 @@ import { IBuildConfiguration } from './Interfaces/IBuildConfiguration';
 
     let config: IBuildConfiguration = JSONConfigFile as IBuildConfiguration;
     let sec = lh1("Starting Build Process")
+    clearSec();
     logConfigurationDefaults(config);
 
-    l(`Building Targets using defaults and target settings:`.red.bgBlack)
+    lh2(`Building Targets using defaults and target settings:`)
     let targets = await mergeDefaultsWithTargets(config);
 
     if (!targets) {

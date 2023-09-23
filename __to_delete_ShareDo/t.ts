@@ -9,7 +9,7 @@ let v = $ui
 
 
 let p : IAutoCompleteFindCardOptions = {
-    type: "message",
+    type: undefined,
     data: undefined,
     text: ""
 }

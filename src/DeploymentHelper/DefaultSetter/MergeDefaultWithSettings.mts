@@ -1,4 +1,4 @@
-import { l } from "../Log.mjs";
+import { clearSec, err, l, lh3, secBackOne, wrn } from "../Log.mjs";
 import { IFinalTargetSettings } from "../Interfaces/IFinalTargetSettings";
 import { validateAndBuildTargetSettings } from "../Validation/TargetSettingsValidator.mjs";
 import { IBuildConfiguration } from "../Interfaces/IBuildConfiguration";
@@ -6,21 +6,20 @@ import { IBuildConfiguration } from "../Interfaces/IBuildConfiguration";
 export async function mergeDefaultsWithTargets(config: IBuildConfiguration) {
 
     if (!config.targets) {
-        l(`No targets found in config`.red.bold);
+        err(`No targets found in config`);
         return;
     }
 
     if (!config.defaults.typeDefaults) {
-        l(`Warining! - No typeDefaults found in config`.cyan.bold);
+        wrn(`Warining! - No typeDefaults found in config`);
 
     }
 
-
-
     let targetsTypeNames = Object.keys(config.targets);
     let finalTargetSettings = new Array<IFinalTargetSettings>();
-
+    clearSec();
     for (let i = 0; i < targetsTypeNames.length; i++) {
+
         let targetTypeName = targetsTypeNames[i];
 
         // targetsTypeNames.forEach(async targetTypeName => {
@@ -47,16 +46,13 @@ export async function mergeDefaultsWithTargets(config: IBuildConfiguration) {
             defaultValue.modulesToExtract = Object.assign(type, global);
         }
 
-        l(`=`.repeat(100).rainbow.bold);
-        l(` - ${targetTypeName}`.padStart(50, " ").padEnd(100, " ").blue.bgYellow.bold);
-        l(`Default Values:`.green.bold);
+
+        lh3(`Processing Target Type: ${targetTypeName}`)
         l(defaultValue);
-        l(`Targets that will be processed: `.green.bold, targetEntriesNames);
-
-
+        l(`Targets that will be processed: `, targetEntriesNames);
 
         if (!defaultValue) {
-            l(`No default settings found for ${targetTypeName}`.red.bold);
+            err(`No default settings found for ${targetTypeName}`);
             return;
         }
 
@@ -65,14 +61,16 @@ export async function mergeDefaultsWithTargets(config: IBuildConfiguration) {
             let key = targetEntriesKeys[j];
             // let targetEntry = targetEntries[key];
 
-            l(` ----- Processing Target ${key} ----`.blue.bold);
+            lh3(`Processing Target ${key}`);
             let newTarget: IFinalTargetSettings = await validateAndBuildTargetSettings(config.defaults,targetTypeName, targetEntries, key, defaultValue);
+            secBackOne();
             // newTarget.namespace = targetTypeName;
             finalTargetSettings.push(newTarget);
 
         };
 
         l(`=`.repeat(100).rainbow.bold);
+        secBackOne();
     };
     return finalTargetSettings;
 }

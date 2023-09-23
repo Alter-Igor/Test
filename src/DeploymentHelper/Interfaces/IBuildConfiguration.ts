@@ -12,7 +12,7 @@ export interface IDefaults {
 
 
 export interface ITypeDefaults {
-    [key: string]: ISettingDefaults;
+    [key: string]: ISetting;
 }
 
 export interface ITargets {
@@ -24,18 +24,20 @@ export interface ITargetEntry {
 }
 
 
-export interface ISettingDefaults {
-    enabled: boolean;
-    deployPath: string;
-    sourcePath: string;
-    modulesToExtract?: IExtract[]
-}
+// export interface ISettingDefaults {
+//     enabled: boolean;
+//     deployPath: string;
+//     sourcePath: string;
+//     modulesToExtract?: IExtract[]
+//     generatDefaultConfigurationJson?: boolean;
+// }
 
 export interface ISetting {
     enabled?: boolean;
     deployPath?: string;
     sourcePath?: string;
     modulesToExtract?: IExtract[]
+    generatDefaultConfigurationJson?: boolean;
 }
 
 export interface IExtract {
@@ -79,7 +81,8 @@ let test: IBuildConfiguration = {
             "IDEAspects": {
                 "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/IDEAspects",
                 "sourcePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/IDEAspects",
-                "enabled": true
+                "enabled": true,
+                "generatDefaultConfigurationJson": true,
             },
             "WorkflowActions": {
                 "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/WorkflowActions",

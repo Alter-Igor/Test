@@ -1,4 +1,7 @@
+import { IAspectData } from "../Aspect/IAspect";
+
 export interface ISharedoBladeModel {
+    aspectData: IAspectData;
     sharedoTypeSystemName: any;
     id: any;
     title: ko.Observable<string>

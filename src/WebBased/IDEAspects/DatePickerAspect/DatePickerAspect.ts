@@ -1,8 +1,7 @@
-import * as ko from "knockout";
-import { DateTime, TempusDominus, Options } from '@eonasdan/tempus-dominus';
+import { DateTime, TempusDominus } from '@eonasdan/tempus-dominus';
 //https://getdatepicker.com/6/options/display.html
-import { v4 as uuid4 } from "uuid";
-import { AspectData } from "../../../Interfaces/OdsList/IODSOrganisationResult";
+import { IDatePickerAspectOptions } from "./IConfiguration";
+import { BaseIDEAspect, Defaults, getFormBuilderFieldPath } from "../BaseClasses/BaseIDEAspect";
 
 let thisWidgetSystemName = "DatePickerAspect";
 
@@ -10,90 +9,18 @@ let thisWidgetSystemName = "DatePickerAspect";
 //add style to head: https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css
 document.head.insertAdjacentHTML("beforeend", `<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">`);
 
-
-
-export interface IDatePickerAspect_ConfigurationFromModeller {
-    debug: Debug | null | undefined;
-    title: string | null | undefined;
-    formBuilderField: string | null | undefined;
-    pickerEnabled: boolean | null | undefined;
-    eventToFireOnUpdate: Array<string> | null | undefined;
-    datePickerOptions: Options | null | undefined;
-    defaultDateFromNowHours: number | null | undefined;
-}
-
-
-
-export interface Host {
-    model: HostModel | null;
-    blade: any | null;
-    enabled: boolean | null;
-    toolbarContext?: any | null;
-    burgerContext?: any | null;
-    _host: Host;
-}
-
-type ConfigurationWithHost = IDatePickerAspect_ConfigurationFromModeller & Host;
-
-export interface HostModel {
-    title: string;
-    instanceId: string;
-    parentSharedoId: string;
-    id: ko.Observable<string | undefined>;
-    aspectData: AspectData;
-}
-
-export interface Debug {
-    enabled?: boolean | null;
-    logToConsole?: boolean | null;
-    showEvents?: boolean | null;
-    showInAspect?: boolean | null;
-}
-
-type Model = {
-    title: string | null | undefined;
-    saveRuns: number;
-};
-
-export class DatePickerAspect {
-
-    firedEvents: any[];
-    monitoredHandlers: any[];
-    readyForSave: boolean;
-    options?: ConfigurationWithHost;
-    disposables?: any[];
-    enabled?: boolean;
-    instanceId?: string;
-    element?: HTMLElement;
-    blade: any;
-    parentSharedoId?: string;
-    toolbarContext: any;
-    burgerContext: any;
-    sharedoId: ko.Observable<string | undefined> | undefined;
-    sharedoTypeSystemName: string | null | undefined;
-    reloading?: boolean;
-    model: Model;
-    isValidTemp: any;
-    hostModel: HostModel | null;
-    currentPhaseSystemName: ko.Observable<string | undefined> | undefined;
-    DatePickerAspectElement: any;
-    configuration: IDatePickerAspect_ConfigurationFromModeller;
-    host: Host;
-    dateTimePicker: TempusDominus | undefined;
-    pickerId: string;
-    pickerEnabled: ko.Observable<boolean | null | undefined>;
+export class DatePickerAspect extends BaseIDEAspect<IDatePickerAspectOptions, any> {
+    
     datePickerDiv: HTMLDivElement | undefined;
-    dateTimePickerOptions: ko.Observable<any>;
+    dateTimePicker: TempusDominus | undefined;
+    
+    constructor(element: HTMLElement, configuration: IDatePickerAspectOptions, baseModel: any) {
+        super("SingleValueAspect", "aspectData.odsEntityPicker", element, configuration, baseModel)
+    }
 
-
-    constructor(element: HTMLElement, configurationWithHost: ConfigurationWithHost, baseModel: any) {
-
-        this.firedEvents = [];
-        this.monitoredHandlers = [];
-        this.readyForSave = false;
-
-        let defaults: IDatePickerAspect_ConfigurationFromModeller =
-        {
+    //Abstract methods - must be implemented by the derived class
+    setDefaults(): Defaults<IDatePickerAspectOptions> {
+        return {
             // Aspect widget config parameters
             title: undefined,
             formBuilderField: undefined,
@@ -110,70 +37,19 @@ export class DatePickerAspect {
             debug: {
                 enabled: false,
                 logToConsole: false,
-                showEvents: false,
                 showInAspect: false
             }
         }
+    }
 
-
-        this.options = $.extend(true, {}, defaults, configurationWithHost);
-
-        this.dateTimePickerOptions = ko.observable(this.options.datePickerOptions);
-
-        this.configuration = this.options;
-        this.blade = configurationWithHost._host.blade;
-        this.hostModel = configurationWithHost._host.model;
-        this.host = configurationWithHost._host;
-
-        this.pickerEnabled = ko.observable(this.options.pickerEnabled);
-        this.pickerEnabled.subscribe((newValue) => {
-            this.setPickerEnabledState(newValue);
-        });
-
-
-        this.model =
+   //Abstract methods - must be implemented by the derived class
+    setLocationOfDataToLoadAndSave(): string {
+        if(!this.configuration.formBuilderField)
         {
-            // This is referencing a standard observable item from the main model
-            title: configurationWithHost._host?.model?.title,
-            // This is the configured message against the aspect instance
-            saveRuns: 0,
-        };
-
-        this.log("----> Constructing", 'background: #222; color: #bada55', configurationWithHost);
-
-
-        // if (this.model.eventToFireSaveOn) {
-        //     this.disposables = [
-        //         $ui.events.subscribe(this.model.eventToFireSaveOn, this.save, this)
-        //     ];
-        // }
-
-        // Every widget gets this
-
-        this.enabled = configurationWithHost._host.blade.enabled;
-        this.instanceId = this.hostModel?.instanceId;
-        this.element = element;
-        this.blade = configurationWithHost._host.blade
-        this.parentSharedoId = this.hostModel?.parentSharedoId;
-        this.toolbarContext = configurationWithHost._host.toolbarContext;
-        this.burgerContext = configurationWithHost._host.burgerContext;
-
-        this.sharedoId = this.hostModel?.id;
-        this.reloading = false;
-        this.sharedoTypeSystemName = this.blade.model.sharedoTypeSystemName()
-        this.currentPhaseSystemName = this.blade.model.phaseSystemName
-
-        if (this.currentPhaseSystemName !== undefined) {
-            this.currentPhaseSystemName.subscribe(() => {
-                this.log("Current Phase Changed", "red", this.currentPhaseSystemName!());
-                this.loadAndBind();
-            });
-        };
-        //add backgroundColor to element css var
-
-        this.pickerId = uuid4().toString();
-
-        this.addDebugIfRequired();
+            this.log("No formbuilder field set in configuration - check aspect configuration", "red");
+            throw new Error("No formbuilder field set in configuration - check aspect configuration");
+        }
+        return getFormBuilderFieldPath(this.configuration.formBuilderField);
     }
 
     private setPickerEnabledState(newValue: boolean | null | undefined) {
@@ -190,70 +66,42 @@ export class DatePickerAspect {
         }
     }
 
-    formbuilder() {
-        if (!this.blade.model.aspectData.formBuilder) {
-            this.log("No formbuilder", "blue");
-            this.log(`Creating formbuilder`, "blue");
-            this.blade.model.aspectData.formBuilder = {
-                formData: {}
-            };
-
-        }
-
-        if (!this.blade.model.aspectData.formBuilder.formData) {
-            this.log("No formbuilder form data", "blue");
-            this.log(`Creating formbuilder form data`, "blue");
-            this.blade.model.aspectData.formBuilder.formData = {};
-        }
-
-        return this.blade.model.aspectData.formBuilder.formData;
+    /**
+     * Sanatise the data before saving, form build data needs to be a string
+     */
+    set modelDataAsDate(newValue: DateTime | undefined) {
+        this.data = newValue?.toISOString() || undefined;
     }
 
-    formbuilderField(setValue?: DateTime): DateTime | undefined {
-        if (!this.formbuilder()) {
-            return undefined;
-        }
-
-
-        if (!this.configuration.formBuilderField) {
-            this.log("No formbuilder field set in configuration - check aspect configuration", "red");
-            return undefined;
-        }
-
-
-        let foundValue: string = this.formbuilder()[this.configuration.formBuilderField]
-        if (!foundValue) {
-            this.log(`Form builder does not contain field ${this.configuration.formBuilderField} `, "orange");
-            this.log(`Creating field ${this.configuration.formBuilderField} `, "orange");
-        }
-
-        //Are we doing a set
-        if (setValue) {
-            this.formbuilder()[this.configuration.formBuilderField] = setValue.toISOString();
-            return setValue;
-        }
-
-        if (!foundValue) {
-            let defaultDate = new DateTime(DateTime.now());
-            if (this.configuration.defaultDateFromNowHours) {
-                defaultDate.setHours(defaultDate.getHours() + this.configuration.defaultDateFromNowHours);
-            }
-            foundValue = defaultDate.toISOString();
-        }
-
-        //if not we are doing a get
+    /**
+     * Gets the data from form builder and converts to DateTime
+     */
+    get modelDataAsDate(): DateTime | undefined {
         let retValue: DateTime
-        try {
-            retValue = this.convertToLocalDate(foundValue);
+
+        let foundValue = this.data;
+        if (!foundValue) {
+            foundValue = this.generateDefaultDate();
         }
-        catch (e) {
-            this.log(`Unable to parse date ${foundValue} - check aspect configuration `, "red");
-            return undefined;
-        }
+        
+        retValue = this.ensureDate(foundValue);
+
+        this.modelDataAsDate = retValue; //set the value to ensure it is valid
+       
 
         return retValue;
     }
 
+    /**
+     * @returns get today date + defaultDateFromNowHours (if set in configuration)
+     */
+    private generateDefaultDate() {
+        let defaultDate = new DateTime(DateTime.now());
+        if (this.configuration.defaultDateFromNowHours) {
+            defaultDate.setHours(defaultDate.getHours() + this.configuration.defaultDateFromNowHours);
+        }
+        return defaultDate;
+    }
 
     /**
      * Called by the UI framework after initial creation and binding to load data
@@ -271,7 +119,6 @@ export class DatePickerAspect {
             return;
         }
 
-
         //check if already exists remove it
         if (this.datePickerDiv) {
             this.log("Already exists", "red");
@@ -279,74 +126,47 @@ export class DatePickerAspect {
             return;
         }
 
-        // document.getElementById('datetimepicker1')
-
-
-        // <div class="log-event" id="datetimepicker1"></div>
+        //Build the date picker div 
         this.datePickerDiv = document.createElement("div");
         this.datePickerDiv.classList.add("the-picker");
         this.datePickerDiv.classList.add("log-event");
-        this.datePickerDiv.id = this.pickerId;
-        // <input
-    //     id="datetimepicker1Input"
-    //     type="text"
-    //     class="form-control"
-    //     data-td-target="#datetimepicker1"
-    //   />
+        this.datePickerDiv.id = this.uniqueId;
 
         let input = document.createElement("input");
-        input.id = this.pickerId + "Input";
+        input.id = this.uniqueId + "Input";
         input.type = "text";
         input.classList.add("form-control");
-        input.setAttribute("data-td-target", "#" + this.pickerId);
+        input.setAttribute("data-td-target", "#" + this.uniqueId);
         this.datePickerDiv.appendChild(input);
 
-    //     <span
-    //     class="input-group-text"
-    //     data-td-target="#datetimepicker1"
-    //     data-td-toggle="datetimepicker"
-    //   >
-    //     <i class="fas fa-calendar"></i>
-    //   </span>
-
-        
-        let span = document.createElement("span");
-        span.classList.add("input-group-text");
-        span.setAttribute("data-td-target", "#" + this.pickerId);
-        span.setAttribute("data-td-toggle", "datetimepicker");
-        let i = document.createElement("i");
-        i.classList.add("fas");
-        i.classList.add("fa-calendar");
-        span.appendChild(i);
-        this.datePickerDiv.appendChild(span);
-
+        // let span = document.createElement("span");
+        // span.classList.add("input-group-text");
+        // span.setAttribute("data-td-target", "#" + this.uniqueId);
+        // span.setAttribute("data-td-toggle", "datetimepicker");
+        // let i = document.createElement("i"); 
+        // i.classList.add("fas");
+        // i.classList.add("fa-calendar");
+        // span.appendChild(i); 
+        // this.datePickerDiv.appendChild(span);
 
         element.appendChild(this.datePickerDiv);
 
-
-        this.dateTimePicker = new TempusDominus(this.datePickerDiv, this.dateTimePickerOptions());
-        this.dateTimePickerOptions.subscribe((newValue) => {
+        this.dateTimePicker = new TempusDominus(this.datePickerDiv, this.options.datePickerOptions() || {});
+        this.options.datePickerOptions.subscribe((newValue) => {
             this.loadAndBind();
         });
 
 
-        this.setPickerEnabledState(this.pickerEnabled());
-
-        let date = this.formbuilderField()
-
-        const parsedDate = this.dateTimePicker.dates.parseInput(date);
-
-
-        //if multipleDates is false, the second parameter is not required.
+        this.setPickerEnabledState(this.options.pickerEnabled());
+        //Set the value of the picker to the value in the model
         this.dateTimePicker.dates.setValue(
-            parsedDate,
+            this.modelDataAsDate,
             this.dateTimePicker.dates.lastPickedIndex
         );
 
         this.dateTimePicker.subscribe("change.td", (e: any) => {
             this.log("Date Changed", "red", e);
-
-            this.options?.eventToFireOnUpdate?.forEach((event) => {
+            this.options.eventToFireOnUpdate()?.forEach((event) => {
                 $ui.events.broadcast(event,
                     {
                         source: this,
@@ -354,22 +174,39 @@ export class DatePickerAspect {
                         value: this.getCurrentSelectedDate()
                     }); //fire event and pass in the date
             });
-            this.onSave();
+            this.modelDataAsDate = this.getCurrentSelectedDate();
         });
 
     };
 
-    convertToLocalDate(datestr: string) {
-        let date = new DateTime(DateTime.parse(datestr));
-        return new DateTime(date.getTime() + date.getTimezoneOffset() * 60 * 1000);
+    /**
+     * Ensure the date is a valid date
+        * @param d
+        * @returns a DateTime based on the input or a default date if the input is not valid
+    **/
+    ensureDate(d: any) : DateTime {
+        let retValue: DateTime;
+        //check if d is a date
+        if (d instanceof DateTime) {
+            return d;
+        }
+
+        try {
+             retValue = new DateTime(DateTime.parse(d));
+            if(!DateTime.isValid(retValue))
+            {
+                retValue= this.generateDefaultDate();;
+            }
+
+        }
+        catch (e) {
+            this.log(`Unable to parse date ${d} (setting date to default date) - check aspect configuration `, "red");
+            retValue = this.generateDefaultDate();
+        }
+
+        return retValue;
     }
 
-    convertToSysDate(date: DateTime | undefined) {
-        if (!date) {
-            return new DateTime();
-        }
-        return new DateTime(date.getTime() - date.getTimezoneOffset() * 60 * 1000);
-    }
 
     load(model: any) {
         this.log("Load");
@@ -383,30 +220,10 @@ export class DatePickerAspect {
         return this.dateTimePicker?.dates.picked[0];
     }
 
-
-    onSave(): void {
-        this.log("----> Running Save", 'background: #222; color: #bada55');
-        let data = this.formbuilder();
-        this.log("Data", "red", data);
-        //+date.getTimezoneOffset()*60*1000
-        this.log("Current Date", "green", this.getCurrentSelectedDate());
-        this.formbuilderField(this.convertToSysDate(this.getCurrentSelectedDate()));
-    }
-
-
-    log(message: string, color?: string, data?: any): void {
-        if (this.configuration.debug?.enabled) {
-            if (this.configuration.debug.logToConsole) {
-                console.log(`%c ${thisWidgetSystemName} - ${message}`, color, data);
-            }
-        }
-    }
-
-    private addDebugIfRequired() {
-        if (this.configuration.debug?.enabled) {
-            (window as any).aspectDebug = (window as any).aspectDebug || {};
-            (window as any).aspectDebug[thisWidgetSystemName] = this;
-        }
+    public override onSave(model: any): void {
+        this.log("Save");
+        this.modelDataAsDate = this.getCurrentSelectedDate();
+        super.onSave(model);
     }
 }
 

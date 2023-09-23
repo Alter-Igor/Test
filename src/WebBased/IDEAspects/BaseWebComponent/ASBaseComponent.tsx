@@ -1,6 +1,6 @@
-import { createRef, RefObject, render } from "preact";
+import { RefObject, render } from "preact";
 import { DeepProxy } from "./DeepProxy";
-import { ASMaterialShared } from "./ASBaseStyles";
+// import { ASMaterialShared } from "./ASBaseStyles";
 
 class SCSSToLoad {
   id: string = "";
@@ -30,7 +30,7 @@ export abstract class ShareDoBaseWebComponent<TOptions> extends HTMLElement {
   //Initialize the options
   constructor(initOptions: TOptions, useShadow: boolean = true) {
     super();
-    let x = new ASMaterialShared();
+    // let x = new ASMaterialShared(); //TODO later
     this.initializeOptionsAttributes(initOptions);   
     this.usingShadow = useShadow;
     if (useShadow === true) {
@@ -74,23 +74,23 @@ export abstract class ShareDoBaseWebComponent<TOptions> extends HTMLElement {
     }
   }
 
-  private attachShared() {
-     if (ShareDoBaseWebComponent.insertedShared == false) {
-      let sharedRef = createRef<ASMaterialShared>();
-      let sharedHtml = (
-        <as-material-shared ref={sharedRef}></as-material-shared>
-      );
-      render(sharedHtml, window.document.body);
-      ShareDoBaseWebComponent.insertedShared = true;
-    }
-  }
+  // private attachShared() {
+  //    if (ShareDoBaseWebComponent.insertedShared == false) {
+  //     let sharedRef = createRef<ASMaterialShared>();
+  //     let sharedHtml = (
+  //       <as-material-shared ref={sharedRef}></as-material-shared>
+  //     );
+  //     render(sharedHtml, window.document.body);
+  //     ShareDoBaseWebComponent.insertedShared = true;
+  //   }
+  // }
 
   applyScss(
     scss: any,
     name: string,
     element?: HTMLElement | ShadowRoot | RefObject<any>
   ) {
-    this.attachShared();
+    // this.attachShared();
     let scssToApply = ShareDoBaseWebComponent.ScssToLoad.find(
       (scss) => scss.component === this.tagName && scss.name === name
     );

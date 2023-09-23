@@ -1,0 +1,34 @@
+﻿{
+    // The system name for the type of node
+    "systemName": "WorkflowActions.CreateTaskv2", 
+ 
+    // The category to show this in the toolbox
+    "category": "Custom Workflow Actions",
+
+    // The display info
+    "name": "Custom Create Task",
+    "icon": "fa-check-circle",
+    "description": "Creates a task against a work item (Action Plan Pre-Created) with InstanceTags",
+ 
+    // The widget used to configure this node type
+    "configWidget": "WorkflowActions.CreateTaskv2Designer",
+
+    "factoryIncludes": 
+    [
+        "/plugins/sharedo.core.case/workflowEditor/WFAssignmentComponent/model.js",
+        "/plugins/sharedo.core.case/workflowEditor/WFPhaseOutletComponent/model.js"
+    ],
+    
+    "factoryScript": "/_ideFiles/WorkflowActions/CreateTaskv2/CreateTaskv2-factory.js",
+
+    "templateScript": "/_ideFiles/WorkflowActions/CreateTaskv2/CreateTaskv2-template.js",
+
+    // Any additional helper scripts to load and run before the main generated script runs
+    "helperScripts": [ "StringHelpers" ],
+
+    "requiredTypes": [
+        "/Identifier/Work Type Identifier",
+        "/Identifier/Work Type Identifier/Task Identifier",
+        "/Identifier/Ods Entity Identifier"
+    ] 
+}

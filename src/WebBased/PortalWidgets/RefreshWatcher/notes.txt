@@ -1,0 +1,3 @@
+
+eventsToRefreshOn = ["Sharedo.Core.Case.DataQuality.CallToActionDone","Sharedo.Core.Case.Participants.Updated","sharedo.updated","sharedo.core.case.action-plan.changed","Sharedo.Core.Case.ActionPlanActions.TaskCreatedFromCallToAction"]
+

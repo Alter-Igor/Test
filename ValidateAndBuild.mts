@@ -2,7 +2,7 @@ import { Configuration } from 'webpack';
 import webpack from 'webpack';
 // import targetsJson from './targets.json' assert { type: "json" };;
 import * as path from 'path';
-import { imp, l, lh, lh1, runTest } from './src/DeploymentHelper/Log.mjs';
+import { clearSec, err, imp, l, lh, lh1, runTest, suc } from './src/DeploymentHelper/Log.mjs';
 import CopyPlugin from 'copy-webpack-plugin';
 import { runBuild } from './src/DeploymentHelper/BuildMIXTargetFile.mjs';
 import { IFinalTargetSettings } from './src/DeploymentHelper/Interfaces/IFinalTargetSettings';
@@ -16,6 +16,7 @@ import { copy } from 'esbuild-plugin-copy';
 runTest();
 
 lh("Starting Build Process")
+clearSec();
 
 //Load up the build configuration JSON as types so we can use it in the code and ensure it is valid
 let BuildConfiguration = BuildConfigurationJSON as IBuildConfiguration
@@ -45,12 +46,15 @@ async function run() {
   }
 
 
+  let targetSummary = new Array<{target:IFinalTargetSettings,result:boolean}>();
 
   // targets.forEach((target, idx) => {
   for (let idx = 0; idx < targets.length; idx++) //No foreach as we need to await the build
   {
     
     const target = targets[idx];
+    let newTargetSummary = {target:target,result:false};
+    targetSummary.push(newTargetSummary);
 
     // l('-'.repeat(100).bgBlue.bold)
     let sec = lh1(`Processing  ${target.name}`)
@@ -83,8 +87,23 @@ async function run() {
       esBuildWatchContextArray.push(createEsBuildWatchContext(target, target.factoryTSFilePath, target.name + "-factory.js"))
       esBuildWatchContextArray.push(createEsBuildWatchContext(target, target.templateTsFilePath, target.name + "-template.js"));
     }
+
+    newTargetSummary.result = true;
   };
 
+  l(`targetSummary ${targetSummary.length}`);
+
+  clearSec();
+  lh("Summary")
+  targetSummary.forEach((target) => {
+    if (target.result) {
+      l(suc(`Target ${target.target.name} built successfully`));
+    }
+    else {
+      l(err(`Target ${target.target.name} failed to build`));
+    }
+  });
+  
   ("- - ".repeat(1000).blue.underline.bold)
   l("Starting esBuild for wf-templates and wf-factory ".blue.underline.bold)
   esBuildWatchContextArray.forEach(async (esBuildWatchContext) => {
@@ -117,6 +136,9 @@ async function run() {
     const step = getStepLogger(targets!.length); // Using the next id after all targets for final logs
     console.log(`Webpack completed successfully!`.bgGreen.bold);
   });
+
+
+
 }
 
 await run();

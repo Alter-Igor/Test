@@ -1,7 +1,8 @@
 import { IBuildConfiguration } from "../Interfaces/IBuildConfiguration";
-import {l} from "../Log.mjs";
+import {clearSec, l, lh1} from "../Log.mjs";
 
 export function logConfigurationDefaults(config:IBuildConfiguration) {
+    lh1("Configuration Defaults [BuildConfigurations.json]")
     l(`Reading Configuration [BuildConfigurations.json] `.green.underline);
     l(`Types Defined:`.magenta.bgBlack);
 
@@ -25,4 +26,5 @@ export function logConfigurationDefaults(config:IBuildConfiguration) {
         // }
         l(typeDefault);
     });
+    clearSec();
 }

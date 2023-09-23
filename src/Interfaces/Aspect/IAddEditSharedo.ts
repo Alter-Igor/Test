@@ -1,7 +1,9 @@
 
 import * as ko from 'knockout';
+import { TSharedo } from '../TSharedo';
+import { IWidget } from '../Widgets/IWidget';
 
-export interface IAddEditSharedo {
+export interface IAddEditSharedo<TWidget extends IWidget> {
     approvingStatusContainerId: string;
     approvingStatusWidget: any; // Replace with the actual type if known
     aspectDefinitions: ko.Observable;
@@ -18,7 +20,7 @@ export interface IAddEditSharedo {
     isInClosedPhase: ko.Observable;
     isMaximised: ko.Observable;
     isValid: ko.Observable;
-    model: Sharedo.Core.Case.Sharedo.Models.Sharedo;
+    model: TSharedo<TWidget>;
     needCreatePermission: ko.Observable;
     needInitialSave: ko.Observable;
     needUpdatePermission: ko.Observable;

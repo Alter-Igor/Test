@@ -1,0 +1,42 @@
+.ide-aspects-external-matter-search
+{
+  padding: 15px;
+}
+
+
+.ide-aspects-external-matter-search .code
+{
+  font-weight: bold;
+}
+
+.ide-aspects-external-matter-search .result-item
+{
+  display: flex;
+  flex-direction: row;
+  align-items:flex-start;
+  padding: 15px;
+  border-bottom: 1px solid #ccc;
+}
+
+.ide-aspects-external-matter-search .selected-item
+{
+  box-shadow: 1px 1px 10px #ccc;
+  margin-top:10px;
+
+}
+
+.ide-aspects-external-matter-search .row1
+{
+  display: flex;
+  justify-content:space-between;
+}
+
+.ide-aspects-external-matter-search .closed-matter
+{
+  color: #ccc;
+}
+
+.ide-aspects-external-matter-search .open-matter
+{
+  color: #000;
+}
