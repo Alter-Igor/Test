@@ -9,7 +9,10 @@ const __dirname = dirname(__filename);
 export async function compileTypeScriptToJavaScript(filePath: string) {
     
 
-  const outFilePath = path.join(__dirname, '/builds/outTemp.js');  // Specify output file path
+  //extract file name from path
+  const fileName = path.basename(filePath);
+
+  const outFilePath = path.join(__dirname, `/builds/${fileName}.js`);  // Specify output file path
 
   try {
       const result = await esbuild.build({

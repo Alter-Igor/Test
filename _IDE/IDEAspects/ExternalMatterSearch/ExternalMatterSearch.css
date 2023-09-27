@@ -1,55 +1,106 @@
-.ide-aspects-external-matter-search
-{
+.ide-aspects-external-matter-search {
   padding: 15px;
-
 }
 
-
-.ide-aspects-external-matter-search .code
+.ems-error-container
 {
+  box-shadow: 1px 1px 100px red;
+  padding: 10px;
+  margin: 10px;
+}
+
+.ems-error-title
+{
+  color: red;
   font-weight: bold;
+  margin: 10px;
+  font-family: cursive;
+}
+.ems-error-user-message
+{
+  margin-bottom: 10px;
+}
+.ems-error-user-message:before{
+  content:"- ";
+   color:red;
+}
+.ems-error-user-message:after{
+  content:"";
+  color:red;
 }
 
-.ide-aspects-external-matter-search .result-item
-{
+.ems-result-item {
+  padding: 5px;
   display: flex;
   flex-direction: row;
-  align-items:flex-start;
-  padding: 15px;
-  
+  width: 100%;
+  align-content: space-around;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
 }
 
-.ide-aspects-external-matter-search .selected-item
-{
-  box-shadow: 1px 1px 10px #ccc;
-  margin-top:10px;
+.ems-selected-item {
+  box-shadow: 1px 1px 10px #a4a3a3;
+  margin-top: 10px;
   border-radius: 20px;
+  padding-left: 5px;
+  padding-right: 5px;
+  display: none;
 }
 
-.ide-aspects-external-matter-search .selected-item.secure-matter
-{
+.ems-selected-item.ems-show {
+  display: block;
+}
+
+.selected-item.secure-matter {
   box-shadow: 1px 1px 62px #cb8383;
-  margin-top:10px;
+  margin-top: 10px;
+}
 
+.ems-row-container {
+  padding: 10px;
+  /* display: flex; */
+  /* flex-direction: column; */
+  width: 100%;
+  align-content: space-between;
+  /* justify-content: space-around; */
+  /* flex-wrap: nowrap; */
+  /* align-items: stretch; */
+}
+
+.ems-row-group {
+  line-height: 20px;
 
 }
 
-.ide-aspects-external-matter-search .row1
-{
+.ems-field-value {
+  margin-right: 5px;
+}
+
+.ems-icon {
+  margin-right: 5px;
+}
+
+.ems-row {
   display: flex;
-  justify-content:space-between;
+  flex-direction: row;
+  /* border: red 2px solid; */
+  flex-wrap: nowrap;
+  justify-content: space-between;
 }
 
-.ide-aspects-external-matter-search .selected-item.closed-matter
-{
-    color: #9E9E9E;
-}
-.ide-aspects-external-matter-search .closed-matter
-{
-  color: #ccc;
+.ems-label {
+  margin-right: 5px;
 }
 
-.ide-aspects-external-matter-search .open-matter
-{
-  color: #343333;
+.ems-label:after {
+  content: ":"
+}
+
+.ems-icon-container {
+  border: red;
+  display: flex;
+  align-items: center;
+  margin: 10px;
 }

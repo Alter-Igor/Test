@@ -10355,23 +10355,32 @@ var ko2 = __toESM(require_knockout_latest());
 
 // src/WebBased/IDEAspects/BaseClasses/KOConverter.ts
 var ko = __toESM(require_knockout_latest());
-function toObservableObject(obj, existingObservables) {
-  const result = existingObservables || {};
+function toObservableObject(obj, existing) {
   for (const key in obj) {
     if (Object.prototype.hasOwnProperty.call(obj, key)) {
-      let newv = obj[key];
-      let curr = result[key];
-      if (ko.isObservable(newv)) {
-        newv = newv();
+      const value = obj[key];
+      if (Array.isArray(value)) {
+        if (!existing[key]) {
+          existing[key] = ko.observableArray(value.map((item) => toObservableObject(item, {})));
+        } else {
+          existing[key](value.map((item) => toObservableObject(item, {})));
+        }
+      } else if (value !== null && typeof value === "object") {
+        if (!existing[key]) {
+          existing[key] = ko.observable(toObservableObject(value, {}));
+        } else {
+          existing[key](toObservableObject(value, existing[key]()));
+        }
+      } else {
+        if (!existing[key]) {
+          existing[key] = ko.observable(value);
+        } else {
+          existing[key](value);
+        }
       }
-      if (ko.isObservable(curr)) {
-        curr(newv);
-        continue;
-      }
-      result[key] = ko.observable(newv);
     }
   }
-  return result;
+  return existing;
 }
 
 // src/WebBased/IDEAspects/BaseClasses/ObjectHelpers.ts
@@ -10464,6 +10473,7 @@ function fireEvent(event) {
 }
 
 // src/WebBased/IDEAspects/BaseClasses/BaseIDEAspect.ts
+console.log("v: - 5.27");
 var ERROR_DIV_SELECTOR = "#render-errors-here";
 var BaseIDEAspect = class {
   constructor(...arr) {
@@ -10476,9 +10486,9 @@ var BaseIDEAspect = class {
       return;
     }
     if (arr.length === 3) {
-      this.LocationToSaveOrLoadData = this.setLocationOfDataToLoadAndSave();
       this.uniqueId = v4_default();
       this._initialise(arr[0], arr[1], arr[2]);
+      this.LocationToSaveOrLoadData = this.setLocationOfDataToLoadAndSave();
       this.fireEvent("onSetup", this.model);
       this.setup();
       this.fireEvent("afterSetup", this.model);
@@ -10520,6 +10530,9 @@ var BaseIDEAspect = class {
     this.LocationToSaveOrLoadData = this.setLocationOfDataToLoadAndSave();
     this.fireEvent("onInitialise", this.model);
   }
+  clearErrors() {
+    this.errors?.removeAll();
+  }
   setupErrorManager() {
     this.l("Setting up error manager");
     this.errors?.subscribe((newValue) => {
@@ -10528,7 +10541,16 @@ var BaseIDEAspect = class {
     });
   }
   setupLiveConfig() {
-    if (!this.options.debug().liveConfig) {
+    this.options.debug.liveConfig.subscribe((newValue) => {
+      if (newValue.liveConfig) {
+        this.activateLiveConfig(newValue.liveConfig);
+      }
+    });
+    this.activateLiveConfig(this.options.debug().liveConfig);
+  }
+  activateLiveConfig(active) {
+    if (!active) {
+      this.liveConfigDiv?.remove();
       return;
     }
     if (this.liveConfigDiv) {
@@ -10591,6 +10613,7 @@ var BaseIDEAspect = class {
     if (!errorDiv || !this.errors) {
       return;
     }
+    l("errorDiv.innerHTML");
     errorDiv.innerHTML = "";
     let errorContainerDiv = document.createElement("div");
     errorDiv.appendChild(errorContainerDiv);
@@ -11011,6 +11034,7 @@ var Default = {
   formBuilderFieldSerialisedData: "matterJSON",
   selectedFieldDisplayValue: "{matterCode} - {shortName}",
   searchApiResultCollectionPath: "data[0].results",
+  loadApiResultDataPath: "data",
   searchApiUrl: "api/externalMatterProvider/query/{searchTerm}",
   loadApiUrl: "api/externalMatterProvider/details/{code}",
   dataMapping: [
@@ -11769,10 +11793,11 @@ var ExternalMatterSearch = class extends BaseIDEAspect {
     return this.configuration;
   }
   getSearchFieldPlacement() {
-    return this.options.searchFields();
+    return import_knockout.default.toJS(this.options.searchFields());
   }
   getSelectedIFieldPlacement() {
-    return this.options.selectedFields();
+    let retValue = import_knockout.default.toJS(this.options.selectedFields());
+    return retValue;
   }
   /**
    * Helper method to generate a field placement based on the field names passed in
@@ -11817,7 +11842,8 @@ var ExternalMatterSearch = class extends BaseIDEAspect {
         if (this.searchTemplateGeneratedDiv) {
           this.searchTemplateGeneratedDiv.remove();
         }
-        this.searchTemplateGeneratedDiv = generateHtmlDiv(this.options.searchFields(), "data", this.searchCustomTemplateContentsDiv);
+        let unwrap = import_knockout.default.toJS(this.options.searchFields());
+        this.searchTemplateGeneratedDiv = generateHtmlDiv(unwrap, "data", this.searchCustomTemplateContentsDiv);
         this.searchTemplateToUseName = this.searchCustomTemplateId;
       }
     }
@@ -11897,9 +11923,9 @@ var ExternalMatterSearch = class extends BaseIDEAspect {
       } else {
         model = await this.loadMatterDetailsFromLoadAPI(model);
         this.selectedMatter(model);
-        let mappedData = mapData(this.selectedMatter(), this.options.dataMapping());
+        let mappedData = mapData(this.selectedMatter(), import_knockout.default.toJS(this.options.dataMapping()));
         this.inf("Mapped Data", mappedData);
-        let reverse = reverseMapData(mappedData, this.options.dataMapping());
+        let reverse = reverseMapData(mappedData, import_knockout.default.toJS(this.options.dataMapping()));
         this.inf("Mapped Reverse", mappedData);
         $ui.stacks.unlock(self);
       }
@@ -11926,8 +11952,15 @@ var ExternalMatterSearch = class extends BaseIDEAspect {
     }
   }
   ensureSelectedMatterTemplate() {
-    if (this.selectedMatter() === void 0)
+    if (!this.selectedDiv) {
+      this.err("No selectedDiv defined");
       return;
+    }
+    if (this.selectedMatter() === void 0) {
+      this.selectedDiv.classList.remove("ems-show");
+    }
+    ;
+    this.selectedDiv.classList.add("ems-show");
     this.lh1("ensureSelectedMatterTemplate");
     if (this.selectedTemplateGeneratedDiv) {
       import_knockout.default.cleanNode(this.selectedTemplateGeneratedDiv);
@@ -11937,12 +11970,12 @@ var ExternalMatterSearch = class extends BaseIDEAspect {
       this.err("No searchIFieldPlacement defined");
       throw new Error("No searchIFieldPlacement defined");
     }
-    this.selectedTemplateGeneratedDiv = generateHtmlDiv(this.options.selectedFields(), "selectedMatter()", this.selectedDiv);
+    this.selectedTemplateGeneratedDiv = generateHtmlDiv(import_knockout.default.toJS(this.options.selectedFields()), "selectedMatter()", this.selectedDiv);
     import_knockout.default.applyBindings(this, this.selectedTemplateGeneratedDiv);
     this.clearSec();
   }
   async loadMatterDetailsFromLoadAPI(model) {
-    this.errors = this.errors([]);
+    this.clearErrors();
     try {
       let retValue = model;
       let url = this.options.loadApiUrl();
@@ -11956,16 +11989,14 @@ var ExternalMatterSearch = class extends BaseIDEAspect {
       }
       this.log("Loading Matter using : " + url, "green");
       return executeGetv2(url).then((response) => {
+        let dataPath = this.options.loadApiResultDataPath();
+        let data = this.validateResponseData(response, dataPath);
         if (response.info.success === false) {
           this.buildUserErrors(response);
           return retValue;
         }
-        this.inf("loadMatterDetailsFromLoadAPI", response);
-        if (typeof response === "string") {
-          response = JSON.parse(response);
-        }
-        this.inf(url, response);
-        return response;
+        this.inf("loadMatterDetailsFromLoadAPI", data);
+        return data;
       }).catch((error) => {
         setAllFieldsToNull(retValue);
         return retValue;
@@ -11999,13 +12030,14 @@ var ExternalMatterSearch = class extends BaseIDEAspect {
     });
   }
   save(model) {
-    let mappedData = mapData(this.selectedMatter(), this.options.dataMapping(), this.options.formBuilderFieldSerialisedData());
+    let mappedData = mapData(this.selectedMatter(), import_knockout.default.toJS(this.options.dataMapping()), this.options.formBuilderFieldSerialisedData());
     this.inf("save", mappedData);
     let dataToSave = this.ensureFormbuilder(model);
     $.extend(this.ensureFormbuilder(model), mappedData);
     this.l("dataToSave", dataToSave);
   }
   querySearchAPI(v, handler) {
+    this.clearErrors();
     var search = v.toLowerCase();
     var result = $.Deferred();
     this.log("Searching for: " + search, "green");
@@ -12015,20 +12047,9 @@ var ExternalMatterSearch = class extends BaseIDEAspect {
     }
     executeGetv2(url).then((response) => {
       let cards = new Array();
-      if (response.info.success === false) {
-        this.buildUserErrors(response);
-        return [];
-      }
-      if (typeof response === "string") {
-        response = JSON.parse(response);
-      }
-      this.inf("querySearchAPI", response);
+      let data;
       let dataPath = this.options.searchApiResultCollectionPath();
-      let dataItems = getNestedProperty(response, dataPath);
-      if (!dataItems) {
-        this.err("No data found at path: " + dataPath);
-        return [];
-      }
+      let dataItems = this.validateResponseData(response, dataPath);
       if (!Array.isArray(dataItems)) {
         this.err("Data at path: " + dataPath + " is not an array");
         return [];
@@ -12060,6 +12081,22 @@ var ExternalMatterSearch = class extends BaseIDEAspect {
   onSave(model) {
     this.validateFormbuilderJSONFieldSetup();
     this.save(model);
+  }
+  validateResponseData(response, dataPath) {
+    let retValue = void 0;
+    if (response.info.success === false) {
+      this.buildUserErrors(response);
+    }
+    if (typeof response.data === "string") {
+      retValue = JSON.parse(response.data);
+    }
+    this.inf("querySearchAPI", retValue);
+    let dataItems = getNestedProperty(retValue, dataPath);
+    if (!dataItems) {
+      this.err("No data found at path: " + dataPath);
+      return [];
+    }
+    return dataItems;
   }
 };
 // Annotate the CommonJS export names for ESM import in node:

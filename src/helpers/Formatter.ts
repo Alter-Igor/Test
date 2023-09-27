@@ -19,7 +19,7 @@ export function formatValue(value: any, formatter: string): any {
     // Invoke the function with the given value
     let returnValue: any;
     try{
-    let returnValue = dynamicFunc(value);
+     returnValue = dynamicFunc(value);
     }
     catch(e)
     {
@@ -27,6 +27,6 @@ export function formatValue(value: any, formatter: string): any {
         returnValue = "Error formatting value - see console"
     }
     return returnValue;
-
-
 }
+
+export const formatFunc = formatValue; // For backwards compatibility

@@ -1,3 +1,4 @@
+
 import { formatValue } from "../../../helpers/Formatter";
 import { searchForAttributeRecursive } from "../../Common/api/searchForAttributeWithParents";
 import { BaseIDEAspect, IDefaultSettings } from "../BaseClasses/BaseIDEAspect";
@@ -7,6 +8,12 @@ import { Default, ISingleValueAspectConfiguration, WidgetSettings } from "./Sing
 let thisWidgetSystemName = "SingleValueAspect";
 
 export class SingleValueAspect extends BaseIDEAspect<ISingleValueAspectConfiguration, any> {
+    refresh(newConfig: any): void {
+        //nothing
+    }
+    reset(newConfig: any): void {
+        //nothing
+    }
     setThisComponentName(): string {
         return "SingleValueAspect";
     }

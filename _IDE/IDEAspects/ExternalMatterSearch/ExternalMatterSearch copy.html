@@ -1,0 +1,94 @@
+<div class="ide-aspects-external-matter-search">
+    <div class="form-group">
+        <label for="externalMatterSearch" class="search-label control-label">Matter Number:</label>
+        <div id="externalMatterSearch" class="search-autocomplete">
+            <!-- ko component: { name: "auto-complete", params: autoComplete } -->
+            <!-- /ko -->
+        </div>
+
+        <div>
+            <div class="selected-item"  data-bind="">
+                <div id="resultItem" class="flex-row result-item">
+                    <div class="selected-item"  data-bind="css:selectedMatter().cssClass">
+                        <div class="flex-row result-item"> -->
+                            <!-- ko if: selectedMatter().icon -->
+                            <div class="column-auto" style="margin-right:5px">
+                                <span class="fa card-icon" data-bind="css:selectedMatter().icon"></span>
+                            </div>
+                            <!-- /ko -->
+                            <div class="column-fit">
+                                <div class="row1">
+                                    <div class="code" data-bind="text:selectedMatter().code"></div>
+                                    <div>status: <span class="status" data-bind="text:selectedMatter().status"></span></div>
+                                </div>
+                                <div class="title" data-bind="text:selectedMatter().title"></div>
+                                <div class="client" data-bind="text:selectedMatter().client"></div> -->
+                                  <!-- ko if: selectedMatter().isSecureIcon -->
+                                <div>isSecure: <span class="fa card-icon" data-bind="css:selectedMatter().isSecureIcon"></span></div>
+                                <!-- /ko -->
+                             </div>  
+                        </div>
+                    </div>
+            </div>
+        </div>
+ 
+    </div>
+    5:35
+    <template type="text/template" id="__matter_search_item_template">
+        <li class="card-result"
+            data-bind="css:cssClasses, attr:{ style: styles}, event:{ mousedown: $parent.model.onClickSearchResultCard.bind($parent.model) }">
+            <div class="flex-row result-item">
+                <!-- ko if: icon -->
+                <div class="column-auto" style="margin-right:5px">
+                    <span class="fa card-icon" data-bind="css:icon"></span>
+                </div>
+                <!-- /ko -->
+                <div class="column-fit">
+                    <div data-bind="text:$root.formatFunc(data.code,'value.toUpperCase()')"></div>
+                    <div class="row1">
+                        <div class="code" data-bind="text:data.code"></div>
+                        <div class="status" data-bind="text:data.status"></div>
+                    </div>
+                    <div class="title" data-bind="text:data.title"></div>
+                    <div class="client" data-bind="text:data.client"></div>
+                </div>
+                <!-- ko if: selected -->
+                <div class="column-auto text-right" style="align-self:center"><span class="fa fa-chevron-left"></span>
+                </div>
+                <!-- /ko -->
+            </div>
+        </li>
+    </template>
+
+    <template type="text/template" id="__custom_matter_search_item_template">
+        <li class="card-result"
+            data-bind="css:cssClasses, attr:{ style: styles}, event:{ mousedown: $parent.model.onClickSearchResultCard.bind($parent.model) }">
+            <div id="resultItem" class="flex-row result-item">
+            </div>
+        </li>
+    </template>
+
+
+    <!-- <template>
+        <div class="selected-item"  data-bind="css:selectedMatter().cssClass">
+            <div class="flex-row result-item"> -->
+                <!-- ko if: selectedMatter().icon -->
+                <!-- <div class="column-auto" style="margin-right:5px">
+                    <span class="fa card-icon" data-bind="css:selectedMatter().icon"></span>
+                </div> -->
+                <!-- /ko -->
+                <!-- <div class="column-fit">
+                    <div class="row1">
+                        <div class="code" data-bind="text:selectedMatter().code"></div>
+                        <div>status: <span class="status" data-bind="text:selectedMatter().status"></span></div>
+                    </div>
+                    <div class="title" data-bind="text:selectedMatter().title"></div>
+                    <div class="client" data-bind="text:selectedMatter().client"></div> -->
+                      <!-- ko if: selectedMatter().isSecureIcon -->
+                    <!-- <div>isSecure: <span class="fa card-icon" data-bind="css:selectedMatter().isSecureIcon"></span></div> -->
+                    <!-- /ko -->
+                <!-- </div>
+            </div>
+        </div>
+    </template> -->
+</div>

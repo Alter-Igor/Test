@@ -8,6 +8,7 @@ let thisWidgetSystemName = "DatePickerAspect";
 
 
 //add style to head: https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css
+document.head.insertAdjacentHTML("beforeend", `<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">`);
 
 export class DatePickerAspect extends BaseIDEAspect<IDatePickerAspectOptions, any> {
     refresh(newConfig: any): void {
@@ -32,8 +33,6 @@ export class DatePickerAspect extends BaseIDEAspect<IDatePickerAspectOptions, an
     }
     setup(): void {
         
-        document.head.insertAdjacentHTML("beforeend", `<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">`);
-
     }
     
     setWidgetJsonSettings(): IWidgetJson<IDatePickerAspectOptions> {

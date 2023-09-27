@@ -13,37 +13,174 @@
     "isConfigurable": true,
     "configurationWidget": null,
     "defaultConfigurationJson": {
+      "title": "Matter Search",
+      "inputVisability": [
+        {
+          "rule": "phaseName().toLowerCase()==='new'"
+        }
+      ],
       "fackMode": false,
+      "formBuilderFieldSerialisedData": "matterJSON",
+      "selectedFieldDisplayValue": "{matterCode} - {shortName}",
+      "searchApiResultCollectionPath": "data[0].results",
+      "loadApiResultDataPath": "data",
       "searchApiUrl": "api/externalMatterProvider/query/{searchTerm}",
       "loadApiUrl": "api/externalMatterProvider/details/{code}",
       "dataMapping": [
         {
           "formBuilderField": "matterNumber",
-          "searchResultField": "matterCode"
+          "searchResultField": "{matterCode}"
         },
         {
           "formBuilderField": "matterShortName",
-          "searchResultField": "shortName"
+          "searchResultField": "{shortName}"
         },
         {
           "formBuilderField": "matterClient{*}",
-          "searchResultField": "client.{*}"
+          "searchResultField": "{client}.{*}"
         },
         {
-          "formBuilderField": "matterPartnerName",
-          "searchResultField": "partner.name"
+          "formBuilderField": "matterPartner{*}",
+          "searchResultField": "{partner}.{*}"
         },
         {
-          "formBuilderField": "matterPartnerEmail",
-          "searchResultField": "partner.name"
+          "formBuilderField": "matterIsSecure",
+          "searchResultField": "{isSecure}"
         }
       ],
       "debug": {
         "enabled": true,
         "logToConsole": true,
-        "showInAspect": true
+        "showInAspect": true,
+        "liveConfig": true,
+        "supportRequestEnabled": true
       },
-      "eventsToReactTo": []
+      "eventsToReactTo": [],
+      "searchFields": {
+        "container": {},
+        "icon": [
+          {
+            "icon": "fa-search fa-2x text-primary"
+          }
+        ],
+        "style": [
+          {
+            "rule": "status.toLowerCase()==='closed'",
+            "style": {
+              "color": "lightgrey"
+            }
+          }
+        ],
+        "rows": [
+          {
+            "fields": [
+              {
+                "field": "matterCode",
+                "style": "font-weight:bold",
+                "icon": [
+                  {
+                    "rule": "status.toLowerCase()==='open'",
+                    "icon": "fa-folder-open text-success",
+                    "position": "before"
+                  },
+                  {
+                    "rule": "status.toLowerCase()==='closed'",
+                    "icon": "fa-folder text-danger",
+                    "position": "before"
+                  }
+                ],
+                "width": null
+              },
+              {
+                "field": "status",
+                "formatter": "value.toUpperCase()",
+                "label": "Status",
+                "position": "right",
+                "width": null
+              }
+            ]
+          },
+          {
+            "fields": [
+              {
+                "label": "Client",
+                "field": "client",
+                "width": null
+              }
+            ]
+          }
+        ]
+      },
+      "selectedFields": {
+        "container": {
+          "style": [
+            {
+              "rule": "data.secure",
+              "style": {
+                "box-shadow": "1px 1px 62px #cb8383"
+              }
+            }
+          ]
+        },
+        "icon": [
+          {
+            "rule": "data.secure",
+            "icon": "fa-shield text-warning fa-2x",
+            "position": "before"
+          }
+        ],
+        "rows": [
+          {
+            "fields": [
+              {
+                "field": "data.matterCode",
+                "style": "font-weight:bold",
+                "icon": [
+                  {
+                    "rule": "data.status.toLowerCase()==='open'",
+                    "icon": "fa-folder-open text-success",
+                    "position": "before"
+                  },
+                  {
+                    "rule": "data.status.toLowerCase()==='closed'",
+                    "icon": "fa-folder text-danger",
+                    "position": "before"
+                  }
+                ],
+                "width": null
+              },
+              {
+                "field": "data.status",
+                "formatter": "value.toUpperCase()",
+                "label": "Status",
+                "position": "right",
+                "width": null,
+                "style": {
+                  "font-size": "0.8em",
+                  "font-weight": "bold"
+                }
+              }
+            ]
+          },
+          {
+            "fields": [
+              {
+                "field": "data.shortName",
+                "width": null
+              }
+            ]
+          },
+          {
+            "fields": [
+              {
+                "label": "Client",
+                "field": "data.client.name",
+                "width": null
+              }
+            ]
+          }
+        ]
+      }
     }
   },
   "scripts": [
@@ -57,6 +194,8 @@
   ],
   "menuTemplates": [],
   "components": [
-    "Sharedo.UI.Framework.Components.AutoComplete"
+    "Sharedo.UI.Framework.Components.AutoComplete",
+    "Sharedo.Core.Case.TextEditor.Component",
+    "Sharedo.UI.Framework.Components.SyntaxEditor"
   ]
 }

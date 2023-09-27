@@ -14,7 +14,7 @@ import { IOdsEntity } from "../../../../Interfaces/WidgetsOdsEntityPicker/IOdsEn
 type OdsWidget = {
     [key:string]: any
 };
-
+  
 //constants 
 const matterPartnerRoleSystemName = "matter-partner";
 const clientRoleSystemName = "client";

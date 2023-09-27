@@ -51,12 +51,14 @@
                 "modulesToExtract": [ ]
             },
             "DatePickerAspect" :{
-                "enabled": false
+                "enabled": true
             },
             "SingleValueAspect":{
-                "enabled": false
+                "enabled": true
             },
-            "ExternalMatterSearch":{}
+            "ExternalMatterSearch":{
+                "enabled": true
+            }
         },
         "WorkflowActions": {
             "LargeFiles": {

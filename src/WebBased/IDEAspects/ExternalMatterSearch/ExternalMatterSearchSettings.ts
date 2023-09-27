@@ -1,5 +1,6 @@
 import { IWidgetJson } from "../BaseClasses/IWidgetJson";
-import { Default, IExternalMatterSearchConfiguration } from "./ExternalMatterSearchInterface";
+import { Default } from "./ExternalMatterSearchDefaults";
+import { IExternalMatterSearchConfiguration } from "./ExternalMatterSearchInterface";
  
 export const Settings: IWidgetJson<IExternalMatterSearchConfiguration> =
 {
@@ -27,7 +28,9 @@ export const Settings: IWidgetJson<IExternalMatterSearchConfiguration> =
     ],
     "menuTemplates": [],
     "components": [
-        "Sharedo.UI.Framework.Components.AutoComplete"
+        "Sharedo.UI.Framework.Components.AutoComplete",
+        "Sharedo.Core.Case.TextEditor.Component",
+        "Sharedo.UI.Framework.Components.SyntaxEditor"
     ]
 }
 

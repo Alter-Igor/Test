@@ -1,0 +1,48 @@
+{
+    "rows": [
+        {
+            "fields": [
+                {
+                    "field": "code",
+                    "formatter": "value.toUpperCase()",
+                    "style": "font-weight:bold",
+                    "icon": [
+                        {
+                            "rule": "isSecure",
+                            "icon": "fa-shield",
+                            "position": "before"
+                        }
+                    ],
+                    "width": null
+                }
+            ]
+        },
+        {
+            "fields": [
+                {
+                    "field": "status",
+                    "formatter": "value.toUpperCase()",
+                    "label": "Status",
+                    "position": "right",
+                    "width": null
+                }
+            ]
+        },
+        {
+            "fields": [
+                {
+                    "field": "shortName",
+                    "width": null
+                }
+            ]
+        },
+        {
+            "fields": [
+                {
+                    "field": "client",
+                    "width": null
+                }
+            ]
+        }
+    ]
+}

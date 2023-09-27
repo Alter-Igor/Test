@@ -26,6 +26,12 @@ interface OdsEntityModel {
 // }
 
 export class OdsPicker extends BaseIDEAspect<IODSPickerConfiguration, any> {
+    refresh(newConfig: any): void {
+        // throw new Error("Method not implemented.");
+    }
+    reset(newConfig: any): void {
+        // throw new Error("Method not implemented.");
+    }
     setThisComponentName(): string {
         return "OdsPicker";
     }

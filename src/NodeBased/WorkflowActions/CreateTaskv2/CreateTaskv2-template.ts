@@ -56,6 +56,7 @@ if (connections["onOverdue"]) {
     task.OnOverdue(connections["onOverdue"].step)
 }
 if (connections["onComplete"]) {
+    //if differed action fired then we do  not fire this step.
     task.OnComplete(connections["onComplete"].step)
 }
 

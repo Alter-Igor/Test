@@ -1,0 +1,266 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$ref": "#/definitions/IExternalMatterSearchConfiguration",
+    "definitions": {
+        "IExternalMatterSearchConfiguration": {
+            "type": "object",
+            "properties": {
+                "fackMode": {
+                    "type": "boolean"
+                },
+                "searchApiUrl": {
+                    "type": "string"
+                },
+                "loadApiUrl": {
+                    "type": "string"
+                },
+                "searchFields": {
+                    "$ref": "#/definitions/IFieldPlacement"
+                },
+                "selectedFields": {
+                    "$ref": "#/definitions/IFieldPlacement"
+                },
+                "dataMapping": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/IDataMapping"
+                    }
+                },
+                "fackSearchDataIDEPath": {
+                    "type": "string"
+                },
+                "fackLoadDataIDEPath": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "fackMode",
+                "searchApiUrl",
+                "loadApiUrl",
+                "searchFields",
+                "selectedFields",
+                "dataMapping"
+            ],
+            "additionalProperties": false
+        },
+        "IFieldPlacement": {
+            "type": "object",
+            "properties": {
+                "cssClass": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "style": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "icon": {
+                    "anyOf": [
+                        {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/IIconRule"
+                            }
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
+                },
+                "rows": {
+                    "anyOf": [
+                        {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/IFieldRow"
+                            }
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
+                }
+            },
+            "required": [
+                "rows"
+            ],
+            "additionalProperties": false
+        },
+        "IIconRule": {
+            "type": "object",
+            "properties": {
+                "rule": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "icon": {
+                    "type": "string"
+                },
+                "cssClass": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "style": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "position": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "enum": [
+                        "before",
+                        "after",
+                        null
+                    ]
+                }
+            },
+            "required": [
+                "icon"
+            ],
+            "additionalProperties": false
+        },
+        "IFieldRow": {
+            "type": "object",
+            "properties": {
+                "cssClass": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "style": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "alignItems": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "enum": [
+                        "space-between",
+                        "space-around",
+                        "flex-start",
+                        "flex-end",
+                        "center",
+                        null
+                    ]
+                },
+                "fields": {
+                    "anyOf": [
+                        {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/IFieldRowField"
+                            }
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
+                }
+            },
+            "required": [
+                "fields"
+            ],
+            "additionalProperties": false
+        },
+        "IFieldRowField": {
+            "type": "object",
+            "properties": {
+                "field": {
+                    "type": "string"
+                },
+                "formatter": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "label": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "position": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "enum": [
+                        "left",
+                        "right",
+                        "center",
+                        null
+                    ]
+                },
+                "width": {
+                    "type": [
+                        "number",
+                        "null"
+                    ]
+                },
+                "icon": {
+                    "anyOf": [
+                        {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/IIconRule"
+                            }
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
+                },
+                "cssClass": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "style": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "field"
+            ],
+            "additionalProperties": false
+        },
+        "IDataMapping": {
+            "type": "object",
+            "properties": {
+                "formBuilderField": {
+                    "type": "string"
+                },
+                "searchResultField": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "formBuilderField",
+                "searchResultField"
+            ],
+            "additionalProperties": false
+        }
+    }
+}
