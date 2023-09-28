@@ -39,14 +39,14 @@ type Observableify<T> = {
     [P in keyof T]: ko.Observable<T[P]>;
 };
 
-// export type ObservableConfigurationOptions<TConfig> = 
-// { [K in keyof IBaseIDEAspectConfiguration<TConfig>]: ko.Observable<IBaseIDEAspectConfiguration<TConfig>[K]>; }
+export type ObservableConfigurationOptions<TConfig> = 
+{ [K in keyof IBaseIDEAspectConfiguration<TConfig>]: ko.Observable<IBaseIDEAspectConfiguration<TConfig>[K]>; }
 
-export type IObservableConfigurationOptions<TConfig> =  {debug: ko.Observable<ObservableIDebug>} &
-{
-    [K in keyof TConfig]: NestedObservableObject<TConfig>[K];
+// export type IObservableConfigurationOptions<TConfig> =  {debug: ko.Observable<ObservableIDebug>} &
+// {
+//     [K in keyof TConfig]: NestedObservableObject<TConfig>[K];
    
-}
+// }
 
 export type IBaseIDEAspectConfiguration<TConfig> = IConfigurationHost & I_IDE_Aspect_Modeller_Configuration<TConfig>;
 // abstract class Creator<TConfig> {
@@ -79,7 +79,7 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
     baseModel!: TSharedo<any>;
     thisComponentName!: string;
     LocationToSaveOrLoadData: string | undefined; //The location to load and save the data from
-    options!: IObservableConfigurationOptions<TConfig>
+    options!: ObservableConfigurationOptions<TConfig>
     uniqueId!: string;
     widgetSettings!: IWidgetJson<TConfig>;
     aspectLogOutput: HTMLDivElement | undefined;
@@ -174,9 +174,9 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
             this.log("No sharedoTypeSystemName found");
         }
 
-        this.options = toObservableObject(this.configuration, this.options);
+        (this.options as any) = toObservableObject(this.configuration, (this.options as any));
 
-
+ 
         // Validation
         this.validation = {};
         this.validationErrorCount = this.validationErrorCount || ko.observable(0);
@@ -200,14 +200,14 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
     }
 
     setupLiveConfig() {
-        (this.options.debug as any).liveConfig.subscribe((newValue:any) => {
+        this.options.debug.subscribe((newValue:any) => {
             if (newValue.liveConfig) {
                 this.activateLiveConfig(newValue.liveConfig);
             }});
 
       
      
-        this.activateLiveConfig(this.options.debug().liveConfig!());
+        this.activateLiveConfig((this.options.debug().liveConfig as any)()); //TODO fix typings
     }
 
     activateLiveConfig(active: boolean | undefined){
@@ -234,14 +234,14 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
         let config = ko.observable(serializedData);
 
         this.liveConfigData = {
-            config: config,
+            config: config, 
         };
 
         let timeout: boolean = false;
 
 
 
-        this.liveConfigDiv = this.createFormBuilderElement();
+        this.liveConfigDiv = this.createLiveConfigDiv();
 
         this.element.prepend(this.liveConfigDiv);
 
@@ -257,7 +257,7 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
                     let newConfig = JSON.parse(config())
                     this._initialise(this.element, newConfig, this.baseModel);
                     this.reset(newConfig);
-                }, 500);
+                }, 5000);
                 timeout = true;
 
             });
@@ -282,7 +282,7 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
     abstract reset(newConfig: any): void;
 
 
-    createFormBuilderElement(): HTMLElement {
+    createLiveConfigDiv(): HTMLElement {
         // Create the outer <div> with class "col-sm-12 formbuilder-editor-json"
         const outerDiv = document.createElement('div');
         outerDiv.className = 'col-sm-12 formbuilder-editor-json';
@@ -319,7 +319,7 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
     buildErrorDiv() {
         this.inf("Building error div")
         let errorDiv = this.element.querySelector(this.errorDivSelector);
-        if (!errorDiv || !this.errors) {
+        if (!errorDiv || !this.errors || this.errors() || this.errors().length === 0) {
             return;
         }
 

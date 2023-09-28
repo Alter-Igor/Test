@@ -18,6 +18,7 @@ import { DEFAULT_SELECTED_FIELDS_CONFIG } from "./DefaultSelectedFields";
 import { mapData, reverseMapData } from "./DataMapper";
 import { getNestedProperty } from "../BaseClasses/ObjectHelpers";
 import { set } from "lodash";
+import { NestedObservableObject } from "../BaseClasses/KOConverter";
 
 const CSS_CLASS_SELECTED_ITEM = "ems-selected-item";
 const CSS_CLASS_RESULT_ITEM = "ems-result-item";
@@ -192,12 +193,12 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
                 this.options.inputVisability([this.options.inputVisability() as any]);
             }
             if (this.options.inputVisability() instanceof Array) {
-                let rules = this.options.inputVisability() as IRule[];
+                let rules = this.options.inputVisability() as  IRule[];
                 //check if any of the rules evaluate to true
                 for (let i = 0; i < rules.length; i++) {
-                    const rule = rules[i];
+                    const rule = rules[i] as NestedObservableObject<IRule>;
                     if (!rule.rule) continue;
-                    retValue = evaluteRule(`model.${rule.rule}`, this.model, "model");
+                    retValue = evaluteRule(`model.${rule.rule()}`, this.model, "model");
                 }
             }
         }

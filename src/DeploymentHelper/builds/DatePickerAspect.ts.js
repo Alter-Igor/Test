@@ -91,19 +91,19 @@ var require_popper = __commonJS({
       }
       var _ref = isElement(element) ? getWindow(element) : window, visualViewport = _ref.visualViewport;
       var addVisualOffsets = !isLayoutViewport() && isFixedStrategy;
-      var x2 = (clientRect.left + (addVisualOffsets && visualViewport ? visualViewport.offsetLeft : 0)) / scaleX;
-      var y2 = (clientRect.top + (addVisualOffsets && visualViewport ? visualViewport.offsetTop : 0)) / scaleY;
+      var x = (clientRect.left + (addVisualOffsets && visualViewport ? visualViewport.offsetLeft : 0)) / scaleX;
+      var y = (clientRect.top + (addVisualOffsets && visualViewport ? visualViewport.offsetTop : 0)) / scaleY;
       var width = clientRect.width / scaleX;
       var height = clientRect.height / scaleY;
       return {
         width,
         height,
-        top: y2,
-        right: x2 + width,
-        bottom: y2 + height,
-        left: x2,
-        x: x2,
-        y: y2
+        top: y,
+        right: x + width,
+        bottom: y + height,
+        left: x,
+        x,
+        y
       };
     }
     function getWindowScroll(node) {
@@ -385,22 +385,22 @@ var require_popper = __commonJS({
       var visualViewport = win.visualViewport;
       var width = html.clientWidth;
       var height = html.clientHeight;
-      var x2 = 0;
-      var y2 = 0;
+      var x = 0;
+      var y = 0;
       if (visualViewport) {
         width = visualViewport.width;
         height = visualViewport.height;
         var layoutViewport = isLayoutViewport();
         if (layoutViewport || !layoutViewport && strategy === "fixed") {
-          x2 = visualViewport.offsetLeft;
-          y2 = visualViewport.offsetTop;
+          x = visualViewport.offsetLeft;
+          y = visualViewport.offsetTop;
         }
       }
       return {
         width,
         height,
-        x: x2 + getWindowScrollBarX(element),
-        y: y2
+        x: x + getWindowScrollBarX(element),
+        y
       };
     }
     function getDocumentRect(element) {
@@ -410,16 +410,16 @@ var require_popper = __commonJS({
       var body = (_element$ownerDocumen = element.ownerDocument) == null ? void 0 : _element$ownerDocumen.body;
       var width = max(html.scrollWidth, html.clientWidth, body ? body.scrollWidth : 0, body ? body.clientWidth : 0);
       var height = max(html.scrollHeight, html.clientHeight, body ? body.scrollHeight : 0, body ? body.clientHeight : 0);
-      var x2 = -winScroll.scrollLeft + getWindowScrollBarX(element);
-      var y2 = -winScroll.scrollTop;
+      var x = -winScroll.scrollLeft + getWindowScrollBarX(element);
+      var y = -winScroll.scrollTop;
       if (getComputedStyle(body || html).direction === "rtl") {
-        x2 += max(html.clientWidth, body ? body.clientWidth : 0) - width;
+        x += max(html.clientWidth, body ? body.clientWidth : 0) - width;
       }
       return {
         width,
         height,
-        x: x2,
-        y: y2
+        x,
+        y
       };
     }
     function contains(parent, child) {
@@ -800,26 +800,26 @@ var require_popper = __commonJS({
       left: "auto"
     };
     function roundOffsetsByDPR(_ref, win) {
-      var x2 = _ref.x, y2 = _ref.y;
+      var x = _ref.x, y = _ref.y;
       var dpr = win.devicePixelRatio || 1;
       return {
-        x: round(x2 * dpr) / dpr || 0,
-        y: round(y2 * dpr) / dpr || 0
+        x: round(x * dpr) / dpr || 0,
+        y: round(y * dpr) / dpr || 0
       };
     }
     function mapToStyles(_ref2) {
       var _Object$assign2;
       var popper2 = _ref2.popper, popperRect = _ref2.popperRect, placement = _ref2.placement, variation = _ref2.variation, offsets = _ref2.offsets, position = _ref2.position, gpuAcceleration = _ref2.gpuAcceleration, adaptive = _ref2.adaptive, roundOffsets = _ref2.roundOffsets, isFixed = _ref2.isFixed;
-      var _offsets$x = offsets.x, x2 = _offsets$x === void 0 ? 0 : _offsets$x, _offsets$y = offsets.y, y2 = _offsets$y === void 0 ? 0 : _offsets$y;
+      var _offsets$x = offsets.x, x = _offsets$x === void 0 ? 0 : _offsets$x, _offsets$y = offsets.y, y = _offsets$y === void 0 ? 0 : _offsets$y;
       var _ref3 = typeof roundOffsets === "function" ? roundOffsets({
-        x: x2,
-        y: y2
+        x,
+        y
       }) : {
-        x: x2,
-        y: y2
+        x,
+        y
       };
-      x2 = _ref3.x;
-      y2 = _ref3.y;
+      x = _ref3.x;
+      y = _ref3.y;
       var hasX = offsets.hasOwnProperty("x");
       var hasY = offsets.hasOwnProperty("y");
       var sideX = left;
@@ -843,8 +843,8 @@ var require_popper = __commonJS({
             // $FlowFixMe[prop-missing]
             offsetParent[heightProp]
           );
-          y2 -= offsetY - popperRect.height;
-          y2 *= gpuAcceleration ? 1 : -1;
+          y -= offsetY - popperRect.height;
+          y *= gpuAcceleration ? 1 : -1;
         }
         if (placement === left || (placement === top || placement === bottom) && variation === end) {
           sideX = right;
@@ -852,27 +852,27 @@ var require_popper = __commonJS({
             // $FlowFixMe[prop-missing]
             offsetParent[widthProp]
           );
-          x2 -= offsetX - popperRect.width;
-          x2 *= gpuAcceleration ? 1 : -1;
+          x -= offsetX - popperRect.width;
+          x *= gpuAcceleration ? 1 : -1;
         }
       }
       var commonStyles = Object.assign({
         position
       }, adaptive && unsetSides);
       var _ref4 = roundOffsets === true ? roundOffsetsByDPR({
-        x: x2,
-        y: y2
+        x,
+        y
       }, getWindow(popper2)) : {
-        x: x2,
-        y: y2
+        x,
+        y
       };
-      x2 = _ref4.x;
-      y2 = _ref4.y;
+      x = _ref4.x;
+      y = _ref4.y;
       if (gpuAcceleration) {
         var _Object$assign;
-        return Object.assign({}, commonStyles, (_Object$assign = {}, _Object$assign[sideY] = hasY ? "0" : "", _Object$assign[sideX] = hasX ? "0" : "", _Object$assign.transform = (win.devicePixelRatio || 1) <= 1 ? "translate(" + x2 + "px, " + y2 + "px)" : "translate3d(" + x2 + "px, " + y2 + "px, 0)", _Object$assign));
+        return Object.assign({}, commonStyles, (_Object$assign = {}, _Object$assign[sideY] = hasY ? "0" : "", _Object$assign[sideX] = hasX ? "0" : "", _Object$assign.transform = (win.devicePixelRatio || 1) <= 1 ? "translate(" + x + "px, " + y + "px)" : "translate3d(" + x + "px, " + y + "px, 0)", _Object$assign));
       }
-      return Object.assign({}, commonStyles, (_Object$assign2 = {}, _Object$assign2[sideY] = hasY ? y2 + "px" : "", _Object$assign2[sideX] = hasX ? x2 + "px" : "", _Object$assign2.transform = "", _Object$assign2));
+      return Object.assign({}, commonStyles, (_Object$assign2 = {}, _Object$assign2[sideY] = hasY ? y + "px" : "", _Object$assign2[sideX] = hasX ? x + "px" : "", _Object$assign2.transform = "", _Object$assign2));
     }
     function computeStyles(_ref5) {
       var state = _ref5.state, options = _ref5.options;
@@ -1001,10 +1001,10 @@ var require_popper = __commonJS({
         acc[placement] = distanceAndSkiddingToXY(placement, state.rects, offset2);
         return acc;
       }, {});
-      var _data$state$placement = data[state.placement], x2 = _data$state$placement.x, y2 = _data$state$placement.y;
+      var _data$state$placement = data[state.placement], x = _data$state$placement.x, y = _data$state$placement.y;
       if (state.modifiersData.popperOffsets != null) {
-        state.modifiersData.popperOffsets.x += x2;
-        state.modifiersData.popperOffsets.y += y2;
+        state.modifiersData.popperOffsets.x += x;
+        state.modifiersData.popperOffsets.y += y;
       }
       state.modifiersData[name] = data;
     }
@@ -2020,7 +2020,7 @@ var require_tempus_dominus = __commonJS({
          */
         parts(locale2 = this.localization.locale, template = { dateStyle: "full", timeStyle: "long" }) {
           const parts = {};
-          new Intl.DateTimeFormat(locale2, template).formatToParts(this).filter((x2) => x2.type !== "literal").forEach((x2) => parts[x2.type] = x2.value);
+          new Intl.DateTimeFormat(locale2, template).formatToParts(this).filter((x) => x.type !== "literal").forEach((x) => parts[x.type] = x.value);
           return parts;
         }
         /**
@@ -2088,7 +2088,7 @@ var require_tempus_dominus = __commonJS({
           return new Intl.DateTimeFormat(locale2, {
             hour: "numeric",
             hour12: true
-          }).formatToParts(this).find((p2) => p2.type === "dayPeriod")?.value;
+          }).formatToParts(this).find((p) => p.type === "dayPeriod")?.value;
         }
         /**
          * Shortcut to Date.getDate()
@@ -2237,7 +2237,7 @@ var require_tempus_dominus = __commonJS({
           const meridiem = new Intl.DateTimeFormat(this.localization.locale, {
             hour: "numeric",
             hour12: true
-          }).formatToParts(new Date(2022, 3, 4, 13)).find((p2) => p2.type === "dayPeriod")?.value;
+          }).formatToParts(new Date(2022, 3, 4, 13)).find((p) => p.type === "dayPeriod")?.value;
           return input.toLowerCase() === meridiem.toLowerCase();
         }
         correctHours(time) {
@@ -2311,15 +2311,15 @@ var require_tempus_dominus = __commonJS({
             const parser = dt.makeParser(localization.format);
             const { year, month, day, hours, minutes, seconds, milliseconds, zone } = parser(input);
             const d = day || (!year && !month ? dt.getDate() : 1);
-            const y2 = year || dt.getFullYear();
+            const y = year || dt.getFullYear();
             let M = 0;
             if (!(year && !month)) {
               M = month > 0 ? month - 1 : dt.getMonth();
             }
             if (zone) {
-              return new DateTime2(Date.UTC(y2, M, d, hours, minutes, seconds, milliseconds + zone.offset * 60 * 1e3));
+              return new DateTime2(Date.UTC(y, M, d, hours, minutes, seconds, milliseconds + zone.offset * 60 * 1e3));
             }
-            return new DateTime2(y2, M, d, hours, minutes, seconds, milliseconds);
+            return new DateTime2(y, M, d, hours, minutes, seconds, milliseconds);
           } catch (e) {
             Namespace.errorMessages.customDateFormatError(`Unable to parse provided input: ${input}, format: ${localization.format}`);
           }
@@ -2498,7 +2498,7 @@ var require_tempus_dominus = __commonJS({
         _isInDisabledDates(testDate) {
           if (!this.optionsStore.options.restrictions.disabledDates || this.optionsStore.options.restrictions.disabledDates.length === 0)
             return false;
-          return !!this.optionsStore.options.restrictions.disabledDates.find((x2) => x2.isSame(testDate, exports2.Unit.date));
+          return !!this.optionsStore.options.restrictions.disabledDates.find((x) => x.isSame(testDate, exports2.Unit.date));
         }
         /**
          * Checks to see if the enabledDates option is in use and returns true (meaning valid)
@@ -2509,7 +2509,7 @@ var require_tempus_dominus = __commonJS({
         _isInEnabledDates(testDate) {
           if (!this.optionsStore.options.restrictions.enabledDates || this.optionsStore.options.restrictions.enabledDates.length === 0)
             return true;
-          return !!this.optionsStore.options.restrictions.enabledDates.find((x2) => x2.isSame(testDate, exports2.Unit.date));
+          return !!this.optionsStore.options.restrictions.enabledDates.find((x) => x.isSame(testDate, exports2.Unit.date));
         }
         _minMaxIsValid(granularity, targetDate) {
           if (this.optionsStore.options.restrictions.minDate && targetDate.isBefore(this.optionsStore.options.restrictions.minDate, granularity)) {
@@ -2749,7 +2749,7 @@ var require_tempus_dominus = __commonJS({
         }
       }
       function typeCheckNumberArray(optionName, value, providedType) {
-        if (!Array.isArray(value) || value.some((x2) => typeof x2 !== "number")) {
+        if (!Array.isArray(value) || value.some((x) => typeof x !== "number")) {
           Namespace.errorMessages.typeMismatch(optionName, providedType, "array of numbers");
         }
       }
@@ -2777,7 +2777,7 @@ var require_tempus_dominus = __commonJS({
             return [];
           }
           typeCheckNumberArray(key, value, providedType);
-          if (value.some((x2) => x2 < lower || x2 > upper))
+          if (value.some((x) => x < lower || x > upper))
             Namespace.errorMessages.numbersOutOfRange(key, lower, upper);
           return value;
         };
@@ -2920,12 +2920,12 @@ var require_tempus_dominus = __commonJS({
          */
         static spread(provided, copyTo, localization, path = "") {
           const defaultOptions = OptionConverter.objectPath(path, DefaultOptions);
-          const unsupportedOptions = Object.keys(provided).filter((x2) => !Object.keys(defaultOptions).includes(x2));
+          const unsupportedOptions = Object.keys(provided).filter((x) => !Object.keys(defaultOptions).includes(x));
           if (unsupportedOptions.length > 0) {
             const flattenedOptions = OptionConverter.getFlattenDefaultOptions();
-            const errors = unsupportedOptions.map((x2) => {
-              let error = `"${path}.${x2}" in not a known option.`;
-              const didYouMean = flattenedOptions.find((y2) => y2.includes(x2));
+            const errors = unsupportedOptions.map((x) => {
+              let error = `"${path}.${x}" in not a known option.`;
+              const didYouMean = flattenedOptions.find((y) => y.includes(x));
               if (didYouMean)
                 error += ` Did you mean "${didYouMean}"?`;
               return error;
@@ -2980,14 +2980,14 @@ var require_tempus_dominus = __commonJS({
           const dataOptions = {};
           const objectToNormalized = (object) => {
             const lowered = {};
-            Object.keys(object).forEach((x2) => {
-              lowered[x2.toLowerCase()] = x2;
+            Object.keys(object).forEach((x) => {
+              lowered[x.toLowerCase()] = x;
             });
             return lowered;
           };
           const normalizeObject = this.normalizeObject(objectToNormalized);
           const optionsLower = objectToNormalized(options);
-          Object.keys(eData).filter((x2) => x2.startsWith(Namespace.dataKey)).map((x2) => x2.substring(2)).forEach((key) => {
+          Object.keys(eData).filter((x) => x.startsWith(Namespace.dataKey)).map((x) => x.substring(2)).forEach((key) => {
             let keyOption = optionsLower[key.toLowerCase()];
             if (key.includes("_")) {
               const split = key.split("_");
@@ -3181,10 +3181,10 @@ var require_tempus_dominus = __commonJS({
           if (!DateTime2.isValid(targetDate))
             return false;
           if (!unit)
-            return this._dates.find((x2) => x2.isSame(targetDate)) !== void 0;
+            return this._dates.find((x) => x.isSame(targetDate)) !== void 0;
           const format = getFormatByUnit(unit);
           const innerDateFormatted = targetDate.format(format);
-          return this._dates.map((x2) => x2.format(format)).find((x2) => x2 === innerDateFormatted) !== void 0;
+          return this._dates.map((x) => x.format(format)).find((x) => x === innerDateFormatted) !== void 0;
         }
         /**
          * Returns the index at which `targetDate` is in the array.
@@ -3197,10 +3197,10 @@ var require_tempus_dominus = __commonJS({
           if (!DateTime2.isValid(targetDate))
             return -1;
           if (!unit)
-            return this._dates.map((x2) => x2.valueOf()).indexOf(targetDate.valueOf());
+            return this._dates.map((x) => x.valueOf()).indexOf(targetDate.valueOf());
           const format = getFormatByUnit(unit);
           const innerDateFormatted = targetDate.format(format);
-          return this._dates.map((x2) => x2.format(format)).indexOf(innerDateFormatted);
+          return this._dates.map((x) => x.format(format)).indexOf(innerDateFormatted);
         }
         /**
          * Clears all selected dates.
@@ -3683,7 +3683,7 @@ var require_tempus_dominus = __commonJS({
             this.validation.isValid(this._startDecade, exports2.Unit.year) ? previous.classList.remove(Namespace.css.disabled) : previous.classList.add(Namespace.css.disabled);
             this.validation.isValid(this._endDecade, exports2.Unit.year) ? next.classList.remove(Namespace.css.disabled) : next.classList.add(Namespace.css.disabled);
           }
-          const pickedYears = this.dates.picked.map((x2) => x2.year);
+          const pickedYears = this.dates.picked.map((x) => x.year);
           container.querySelectorAll(`[data-action="${ActionTypes$1.selectDecade}"]`).forEach((containerClone, index) => {
             if (index === 0) {
               containerClone.classList.add(Namespace.css.old);
@@ -3703,7 +3703,7 @@ var require_tempus_dominus = __commonJS({
             classes.push(Namespace.css.decade);
             const startDecadeYear = this._startDecade.year;
             const endDecadeYear = this._startDecade.year + 9;
-            if (!this.optionsStore.unset && pickedYears.filter((x2) => x2 >= startDecadeYear && x2 <= endDecadeYear).length > 0) {
+            if (!this.optionsStore.unset && pickedYears.filter((x) => x >= startDecadeYear && x <= endDecadeYear).length > 0) {
               classes.push(Namespace.css.active);
             }
             paint("decade", this._startDecade, classes, containerClone);
@@ -4390,7 +4390,7 @@ var require_tempus_dominus = __commonJS({
             return;
           const showing = [
             ...this.widget.querySelector(`.${Namespace.css.dateContainer} div[style*="display: grid"]`).classList
-          ].find((x2) => x2.startsWith(Namespace.css.dateContainer));
+          ].find((x) => x.startsWith(Namespace.css.dateContainer));
           const [previous, switcher, next] = this.widget.getElementsByClassName(Namespace.css.calendarHeader)[0].getElementsByTagName("div");
           switch (showing) {
             case Namespace.css.decadesContainer:
@@ -5214,7 +5214,7 @@ var require_tempus_dominus = __commonJS({
           }
           this.optionsStore.currentCalendarViewMode = Math.max(this.optionsStore.minimumCalendarViewMode, this.optionsStore.currentCalendarViewMode);
           if (CalendarModes[this.optionsStore.currentCalendarViewMode].name !== newConfig.display.viewMode) {
-            this.optionsStore.currentCalendarViewMode = Math.max(CalendarModes.findIndex((x2) => x2.name === newConfig.display.viewMode), this.optionsStore.minimumCalendarViewMode);
+            this.optionsStore.currentCalendarViewMode = Math.max(CalendarModes.findIndex((x) => x.name === newConfig.display.viewMode), this.optionsStore.minimumCalendarViewMode);
           }
           if (this.display?.isVisible) {
             this.display._update("all");
@@ -5434,7 +5434,7 @@ var require_knockout_latest = __commonJS({
                 for (var c2 = 0, d2 = b2.length; c2 < d2; c2++)
                   k[b2[c2]] = a2;
             });
-            var l2 = { propertychange: true }, p2 = w && function() {
+            var l2 = { propertychange: true }, p = w && function() {
               for (var a2 = 3, b2 = w.createElement("div"), c2 = b2.getElementsByTagName("i"); b2.innerHTML = "<!--[if gt IE " + ++a2 + "]><i></i><![endif]-->", c2[0]; )
                 ;
               return 4 < a2 ? a2 : n;
@@ -5558,7 +5558,7 @@ var require_knockout_latest = __commonJS({
                 return a2;
               },
               Zc: function(a2, b2) {
-                7 > p2 ? a2.setAttribute("selected", b2) : a2.selected = b2;
+                7 > p ? a2.setAttribute("selected", b2) : a2.selected = b2;
               },
               Db: function(a2) {
                 return null === a2 || a2 === n ? "" : a2.trim ? a2.trim() : a2.toString().replace(/^[\s\xa0]+|[\s\xa0]+$/g, "");
@@ -5672,7 +5672,7 @@ var require_knockout_latest = __commonJS({
               },
               Yc: function(a2, b2) {
                 a2.name = b2;
-                if (7 >= p2)
+                if (7 >= p)
                   try {
                     var c2 = a2.name.replace(/[&<>'"]/g, function(a3) {
                       return "&#" + a3.charCodeAt(0) + ";";
@@ -5682,10 +5682,10 @@ var require_knockout_latest = __commonJS({
                   }
               },
               Ad: function(a2) {
-                9 <= p2 && (a2 = 1 == a2.nodeType ? a2 : a2.parentNode, a2.style && (a2.style.zoom = a2.style.zoom));
+                9 <= p && (a2 = 1 == a2.nodeType ? a2 : a2.parentNode, a2.style && (a2.style.zoom = a2.style.zoom));
               },
               wd: function(a2) {
-                if (p2) {
+                if (p) {
                   var b2 = a2.style.width;
                   a2.style.width = 0;
                   a2.style.width = b2;
@@ -5706,9 +5706,9 @@ var require_knockout_latest = __commonJS({
               Da: function(a2) {
                 return h ? Symbol(a2) : a2;
               },
-              Zd: 6 === p2,
-              $d: 7 === p2,
-              W: p2,
+              Zd: 6 === p,
+              $d: 7 === p,
+              W: p,
               Lc: function(b2, c2) {
                 for (var d2 = a.a.la(b2.getElementsByTagName("input")).concat(a.a.la(b2.getElementsByTagName("textarea"))), e2 = "string" == typeof c2 ? function(a2) {
                   return a2.name === c2;
@@ -5734,23 +5734,23 @@ var require_knockout_latest = __commonJS({
                     for (var g2 = a.a.Lc(c2, k2[h2]), m2 = g2.length - 1; 0 <= m2; m2--)
                       l3[g2[m2].name] = g2[m2].value;
                 d2 = a.a.f(d2);
-                var p3 = w.createElement("form");
-                p3.style.display = "none";
-                p3.action = f2;
-                p3.method = "post";
+                var p2 = w.createElement("form");
+                p2.style.display = "none";
+                p2.action = f2;
+                p2.method = "post";
                 for (var q2 in d2)
-                  c2 = w.createElement("input"), c2.type = "hidden", c2.name = q2, c2.value = a.a.hc(a.a.f(d2[q2])), p3.appendChild(c2);
+                  c2 = w.createElement("input"), c2.type = "hidden", c2.name = q2, c2.value = a.a.hc(a.a.f(d2[q2])), p2.appendChild(c2);
                 b(l3, function(a2, b2) {
                   var c3 = w.createElement("input");
                   c3.type = "hidden";
                   c3.name = a2;
                   c3.value = b2;
-                  p3.appendChild(c3);
+                  p2.appendChild(c3);
                 });
-                w.body.appendChild(p3);
-                e2.submitter ? e2.submitter(p3) : p3.submit();
+                w.body.appendChild(p2);
+                e2.submitter ? e2.submitter(p2) : p2.submit();
                 setTimeout(function() {
-                  p3.parentNode.removeChild(p3);
+                  p2.parentNode.removeChild(p2);
                 }, 0);
               }
             };
@@ -5906,12 +5906,12 @@ var require_knockout_latest = __commonJS({
                 }
               else {
                 (e2 = d2) || (e2 = w);
-                var l2 = e2.parentWindow || e2.defaultView || A, p2 = a.a.Db(c2).toLowerCase(), q = e2.createElement("div"), t;
-                t = (p2 = p2.match(/^(?:\x3c!--.*?--\x3e\s*?)*?<([a-z]+)[\s>]/)) && f[p2[1]] || b;
-                p2 = t[0];
+                var l2 = e2.parentWindow || e2.defaultView || A, p = a.a.Db(c2).toLowerCase(), q = e2.createElement("div"), t;
+                t = (p = p.match(/^(?:\x3c!--.*?--\x3e\s*?)*?<([a-z]+)[\s>]/)) && f[p[1]] || b;
+                p = t[0];
                 t = "ignored<div>" + t[1] + c2 + t[2] + "</div>";
                 "function" == typeof l2.innerShiv ? q.appendChild(l2.innerShiv(t)) : (g && e2.body.appendChild(q), q.innerHTML = t, g && q.parentNode.removeChild(q));
-                for (; p2--; )
+                for (; p--; )
                   q = q.lastChild;
                 e2 = a.a.la(q.lastChild.childNodes);
               }
@@ -6001,8 +6001,8 @@ var require_knockout_latest = __commonJS({
                     }
                     try {
                       d2();
-                    } catch (p2) {
-                      a.a.Gc(p2);
+                    } catch (p) {
+                      a.a.Gc(p);
                     }
                   }
               }
@@ -6420,13 +6420,13 @@ var require_knockout_latest = __commonJS({
             c && "object" == typeof c && a.a.extend(b.Ob, c);
             b.Ob.sparse = true;
             if (!b.zc) {
-              var e = false, f = null, g, h, m = 0, k, l2 = b.Qa, p2 = b.hb;
+              var e = false, f = null, g, h, m = 0, k, l2 = b.Qa, p = b.hb;
               b.Qa = function(a2) {
                 l2 && l2.call(b, a2);
                 "arrayChange" === a2 && d();
               };
               b.hb = function(a2) {
-                p2 && p2.call(b, a2);
+                p && p.call(b, a2);
                 "arrayChange" !== a2 || b.Wa("arrayChange") || (g && g.s(), h && h.s(), h = g = null, e = false, k = n);
               };
               b.zc = function(b2, c2, d2) {
@@ -6434,23 +6434,23 @@ var require_knockout_latest = __commonJS({
                   return k2[k2.length] = { status: a2, value: b3, index: c3 };
                 }
                 if (e && !m) {
-                  var k2 = [], p3 = b2.length, g2 = d2.length, h2 = 0;
+                  var k2 = [], p2 = b2.length, g2 = d2.length, h2 = 0;
                   switch (c2) {
                     case "push":
-                      h2 = p3;
+                      h2 = p2;
                     case "unshift":
                       for (c2 = 0; c2 < g2; c2++)
                         l3("added", d2[c2], h2 + c2);
                       break;
                     case "pop":
-                      h2 = p3 - 1;
+                      h2 = p2 - 1;
                     case "shift":
-                      p3 && l3("deleted", b2[h2], h2);
+                      p2 && l3("deleted", b2[h2], h2);
                       break;
                     case "splice":
-                      c2 = Math.min(Math.max(0, 0 > d2[0] ? p3 + d2[0] : d2[0]), p3);
-                      for (var p3 = 1 === g2 ? p3 : Math.min(c2 + (d2[1] || 0), p3), g2 = c2 + g2 - 2, h2 = Math.max(p3, g2), U = [], L = [], n2 = 2; c2 < h2; ++c2, ++n2)
-                        c2 < p3 && L.push(l3("deleted", b2[c2], c2)), c2 < g2 && U.push(l3("added", d2[n2], c2));
+                      c2 = Math.min(Math.max(0, 0 > d2[0] ? p2 + d2[0] : d2[0]), p2);
+                      for (var p2 = 1 === g2 ? p2 : Math.min(c2 + (d2[1] || 0), p2), g2 = c2 + g2 - 2, h2 = Math.max(p2, g2), U = [], L = [], n2 = 2; c2 < h2; ++c2, ++n2)
+                        c2 < p2 && L.push(l3("deleted", b2[c2], c2)), c2 < g2 && U.push(l3("added", d2[n2], c2));
                       a.a.Kc(L, U);
                       break;
                     default:
@@ -6818,26 +6818,26 @@ var require_knockout_latest = __commonJS({
                 -1
               ));
               b2 += "\n,";
-              var c2 = [], d2 = b2.match(e), p2, q = [], h2 = 0;
+              var c2 = [], d2 = b2.match(e), p, q = [], h2 = 0;
               if (1 < d2.length) {
-                for (var x2 = 0, B; B = d2[x2]; ++x2) {
+                for (var x = 0, B; B = d2[x]; ++x) {
                   var u = B.charCodeAt(0);
                   if (44 === u) {
                     if (0 >= h2) {
-                      c2.push(p2 && q.length ? { key: p2, value: q.join("") } : { unknown: p2 || q.join("") });
-                      p2 = h2 = 0;
+                      c2.push(p && q.length ? { key: p, value: q.join("") } : { unknown: p || q.join("") });
+                      p = h2 = 0;
                       q = [];
                       continue;
                     }
                   } else if (58 === u) {
-                    if (!h2 && !p2 && 1 === q.length) {
-                      p2 = q.pop();
+                    if (!h2 && !p && 1 === q.length) {
+                      p = q.pop();
                       continue;
                     }
                   } else if (47 === u && 1 < B.length && (47 === B.charCodeAt(1) || 42 === B.charCodeAt(1)))
                     continue;
                   else
-                    47 === u && x2 && 1 < B.length ? (u = d2[x2 - 1].match(f)) && !g[u[0]] && (b2 = b2.substr(b2.indexOf(B) + 1), d2 = b2.match(e), x2 = -1, B = "/") : 40 === u || 123 === u || 91 === u ? ++h2 : 41 === u || 125 === u || 93 === u ? --h2 : p2 || q.length || 34 !== u && 39 !== u || (B = B.slice(1, -1));
+                    47 === u && x && 1 < B.length ? (u = d2[x - 1].match(f)) && !g[u[0]] && (b2 = b2.substr(b2.indexOf(B) + 1), d2 = b2.match(e), x = -1, B = "/") : 40 === u || 123 === u || 91 === u ? ++h2 : 41 === u || 125 === u || 93 === u ? --h2 : p || q.length || 34 !== u && 39 !== u || (B = B.slice(1, -1));
                   q.push(B);
                 }
                 if (0 < h2)
@@ -6849,7 +6849,7 @@ var require_knockout_latest = __commonJS({
             return { Ra: [], wa: h, ac: b, vb: function(e2, f2) {
               function l2(b2, e3) {
                 var f3;
-                if (!x2) {
+                if (!x) {
                   var k = a.getBindingHandler(b2);
                   if (k && k.preprocess && !(e3 = k.preprocess(e3, b2, l2)))
                     return;
@@ -6858,10 +6858,10 @@ var require_knockout_latest = __commonJS({
                   k && q.push("'" + ("string" == typeof h[b2] ? h[b2] : b2) + "':function(_z){" + f3 + "=_z}");
                 }
                 g2 && (e3 = "function(){return " + e3 + " }");
-                p2.push("'" + b2 + "':" + e3);
+                p.push("'" + b2 + "':" + e3);
               }
               f2 = f2 || {};
-              var p2 = [], q = [], g2 = f2.valueAccessors, x2 = f2.bindingParams, B = "string" === typeof e2 ? b(e2) : e2;
+              var p = [], q = [], g2 = f2.valueAccessors, x = f2.bindingParams, B = "string" === typeof e2 ? b(e2) : e2;
               a.a.D(B, function(a2) {
                 l2(
                   a2.key || a2.unknown,
@@ -6869,7 +6869,7 @@ var require_knockout_latest = __commonJS({
                 );
               });
               q.length && l2("_ko_property_writers", "{" + q.join(",") + " }");
-              return p2.join(",");
+              return p.join(",");
             }, Id: function(a2, b2) {
               for (var c2 = 0; c2 < a2.length; c2++)
                 if (a2[c2].key == b2)
@@ -7091,7 +7091,7 @@ var require_knockout_latest = __commonJS({
               var d2 = b2, e2 = 1 === c2.nodeType;
               e2 && a.h.Sc(c2);
               if (e2 || a.ga.instance.nodeHasBindings(c2))
-                d2 = p2(c2, null, b2).bindingContextForDescendants;
+                d2 = p(c2, null, b2).bindingContextForDescendants;
               d2 && !u[a.a.R(c2)] && m(d2, c2);
             }
             function l2(b2) {
@@ -7111,7 +7111,7 @@ var require_knockout_latest = __commonJS({
               });
               return c2;
             }
-            function p2(b2, c2, d2) {
+            function p(b2, c2, d2) {
               var f2 = a.a.g.Ub(b2, z, {}), k2 = f2.hd;
               if (!c2) {
                 if (k2)
@@ -7124,8 +7124,8 @@ var require_knockout_latest = __commonJS({
               if (c2 && "function" !== typeof c2)
                 g2 = c2;
               else {
-                var p3 = a.ga.instance, q2 = p3.getBindingAccessors || h, m2 = a.$(function() {
-                  if (g2 = c2 ? c2(d2, b2) : q2.call(p3, b2, d2)) {
+                var p2 = a.ga.instance, q2 = p2.getBindingAccessors || h, m2 = a.$(function() {
+                  if (g2 = c2 ? c2(d2, b2) : q2.call(p2, b2, d2)) {
                     if (d2[t])
                       d2[t]();
                     if (d2[B])
@@ -7135,7 +7135,7 @@ var require_knockout_latest = __commonJS({
                 }, null, { l: b2 });
                 g2 && m2.ja() || (m2 = null);
               }
-              var x3 = d2, u2;
+              var x2 = d2, u2;
               if (g2) {
                 var J2 = function() {
                   return a.a.Ga(m2 ? m2() : g2, e);
@@ -7159,7 +7159,7 @@ var require_knockout_latest = __commonJS({
                     d3.length && c3(d3, a.Ec(d3[0]));
                   }
                 });
-                a.i.pa in g2 && (x3 = a.i.Cb(b2, d2), a.i.subscribe(b2, a.i.pa, function() {
+                a.i.pa in g2 && (x2 = a.i.Cb(b2, d2), a.i.subscribe(b2, a.i.pa, function() {
                   var c3 = (0, g2[a.i.pa])();
                   c3 && a.h.firstChild(b2) && c3(b2);
                 }));
@@ -7170,14 +7170,14 @@ var require_knockout_latest = __commonJS({
                     throw Error("The binding '" + f3 + "' cannot be used with virtual elements");
                   try {
                     "function" == typeof d3 && a.u.G(function() {
-                      var a2 = d3(b2, r2(f3), J2, x3.$data, x3);
+                      var a2 = d3(b2, r2(f3), J2, x2.$data, x2);
                       if (a2 && a2.controlsDescendantBindings) {
                         if (u2 !== n)
                           throw Error("Multiple bindings (" + u2 + " and " + f3 + ") are trying to control descendant bindings of the same element. You cannot use these bindings together on the same element.");
                         u2 = f3;
                       }
                     }), "function" == typeof e2 && a.$(function() {
-                      e2(b2, r2(f3), J2, x3.$data, x3);
+                      e2(b2, r2(f3), J2, x2.$data, x2);
                     }, null, { l: b2 });
                   } catch (k3) {
                     throw k3.message = 'Unable to process binding "' + f3 + ": " + g2[f3] + '"\nMessage: ' + k3.message, k3;
@@ -7185,12 +7185,12 @@ var require_knockout_latest = __commonJS({
                 });
               }
               f2 = u2 === n;
-              return { shouldBindDescendants: f2, bindingContextForDescendants: f2 && x3 };
+              return { shouldBindDescendants: f2, bindingContextForDescendants: f2 && x2 };
             }
             function q(b2, c2) {
               return b2 && b2 instanceof a.fa ? b2 : new a.fa(b2, n, n, c2);
             }
-            var t = a.a.Da("_subscribable"), x2 = a.a.Da("_ancestorBindingInfo"), B = a.a.Da("_dataDependency");
+            var t = a.a.Da("_subscribable"), x = a.a.Da("_ancestorBindingInfo"), B = a.a.Da("_dataDependency");
             a.c = {};
             var u = { script: true, textarea: true, template: true };
             a.getBindingHandler = function(b2) {
@@ -7199,8 +7199,8 @@ var require_knockout_latest = __commonJS({
             var J = {};
             a.fa = function(b2, c2, d2, e2, f2) {
               function k2() {
-                var b3 = p3 ? h2() : h2, f3 = a.a.f(b3);
-                c2 ? (a.a.extend(l3, c2), x2 in c2 && (l3[x2] = c2[x2])) : (l3.$parents = [], l3.$root = f3, l3.ko = a);
+                var b3 = p2 ? h2() : h2, f3 = a.a.f(b3);
+                c2 ? (a.a.extend(l3, c2), x in c2 && (l3[x] = c2[x])) : (l3.$parents = [], l3.$root = f3, l3.ko = a);
                 l3[t] = q2;
                 g2 ? f3 = l3.$data : (l3.$rawData = b3, l3.$data = f3);
                 d2 && (l3[d2] = f3);
@@ -7210,7 +7210,7 @@ var require_knockout_latest = __commonJS({
                 m2 && (l3[B] = m2);
                 return l3.$data;
               }
-              var l3 = this, g2 = b2 === J, h2 = g2 ? n : b2, p3 = "function" == typeof h2 && !a.O(h2), q2, m2 = f2 && f2.dataDependency;
+              var l3 = this, g2 = b2 === J, h2 = g2 ? n : b2, p2 = "function" == typeof h2 && !a.O(h2), q2, m2 = f2 && f2.dataDependency;
               f2 && f2.exportDependencies ? k2() : (q2 = a.xb(k2), q2.v(), q2.ja() ? q2.equalityComparer = null : l3[t] = n);
             };
             a.fa.prototype.createChildContext = function(b2, c2, d2, e2) {
@@ -7268,9 +7268,9 @@ var require_knockout_latest = __commonJS({
               }
             }, Cb: function(b2, d2) {
               var e2 = a.a.g.Ub(b2, z, {});
-              e2.N || (e2.N = new c(b2, e2, d2[x2]));
-              return d2[x2] == e2 ? d2 : d2.extend(function(a2) {
-                a2[x2] = e2;
+              e2.N || (e2.N = new c(b2, e2, d2[x]));
+              return d2[x] == e2 ? d2 : d2.extend(function(a2) {
+                a2[x] = e2;
               });
             } };
             a.Td = function(b2) {
@@ -7278,7 +7278,7 @@ var require_knockout_latest = __commonJS({
             };
             a.ib = function(b2, c2, d2) {
               1 === b2.nodeType && a.h.Sc(b2);
-              return p2(b2, c2, q(d2));
+              return p(b2, c2, q(d2));
             };
             a.ld = function(b2, c2, d2) {
               d2 = q(d2);
@@ -7557,9 +7557,9 @@ var require_knockout_latest = __commonJS({
                 var a2 = l2 && l2.dispose;
                 "function" === typeof a2 && a2.call(l2);
                 q && q.s();
-                p2 = l2 = q = null;
+                p = l2 = q = null;
               }
-              var l2, p2, q, t = a.a.la(a.h.childNodes(e));
+              var l2, p, q, t = a.a.la(a.h.childNodes(e));
               a.h.Ea(e);
               a.a.K.za(e, k);
               a.o(function() {
@@ -7567,9 +7567,9 @@ var require_knockout_latest = __commonJS({
                 "string" === typeof g2 ? h2 = g2 : (h2 = a.a.f(g2.name), u = a.a.f(g2.params));
                 if (!h2)
                   throw Error("No component name specified");
-                var n2 = a.i.Cb(e, m), z = p2 = ++d;
+                var n2 = a.i.Cb(e, m), z = p = ++d;
                 a.j.get(h2, function(d2) {
-                  if (p2 === z) {
+                  if (p === z) {
                     k();
                     if (!d2)
                       throw Error("Unknown component '" + h2 + "'");
@@ -7607,10 +7607,10 @@ var require_knockout_latest = __commonJS({
                 if (!a.S.Ya() && (e2 || !m && !a.S.qa())) {
                   var k2 = a.u.G(c);
                   if (l2) {
-                    var q2 = p2 ? k2.v() : k2, z = t;
+                    var q2 = p ? k2.v() : k2, z = t;
                     t = f2;
                     z !== f2 ? e2 && (a.a.Na(q2, f2, true), a.a.Na(q2, z, false)) : a.a.Na(q2, f2, e2);
-                    p2 && a.Za(k2) && k2(q2);
+                    p && a.Za(k2) && k2(q2);
                   } else
                     h && (f2 === n ? f2 = e2 : e2 || (f2 = n)), a.m.eb(
                       k2,
@@ -7632,7 +7632,7 @@ var require_knockout_latest = __commonJS({
                   return d.has("value") ? a.a.f(d.get("value")) : b.value;
               }), h = "checkbox" == b.type, m = "radio" == b.type;
               if (h || m) {
-                var k = c(), l2 = h && a.a.f(k) instanceof Array, p2 = !(l2 && k.push && k.splice), q = m || l2, t = l2 ? g() : n;
+                var k = c(), l2 = h && a.a.f(k) instanceof Array, p = !(l2 && k.push && k.splice), q = m || l2, t = l2 ? g() : n;
                 m && !b.name && a.c.uniqueName.init(b, function() {
                   return true;
                 });
@@ -7676,10 +7676,10 @@ var require_knockout_latest = __commonJS({
                 var k, l2 = c()[g2];
                 if (l2) {
                   try {
-                    var p2 = a.a.la(arguments);
+                    var p = a.a.la(arguments);
                     e = f.$data;
-                    p2.unshift(e);
-                    k = l2.apply(e, p2);
+                    p.unshift(e);
+                    k = l2.apply(e, p);
                   } finally {
                     true !== k && (b2.preventDefault ? b2.preventDefault() : b2.returnValue = false);
                   }
@@ -7742,25 +7742,25 @@ var require_knockout_latest = __commonJS({
           (function() {
             function b(b2, d, e) {
               a.c[b2] = { init: function(b3, c, h, m, k) {
-                var l2, p2, q = {}, t, x2, n2;
+                var l2, p, q = {}, t, x, n2;
                 if (d) {
                   m = h.get("as");
                   var u = h.get("noChildContext");
                   n2 = !(m && u);
                   q = { as: m, noChildContext: u, exportDependencies: n2 };
                 }
-                x2 = (t = "render" == h.get("completeOn")) || h.has(a.i.pa);
+                x = (t = "render" == h.get("completeOn")) || h.has(a.i.pa);
                 a.o(function() {
-                  var h2 = a.a.f(c()), m2 = !e !== !h2, u2 = !p2, r2;
+                  var h2 = a.a.f(c()), m2 = !e !== !h2, u2 = !p, r2;
                   if (n2 || m2 !== l2) {
-                    x2 && (k = a.i.Cb(b3, k));
+                    x && (k = a.i.Cb(b3, k));
                     if (m2) {
                       if (!d || n2)
                         q.dataDependency = a.S.o();
                       r2 = d ? k.createChildContext("function" == typeof h2 ? h2 : c, q) : a.S.qa() ? k.extend(null, q) : k;
                     }
-                    u2 && a.S.qa() && (p2 = a.a.Ca(a.h.childNodes(b3), true));
-                    m2 ? (u2 || a.h.va(b3, a.a.Ca(p2)), a.Oa(r2, b3)) : (a.h.Ea(b3), t || a.i.ma(b3, a.i.H));
+                    u2 && a.S.qa() && (p = a.a.Ca(a.h.childNodes(b3), true));
+                    m2 ? (u2 || a.h.va(b3, a.a.Ca(p)), a.Oa(r2, b3)) : (a.h.Ea(b3), t || a.i.ma(b3, a.i.H));
                     l2 = m2;
                   }
                 }, null, { l: b3 });
@@ -7797,22 +7797,22 @@ var require_knockout_latest = __commonJS({
               return "function" == d2 ? b2(a2) : "string" == d2 ? a2[b2] : c2;
             }
             function g(c2, d2) {
-              if (x2 && l2)
+              if (x && l2)
                 a.i.ma(b, a.i.H);
               else if (t.length) {
                 var e2 = 0 <= a.a.A(t, a.w.M(d2[0]));
                 a.a.Zc(d2[0], e2);
-                x2 && !e2 && a.u.G(a.a.Fb, null, [b, "change"]);
+                x && !e2 && a.u.G(a.a.Fb, null, [b, "change"]);
               }
             }
-            var h = b.multiple, m = 0 != b.length && h ? b.scrollTop : null, k = a.a.f(c()), l2 = d.get("valueAllowUnset") && d.has("value"), p2 = d.get("optionsIncludeDestroyed");
+            var h = b.multiple, m = 0 != b.length && h ? b.scrollTop : null, k = a.a.f(c()), l2 = d.get("valueAllowUnset") && d.has("value"), p = d.get("optionsIncludeDestroyed");
             c = {};
             var q, t = [];
             l2 || (h ? t = a.a.Mb(e(), a.w.M) : 0 <= b.selectedIndex && t.push(a.w.M(b.options[b.selectedIndex])));
             k && ("undefined" == typeof k.length && (k = [k]), q = a.a.jb(k, function(b2) {
-              return p2 || b2 === n || null === b2 || !a.a.f(b2._destroy);
+              return p || b2 === n || null === b2 || !a.a.f(b2._destroy);
             }), d.has("optionsCaption") && (k = a.a.f(d.get("optionsCaption")), null !== k && k !== n && q.unshift(Q)));
-            var x2 = false;
+            var x = false;
             c.beforeRemove = function(a2) {
               b.removeChild(a2);
             };
@@ -7822,7 +7822,7 @@ var require_knockout_latest = __commonJS({
               a.u.G(d.get("optionsAfterRender"), null, [c2[0], b2 !== Q ? b2 : n]);
             });
             a.a.ec(b, q, function(c2, e2, g2) {
-              g2.length && (t = !l2 && g2[0].selected ? [a.w.M(g2[0])] : [], x2 = true);
+              g2.length && (t = !l2 && g2[0].selected ? [a.w.M(g2[0])] : [], x = true);
               e2 = b.ownerDocument.createElement("option");
               c2 === Q ? (a.a.Bb(e2, d.get("optionsCaption")), a.w.cb(e2, n)) : (g2 = f(c2, d.get("optionsValue"), c2), a.w.cb(e2, a.a.f(g2)), c2 = f(c2, d.get("optionsText"), g2), a.a.Bb(e2, c2));
               return [e2];
@@ -7917,7 +7917,7 @@ var require_knockout_latest = __commonJS({
               var m = a.a.g.Z(), k = a.a.g.Z(), l2 = function(b2) {
                 var c2 = this.activeElement;
                 (c2 = c2 && a.a.g.get(c2, k)) && c2(b2);
-              }, p2 = function(b2, c2) {
+              }, p = function(b2, c2) {
                 var d2 = b2.ownerDocument;
                 a.a.g.get(d2, m) || (a.a.g.set(d2, m, true), a.a.B(d2, "selectionchange", l2));
                 a.a.g.set(b2, k, c2);
@@ -7930,7 +7930,7 @@ var require_knockout_latest = __commonJS({
                 var d2 = a.a.f(c2());
                 if (null === d2 || d2 === n)
                   d2 = "";
-                L !== n && d2 === L ? a.a.setTimeout(m2, 4) : b2.value !== d2 && (y2 = true, b2.value = d2, y2 = false, v2 = b2.value);
+                L !== n && d2 === L ? a.a.setTimeout(m2, 4) : b2.value !== d2 && (y = true, b2.value = d2, y = false, v2 = b2.value);
               }
               function r2() {
                 w2 || (L = b2.value, w2 = a.a.setTimeout(
@@ -7944,13 +7944,13 @@ var require_knockout_latest = __commonJS({
                 var d2 = b2.value;
                 v2 !== d2 && (v2 = d2, a.m.eb(c2(), k2, "textInput", d2));
               }
-              var v2 = b2.value, w2, L, A2 = 9 == a.a.W ? r2 : z, y2 = false;
+              var v2 = b2.value, w2, L, A2 = 9 == a.a.W ? r2 : z, y = false;
               g && l3("keypress", z);
               11 > g && l3("propertychange", function(a2) {
-                y2 || "value" !== a2.propertyName || A2(a2);
+                y || "value" !== a2.propertyName || A2(a2);
               });
               8 == g && (l3("keyup", z), l3("keydown", z));
-              p2 && (p2(b2, A2), l3("dragend", r2));
+              p && (p(b2, A2), l3("dragend", r2));
               (!g || 9 <= g) && l3("input", A2);
               5 > e && "textarea" === a.a.R(b2) ? (l3("keydown", r2), l3("paste", r2), l3("cut", r2)) : 11 > d ? l3("keydown", r2) : 4 > f ? (l3("DOMAutoComplete", z), l3("dragdrop", z), l3("drop", z)) : h && "number" === b2.type && l3("keydown", r2);
               l3(
@@ -8006,14 +8006,14 @@ var require_knockout_latest = __commonJS({
                 }, c2 = c2.substring(5));
                 a.a.B(b, c2, d2);
               });
-              var p2;
-              p2 = f && "file" == b.type ? function() {
+              var p;
+              p = f && "file" == b.type ? function() {
                 var d2 = a.a.f(c());
                 null === d2 || d2 === n || "" === d2 ? b.value = "" : a.u.G(l2);
               } : function() {
                 var f2 = a.a.f(c()), g2 = a.w.M(b);
                 if (null !== k && f2 === k)
-                  a.a.setTimeout(p2, 0);
+                  a.a.setTimeout(p, 0);
                 else if (f2 !== g2 || g2 === n)
                   "select" === e ? (g2 = d.get("valueAllowUnset"), a.w.cb(b, f2, g2), g2 || f2 === a.w.M(b) || a.u.G(l2)) : a.w.cb(b, f2);
               };
@@ -8023,13 +8023,13 @@ var require_knockout_latest = __commonJS({
                   b,
                   a.i.H,
                   function() {
-                    q ? d.get("valueAllowUnset") ? p2() : l2() : (a.a.B(b, "change", l2), q = a.o(p2, null, { l: b }));
+                    q ? d.get("valueAllowUnset") ? p() : l2() : (a.a.B(b, "change", l2), q = a.o(p, null, { l: b }));
                   },
                   null,
                   { notifyImmediately: true }
                 );
               } else
-                a.a.B(b, "change", l2), a.o(p2, null, { l: b });
+                a.a.B(b, "change", l2), a.o(p, null, { l: b });
             } else
               a.ib(b, { checkedValue: c });
           }, update: function() {
@@ -8096,11 +8096,11 @@ var require_knockout_latest = __commonJS({
                   m,
                   l2
                 )) {
-                  var p2 = m[l2];
-                  if ("function" === typeof p2) {
-                    if (l2 = p2(b2[k].value))
+                  var p = m[l2];
+                  if ("function" === typeof p) {
+                    if (l2 = p(b2[k].value))
                       throw Error(l2);
-                  } else if (!p2)
+                  } else if (!p)
                     throw Error("This template engine does not support the '" + l2 + "' binding within its templates");
                 }
               }
@@ -8257,20 +8257,20 @@ var require_knockout_latest = __commonJS({
                 throw Error("Set a template engine before calling renderTemplate");
               t = t || "replaceChildren";
               if (m2) {
-                var x2 = d(m2);
+                var x = d(m2);
                 return a.$(function() {
                   var g2 = c2 && c2 instanceof a.fa ? c2 : new a.fa(c2, null, null, null, { exportDependencies: true }), n2 = f(b2, g2.$data, g2), g2 = e(m2, t, n2, g2, h2);
-                  "replaceNode" == t && (m2 = g2, x2 = d(m2));
+                  "replaceNode" == t && (m2 = g2, x = d(m2));
                 }, null, { Sa: function() {
-                  return !x2 || !a.a.Sb(x2);
-                }, l: x2 && "replaceNode" == t ? x2.parentNode : x2 });
+                  return !x || !a.a.Sb(x);
+                }, l: x && "replaceNode" == t ? x.parentNode : x });
               }
               return a.aa.Xb(function(d2) {
                 a.dc(b2, c2, h2, d2, "replaceNode");
               });
             };
             a.Qd = function(b2, d2, g2, h2, m2) {
-              function x2(b3, c2) {
+              function x(b3, c2) {
                 a.u.G(a.a.ec, null, [h2, b3, u, g2, r2, c2]);
                 a.i.ma(h2, a.i.H);
               }
@@ -8295,11 +8295,11 @@ var require_knockout_latest = __commonJS({
                   w2 && (b3 = a.a.jb(b3, function(b4) {
                     return b4 === n || null === b4 || !a.a.f(b4._destroy);
                   }));
-                  x2(b3);
+                  x(b3);
                 }, null, { l: h2 });
-              x2(d2.v());
+              x(d2.v());
               var A2 = d2.subscribe(function(a2) {
-                x2(d2(), a2);
+                x(d2(), a2);
               }, null, "arrayChange");
               A2.l(h2);
               return A2;
@@ -8358,17 +8358,17 @@ var require_knockout_latest = __commonJS({
           };
           a.a.Pb = function() {
             function b(b2, d, e, f, g) {
-              var h = Math.min, m = Math.max, k = [], l2, p2 = b2.length, q, n2 = d.length, r2 = n2 - p2 || 1, v2 = p2 + n2 + 1, u, w2, z;
-              for (l2 = 0; l2 <= p2; l2++)
+              var h = Math.min, m = Math.max, k = [], l2, p = b2.length, q, n2 = d.length, r2 = n2 - p || 1, v2 = p + n2 + 1, u, w2, z;
+              for (l2 = 0; l2 <= p; l2++)
                 for (w2 = u, k.push(u = []), z = h(n2, l2 + r2), q = m(0, l2 - 1); q <= z; q++)
                   u[q] = q ? l2 ? b2[l2 - 1] === d[q - 1] ? w2[q - 1] : h(w2[q] || v2, u[q - 1] || v2) + 1 : q + 1 : l2 + 1;
               h = [];
               m = [];
               r2 = [];
-              l2 = p2;
+              l2 = p;
               for (q = n2; l2 || q; )
                 n2 = k[l2][q] - 1, q && n2 === k[l2][q - 1] ? m.push(h[h.length] = { status: e, value: d[--q], index: q }) : l2 && n2 === k[l2 - 1][q] ? r2.push(h[h.length] = { status: f, value: b2[--l2], index: l2 }) : (--q, --l2, g.sparse || h.push({ status: "retained", value: d[q] }));
-              a.a.Kc(r2, m, !g.dontLimitMoves && 10 * p2);
+              a.a.Kc(r2, m, !g.dontLimitMoves && 10 * p);
               return h.reverse();
             }
             return function(a2, d, e) {
@@ -8394,16 +8394,16 @@ var require_knockout_latest = __commonJS({
             var c = a.a.g.Z(), d = a.a.g.Z();
             a.a.ec = function(e, f, g, h, m, k) {
               function l2(b2) {
-                y2 = { Aa: b2, pb: a.ta(w2++) };
-                v2.push(y2);
-                r2 || F2.push(y2);
+                y = { Aa: b2, pb: a.ta(w2++) };
+                v2.push(y);
+                r2 || F2.push(y);
               }
-              function p2(b2) {
-                y2 = t[b2];
-                w2 !== y2.pb.v() && D2.push(y2);
-                y2.pb(w2++);
-                a.a.Ua(y2.Y, e);
-                v2.push(y2);
+              function p(b2) {
+                y = t[b2];
+                w2 !== y.pb.v() && D2.push(y);
+                y.pb(w2++);
+                a.a.Ua(y.Y, e);
+                v2.push(y);
               }
               function q(b2, c2) {
                 if (b2)
@@ -8415,7 +8415,7 @@ var require_knockout_latest = __commonJS({
               f = f || [];
               "undefined" == typeof f.length && (f = [f]);
               h = h || {};
-              var t = a.a.g.get(e, c), r2 = !t, v2 = [], u = 0, w2 = 0, z = [], A2 = [], C2 = [], D2 = [], F2 = [], y2, I2 = 0;
+              var t = a.a.g.get(e, c), r2 = !t, v2 = [], u = 0, w2 = 0, z = [], A2 = [], C2 = [], D2 = [], F2 = [], y, I2 = 0;
               if (r2)
                 a.a.D(f, l2);
               else {
@@ -8429,17 +8429,17 @@ var require_knockout_latest = __commonJS({
                   switch (H2 = G2.moved, K2 = G2.index, G2.status) {
                     case "deleted":
                       for (; u < K2; )
-                        p2(u++);
-                      H2 === n && (y2 = t[u], y2.$ && (y2.$.s(), y2.$ = n), a.a.Ua(y2.Y, e).length && (h.beforeRemove && (v2.push(y2), I2++, y2.Aa === d ? y2 = null : C2.push(y2)), y2 && z.push.apply(z, y2.Y)));
+                        p(u++);
+                      H2 === n && (y = t[u], y.$ && (y.$.s(), y.$ = n), a.a.Ua(y.Y, e).length && (h.beforeRemove && (v2.push(y), I2++, y.Aa === d ? y = null : C2.push(y)), y && z.push.apply(z, y.Y)));
                       u++;
                       break;
                     case "added":
                       for (; w2 < K2; )
-                        p2(u++);
-                      H2 !== n ? (A2.push(v2.length), p2(H2)) : l2(G2.value);
+                        p(u++);
+                      H2 !== n ? (A2.push(v2.length), p(H2)) : l2(G2.value);
                   }
                 for (; w2 < f.length; )
-                  p2(u++);
+                  p(u++);
                 v2._countWaitingForRemove = I2;
               }
               a.a.g.set(e, c, v2);
@@ -8455,20 +8455,20 @@ var require_knockout_latest = __commonJS({
               }
               if (A2.length)
                 for (; (E = A2.shift()) != n; ) {
-                  y2 = v2[E];
+                  y = v2[E];
                   for (M = n; E; )
                     if ((O = v2[--E].Y) && O.length) {
                       M = O[O.length - 1];
                       break;
                     }
-                  for (f = 0; u = y2.Y[f]; M = u, f++)
+                  for (f = 0; u = y.Y[f]; M = u, f++)
                     a.h.Wb(e, u, M);
                 }
-              for (E = 0; y2 = v2[E]; E++) {
-                y2.Y || a.a.extend(y2, b(e, g, y2.Aa, m, y2.pb));
-                for (f = 0; u = y2.Y[f]; M = u, f++)
+              for (E = 0; y = v2[E]; E++) {
+                y.Y || a.a.extend(y, b(e, g, y.Aa, m, y.pb));
+                for (f = 0; u = y.Y[f]; M = u, f++)
                   a.h.Wb(e, u, M);
-                !y2.Ed && m && (m(y2.Aa, y2.Y, y2.pb), y2.Ed = true, M = y2.Y[y2.Y.length - 1]);
+                !y.Ed && m && (m(y.Aa, y.Y, y.pb), y.Ed = true, M = y.Y[y.Y.length - 1]);
               }
               P && e.ownerDocument.activeElement != P && P.focus();
               q(h.beforeRemove, C2);
@@ -9318,8 +9318,10 @@ function fireEvent(event) {
 // src/WebBased/IDEAspects/BaseClasses/KOConverter.ts
 var ko = __toESM(require_knockout_latest());
 function toObservableObject(obj, existing) {
+  if (!existing)
+    existing = {};
   for (const key in obj) {
-    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+    if (Object.prototype.hasOwnProperty.call(obj, key) && key !== "__ko_mapping__" && key !== "_host") {
       const value = obj[key];
       if (Array.isArray(value)) {
         if (!existing[key]) {
@@ -9344,25 +9346,6 @@ function toObservableObject(obj, existing) {
   }
   return existing;
 }
-var x = {
-  l1: "l1",
-  o1: {
-    l2: "l2",
-    o2: {
-      l3: "l3"
-    },
-    a1: [
-      { l4: "l4" }
-    ]
-  },
-  debug: {
-    enabled: false,
-    logToConsole: false,
-    showInAspect: false
-  }
-};
-var y = toObservableObject(x, {});
-var p = y.debug().liveConfig();
 
 // src/WebBased/IDEAspects/BaseClasses/BaseIDEAspect.ts
 console.log("v: - 5.27");
@@ -9437,7 +9420,7 @@ var BaseIDEAspect = class {
     });
   }
   setupLiveConfig() {
-    this.options.debug.liveConfig.subscribe((newValue) => {
+    this.options.debug.subscribe((newValue) => {
       if (newValue.liveConfig) {
         this.activateLiveConfig(newValue.liveConfig);
       }
@@ -9464,7 +9447,7 @@ var BaseIDEAspect = class {
       config
     };
     let timeout = false;
-    this.liveConfigDiv = this.createFormBuilderElement();
+    this.liveConfigDiv = this.createLiveConfigDiv();
     this.element.prepend(this.liveConfigDiv);
     setTimeout(() => {
       config.subscribe((newValue) => {
@@ -9476,12 +9459,12 @@ var BaseIDEAspect = class {
           let newConfig = JSON.parse(config());
           this._initialise(this.element, newConfig, this.baseModel);
           this.reset(newConfig);
-        }, 500);
+        }, 5e3);
         timeout = true;
       });
     }, 3e3);
   }
-  createFormBuilderElement() {
+  createLiveConfigDiv() {
     const outerDiv = document.createElement("div");
     outerDiv.className = "col-sm-12 formbuilder-editor-json";
     const innerDiv = document.createElement("div");
@@ -9506,7 +9489,7 @@ var BaseIDEAspect = class {
   buildErrorDiv() {
     this.inf("Building error div");
     let errorDiv = this.element.querySelector(this.errorDivSelector);
-    if (!errorDiv || !this.errors) {
+    if (!errorDiv || !this.errors || this.errors() || this.errors().length === 0) {
       return;
     }
     l("errorDiv.innerHTML");
@@ -9904,7 +9887,7 @@ var DatePickerAspect = class extends BaseIDEAspect {
     input.setAttribute("data-td-target", "#" + this.uniqueId);
     this.datePickerDiv.appendChild(input);
     element.appendChild(this.datePickerDiv);
-    this.dateTimePicker = new import_tempus_dominus.TempusDominus(this.datePickerDiv, this.options.datePickerOptions() || {});
+    this.dateTimePicker = new import_tempus_dominus.TempusDominus(this.datePickerDiv, this.configuration.datePickerOptions || {});
     this.options.datePickerOptions.subscribe((newValue) => {
       this.loadAndBind();
     });

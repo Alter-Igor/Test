@@ -1,6 +1,5 @@
 import * as ko from 'knockout';
 import { I_IDE_Aspect_Modeller_Configuration } from './IWidgetJson';
-import { IObservableConfigurationOptions } from './BaseIDEAspect';
 
 export type NestedObservableObject<T> = {
     [K in keyof T]: T[K] extends Array<infer U> ? ko.ObservableArray<NestedObservableObject<U>> :
@@ -8,34 +7,37 @@ export type NestedObservableObject<T> = {
     ko.Observable<T[K]>;
 };
 
-export function toObservableObject<T>(obj: T, existing: IObservableConfigurationOptions<T>){
+export function toObservableObject<T>(obj: T, existing: NestedObservableObject<T>): NestedObservableObject<T> {
+    
+    if(!existing) existing = {} as NestedObservableObject<T>;
+   
     for (const key in obj) {
-        if (Object.prototype.hasOwnProperty.call(obj, key)) {
+        if (Object.prototype.hasOwnProperty.call(obj, key) && key !== "__ko_mapping__" && key !== "_host") {
             const value = obj[key as keyof T];
 
             if (Array.isArray(value)) {
                 if (!existing[key]) {
-                    existing[key] = ko.observableArray(value.map(item => toObservableObject(item, {} as IObservableConfigurationOptions<typeof item>))) as any;
+                    existing[key] = ko.observableArray(value.map(item => toObservableObject(item, {} as NestedObservableObject<typeof item>))) as any;
                 } else {
-                    (existing[key] as any)(value.map(item => toObservableObject(item, {} as IObservableConfigurationOptions<typeof item>)));
+                    existing[key](value.map(item => toObservableObject(item, {} as NestedObservableObject<typeof item>)));
                 }
             } else if (value !== null && typeof value === 'object') {
                 if (!existing[key]) {
-                    existing[key] = ko.observable(toObservableObject(value, {} as any)) as any;
+                    existing[key] = ko.observable(toObservableObject(value, {} as NestedObservableObject<typeof value>)) as any;
                 } else {
-                    (existing[key] as any)(toObservableObject((value as any), ((existing[key] as any)() as any)));
+                    existing[key](toObservableObject((value as any), (existing[key]() as any)));
                 }
             } else {
                 if (!existing[key]) {
                     (existing[key] as any) = ko.observable(value);
                 } else {
-                    (existing[key] as any)((value as any));
+                    existing[key]((value as any));
                 }
             }
         }
     }
 
-    return existing 
+    return existing as NestedObservableObject<T>;
 }
 export interface IDebug {
     supportRequestEnabled?: boolean;
@@ -63,49 +65,49 @@ export interface IDebug {
 
 // export type IBaseIDEAspectConfiguration<TConfig> = IConfigurationHost & I_IDE_Aspect_Modeller_Configuration<TConfig>;
 
-interface RootObject {
-  l1: string;
-  o1: O1;
-}
+// interface RootObject {
+//   l1: string;
+//   o1: O1;
+// }
 
-interface O1 {
-  l2: string;
-  o2: O2;
-  a1: A1[];
-}
+// interface O1 {
+//   l2: string;
+//   o2: O2;
+//   a1: A1[];
+// }
 
-interface A1 {
-  l4: string;
-}
+// interface A1 {
+//   l4: string;
+// }
 
-interface O2 {
-  l3: string;
-}
-// Now let's use the function:
-const x: I_IDE_Aspect_Modeller_Configuration<RootObject> = {
-    l1: "l1",
-    o1: {
-        l2:"l2",
-        o2: {
-            l3: "l3",
-        },
-        a1: [
-            { l4: "l4" }
-        ]
-    },
-    debug:
-    {
-        enabled: false,
-        logToConsole: false,
-        showInAspect: false
-    }
-}
+// interface O2 {
+//   l3: string;
+// }
+// // Now let's use the function:
+// const x: I_IDE_Aspect_Modeller_Configuration<RootObject> = {
+//     l1: "l1",
+//     o1: {
+//         l2:"l2",
+//         o2: {
+//             l3: "l3",
+//         },
+//         a1: [
+//             { l4: "l4" }
+//         ]
+//     },
+//     debug:
+//     {
+//         enabled: false,
+//         logToConsole: false,
+//         showInAspect: false
+//     }
+// }
 
+// let m :  NestedObservableObject<I_IDE_Aspect_Modeller_Configuration<RootObject>>
 
-let y = toObservableObject(x,{} as any) 
+// let y = toObservableObject(x,{} as any) as  NestedObservableObject<I_IDE_Aspect_Modeller_Configuration<RootObject>>
 
-let p = y.debug().liveConfig!()
-
+// let p = y.debug().liveConfig!()
 
 // export function toObservableObject(obj: any, existingObservables?:ko.Observable<any>): ko.Observable {
 //     const result = existingObservables || {} as ko.Observable;

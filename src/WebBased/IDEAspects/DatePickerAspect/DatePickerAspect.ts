@@ -174,7 +174,7 @@ export class DatePickerAspect extends BaseIDEAspect<IDatePickerAspectOptions, an
 
         element.appendChild(this.datePickerDiv);
 
-        this.dateTimePicker = new TempusDominus(this.datePickerDiv, this.options.datePickerOptions() || {});
+        this.dateTimePicker = new TempusDominus(this.datePickerDiv, this.configuration.datePickerOptions || {});
         this.options.datePickerOptions.subscribe((newValue) => {
             this.loadAndBind();
         });

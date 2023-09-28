@@ -10353,36 +10353,6 @@ function getBearerToken() {
 // src/WebBased/IDEAspects/BaseClasses/BaseIDEAspect.ts
 var ko2 = __toESM(require_knockout_latest());
 
-// src/WebBased/IDEAspects/BaseClasses/KOConverter.ts
-var ko = __toESM(require_knockout_latest());
-function toObservableObject(obj, existing) {
-  for (const key in obj) {
-    if (Object.prototype.hasOwnProperty.call(obj, key)) {
-      const value = obj[key];
-      if (Array.isArray(value)) {
-        if (!existing[key]) {
-          existing[key] = ko.observableArray(value.map((item) => toObservableObject(item, {})));
-        } else {
-          existing[key](value.map((item) => toObservableObject(item, {})));
-        }
-      } else if (value !== null && typeof value === "object") {
-        if (!existing[key]) {
-          existing[key] = ko.observable(toObservableObject(value, {}));
-        } else {
-          existing[key](toObservableObject(value, existing[key]()));
-        }
-      } else {
-        if (!existing[key]) {
-          existing[key] = ko.observable(value);
-        } else {
-          existing[key](value);
-        }
-      }
-    }
-  }
-  return existing;
-}
-
 // src/WebBased/IDEAspects/BaseClasses/ObjectHelpers.ts
 function setNestedProperty(obj, propertyPath, value) {
   const properties = propertyPath.split(".");
@@ -10472,6 +10442,38 @@ function fireEvent(event) {
   $ui.events.broadcast(event.eventPath, event);
 }
 
+// src/WebBased/IDEAspects/BaseClasses/KOConverter.ts
+var ko = __toESM(require_knockout_latest());
+function toObservableObject(obj, existing) {
+  if (!existing)
+    existing = {};
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key) && key !== "__ko_mapping__" && key !== "_host") {
+      const value = obj[key];
+      if (Array.isArray(value)) {
+        if (!existing[key]) {
+          existing[key] = ko.observableArray(value.map((item) => toObservableObject(item, {})));
+        } else {
+          existing[key](value.map((item) => toObservableObject(item, {})));
+        }
+      } else if (value !== null && typeof value === "object") {
+        if (!existing[key]) {
+          existing[key] = ko.observable(toObservableObject(value, {}));
+        } else {
+          existing[key](toObservableObject(value, existing[key]()));
+        }
+      } else {
+        if (!existing[key]) {
+          existing[key] = ko.observable(value);
+        } else {
+          existing[key](value);
+        }
+      }
+    }
+  }
+  return existing;
+}
+
 // src/WebBased/IDEAspects/BaseClasses/BaseIDEAspect.ts
 console.log("v: - 5.27");
 var ERROR_DIV_SELECTOR = "#render-errors-here";
@@ -10541,12 +10543,12 @@ var BaseIDEAspect = class {
     });
   }
   setupLiveConfig() {
-    this.options.debug.liveConfig.subscribe((newValue) => {
+    this.options.debug.subscribe((newValue) => {
       if (newValue.liveConfig) {
         this.activateLiveConfig(newValue.liveConfig);
       }
     });
-    this.activateLiveConfig(this.options.debug().liveConfig);
+    this.activateLiveConfig(this.options.debug().liveConfig());
   }
   activateLiveConfig(active) {
     if (!active) {
@@ -10568,7 +10570,7 @@ var BaseIDEAspect = class {
       config
     };
     let timeout = false;
-    this.liveConfigDiv = this.createFormBuilderElement();
+    this.liveConfigDiv = this.createLiveConfigDiv();
     this.element.prepend(this.liveConfigDiv);
     setTimeout(() => {
       config.subscribe((newValue) => {
@@ -10580,12 +10582,12 @@ var BaseIDEAspect = class {
           let newConfig = JSON.parse(config());
           this._initialise(this.element, newConfig, this.baseModel);
           this.reset(newConfig);
-        }, 500);
+        }, 5e3);
         timeout = true;
       });
     }, 3e3);
   }
-  createFormBuilderElement() {
+  createLiveConfigDiv() {
     const outerDiv = document.createElement("div");
     outerDiv.className = "col-sm-12 formbuilder-editor-json";
     const innerDiv = document.createElement("div");
@@ -10610,7 +10612,7 @@ var BaseIDEAspect = class {
   buildErrorDiv() {
     this.inf("Building error div");
     let errorDiv = this.element.querySelector(this.errorDivSelector);
-    if (!errorDiv || !this.errors) {
+    if (!errorDiv || !this.errors || this.errors() || this.errors().length === 0) {
       return;
     }
     l("errorDiv.innerHTML");
@@ -11778,7 +11780,7 @@ var ExternalMatterSearch = class extends BaseIDEAspect {
           const rule = rules[i];
           if (!rule.rule)
             continue;
-          retValue = evaluteRule(`model.${rule.rule}`, this.model, "model");
+          retValue = evaluteRule(`model.${rule.rule()}`, this.model, "model");
         }
       }
     }
