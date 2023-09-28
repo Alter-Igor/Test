@@ -1,0 +1,34 @@
+<script type="text/html" id="wk-new-instruction-address">
+
+<div>
+
+    <div class="input-group" style="width: 100%" data-bind="css:{ 'open': showAutoComplete }">
+
+        <input id="tentantPropertyAddress" type="text" placeholder="Start typing address to search" class="form-control input-sm"
+               data-bind="textInput: searchQuery, event: {blur: hideAutoComplete, keydown: autoCompleteKey}"
+               autofocus="autofocus" autocomplete="off" />
+
+        <ul class="dropdown-menu address-drop-down">
+            <!-- ko if: showNoResultsMessage -->
+            <li class="dropdown-header">No results found</li>
+            <!-- /ko -->
+            <!-- ko if: searchInProgress -->
+            <li class="dropdown-header">Searching...</li>
+            <!-- /ko -->
+            <!-- ko foreach: autoCompleteResults -->
+            <li class="result" data-bind="event:{ mousedown: $parent.autoCompleteSelectResult.bind($parent) }, css:{ 'selected': selected }">
+                <a class="result-bordered">
+                    <div class="flex-row">
+                        <div class="column-fit">
+                            <span data-bind="text: display"></span>
+                        </div>
+                    </div>
+                </a>
+            </li>
+            <!-- /ko -->
+        </ul>
+    </div>
+    
+</div>
+    
+</script>

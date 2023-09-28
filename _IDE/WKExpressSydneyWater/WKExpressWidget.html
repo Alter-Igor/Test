@@ -1,0 +1,400 @@
+<div class="WKExpressWidget">
+    
+    <div class="segment_header"
+        style="width:auto;text-align:Left; display: flex; align-items: center; justify-content:space-between;">
+        <h1 style="font-size:2.0vw; font-weight:bold ; color: #FFFFFF; color: #163269; margin-bottom: 24px;">Sydney
+            Water Recoveries Platform</h1>
+        <img src="/_ideFiles/WKExpressSydneyWater/sw-logo.gif"
+            style="max-width: 300px; height: auto; padding: 10px 15px 15px 0px;">
+    </div>
+    <!--ko if: !model.currentlySubmited() -->
+
+    <div>
+        <label class="form-label">Client Details</label>
+    </div>
+    <div class="client-details">
+        <div class="title-text" id="client-name">
+            <div id="title-label">Name: </div>
+            <div data-bind="text: model.organisationName()"></div>
+        </div>
+    </div>
+
+    <br>
+    <div>
+        <label class="form-label">Claim Handler</label>
+    </div>
+    <div class="client-details">
+        <div class="title-text" id="claim-handler-name">
+            <div id="title-label">Name: </div>
+            <div data-bind="text:$ui.pageContext.user.firstname() + ' ' + $ui.pageContext.user.lastname()"></div>
+        </div>
+        <div class="title-text" id="claim-handler-name">
+            <div id="title-label">Email: </div>
+            <div data-bind="text:ui.handler.email"></div>
+        </div>
+        <div class="title-text" id="claim-handler-name">
+            <div id="title-label">Phone Number: </div>
+            <div data-bind="text:ui.handler.tel"></div>
+        </div>
+    </div>
+    <br>
+    <div class="form-group">
+        <label class="form-label" for="claimRef">Claim Reference/No. <span
+                style="display: inline-block; margin: 0 0; color: red;">*</span></label>
+        <input class="form-control col-4" id="claimRef" type="text" placeholder="Insert Claim's Reference"
+            data-bind="textInput: model.claimRef" />
+        <!--ko if: !model.validationMessages() -->
+        <div class="text-danger" data-bind="visible: validation.claimRef, text:validation.claimRef"></div>
+        <!-- /ko -->
+    </div>
+
+    <div data-bind="visible: model.claimRef">
+    
+    <div class="form-group">
+        <label>Is third party an organisation?</label>
+        <div>
+            <input type="checkbox" data-bind="toggleSwitch: ui.thirdPartyIsOrganisation" />
+        </div>
+    </div>
+    
+    <!-- ko if: ui.thirdPartyIsOrganisation -->
+    <div class="form-group" data-bind="visible: model.thirdParty()">
+        <label class="form-label" for="TPIName">Third party name <span
+                style="display: inline-block; margin: 0 0; color: red;">*</span></label>
+        <input class="form-control col-4" id="TPIName" type="text" placeholder="Enter third party name"
+            data-bind="textInput: model.TPIName" />
+        <div class="text-danger" data-bind="visible: validation.TPIName, text:validation.TPIName"></div>
+    </div>
+    <!-- /ko -->
+    <!-- ko ifnot: ui.thirdPartyIsOrganisation -->
+    <div class="form-group" data-bind="visible: model.thirdParty()">
+        <label class="form-label" for="TPIName">Third party name <span
+                style="display: inline-block; margin: 0 0; color: red;">*</span></label>
+        <div class="flex-row">
+            <div class="column-fit">
+                <input class="form-control" id="TPIName" type="text" placeholder="Third party first name" data-bind="textInput: model.TPIFirstName" />
+                <div class="text-danger" data-bind="visible: validation.TPIFirstName, text:validation.TPIFirstName"></div>
+            </div>
+            <div class="column-fit" style="margin-left: 5px;">
+                <input class="form-control" id="TPIName" type="text" placeholder="Third party last name" data-bind="textInput: model.TPILastName" />
+                <div class="text-danger" data-bind="visible: validation.TPILastName, text:validation.TPILastName"></div>
+            </div>
+        </div>
+    </div>
+    <!-- /ko -->
+    
+    
+    <div class="form-group" data-bind="visible: model.thirdParty()">
+        <label>Third party address:</label>
+        <div id="wk-tpi-address" class="wk-address-form">
+        </div>
+    </div>
+    
+    <div class="form-group" data-bind="visible: model.thirdParty()">
+        <label for="tpiEmail" class="control-label">Third party email:</label>
+        <input class="form-control" id="tpiEmail" type="email" placeholder="Third party email" data-bind="textInput: model.tpiEmail" />
+        
+        <div class="text-danger" data-bind="visible: validation.tpiEmail, text:validation.tpiEmail"></div>
+    </div>
+    
+
+    <div class="form-group" data-bind="visible: model.checkedThirdPartyInsurerName()">
+        <label class="form-label" for="TPI">Enter name of third party insurer</label>
+        <input class="form-control col-4" id="TPI" type="text" placeholder="Insert Third Party Insurer"
+            data-bind="textInput: model.TPI" />
+        <!--ko if: !model.validationMessages() -->
+        <div class="text-danger" data-bind="visible: validation.TPI, text:validation.TPI"></div>
+        <!-- /ko -->
+    </div>
+
+    <!-- ko if: model.thirdParty  -->
+
+    <div class="form-group">
+        <label class="form-label" for="dateOfLossInput">Enter date of loss <span
+                style="display: inline-block; margin: 0 0; color: red;">*</span></label>
+        <div>
+            <div class="form-group">
+                <div class="input-group date" data-provide="datepicker"
+                    data-bind="event:{mouseleave : checkDate, mousemove: checkDate}">
+                    <input type="date" class="form-control"
+                        data-bind="value: model.dateOfLossInput, event:{ mousemove: checkDate, mouseleave : checkDate}">
+                </div>
+            </div>
+        </div>
+        <div class="text-danger" data-bind="visible:model.dateofLossGreaterThan()">Date cannot be in the future</div>
+    </div>
+
+    <div class="form-group">
+        <label for="typeOfLoss">Type of loss <span
+                style="display: inline-block; margin: 0 0; color: red;">*</span></label>
+        <div>
+            <select id="typeOfLoss" class="form-control"
+                data-bind="options: model.typeOfLoss, optionsText: 'name', optionsValue: 'id', optionsCaption: 'Select a type of Loss', click: checkCauseOfLoss">
+            </select>
+        </div>
+        <div class="text-danger" data-bind="visible: validation.selectedTypeOfLoss, text:validation.selectedTypeOfLoss"></div>
+    </div>
+    
+    <!-- ko if: model.selectedTypeOfLoss() == "500001989" -->
+    <div class="form-group">
+        <label>Asset Details:</label>
+        <input type="text" class="form-control" data-bind="textInput: model.assetDetails" />
+    </div>
+    <!-- /ko -->
+    
+    <!-- ko if: model.selectedTypeOfLoss -->
+    <div class="form-group">
+        <label class="form-label" for="incidentCausingDamage">Incident Causing Damage</label>
+        <div>
+            <textarea id="incidentCausingDamage" name="incidentCausingDamage" data-bind="textInput: model.incidentCausingDamage"
+            style="border-radius: 4px" rows="3" cols="33"></textarea>
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <label class="form-label" for="descriptionOfRemedialWorksRequired">Description of Remedial Works Required</label>
+        <div>
+            <textarea id="incidentCausingDamage" name="descriptionOfRemedialWorksRequired" data-bind="textInput: model.descriptionOfRemedialWorksRequired"
+            style="border-radius: 4px" rows="3" cols="33"></textarea>
+        </div>
+    </div>
+    <!-- /ko -->
+
+    <div data-bind="visible: !model.selectedCauseIncorrect()">
+        
+    <div class="form-group">
+        <label for="locationOfLoss">Location of loss <span
+                style="display: inline-block; margin: 0 0; color: red;">*</span></label>
+        <div>
+            <select id="locationOfLoss" class="form-control"
+                data-bind="options: model.locationOfLoss, optionsText: 'name' , optionsCaption: 'Select a location', optionsValue: 'id', click: checkLocation">
+            </select>
+        </div>
+        <div class="text-danger" data-bind="visible: validation.locationOfLoss, text:validation.locationOfLoss"></div>
+    </div>
+
+    <div class="form-group">
+        <label>Address of location of loss:</label>
+        <div id="wk-loss-address" class="wk-address-form">
+        </div>
+        <div class="text-danger" data-bind="visible: validation.locationOfLossAddress, text:validation.locationOfLossAddress"></div>
+    </div>
+    </div> <!-- selectedLocation -->
+    
+    <div class="form-group">
+        <label for="amountClaimed" class="control-label">Amount claimed:</label>
+        <input class="form-control" id="amountClaimed" type="text" placeholder="Amount claimed" data-bind="currency: model.amountClaimed, currencyCode: 'AUD'" />
+    </div>
+    
+    
+    <div class="form-group">
+        <label for="haveLODBeenSent">Have previous letters of demand been sent?:<span
+                style="display: inline-block; margin: 0 0; color: red;">*</span></label>
+        <div>
+            <select id="haveLODBeenSent" class="form-control"
+                data-bind="options: model.optionsetYesNo, optionsText: 'name', optionsValue: 'id', value: model.havePreviousLodBeenSent, valueAllowUnset: true">
+            </select>
+        </div>
+    </div>
+    
+    
+    <!-- ko if: model.havePreviousLodBeenSent() == "5023402" -->
+    <div class="form-group">
+        <label class="form-label" for="firstLodSent">First LOD sent:</label>
+        <div>
+            <div class="form-group">
+                <div class="input-group date" data-provide="datepicker">
+                    <input type="date" class="form-control" data-bind="value: model.firstLodSent">
+                </div>
+            </div>
+        </div>
+        <div class="text-danger" data-bind="visible:validation.firstLodSent,text:validation.firstLodSent"></div>
+    </div>
+    <div class="form-group">
+        <label class="form-label" for="secondLodSent">Second LOD sent:</label>
+        <div>
+            <div class="form-group">
+                <div class="input-group date" data-provide="datepicker">
+                    <input type="date" class="form-control" data-bind="value: model.secondLodSent">
+                </div>
+            </div>
+        </div>
+        <div class="text-danger" data-bind="visible:validation.secondLodSent,text:validation.secondLodSent"></div>
+    </div>
+    <div class="form-group">
+        <label class="form-label" for="thirdLodSent">Third LOD sent:</label>
+        <div>
+            <div class="form-group">
+                <div class="input-group date" data-provide="datepicker">
+                    <input type="date" class="form-control" data-bind="value: model.thirdLodSent">
+                </div>
+            </div>
+        </div>
+        <div class="text-danger" data-bind="visible:validation.thirdLodSent,text:validation.thirdLodSent"></div>
+    </div>
+    <!-- /ko -->
+
+
+    <div class="form-group">
+        <div id="uploadDocs">
+            <label class="form-label" for="settleAmount">Please upload all relevant documents e.g:
+            <span
+                style="display: inline-block; margin: 0 0; color: red;">*</span></label>
+            <div>
+                <ul>
+                    <li>SWC Work Orders</li>
+                    <li>Suppliers Invoices</li>
+                    <li>Photographs</li>
+                    <li>Previous letters of demands and correspondence with Recovery Target</li>
+                    <li>Asset Inspection Reports (if available)</li>
+                    <li>Hydra plan with assets marked (if available) </li>
+                    <li>CCTV reports (if available) </li>
+                    <li>Loss Adjustor Report (if available)</li>
+                    <li>Customer Interaction Report (if applicable) </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="file-upload-section">
+        <div class="form-group" data-bind="visible: false">
+            <label for="uploadFolder">Upload to folder:</label>
+            <div>
+                <select id="uploadFolder" class="form-control"
+                    data-bind="options: ui.folders, optionsCaption: 'Select a folder', value: uploadFolder">
+                </select>
+            </div>
+        </div>
+
+        <div class="upload-section-wrap">
+            <label class="btn btn-primary btn-md button-wrap" style="margin-bottom: 10px;" for="upload-section-btn"
+                data-bind="{ event: { change: selectFiles }}">Upload documents</label>
+            <input type="file" id="upload-section-btn" data-bind="{ event: { change: selectFiles }}" class="form-control"
+                accept=".avi,.bmp,.doc,.docx,.gif,.jpeg,.jpg,.mp3,.mp4,.mpeg,.mpg,.pdf,.png,.ppt,.pptx,.txt,.wav,.wmv,.xls,.xlsx,.zip"
+                multiple />
+        </div>
+
+
+        <div class="upload-section-wrap">
+            <div data-bind="nativeDropZone:{canDrop:true, onDrop:$root.dropFiles.bind($root)}" class="rd-dropzone"
+                style="min-height: 100px;">
+                <div class="fa fa-upload text-notice"></div>
+                <p>Drag or select files to upload</p>
+            </div>
+        </div>
+        
+        <!-- ko if: files().length === 0 -->
+        <span class="text-danger">
+            At least one document must be uploaded.
+        </span>
+        <!-- /ko -->
+        
+        <div class="files-uploaded">
+            <label>My uploaded documents:</label>
+            <ul>
+                <!-- ko foreach: files -->
+                <div class="individual-files">
+                    <li data-bind="text:'&nbsp;&nbsp;' + name" class="fa fa-file"></li>
+                    <span class="cancel-upload" data-bind="click: $root.removeFiles.bind($root)"><i class="fa fa-trash"
+                            style="color: #ad6501"></i></span>
+                </div>
+                <!-- /ko -->
+            </ul>
+        </div>
+    </div>
+    <!-- ko ifnot: hasValidationErrors -->
+
+    <div class="form-group">
+        <label class="form-label" for="additionalInfo">Additional instructions/notes</label>
+        <textarea id="additionalInfo" name="story" data-bind="textInput: model.additionalInfo"
+            style="border-radius: 4px" rows="5" cols="33"></textarea>
+        <div class="text-danger" data-bind="visible: validation.inputAddressLoss, text:validation.inputAddressLoss">
+        </div>
+    </div>
+
+    <!-- ko if: false -->
+    <div class="form-group">
+        <label class="form-label" for="TCHeader"
+            style="color:#05428c ;margin-top: 10px; font-size: 16px; margin-bottom: 10px;">Terms and conditions</label>
+        <label class="form-label" id="TC" for="TC">By submitting your instructions through the W+K Express Recoveries
+            portal, you instruct Wotton + Kearney to undertake an express recovery for you in accordance with the
+            Express Recoveries <a data-toggle="modal" id="TCLink" data-target="#tcsmodal"
+                data-bind="click: checkComplex"> Terms and conditions</a></label>
+        <div id="TCbtns" class="btn-group" data-toggle="buttons">
+            <label class="btn btn-sm" data-bind="click: tandcToggle, checkedValue: true">
+                <input type="radio" name="TC" value="1" id="TCYEs" />I agree
+            </label>
+            <label class="btn btn-sm" data-bind="click: tandcToggle, checkedValue: false">
+                <input type="radio" name="TC" value="0" id="TCNo" />Cancel
+            </label>
+        </div>
+    </div>
+    <!-- /ko --> <!-- tc -->
+
+    <div class="submitBtn">
+        <button class="btn btn-primary btn-md" type="button"
+            data-bind="enable: true, click: $root.submit">Submit</button>
+    </div>
+    
+    <!-- /ko --> <!-- hasValidationErrors -->
+
+    <!-- /ko --> <!-- thirdParty -->
+
+    </div> <!-- claimRef -->
+    
+    <!-- /ko --> <!-- currentlySubmitted -->
+    
+    <div class="modal fade" id="tcsmodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <!-- ko if: complex() === 5023402 -->
+                    <h4 class="modal-title">Terms and Conditons: Express instruction</h4>
+                    <!-- /ko -->
+                    <!-- ko if: complex() === 5023403 -->
+                    <h4 class="modal-title">Terms and Conditons: Complex instruction</h4>
+                    <!-- /ko -->
+                </div>
+                <div class="modal-body">
+                    <!-- ko if: complex() === 5023402  -->
+                        <div data-bind="html:model.expressHtml"></div>
+                    <!-- /ko -->
+                    <!--ko if: complex() === 5023403  -->
+                        <div data-bind="html:model.complexHtml"></div>
+                    <!-- /ko -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!--T&CS agree -->
+    <!--ko if: model.currentlySubmited() -->
+    <div style="display: flex; flex-direction: column; align-items: center;">
+        <div class="submittedMessage">
+            <strong>Thank you for your referral.  A member of our team will conduct a conflict check and will contact you within 48 hours.</strong>
+        </div>
+        <div class="documentsUploadedSec">
+            <strong data-bind="text: documentsSuccesfullyUploaded().length"></strong> out of <strong data-bind="text: files().length"></strong> documents uploaded.
+         <!-- ko if: files().length > documentsSuccesfullyUploaded().length -->
+         <div>
+            <strong>Files:</strong>
+             <!--ko foreach: filesNotUploaded -->
+                <li data-bind="text: name" style="padding-left: 30px;padding-bottom: 10px;"></li>
+            <!-- /ko -->
+            <strong>Failed to upload.</strong>
+        </div>
+         <!-- /ko -->
+        </div>
+        <button type="button" class="btn btn-default" data-bind="click: reset" style="width: 250px; margin: 10px;">Submit another recoveries instruction</button>
+    </div>
+    <!-- /ko -->    
+    <!--T&CS disagree -->
+    <!--<div>-->
+    <!--    <strong>You have selected not to agree with our T&amp;Cs. Have a nice day.</strong>-->
+    <!--</div>-->
+
+</div>

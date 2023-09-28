@@ -1,0 +1,44 @@
+{
+    "id": "WKExpressSydneyWater",
+    "priority": 6000,
+    "designer":
+    {
+        "allowInPortalDesigner": true,
+        "allowInSharedoPortalDesigner": true,
+        "title": "W+K Express Recoveries Platform - Sydney Water",
+        "icon": "fa-cog",
+        "description": "widget that creates an instruction type for W+K ",
+        "categories":
+        [
+            "WK Express Widget"
+        ],
+        "isConfigurable": true,
+        "configurationWidget": "WKExpressSydneyWaterDesigner"
+    },
+    "scripts":
+    [
+        "/_ideFiles/WKExpressSydneyWater/WKExpressWidgetAgent.js",
+        "/_ideFiles/WKExpressSydneyWater/NewInstructionAddressModel.js",
+        "/_ideFiles/WKExpressSydneyWater/WKExpressWidget.js",
+        "/_ideFiles/WKExpressSydneyWater/AddressUiConfigHandler.js",
+        "/_ideFiles/WKExpressSydneyWater/AddressModel.js",
+           "/_ideFiles/WKExpressSydneyWater/AddressPicker.js"
+    ],
+    "styles":
+    [
+        "/_ideFiles/WKExpressSydneyWater/WKExpressWidget.css"
+    ],
+    "templates":
+    [
+        "/_ideFiles/WKExpressSydneyWater/WKExpressWidget.html",
+        "/_ideFiles/WKExpressSydneyWater/AddressTemplate.html"
+    ],
+    "menuTemplates":
+    [
+        "/_ideFiles/WKExpressSydneyWater/WKExpressWidgetMenu.html"
+    ],
+    "components":
+    [
+        "Sharedo.UI.Framework.Components.Toggle"
+    ]
+}

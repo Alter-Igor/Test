@@ -12,8 +12,21 @@ export interface IExternalMatterSearchConfiguration {
   dataMapping: IDataMapping[],
   formBuilderFieldSerialisedData: string;
   fackSearchDataIDEPath: string | undefined;
-  fackLoadDataIDEPath: string | undefined;
+  fackLoadDataIDEPath: string | undefined;  
+
+  searchApiExecutionSettings?: Array<TAPIExecutionSettings>;
+  loadApiExecutionSettings?: Array<TAPIExecutionSettings>;
+
 }
+
+export type TAPIExecutionSettings = {
+  method:"GET"|"POST"|"PUT"|"DELETE",
+  url:string,
+  data?:any,
+  resultDataPath?:string,
+  resultDatapPrefixName?:string
+}
+
 
 export type IStyleEntry =IStyleRule[] |string| INameValue | null
 

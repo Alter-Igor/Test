@@ -17,7 +17,7 @@ import * as SCHEMA from "./ConfigSchema.json";
 import { DEFAULT_SELECTED_FIELDS_CONFIG } from "./DefaultSelectedFields";
 import { mapData, reverseMapData } from "./DataMapper";
 import { getNestedProperty } from "../BaseClasses/ObjectHelpers";
-import { set } from "lodash";
+import { forEach, set } from "lodash";
 import { NestedObservableObject } from "../BaseClasses/KOConverter";
 
 const CSS_CLASS_SELECTED_ITEM = "ems-selected-item";
@@ -25,6 +25,8 @@ const CSS_CLASS_RESULT_ITEM = "ems-result-item";
 const CSS_CLASS_ROW_CONTAINER = "ems-row-container";
 const CUSTOM_TEMPLATE_CONTENT_ID = "resultItem";
 const AUTOCOMPLETE_ID = "externalMatterSearch";
+const SEARCH_TEMPLATE_NAME = "__matter_search_item_template";
+const SEARCH_TERM = "searchTerm";
 
 //customTemplateContentId = "resultItem";
 
@@ -247,14 +249,13 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
      * @returns {void}
      */
     setup() {
-        this.searchTemplateToUseName = "__matter_search_item_template";
+        
 
         if (!validateJSON(this.configuration, (SCHEMA as any))) {
             this.wrn("SearchFields does not match schema");
         }
 
         this.inputVisability = ko.computed(() => {
-
             this.getInputVisability();
             return true;
         });
@@ -270,20 +271,6 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
             this.wrn("No selectedFields defined, using searchFields as selectedFields");
             this.options.selectedFields(this.options.searchFields());
         }
-
-        // this.searchIFieldPlacement = autoGenerateTemplate(this.options.searchFields().rows!.map((r: any) => r.fields.map((f: any) => f.field)).flat());
-        // this.selectedIFieldPlacement = autoGenerateTemplate(this.options.searchFields().rows!.map((r: any) => r.fields.map((f: any) => f.field)).flat());
-
-        // this.searchIFieldPlacement = this.options.searchFields();
-        // this.selectedIFieldPlacement = this.options.selectedFields();
-
-        // this.searchIFieldPlacement = DEFAULT_SEARCH_FIELDS_CONFIG
-        // this.selectedIFieldPlacement = DEFAULT_SELECTED_FIELDS_CONFIG
-
-        // console.log("-------------------")
-        // console.log("example",DEFAULT_SEARCH_FIELDS_CONFIG)
-        // console.log("search ",this.options.searchFields())
-        // console.log("-------------------")
 
         this.customTemplateContentId = CUSTOM_TEMPLATE_CONTENT_ID;
         this.searchCustomTemplateId = "__custom_matter_search_item_template";
@@ -309,10 +296,21 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
             throw new Error(`Could not find element with class '${CSS_CLASS_SELECTED_ITEM}'`);
         }
 
+        this.autoComplete = this.autoComplete || this.setupAutoComplete()
 
+        this.selectedMatter = ko.observable<IExternalResultItem | undefined>();
 
+        this.selectedMatter.subscribe((newValue) => {
+            this.ensureSelectedMatterTemplate();
+        });
 
-        this.autoComplete = this.autoComplete || new Sharedo.UI.Framework.Components.AutoCompleteHandler(
+        this.options.selectedFields.subscribe((newValue) => {
+            this.ensureSelectedMatterTemplate();
+        });
+    }
+    setupAutoComplete(): Sharedo.UI.Framework.Components.AutoCompleteHandler | undefined {
+    this.searchTemplateToUseName = SEARCH_TEMPLATE_NAME;
+        return new Sharedo.UI.Framework.Components.AutoCompleteHandler(
             {
                 enabled: true,
                 mode: AUTOCOMPLETE_MODE.SELECT,
@@ -332,19 +330,9 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
                     onLoad: this.loadSelectedExternalResult.bind(this)
                 },
                 onFind: this.querySearchAPI.bind(this),
-                templates: { result: this.searchTemplateToUseName },
+                templates: { result: this.searchTemplateToUseName  },
             }
         );
-
-        this.selectedMatter = ko.observable<IExternalResultItem | undefined>();
-
-        this.selectedMatter.subscribe((newValue) => {
-            this.ensureSelectedMatterTemplate();
-        });
-
-        this.options.selectedFields.subscribe((newValue) => {
-            this.ensureSelectedMatterTemplate();
-        });
     }
 
     private validateFormbuilderJSONFieldSetup() {
@@ -362,31 +350,15 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
      */
     load(model: any) {
         if (!this.sharedoId()) return;
-
         this.inf("Loading Data", this.model)
-
         if (this.options.formBuilderFieldSerialisedData()) {
             let data = this.formbuilder()[this.options.formBuilderFieldSerialisedData()];
             if (data) {
                 let base64Decoded = atob(data);
                 this.selectedMatter = ko.observable<IExternalResultItem | undefined>();
                 this.selectedMatter(JSON.parse(base64Decoded));
-                // this.ensureSelectedMatterTemplate();
             }
         }
-
-        // let matterModel = {
-        //     code: formData.externalMatter_Code,
-        //     title: formData.externalMatter_Title,
-        //     client: formData.externalMatter_Client,
-        //     partner: formData.externalMatter_Partner,
-        //     status: formData.externalMatter_Status,
-        //     isSecure: formData.externalMatter_IsSecure,
-        // };
-
-        // addVisualExtension(matterModel);
-
-        // this.selectedMatter(matterModel);
     }
 
     /**
@@ -616,9 +588,10 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
         this.log("Searching for: " + search, "green");
         let url = this.options.searchApiUrl();
 
-        if (url.indexOf("{searchTerm}") > -1) {
-            url = url.replace("{searchTerm}", search);
+        if (url.indexOf(SEARCH_TERM) > -1) {
+            url = url.replace(SEARCH_TERM, search);
         }
+
         executeGetv2(url).then((response) => {
             let cards = new Array<Sharedo.UI.Framework.Components.AutoCompleteFindCard>();
             let data: any;
@@ -654,6 +627,46 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
 
         return result;
     };
+
+
+    querySearchAPIMulti(v: string, handler: any) {
+    
+        this.clearErrors();
+        var search = v.toLowerCase();
+        var result = $.Deferred();
+
+        this.log("Searching for: " + search, "green");
+
+        if(!this.options.searchApiExecutionSettings){
+            this.err("No searchApiExecutionSettings defined");
+            return;
+        }
+
+        this.options.searchApiExecutionSettings()?.forEach((setting) => {
+            this.lh1("querySearchAPIMulti")
+            this.log("Searching for: " + search, "green");
+            let url = setting.url;
+
+            if (url.indexOf(SEARCH_TERM) > -1) {
+                url = url.replace(SEARCH_TERM, search);
+            }
+
+            
+
+        });
+
+
+        // let url = this.options.searchApiUrl();
+
+        // if (url.indexOf(SEARCH_TERM) > -1) {
+        //     url = url.replace(SEARCH_TERM, search);
+        // }
+
+
+
+      
+    
+    }
 
     autoCompleteSelect(selectCard: any, handler: any) {
     };

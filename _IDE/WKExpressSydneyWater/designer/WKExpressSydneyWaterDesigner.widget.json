@@ -1,0 +1,28 @@
+{
+    "id": "WKExpressSydneyWaterDesigner",
+    "priority": 6000,
+    "designer":
+    {
+        "allowInPortalDesigner": false,
+        "allowInSharedoPortalDesigner": false
+    },
+    "scripts":
+    [
+        "/_ideFiles/WKExpressSydneyWater/designer/WKExpressSydneyWaterDesigner.js"
+    ],
+    "styles":
+    [
+        "/_ideFiles/WKExpressSydneyWater/designer/WKExpressSydneyWaterDesigner.css"
+    ],
+    "templates":
+    [
+        "/_ideFiles/WKExpressSydneyWater/designer/WKExpressSydneyWaterDesigner.html"
+    ],
+    "menuTemplates":
+    [
+    ],
+    "components":
+    [
+        "Sharedo.Core.Case.TextEditor.Component"
+    ]
+}
