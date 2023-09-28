@@ -10,6 +10,8 @@ namespace("WK");
 WKExpressSydneyWater = function (element, configuration, baseModel) {
     const self = this;
 
+    const DEFAULT_SELECTED_LOCATION = "500000001";
+
     const defaults =
     {
         useCustomAddressInputConfig: null,
@@ -132,7 +134,7 @@ WKExpressSydneyWater = function (element, configuration, baseModel) {
 
         // Section 7: Location of Loss
         locationOfLoss: ko.observableArray(null),
-        selectedLocation: ko.observable(null),
+        selectedLocation: ko.observable(DEFAULT_SELECTED_LOCATION),
         selectedLocationIncorrect: ko.observable(true),
         inputLocationLoss: ko.observable(),
 
@@ -661,7 +663,7 @@ WKExpressSydneyWater.prototype.reset = function () {
     self.model.policeNumberAvailable(null);
 
     //location
-    self.model.selectedLocation("");
+    self.model.selectedLocation(DEFAULT_SELECTED_LOCATION);
     self.model.selectedLocationIncorrect(true);
     self.model.inputLocationLoss("");
 

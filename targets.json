@@ -467,7 +467,14 @@
                                     ]
                                 }
                             ]
-                        }
+                        },
+                        "searchApiExecutionSettings": [
+                            {
+                                "method": "GET",
+                                "url": "api/externalMatterProvider/query/{searchTerm}",
+                                "resultDataPath": "data[0].results"
+                            }
+                        ]
                     }
                 },
                 "scripts": [

@@ -2,32 +2,6 @@
   padding: 15px;
 }
 
-.ems-error-container
-{
-  box-shadow: 1px 1px 100px red;
-  padding: 10px;
-  margin: 10px;
-}
-
-.ems-error-title
-{
-  color: red;
-  font-weight: bold;
-  margin: 10px;
-  font-family: cursive;
-}
-.ems-error-user-message
-{
-  margin-bottom: 10px;
-}
-.ems-error-user-message:before{
-  content:"- ";
-   color:red;
-}
-.ems-error-user-message:after{
-  content:"";
-  color:red;
-}
 
 .ems-result-item {
   padding: 5px;
@@ -103,4 +77,42 @@
   display: flex;
   align-items: center;
   margin: 10px;
+}
+
+
+ 
+
+.ide-aspect-error-detailed-message {
+  margin: 0;
+  padding: 0;
+}
+
+
+.ide-aspect-error-title
+{
+  color: red;
+  font-weight: bold;
+  margin: 10px;
+  font-family: cursive;
+}
+.ide-aspect-error-user-message
+{
+  margin-bottom: 10px;
+}
+.ide-aspect-error-user-message:before{
+  content:"- ";
+   color:red;
+}
+.ide-aspect-error-user-message:after{
+  content:"";
+  color:red;
+}
+
+.ide-aspect-error-detailed-message {
+  margin: 0;
+  padding: 0;
+  text-wrap: pretty;
+  overflow: unset;
+  overflow-wrap: anywhere;
+  width: 100%;
 }

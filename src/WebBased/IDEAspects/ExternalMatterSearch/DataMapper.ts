@@ -1,4 +1,4 @@
-import { getNestedProperty, setNestedProperty } from "../BaseClasses/ObjectHelpers";
+import { getNestedProperty, setNestedProperty } from "../../Common/ObjectHelper";
 import { IDataMapping } from "./ExternalMatterSearchInterface";
 
   

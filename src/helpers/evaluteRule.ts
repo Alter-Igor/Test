@@ -37,6 +37,39 @@ export function evaluteRule(rule: string, dataContext: any, dataContextName?: st
   }
 }
 
+export function executeFunc(rule: string, dataContext: any, dataContextName?: string) {
+  // Create a new function based on the formatter
+  l(inf(`evaluteRule(${rule})`), dataContext);
+
+  let dataContextNameToUse = 'dataContext';
+
+  //replace the dataContextName with the dataContextNameToUse
+  // Replace the dataContextName with the dataContextNameToUse
+  if (dataContextName) {
+    // Escape special characters in the string for use in regular expressions
+    const escapedDataContextName = dataContextName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+    const regex = new RegExp(escapedDataContextName, 'g');
+    rule = rule.replace(regex, dataContextNameToUse);
+  }
+
+  checkAndLogUndefined(dataContext, rule, dataContextNameToUse);
+
+  const dynamicFunc = new Function(`${dataContextNameToUse}`, `return (${rule});`);
+
+  
+  l(inf(`evaluteRule(${rule}) - dynamicFunc: `), dynamicFunc);
+
+  try {
+    const returnValue: any = dynamicFunc(dataContext);
+   return returnValue;
+  } catch (e) {
+    console.log(`Error evaluating rule [${rule}] with data context`, e);
+    return `${e}`; // Default value in case of an error
+  }
+}
+
+
 
 export function checkAndLogUndefined(obj:any, rule:string, dataContextName:string) {
   const props = rule.split('.');

@@ -72,6 +72,8 @@ export type TUserErrors =
         suggestions?: Array<string>
         internalSuggestions?: Array<string>
         actions?: Array<string>
+        errorStack?: string,
+        additionalInfo?: any
     }
 
 export async function executeFetch<T>(api: string, method: string, data: any): Promise<TExecuteFetchResponse> {

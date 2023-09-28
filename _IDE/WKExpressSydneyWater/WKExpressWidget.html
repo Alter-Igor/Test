@@ -165,9 +165,11 @@
     <div class="form-group">
         <label for="locationOfLoss">Location of loss <span
                 style="display: inline-block; margin: 0 0; color: red;">*</span></label>
+               
         <div>
+            
             <select id="locationOfLoss" class="form-control"
-                data-bind="options: model.locationOfLoss, optionsText: 'name' , optionsCaption: 'Select a location', optionsValue: 'id', click: checkLocation">
+                data-bind="options: model.locationOfLoss, optionsText: 'name' , optionsCaption: 'Select a location', optionsValue: 'id', click: checkLocation, value: model.selectedLocation">
             </select>
         </div>
         <div class="text-danger" data-bind="visible: validation.locationOfLoss, text:validation.locationOfLoss"></div>

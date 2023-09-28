@@ -2,8 +2,8 @@ export interface IExternalMatterSearchConfiguration {
   fackMode: boolean;
   title: string |  undefined;
   inputVisability: boolean | IRule | IRule[];
-  searchApiUrl: string; ///"api/externalMatterProvider/query/{0}"
-  searchApiResultCollectionPath: string; //"data"
+  // searchApiUrl: string; ///"api/externalMatterProvider/query/{0}"
+  // searchApiResultCollectionPath: string; //"data"
   loadApiResultDataPath: string; //"data"
   loadApiUrl: string; //"api/externalMatterProvider/details/{data.code}" 
   selectedFieldDisplayValue:string
@@ -25,6 +25,7 @@ export type TAPIExecutionSettings = {
   data?:any,
   resultDataPath?:string,
   resultDatapPrefixName?:string
+  name?:string
 }
 
 

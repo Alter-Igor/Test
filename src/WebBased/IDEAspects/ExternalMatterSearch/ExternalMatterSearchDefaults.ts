@@ -13,9 +13,7 @@ export const Default: IDefaultSettings<IExternalMatterSearchConfiguration>= {
     fackMode: false,
     formBuilderFieldSerialisedData: "matterJSON",
     selectedFieldDisplayValue:"{matterCode} - {shortName}",
-    searchApiResultCollectionPath: "data[0].results",
-    loadApiResultDataPath: "data",
-    searchApiUrl: "api/externalMatterProvider/query/{searchTerm}",
+        loadApiResultDataPath: "data",
     loadApiUrl: "api/externalMatterProvider/details/{code}",
     dataMapping: [
         { formBuilderField: "matterNumber", searchResultField: "{matterCode}" },
@@ -36,6 +34,15 @@ export const Default: IDefaultSettings<IExternalMatterSearchConfiguration>= {
     },
     eventsToReactTo: [],
     searchFields: DEFAULT_SEARCH_FIELDS_CONFIG,
-    selectedFields: DEFAULT_SELECTED_FIELDS_CONFIG
-    
+    selectedFields: DEFAULT_SELECTED_FIELDS_CONFIG,
+    searchApiExecutionSettings: [
+        {
+            method: "GET",
+            url: "api/externalMatterProvider/query/{searchTerm}",
+            data: undefined,
+            resultDataPath: "data[0].results",
+            resultDatapPrefixName: undefined,
+            name: "External Matter Provider"
+        }
+    ]
 }

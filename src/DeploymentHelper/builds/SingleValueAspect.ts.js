@@ -4103,43 +4103,6 @@ async function searchForAttribute(workItemId, attributeName) {
 // src/WebBased/IDEAspects/BaseClasses/BaseIDEAspect.ts
 var ko2 = __toESM(require_knockout_latest());
 
-// src/WebBased/IDEAspects/BaseClasses/ObjectHelpers.ts
-function setNestedProperty(obj, propertyPath, value) {
-  const properties = propertyPath.split(".");
-  let current = obj;
-  for (let i = 0; i < properties.length - 1; i++) {
-    const prop = properties[i];
-    if (!current[prop]) {
-      current[prop] = {};
-    }
-    current = current[prop];
-  }
-  current[properties[properties.length - 1]] = value;
-}
-function getNestedProperty(obj, propertyPath) {
-  l(inf(`getNestedProperty(${propertyPath})`), obj);
-  const properties = propertyPath.split(".");
-  let current = obj;
-  for (const prop of properties) {
-    const matches = prop.match(/^([a-zA-Z0-9_]+)\[([0-9]+)\]$/);
-    if (matches) {
-      const arrayProp = matches[1];
-      const index = parseInt(matches[2], 10);
-      if (!Array.isArray(current[arrayProp]) || current[arrayProp][index] === void 0) {
-        l(err(`getNestedProperty(${propertyPath}): arrayProp or index is undefined`), obj);
-        return void 0;
-      }
-      current = current[arrayProp][index];
-    } else if (current[prop] === void 0) {
-      l(err(`getNestedProperty(${propertyPath}): prop is undefined`), obj);
-      return void 0;
-    } else {
-      current = current[prop];
-    }
-  }
-  return current;
-}
-
 // node_modules/uuid/dist/esm-node/rng.js
 var import_crypto = __toESM(require("crypto"));
 var rnds8Pool = new Uint8Array(256);
@@ -4223,6 +4186,83 @@ function toObservableObject(obj, existing) {
   }
   return existing;
 }
+
+// src/WebBased/Common/ObjectHelper.ts
+function setNestedProperty(obj, propertyPath, value) {
+  const properties = propertyPath.split(".");
+  let current = obj;
+  for (let i = 0; i < properties.length - 1; i++) {
+    const prop = properties[i];
+    if (!current[prop]) {
+      current[prop] = {};
+    }
+    current = current[prop];
+  }
+  current[properties[properties.length - 1]] = value;
+}
+function getNestedProperty(obj, propertyPath) {
+  l(inf(`getNestedProperty(${propertyPath})`), obj);
+  const properties = propertyPath.split(".");
+  let current = obj;
+  for (const prop of properties) {
+    const matches = prop.match(/^([a-zA-Z0-9_]+)\[([0-9]+)\]$/);
+    if (matches) {
+      const arrayProp = matches[1];
+      const index = parseInt(matches[2], 10);
+      if (!Array.isArray(current[arrayProp]) || current[arrayProp][index] === void 0) {
+        l(err(`getNestedProperty(${propertyPath}): arrayProp or index is undefined`), obj);
+        return void 0;
+      }
+      current = current[arrayProp][index];
+    } else if (current[prop] === void 0) {
+      l(err(`getNestedProperty(${propertyPath}): prop is undefined`), obj);
+      return void 0;
+    } else {
+      current = current[prop];
+    }
+  }
+  return current;
+}
+
+// src/Common/HtmlHelper.ts
+function escapeHtml(unsafe) {
+  return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+}
+
+// src/Common/JsonToHTMLConverter.ts
+var JsonToHtmlConverter = class {
+  static convert(json2) {
+    if (json2 == null)
+      return this.escapeHtml("<em>null</em>");
+    if (typeof json2 !== "object")
+      return this.escapeHtml(json2.toString());
+    if (Array.isArray(json2)) {
+      return this.arrayToHtml(json2);
+    } else {
+      return this.objectToHtml(json2);
+    }
+  }
+  static arrayToHtml(arr) {
+    const itemsHtml = arr.map((item) => `<li>${this.convert(item)}</li>`).join("");
+    return `<ul>${itemsHtml}</ul>`;
+  }
+  static objectToHtml(obj) {
+    const propertiesHtml = Object.keys(obj).map((key) => `<li>${this.escapeHtml(key)}: ${this.convert(obj[key])}</li>`).join("");
+    return `<ul>${propertiesHtml}</ul>`;
+  }
+  static escapeHtml(unsafe) {
+    return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+  }
+};
+var json = {
+  code: "ERROR_CODE",
+  message: "Something went wrong",
+  details: {
+    info: "Detailed information about the error",
+    timestamp: (/* @__PURE__ */ new Date()).toISOString(),
+    items: [1, 2, 3]
+  }
+};
 
 // src/WebBased/IDEAspects/BaseClasses/BaseIDEAspect.ts
 console.log("v: - 5.27");
@@ -4332,10 +4372,19 @@ var BaseIDEAspect = class {
           let newConfig = JSON.parse(config());
           this._initialise(this.element, newConfig, this.baseModel);
           this.reset(newConfig);
-        }, 5e3);
+        }, 500);
         timeout = true;
       });
     }, 3e3);
+  }
+  ensureStylesLoaded(href) {
+    if (!document.querySelector(`link[href="${href}"]`)) {
+      const link = document.createElement("link");
+      link.href = href;
+      link.rel = "stylesheet";
+      link.type = "text/css";
+      document.head.appendChild(link);
+    }
   }
   createLiveConfigDiv() {
     const outerDiv = document.createElement("div");
@@ -4362,47 +4411,72 @@ var BaseIDEAspect = class {
   buildErrorDiv() {
     this.inf("Building error div");
     let errorDiv = this.element.querySelector(this.errorDivSelector);
-    if (!errorDiv || !this.errors || this.errors() || this.errors().length === 0) {
+    if (!errorDiv) {
       return;
     }
     l("errorDiv.innerHTML");
     errorDiv.innerHTML = "";
+    if (!this.errors) {
+      this.errors = ko2.observableArray();
+    }
+    if (this.errors().length === 0) {
+      return;
+    }
     let errorContainerDiv = document.createElement("div");
     errorDiv.appendChild(errorContainerDiv);
-    errorContainerDiv.className = "ems-error-container";
+    errorContainerDiv.className = "ide-aspect-error-container";
     let titleDiv = document.createElement("div");
-    titleDiv.className = "ems-error-title";
+    titleDiv.className = "ide-aspect-error-title";
     titleDiv.innerText = "There has been an error:";
     errorContainerDiv.appendChild(titleDiv);
     let foreachDiv = document.createElement("div");
     errorContainerDiv.appendChild(foreachDiv);
     this.errors().forEach((error) => {
       let userMessageDiv = document.createElement("div");
-      userMessageDiv.className = "ems-error-user-message";
+      userMessageDiv.className = "ide-aspect-error-user-message";
       userMessageDiv.innerHTML = error.userMessage;
+      userMessageDiv.onclick = () => {
+        let detailedMessageDiv = document.createElement("div");
+        detailedMessageDiv.className = "ide-aspect-error-detailed-message";
+        const code = escapeHtml(error.code || "");
+        const message = escapeHtml(error.message || "");
+        const userMessage = escapeHtml(error.userMessage || "");
+        const errorStack = escapeHtml(error.errorStack || "");
+        const additionalInfo = JsonToHtmlConverter.convert(error.additionalInfo || {});
+        const html = `
+                            <div>
+                            <h2>Error: ${code}</h2>
+                            <p><strong>Message:</strong> ${message}</p>
+                            <p><strong>User Message:</strong> ${userMessage}</p>
+                            <p><strong>Stack:</strong> ${errorStack}</p>
+                            <p><strong>Additional Info:</strong> ${additionalInfo}</p>
+                            </div>`;
+        detailedMessageDiv.innerHTML = html;
+        $ui.errorDialog(detailedMessageDiv);
+      };
       foreachDiv.appendChild(userMessageDiv);
       if (error.suggestions && error.suggestions.length > 0) {
         let suggestionsDiv = document.createElement("div");
-        suggestionsDiv.className = "ems-error-suggestions";
+        suggestionsDiv.className = "ide-aspect-error-suggestions";
         suggestionsDiv.innerHTML = `<b>Suggestions:</b><br/>${error.suggestions.join("<br/>")}`;
         foreachDiv.appendChild(suggestionsDiv);
       }
       if (error.actions && error.actions.length > 0) {
         let actionsDiv = document.createElement("div");
-        actionsDiv.className = "ems-error-actions";
+        actionsDiv.className = "ide-aspect-error-actions";
         actionsDiv.innerHTML = `<b>Actions:</b><br/>${error.actions.join("<br/>")}`;
         foreachDiv.appendChild(actionsDiv);
       }
       if (error.internalSuggestions && error.internalSuggestions.length > 0) {
         let internalSuggestionsDiv = document.createElement("div");
-        internalSuggestionsDiv.className = "ems-error-internal-suggestions";
+        internalSuggestionsDiv.className = "ide-aspect-error-internal-suggestions";
         internalSuggestionsDiv.innerHTML = `<b>Internal Suggestions:</b><br/>${error.internalSuggestions.join("<br/>")}`;
         foreachDiv.appendChild(internalSuggestionsDiv);
       }
     });
     if (this.options.debug().supportRequestEnabled) {
       let actionDiv = document.createElement("div");
-      actionDiv.className = "ems-error-support-action";
+      actionDiv.className = "ide-aspect-error-support-action";
       errorContainerDiv.appendChild(actionDiv);
       let button = document.createElement("button");
       button.className = "btn btn-primary";

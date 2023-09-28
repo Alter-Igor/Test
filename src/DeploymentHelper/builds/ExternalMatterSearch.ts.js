@@ -9599,14 +9599,6 @@ __export(ExternalMatterSearch_exports, {
 });
 module.exports = __toCommonJS(ExternalMatterSearch_exports);
 
-// src/WebBased/Common/ObjectHelper.ts
-function setAllFieldsToNull(model) {
-  let keys = Object.keys(model);
-  keys.forEach((key) => {
-    model[key] = null;
-  });
-}
-
 // node_modules/chalk/source/vendor/ansi-styles/index.js
 var ANSI_BACKGROUND_OFFSET = 10;
 var wrapAnsi16 = (offset = 0) => (code) => `\x1B[${code + offset}m`;
@@ -10242,6 +10234,49 @@ var nv = (name, value) => {
 };
 clearSec();
 
+// src/WebBased/Common/ObjectHelper.ts
+function setAllFieldsToNull(model) {
+  let keys = Object.keys(model);
+  keys.forEach((key) => {
+    model[key] = null;
+  });
+}
+function setNestedProperty(obj, propertyPath, value) {
+  const properties = propertyPath.split(".");
+  let current = obj;
+  for (let i = 0; i < properties.length - 1; i++) {
+    const prop = properties[i];
+    if (!current[prop]) {
+      current[prop] = {};
+    }
+    current = current[prop];
+  }
+  current[properties[properties.length - 1]] = value;
+}
+function getNestedProperty(obj, propertyPath) {
+  l(inf(`getNestedProperty(${propertyPath})`), obj);
+  const properties = propertyPath.split(".");
+  let current = obj;
+  for (const prop of properties) {
+    const matches = prop.match(/^([a-zA-Z0-9_]+)\[([0-9]+)\]$/);
+    if (matches) {
+      const arrayProp = matches[1];
+      const index = parseInt(matches[2], 10);
+      if (!Array.isArray(current[arrayProp]) || current[arrayProp][index] === void 0) {
+        l(err(`getNestedProperty(${propertyPath}): arrayProp or index is undefined`), obj);
+        return void 0;
+      }
+      current = current[arrayProp][index];
+    } else if (current[prop] === void 0) {
+      l(err(`getNestedProperty(${propertyPath}): prop is undefined`), obj);
+      return void 0;
+    } else {
+      current = current[prop];
+    }
+  }
+  return current;
+}
+
 // src/WebBased/Common/api/api.ts
 async function executeGetv2(api) {
   return executeFetch(api, "GET", void 0);
@@ -10353,43 +10388,6 @@ function getBearerToken() {
 // src/WebBased/IDEAspects/BaseClasses/BaseIDEAspect.ts
 var ko2 = __toESM(require_knockout_latest());
 
-// src/WebBased/IDEAspects/BaseClasses/ObjectHelpers.ts
-function setNestedProperty(obj, propertyPath, value) {
-  const properties = propertyPath.split(".");
-  let current = obj;
-  for (let i = 0; i < properties.length - 1; i++) {
-    const prop = properties[i];
-    if (!current[prop]) {
-      current[prop] = {};
-    }
-    current = current[prop];
-  }
-  current[properties[properties.length - 1]] = value;
-}
-function getNestedProperty(obj, propertyPath) {
-  l(inf(`getNestedProperty(${propertyPath})`), obj);
-  const properties = propertyPath.split(".");
-  let current = obj;
-  for (const prop of properties) {
-    const matches = prop.match(/^([a-zA-Z0-9_]+)\[([0-9]+)\]$/);
-    if (matches) {
-      const arrayProp = matches[1];
-      const index = parseInt(matches[2], 10);
-      if (!Array.isArray(current[arrayProp]) || current[arrayProp][index] === void 0) {
-        l(err(`getNestedProperty(${propertyPath}): arrayProp or index is undefined`), obj);
-        return void 0;
-      }
-      current = current[arrayProp][index];
-    } else if (current[prop] === void 0) {
-      l(err(`getNestedProperty(${propertyPath}): prop is undefined`), obj);
-      return void 0;
-    } else {
-      current = current[prop];
-    }
-  }
-  return current;
-}
-
 // node_modules/uuid/dist/esm-node/rng.js
 var import_crypto = __toESM(require("crypto"));
 var rnds8Pool = new Uint8Array(256);
@@ -10473,6 +10471,46 @@ function toObservableObject(obj, existing) {
   }
   return existing;
 }
+
+// src/Common/HtmlHelper.ts
+function escapeHtml(unsafe) {
+  return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+}
+
+// src/Common/JsonToHTMLConverter.ts
+var JsonToHtmlConverter = class {
+  static convert(json2) {
+    if (json2 == null)
+      return this.escapeHtml("<em>null</em>");
+    if (typeof json2 !== "object")
+      return this.escapeHtml(json2.toString());
+    if (Array.isArray(json2)) {
+      return this.arrayToHtml(json2);
+    } else {
+      return this.objectToHtml(json2);
+    }
+  }
+  static arrayToHtml(arr) {
+    const itemsHtml = arr.map((item) => `<li>${this.convert(item)}</li>`).join("");
+    return `<ul>${itemsHtml}</ul>`;
+  }
+  static objectToHtml(obj) {
+    const propertiesHtml = Object.keys(obj).map((key) => `<li>${this.escapeHtml(key)}: ${this.convert(obj[key])}</li>`).join("");
+    return `<ul>${propertiesHtml}</ul>`;
+  }
+  static escapeHtml(unsafe) {
+    return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+  }
+};
+var json = {
+  code: "ERROR_CODE",
+  message: "Something went wrong",
+  details: {
+    info: "Detailed information about the error",
+    timestamp: (/* @__PURE__ */ new Date()).toISOString(),
+    items: [1, 2, 3]
+  }
+};
 
 // src/WebBased/IDEAspects/BaseClasses/BaseIDEAspect.ts
 console.log("v: - 5.27");
@@ -10582,10 +10620,19 @@ var BaseIDEAspect = class {
           let newConfig = JSON.parse(config());
           this._initialise(this.element, newConfig, this.baseModel);
           this.reset(newConfig);
-        }, 5e3);
+        }, 500);
         timeout = true;
       });
     }, 3e3);
+  }
+  ensureStylesLoaded(href) {
+    if (!document.querySelector(`link[href="${href}"]`)) {
+      const link = document.createElement("link");
+      link.href = href;
+      link.rel = "stylesheet";
+      link.type = "text/css";
+      document.head.appendChild(link);
+    }
   }
   createLiveConfigDiv() {
     const outerDiv = document.createElement("div");
@@ -10612,47 +10659,72 @@ var BaseIDEAspect = class {
   buildErrorDiv() {
     this.inf("Building error div");
     let errorDiv = this.element.querySelector(this.errorDivSelector);
-    if (!errorDiv || !this.errors || this.errors() || this.errors().length === 0) {
+    if (!errorDiv) {
       return;
     }
     l("errorDiv.innerHTML");
     errorDiv.innerHTML = "";
+    if (!this.errors) {
+      this.errors = ko2.observableArray();
+    }
+    if (this.errors().length === 0) {
+      return;
+    }
     let errorContainerDiv = document.createElement("div");
     errorDiv.appendChild(errorContainerDiv);
-    errorContainerDiv.className = "ems-error-container";
+    errorContainerDiv.className = "ide-aspect-error-container";
     let titleDiv = document.createElement("div");
-    titleDiv.className = "ems-error-title";
+    titleDiv.className = "ide-aspect-error-title";
     titleDiv.innerText = "There has been an error:";
     errorContainerDiv.appendChild(titleDiv);
     let foreachDiv = document.createElement("div");
     errorContainerDiv.appendChild(foreachDiv);
     this.errors().forEach((error) => {
       let userMessageDiv = document.createElement("div");
-      userMessageDiv.className = "ems-error-user-message";
+      userMessageDiv.className = "ide-aspect-error-user-message";
       userMessageDiv.innerHTML = error.userMessage;
+      userMessageDiv.onclick = () => {
+        let detailedMessageDiv = document.createElement("div");
+        detailedMessageDiv.className = "ide-aspect-error-detailed-message";
+        const code = escapeHtml(error.code || "");
+        const message = escapeHtml(error.message || "");
+        const userMessage = escapeHtml(error.userMessage || "");
+        const errorStack = escapeHtml(error.errorStack || "");
+        const additionalInfo = JsonToHtmlConverter.convert(error.additionalInfo || {});
+        const html = `
+                            <div>
+                            <h2>Error: ${code}</h2>
+                            <p><strong>Message:</strong> ${message}</p>
+                            <p><strong>User Message:</strong> ${userMessage}</p>
+                            <p><strong>Stack:</strong> ${errorStack}</p>
+                            <p><strong>Additional Info:</strong> ${additionalInfo}</p>
+                            </div>`;
+        detailedMessageDiv.innerHTML = html;
+        $ui.errorDialog(detailedMessageDiv);
+      };
       foreachDiv.appendChild(userMessageDiv);
       if (error.suggestions && error.suggestions.length > 0) {
         let suggestionsDiv = document.createElement("div");
-        suggestionsDiv.className = "ems-error-suggestions";
+        suggestionsDiv.className = "ide-aspect-error-suggestions";
         suggestionsDiv.innerHTML = `<b>Suggestions:</b><br/>${error.suggestions.join("<br/>")}`;
         foreachDiv.appendChild(suggestionsDiv);
       }
       if (error.actions && error.actions.length > 0) {
         let actionsDiv = document.createElement("div");
-        actionsDiv.className = "ems-error-actions";
+        actionsDiv.className = "ide-aspect-error-actions";
         actionsDiv.innerHTML = `<b>Actions:</b><br/>${error.actions.join("<br/>")}`;
         foreachDiv.appendChild(actionsDiv);
       }
       if (error.internalSuggestions && error.internalSuggestions.length > 0) {
         let internalSuggestionsDiv = document.createElement("div");
-        internalSuggestionsDiv.className = "ems-error-internal-suggestions";
+        internalSuggestionsDiv.className = "ide-aspect-error-internal-suggestions";
         internalSuggestionsDiv.innerHTML = `<b>Internal Suggestions:</b><br/>${error.internalSuggestions.join("<br/>")}`;
         foreachDiv.appendChild(internalSuggestionsDiv);
       }
     });
     if (this.options.debug().supportRequestEnabled) {
       let actionDiv = document.createElement("div");
-      actionDiv.className = "ems-error-support-action";
+      actionDiv.className = "ide-aspect-error-support-action";
       errorContainerDiv.appendChild(actionDiv);
       let button = document.createElement("button");
       button.className = "btn btn-primary";
@@ -11057,7 +11129,16 @@ var Default = {
   },
   eventsToReactTo: [],
   searchFields: DEFAULT_SEARCH_FIELDS_CONFIG,
-  selectedFields: DEFAULT_SELECTED_FIELDS_CONFIG
+  selectedFields: DEFAULT_SELECTED_FIELDS_CONFIG,
+  searchApiExecutionSettings: [
+    {
+      method: "GET",
+      url: "api/externalMatterProvider/query/{searchTerm}",
+      data: void 0,
+      resultDataPath: "data[0].results",
+      resultDatapPrefixName: void 0
+    }
+  ]
 };
 
 // src/WebBased/IDEAspects/ExternalMatterSearch/ExternalMatterSearchSettings.ts
@@ -11265,7 +11346,7 @@ function addField(field, dataContextName, rowDiv) {
   }
   const spanElem = document.createElement("span");
   if (field.formatter) {
-    spanElem.setAttribute("data-bind", `text:$root.formatFunc(${dataContextName}.${field.field},'${field.formatter}')`);
+    spanElem.setAttribute("data-bind", `text:$root.formatFunc(${dataContextName}.${field.field},'${field.formatter}','${dataContextName}.${field.field}')`);
   } else {
     spanElem.setAttribute("data-bind", `text:${dataContextName}.${field.field}`);
   }
@@ -11664,16 +11745,434 @@ function reverseMapData(mappedData, dataMapping) {
   return originalData;
 }
 
+// src/WebBased/Common/TemplateValueReplaces.ts
+function replaceValues(template, data) {
+  return template.replace(/\{([^}]+)\}/g, function(match, p1) {
+    let propertyPath = p1.replace("data.", "");
+    return getNestedProperty(data, propertyPath);
+  });
+}
+
 // src/WebBased/IDEAspects/ExternalMatterSearch/ExternalMatterSearch.ts
 var CSS_CLASS_SELECTED_ITEM = "ems-selected-item";
 var CSS_CLASS_RESULT_ITEM = "ems-result-item";
 var CUSTOM_TEMPLATE_CONTENT_ID = "resultItem";
+var SEARCH_TEMPLATE_NAME = "__matter_search_item_template";
+var SEARCH_TERM = "searchTerm";
 var ExternalMatterSearch = class extends BaseIDEAspect {
+  // private initialise() {//! Note: UI framework looks for this method name and if found behaves differently and wont call loadAndBind
+  /**
+   * @method setup
+   * @description Sets up the auto complete handler
+   * @returns {void}
+   */
+  setup() {
+    if (!validateJSON(this.configuration, ConfigSchema_exports)) {
+      this.wrn("SearchFields does not match schema");
+    }
+    this.inputVisability = import_knockout.default.computed(() => {
+      this.getInputVisability();
+      return true;
+    });
+    this.validateFormbuilderJSONFieldSetup();
+    if (!this.options.searchFields() || !this.options.searchFields().rows) {
+      this.err("No searchFields defined");
+      throw new Error("No searchFields defined");
+    }
+    if (!this.options.selectedFields() || !this.options.selectedFields().rows) {
+      this.wrn("No selectedFields defined, using searchFields as selectedFields");
+      this.options.selectedFields(this.options.searchFields());
+    }
+    this.customTemplateContentId = CUSTOM_TEMPLATE_CONTENT_ID;
+    this.searchCustomTemplateId = "__custom_matter_search_item_template";
+    this.searchCustomTemplateDiv = this.element.querySelector("#" + this.searchCustomTemplateId);
+    if (this.searchCustomTemplateDiv) {
+      const content = this.searchCustomTemplateDiv.content;
+      const resultItem = content.querySelector(`.${CSS_CLASS_RESULT_ITEM}`);
+      this.searchCustomTemplateContentsDiv = content.querySelector("#" + this.customTemplateContentId);
+      if (this.searchCustomTemplateContentsDiv) {
+        if (this.searchTemplateGeneratedDiv) {
+          this.searchTemplateGeneratedDiv.remove();
+        }
+        let unwrap = import_knockout.default.toJS(this.options.searchFields());
+        this.searchTemplateGeneratedDiv = generateHtmlDiv(unwrap, "data", this.searchCustomTemplateContentsDiv);
+        this.searchTemplateToUseName = this.searchCustomTemplateId;
+      }
+    }
+    this.selectedDiv = this.element.querySelector(`.${CSS_CLASS_SELECTED_ITEM}`);
+    if (!this.selectedDiv) {
+      this.err(`Could not find element with class '${CSS_CLASS_SELECTED_ITEM}'`);
+      throw new Error(`Could not find element with class '${CSS_CLASS_SELECTED_ITEM}'`);
+    }
+    this.autoComplete = this.autoComplete || this.setupAutoComplete();
+    this.selectedMatter = import_knockout.default.observable();
+    this.selectedMatter.subscribe((newValue) => {
+      this.ensureSelectedMatterTemplate();
+    });
+    this.options.selectedFields.subscribe((newValue) => {
+      this.ensureSelectedMatterTemplate();
+    });
+  }
+  setupAutoComplete() {
+    this.searchTemplateToUseName = SEARCH_TEMPLATE_NAME;
+    return new Sharedo.UI.Framework.Components.AutoCompleteHandler(
+      {
+        enabled: true,
+        mode: "select" /* SELECT */,
+        text: {
+          placeholder: "Search for matter",
+          empty: "Start typing to lookup a matter by number",
+          emptyIcon: "fa-search",
+          typing: "Will search when you stop typing",
+          searching: "One moment...",
+          noResults: "Nothing found"
+        },
+        select: {
+          allowClear: true,
+          selectedValue: null,
+          onLoad: this.loadSelectedExternalResult.bind(this)
+        },
+        onFind: this.querySearchAPI.bind(this),
+        templates: { result: this.searchTemplateToUseName }
+      }
+    );
+  }
+  validateFormbuilderJSONFieldSetup() {
+    if (!this.options.formBuilderFieldSerialisedData()) {
+      this.wrn("No formBuilderFieldSerialisedData defined - this will prevent the matter from being saved and loaded");
+      this.wrn("Add a field to the form builder and set the formBuilderFieldSerialisedData to the field name in the configuration of the aspect");
+    }
+  }
+  /**
+   * @method load
+   * @description Initial loads the data from the sharedo model form builder
+   * @param {IExternalResultItem} model - The model to load from
+   * @returns {void}
+   */
+  load(model) {
+    if (!this.sharedoId())
+      return;
+    this.inf("Loading Data", this.model);
+    if (this.options.formBuilderFieldSerialisedData()) {
+      let data = this.formbuilder()[this.options.formBuilderFieldSerialisedData()];
+      if (data) {
+        let base64Decoded = atob(data);
+        this.selectedMatter = import_knockout.default.observable();
+        this.selectedMatter(JSON.parse(base64Decoded));
+      }
+    }
+  }
+  /**
+   * After the user clicks a search result, this method is called to load the matter details
+   * If the configuration has a loadApiUrl defined, then this will be used to load the matter details
+   * If the configuration does not have a loadApiUrl defined, then the matter details will be loaded from the search results
+   * @param model 
+   * @returns 
+   */
+  async loadSelectedExternalResult(model) {
+    try {
+      $ui.stacks.lock(self, "Loading");
+      if (!this.options.loadApiUrl()) {
+        this.log(inf("No Load API URL defined, using search results"));
+        this.selectedMatter(model);
+        $ui.stacks.unlock(self);
+      } else {
+        model = await this.loadMatterDetailsFromLoadAPI(model);
+        this.selectedMatter(model);
+        let mappedData = mapData(this.selectedMatter(), import_knockout.default.toJS(this.options.dataMapping()));
+        this.inf("Mapped Data", mappedData);
+        let reverse = reverseMapData(mappedData, import_knockout.default.toJS(this.options.dataMapping()));
+        this.inf("Mapped Reverse", mappedData);
+        $ui.stacks.unlock(self);
+      }
+      let textValue = this.options.selectedFieldDisplayValue();
+      if (!textValue) {
+        textValue = "{matterCode} - {shortName}";
+      }
+      let matches = textValue.match(/{([^}]+)}/g);
+      if (matches) {
+        matches.forEach((m) => {
+          let key = m.replace("{", "").replace("}", "");
+          let val = getNestedProperty(model, key);
+          textValue = textValue.replace(m, val);
+        });
+      }
+      return new Sharedo.UI.Framework.Components.AutoCompleteDisplayCard({
+        id: model,
+        icon: null,
+        text: textValue
+      });
+    } catch (e) {
+      $ui.stacks.unlock(self);
+      this.err("Error loading matter details", e);
+    }
+  }
+  ensureSelectedMatterTemplate() {
+    if (!this.selectedDiv) {
+      this.err("No selectedDiv defined");
+      return;
+    }
+    this.selectedDiv.innerHTML = "";
+    if (this.selectedMatter && this.selectedMatter() === void 0) {
+      this.selectedDiv.classList.remove("ems-show");
+      return;
+    }
+    this.selectedDiv.classList.add("ems-show");
+    this.lh1("ensureSelectedMatterTemplate");
+    if (this.selectedTemplateGeneratedDiv) {
+      import_knockout.default.cleanNode(this.selectedTemplateGeneratedDiv);
+      this.selectedTemplateGeneratedDiv.remove();
+    }
+    if (!this.options.selectedFields()) {
+      this.err("No searchIFieldPlacement defined");
+      throw new Error("No searchIFieldPlacement defined");
+    }
+    this.selectedTemplateGeneratedDiv = generateHtmlDiv(import_knockout.default.toJS(this.options.selectedFields()), "selectedMatter()", this.selectedDiv);
+    import_knockout.default.applyBindings(this, this.selectedTemplateGeneratedDiv);
+    this.clearSec();
+  }
+  async loadMatterDetailsFromLoadAPI(model) {
+    this.clearErrors();
+    try {
+      let retValue = model;
+      let url = this.options.loadApiUrl();
+      let matches = url.match(/{([^}]+)}/g);
+      if (matches) {
+        matches.forEach((m) => {
+          let key = m.replace("{", "").replace("}", "");
+          let val = getNestedProperty(model, key);
+          if (val === void 0) {
+            this.err(`Could not find value for key [${key}] in the data model:`, model);
+            this.errors?.push({
+              code: "CONFIG_ERROR",
+              message: `Could not find value for key ${key} in model`,
+              userMessage: `Could not find value for key ${key} in model, contact a system administrator.`,
+              additionalInfo: {
+                "Looking for the key ": key,
+                "Inside this model ": model
+              }
+            });
+            return;
+          }
+          url = url.replace(m, val);
+        });
+      }
+      this.log("Loading Matter using : " + url, "green");
+      return executeGetv2(url).then((response) => {
+        let dataPath = this.options.loadApiResultDataPath();
+        let data = this.validateResponseData(response, dataPath);
+        if (response.info.success === false) {
+          this.buildUserErrors(response);
+          return retValue;
+        }
+        this.inf("loadMatterDetailsFromLoadAPI", data);
+        return data;
+      }).catch((error) => {
+        setAllFieldsToNull(retValue);
+        return retValue;
+      });
+    } catch (e) {
+      this.err("Error loading matter details", e);
+    }
+  }
+  buildUserErrors(response) {
+    this.err("Error loading matter details", response);
+    let errorMessageFromSharedo = response.data?.errorMessage;
+    let errorStack = new Error().stack;
+    if (errorMessageFromSharedo) {
+      this.errors?.push({
+        code: "SHAREDO_ERROR",
+        message: errorMessageFromSharedo,
+        userMessage: errorMessageFromSharedo,
+        errorStack,
+        additionalInfo: {
+          responseUrl: response.response?.url || "",
+          responseStatus: response.response?.status || "",
+          responseStatusText: response.response?.statusText || "",
+          responseData: response.data || ""
+        }
+      });
+    }
+    response.info.error.forEach((e) => {
+      this.errors?.push(e);
+    });
+  }
+  _aspectReload(model) {
+    this.load(model);
+  }
+  createSupportTask() {
+    $ui.nav.invoke({
+      "invokeType": "panel",
+      "invoke": "Sharedo.Core.Case.Sharedo.AddEditSharedo",
+      "config": '{"typeSystemName":"task-eddiscovery-adhoc","title":"","Support Request":""}'
+    });
+  }
+  save(model) {
+    let mappedData = mapData(this.selectedMatter(), import_knockout.default.toJS(this.options.dataMapping()), this.options.formBuilderFieldSerialisedData());
+    this.inf("save", mappedData);
+    let dataToSave = this.ensureFormbuilder(model);
+    $.extend(this.ensureFormbuilder(model), mappedData);
+    this.l("dataToSave", dataToSave);
+  }
+  async querySearchAPI(searchTerm, handler) {
+    this.clearErrors();
+    let results = new Array();
+    var search = searchTerm.toLowerCase();
+    let multiAPICallResults = void 0;
+    if (this.options.searchApiExecutionSettings && this.options.searchApiExecutionSettings()) {
+      multiAPICallResults = this.querySearchAPIMulti(search, {}).then((data) => {
+        if (!data) {
+          this.wrn("No results from multi search");
+        } else {
+          results.push(...data);
+          this.l("results after multi api call:", results);
+        }
+      });
+    }
+    return Promise.all([multiAPICallResults]).then(() => {
+      let cards = new Array();
+      results.forEach((d) => {
+        d.forma = this.formatFunc;
+        cards.push(new Sharedo.UI.Framework.Components.AutoCompleteFindCard({
+          type: "result" /* RESULT */,
+          data: d,
+          icon: d.icon,
+          id: d,
+          styles: null,
+          cssClass: d.cssClass
+        }));
+      });
+      return cards;
+    });
+  }
+  async querySearchAPIMulti(searchTerm, dataContext) {
+    let executionResults = [];
+    this.clearErrors();
+    var search = searchTerm.toLowerCase();
+    var result = $.Deferred();
+    this.log("Searching for: " + search, "green");
+    if (!this.options.searchApiExecutionSettings) {
+      this.err("No searchApiExecutionSettings defined");
+      return;
+    }
+    dataContext = dataContext || {};
+    this.options.searchApiExecutionSettings()?.forEach((setting) => {
+      setting = import_knockout.default.toJS(setting);
+      this.lh1("querySearchAPIMulti");
+      this.log("Searching for: " + search, "green");
+      let data = void 0;
+      let url = void 0;
+      let method = setting.method || "GET";
+      if (!dataContext[SEARCH_TERM]) {
+        dataContext[SEARCH_TERM] = searchTerm;
+      }
+      if (!setting.url) {
+        this.err("No url defined in searchApiExecutionSettings");
+        this.errors?.push({
+          code: "USER_ERROR",
+          message: "No url defined in searchApiExecutionSettings - check the configuration of the aspect",
+          userMessage: "No url defined in settings of this component, contact a system administrator."
+        });
+        return [];
+      }
+      url = replaceValues(setting.url, dataContext);
+      if (setting.data) {
+        data = replaceValues(setting.data, dataContext);
+      }
+      let executionResult = executeFetch(url, method, data).then((response) => {
+        let data2;
+        this.lh1(`Results from ${url}`);
+        this.l("Response:", response);
+        let dataPath = setting.resultDataPath || "";
+        this.l("dataPath:", dataPath);
+        let dataItems = this.validateResponseData(response, dataPath, setting);
+        this.l("dataItems:", dataItems);
+        if (!Array.isArray(dataItems)) {
+          dataItems = [dataItems];
+          this.l(inf(`Data Items is not an array, converting to array`));
+        }
+        this.nv("Total results:", dataItems.length);
+        dataItems.forEach((d) => {
+          if (setting.resultDatapPrefixName) {
+            d[setting.resultDatapPrefixName] = d;
+          }
+        });
+        secBackOne();
+        return dataItems;
+      });
+      executionResults.push(executionResult);
+    });
+    return Promise.all(executionResults).then(() => {
+      let ultimateResult = [];
+      executionResults.forEach((result2) => {
+        result2.then((data) => {
+          this.l("Data:", data);
+          ultimateResult.push(...data);
+        });
+      });
+      return ultimateResult;
+    });
+  }
+  autoCompleteSelect(selectCard, handler) {
+  }
+  loadAndBind() {
+    this.validateFormbuilderJSONFieldSetup();
+    this.load(this.model);
+  }
+  onSave(model) {
+    this.validateFormbuilderJSONFieldSetup();
+    this.save(model);
+  }
+  validateResponseData(response, dataPath, setting) {
+    let retValue = void 0;
+    if (response.info.success === false) {
+      this.buildUserErrors(response);
+    }
+    if (typeof response.data === "string") {
+      retValue = JSON.parse(response.data);
+    }
+    if (typeof response.data === "object") {
+      retValue = response.data;
+    }
+    this.inf("querySearchAPI", retValue);
+    let dataItems = getNestedProperty(retValue, dataPath);
+    if (!dataItems) {
+      this.err("No data found at path: " + dataPath);
+      this.errors?.push({
+        code: "DATA_ERROR",
+        message: "No data found at path: " + dataPath,
+        userMessage: "Results from the search API are not in the expected format, contact a system administrator.",
+        additionalInfo: {
+          responseUrl: response.response?.url || "",
+          responseStatus: response.response?.status || "",
+          responseStatusText: response.response?.statusText || "",
+          responseData: response.data || "",
+          widgetConfig: import_knockout.default.toJS(this.options)
+        }
+      });
+      return [];
+    }
+    return dataItems;
+  }
   refresh(newConfig) {
   }
   reset(newConfig) {
   }
-  formatFunc(value, formatter) {
+  formatFunc(value, formatter, info) {
+    if (!value) {
+      this.err("No value passed to formatFunc", info);
+      this.errors?.push({
+        code: "CONFIG_ERROR",
+        message: "No value passed to formatFunc",
+        userMessage: "No value passed to formatFunc, contact a system administrator.",
+        additionalInfo: {
+          "Trying to apply formatter ": formatter,
+          "To this object ": value,
+          "Using this key ": info
+        }
+      });
+      return;
+    }
     return formatFunc(value, formatter);
   }
   evalFunc(value, dataContext, dataContextName) {
@@ -11808,297 +12307,6 @@ var ExternalMatterSearch = class extends BaseIDEAspect {
    */
   autoGenerateIFeildPlacement(fieldNames) {
     return autoGenerateTemplate(fieldNames);
-  }
-  // private initialise() {//! Note: UI framework looks for this method name and if found behaves differently and wont call loadAndBind
-  /**
-   * @method setup
-   * @description Sets up the auto complete handler
-   * @returns {void}
-   */
-  setup() {
-    this.searchTemplateToUseName = "__matter_search_item_template";
-    if (!validateJSON(this.configuration, ConfigSchema_exports)) {
-      this.wrn("SearchFields does not match schema");
-    }
-    this.inputVisability = import_knockout.default.computed(() => {
-      this.getInputVisability();
-      return true;
-    });
-    this.validateFormbuilderJSONFieldSetup();
-    if (!this.options.searchFields() || !this.options.searchFields().rows) {
-      this.err("No searchFields defined");
-      throw new Error("No searchFields defined");
-    }
-    if (!this.options.selectedFields() || !this.options.selectedFields().rows) {
-      this.wrn("No selectedFields defined, using searchFields as selectedFields");
-      this.options.selectedFields(this.options.searchFields());
-    }
-    this.customTemplateContentId = CUSTOM_TEMPLATE_CONTENT_ID;
-    this.searchCustomTemplateId = "__custom_matter_search_item_template";
-    this.searchCustomTemplateDiv = this.element.querySelector("#" + this.searchCustomTemplateId);
-    if (this.searchCustomTemplateDiv) {
-      const content = this.searchCustomTemplateDiv.content;
-      const resultItem = content.querySelector(`.${CSS_CLASS_RESULT_ITEM}`);
-      this.searchCustomTemplateContentsDiv = content.querySelector("#" + this.customTemplateContentId);
-      if (this.searchCustomTemplateContentsDiv) {
-        if (this.searchTemplateGeneratedDiv) {
-          this.searchTemplateGeneratedDiv.remove();
-        }
-        let unwrap = import_knockout.default.toJS(this.options.searchFields());
-        this.searchTemplateGeneratedDiv = generateHtmlDiv(unwrap, "data", this.searchCustomTemplateContentsDiv);
-        this.searchTemplateToUseName = this.searchCustomTemplateId;
-      }
-    }
-    this.selectedDiv = this.element.querySelector(`.${CSS_CLASS_SELECTED_ITEM}`);
-    if (!this.selectedDiv) {
-      this.err(`Could not find element with class '${CSS_CLASS_SELECTED_ITEM}'`);
-      throw new Error(`Could not find element with class '${CSS_CLASS_SELECTED_ITEM}'`);
-    }
-    this.autoComplete = this.autoComplete || new Sharedo.UI.Framework.Components.AutoCompleteHandler(
-      {
-        enabled: true,
-        mode: "select" /* SELECT */,
-        text: {
-          placeholder: "Search for matter",
-          empty: "Start typing to lookup a matter by number",
-          emptyIcon: "fa-search",
-          typing: "Will search when you stop typing",
-          searching: "One moment...",
-          noResults: "Nothing found"
-        },
-        select: {
-          allowClear: true,
-          selectedValue: null,
-          onLoad: this.loadSelectedExternalResult.bind(this)
-        },
-        onFind: this.querySearchAPI.bind(this),
-        templates: { result: this.searchTemplateToUseName }
-      }
-    );
-    this.selectedMatter = import_knockout.default.observable();
-    this.selectedMatter.subscribe((newValue) => {
-      this.ensureSelectedMatterTemplate();
-    });
-    this.options.selectedFields.subscribe((newValue) => {
-      this.ensureSelectedMatterTemplate();
-    });
-  }
-  validateFormbuilderJSONFieldSetup() {
-    if (!this.options.formBuilderFieldSerialisedData()) {
-      this.wrn("No formBuilderFieldSerialisedData defined - this will prevent the matter from being saved and loaded");
-      this.wrn("Add a field to the form builder and set the formBuilderFieldSerialisedData to the field name in the configuration of the aspect");
-    }
-  }
-  /**
-   * @method load
-   * @description Initial loads the data from the sharedo model form builder
-   * @param {IExternalResultItem} model - The model to load from
-   * @returns {void}
-   */
-  load(model) {
-    if (!this.sharedoId())
-      return;
-    this.inf("Loading Data", this.model);
-    if (this.options.formBuilderFieldSerialisedData()) {
-      let data = this.formbuilder()[this.options.formBuilderFieldSerialisedData()];
-      if (data) {
-        let base64Decoded = atob(data);
-        this.selectedMatter = import_knockout.default.observable();
-        this.selectedMatter(JSON.parse(base64Decoded));
-      }
-    }
-  }
-  /**
-   * After the user clicks a search result, this method is called to load the matter details
-   * If the configuration has a loadApiUrl defined, then this will be used to load the matter details
-   * If the configuration does not have a loadApiUrl defined, then the matter details will be loaded from the search results
-   * @param model 
-   * @returns 
-   */
-  async loadSelectedExternalResult(model) {
-    try {
-      $ui.stacks.lock(self, "Loading");
-      if (!this.options.loadApiUrl()) {
-        this.log(inf("No Load API URL defined, using search results"));
-        this.selectedMatter(model);
-        $ui.stacks.unlock(self);
-      } else {
-        model = await this.loadMatterDetailsFromLoadAPI(model);
-        this.selectedMatter(model);
-        let mappedData = mapData(this.selectedMatter(), import_knockout.default.toJS(this.options.dataMapping()));
-        this.inf("Mapped Data", mappedData);
-        let reverse = reverseMapData(mappedData, import_knockout.default.toJS(this.options.dataMapping()));
-        this.inf("Mapped Reverse", mappedData);
-        $ui.stacks.unlock(self);
-      }
-      let textValue = this.options.selectedFieldDisplayValue();
-      if (!textValue) {
-        textValue = "{matterCode} - {shortName}";
-      }
-      let matches = textValue.match(/{([^}]+)}/g);
-      if (matches) {
-        matches.forEach((m) => {
-          let key = m.replace("{", "").replace("}", "");
-          let val = getNestedProperty(model, key);
-          textValue = textValue.replace(m, val);
-        });
-      }
-      return new Sharedo.UI.Framework.Components.AutoCompleteDisplayCard({
-        id: model,
-        icon: null,
-        text: textValue
-      });
-    } catch (e) {
-      $ui.stacks.unlock(self);
-      this.err("Error loading matter details", e);
-    }
-  }
-  ensureSelectedMatterTemplate() {
-    if (!this.selectedDiv) {
-      this.err("No selectedDiv defined");
-      return;
-    }
-    if (this.selectedMatter() === void 0) {
-      this.selectedDiv.classList.remove("ems-show");
-    }
-    ;
-    this.selectedDiv.classList.add("ems-show");
-    this.lh1("ensureSelectedMatterTemplate");
-    if (this.selectedTemplateGeneratedDiv) {
-      import_knockout.default.cleanNode(this.selectedTemplateGeneratedDiv);
-      this.selectedTemplateGeneratedDiv.remove();
-    }
-    if (!this.options.selectedFields()) {
-      this.err("No searchIFieldPlacement defined");
-      throw new Error("No searchIFieldPlacement defined");
-    }
-    this.selectedTemplateGeneratedDiv = generateHtmlDiv(import_knockout.default.toJS(this.options.selectedFields()), "selectedMatter()", this.selectedDiv);
-    import_knockout.default.applyBindings(this, this.selectedTemplateGeneratedDiv);
-    this.clearSec();
-  }
-  async loadMatterDetailsFromLoadAPI(model) {
-    this.clearErrors();
-    try {
-      let retValue = model;
-      let url = this.options.loadApiUrl();
-      let matches = url.match(/{([^}]+)}/g);
-      if (matches) {
-        matches.forEach((m) => {
-          let key = m.replace("{", "").replace("}", "");
-          let val = getNestedProperty(model, key);
-          url = url.replace(m, val);
-        });
-      }
-      this.log("Loading Matter using : " + url, "green");
-      return executeGetv2(url).then((response) => {
-        let dataPath = this.options.loadApiResultDataPath();
-        let data = this.validateResponseData(response, dataPath);
-        if (response.info.success === false) {
-          this.buildUserErrors(response);
-          return retValue;
-        }
-        this.inf("loadMatterDetailsFromLoadAPI", data);
-        return data;
-      }).catch((error) => {
-        setAllFieldsToNull(retValue);
-        return retValue;
-      });
-    } catch (e) {
-      this.err("Error loading matter details", e);
-    }
-  }
-  buildUserErrors(response) {
-    this.err("Error loading matter details", response);
-    let errorMessageFromSharedo = response.data?.errorMessage;
-    if (errorMessageFromSharedo) {
-      this.errors?.push({
-        code: "SHAREDO_ERROR",
-        message: errorMessageFromSharedo,
-        userMessage: errorMessageFromSharedo
-      });
-    }
-    response.info.error.forEach((e) => {
-      this.errors?.push(e);
-    });
-  }
-  _aspectReload(model) {
-    this.load(model);
-  }
-  createSupportTask() {
-    $ui.nav.invoke({
-      "invokeType": "panel",
-      "invoke": "Sharedo.Core.Case.Sharedo.AddEditSharedo",
-      "config": '{"typeSystemName":"task-eddiscovery-adhoc","title":"","Support Request":""}'
-    });
-  }
-  save(model) {
-    let mappedData = mapData(this.selectedMatter(), import_knockout.default.toJS(this.options.dataMapping()), this.options.formBuilderFieldSerialisedData());
-    this.inf("save", mappedData);
-    let dataToSave = this.ensureFormbuilder(model);
-    $.extend(this.ensureFormbuilder(model), mappedData);
-    this.l("dataToSave", dataToSave);
-  }
-  querySearchAPI(v, handler) {
-    this.clearErrors();
-    var search = v.toLowerCase();
-    var result = $.Deferred();
-    this.log("Searching for: " + search, "green");
-    let url = this.options.searchApiUrl();
-    if (url.indexOf("{searchTerm}") > -1) {
-      url = url.replace("{searchTerm}", search);
-    }
-    executeGetv2(url).then((response) => {
-      let cards = new Array();
-      let data;
-      let dataPath = this.options.searchApiResultCollectionPath();
-      let dataItems = this.validateResponseData(response, dataPath);
-      if (!Array.isArray(dataItems)) {
-        this.err("Data at path: " + dataPath + " is not an array");
-        return [];
-      }
-      dataItems.forEach((d) => {
-        d.forma = this.formatFunc;
-        cards.push(new Sharedo.UI.Framework.Components.AutoCompleteFindCard({
-          type: "result" /* RESULT */,
-          data: d,
-          icon: d.icon,
-          id: d,
-          styles: null,
-          cssClass: d.cssClass
-        }));
-      });
-      this.clearSec();
-      this.lh1("querySearchAPI");
-      result.resolve(cards);
-      this.clearSec();
-    });
-    return result;
-  }
-  autoCompleteSelect(selectCard, handler) {
-  }
-  loadAndBind() {
-    this.validateFormbuilderJSONFieldSetup();
-    this.load(this.model);
-  }
-  onSave(model) {
-    this.validateFormbuilderJSONFieldSetup();
-    this.save(model);
-  }
-  validateResponseData(response, dataPath) {
-    let retValue = void 0;
-    if (response.info.success === false) {
-      this.buildUserErrors(response);
-    }
-    if (typeof response.data === "string") {
-      retValue = JSON.parse(response.data);
-    }
-    this.inf("querySearchAPI", retValue);
-    let dataItems = getNestedProperty(retValue, dataPath);
-    if (!dataItems) {
-      this.err("No data found at path: " + dataPath);
-      return [];
-    }
-    return dataItems;
   }
 };
 // Annotate the CommonJS export names for ESM import in node:

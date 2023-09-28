@@ -8595,6 +8595,58 @@ var setting = {
 // src/WebBased/IDEAspects/BaseClasses/BaseIDEAspect.ts
 var ko2 = __toESM(require_knockout_latest());
 
+// node_modules/uuid/dist/esm-node/rng.js
+var import_crypto = __toESM(require("crypto"));
+var rnds8Pool = new Uint8Array(256);
+var poolPtr = rnds8Pool.length;
+function rng() {
+  if (poolPtr > rnds8Pool.length - 16) {
+    import_crypto.default.randomFillSync(rnds8Pool);
+    poolPtr = 0;
+  }
+  return rnds8Pool.slice(poolPtr, poolPtr += 16);
+}
+
+// node_modules/uuid/dist/esm-node/stringify.js
+var byteToHex = [];
+for (let i = 0; i < 256; ++i) {
+  byteToHex.push((i + 256).toString(16).slice(1));
+}
+function unsafeStringify(arr, offset = 0) {
+  return (byteToHex[arr[offset + 0]] + byteToHex[arr[offset + 1]] + byteToHex[arr[offset + 2]] + byteToHex[arr[offset + 3]] + "-" + byteToHex[arr[offset + 4]] + byteToHex[arr[offset + 5]] + "-" + byteToHex[arr[offset + 6]] + byteToHex[arr[offset + 7]] + "-" + byteToHex[arr[offset + 8]] + byteToHex[arr[offset + 9]] + "-" + byteToHex[arr[offset + 10]] + byteToHex[arr[offset + 11]] + byteToHex[arr[offset + 12]] + byteToHex[arr[offset + 13]] + byteToHex[arr[offset + 14]] + byteToHex[arr[offset + 15]]).toLowerCase();
+}
+
+// node_modules/uuid/dist/esm-node/native.js
+var import_crypto2 = __toESM(require("crypto"));
+var native_default = {
+  randomUUID: import_crypto2.default.randomUUID
+};
+
+// node_modules/uuid/dist/esm-node/v4.js
+function v4(options, buf, offset) {
+  if (native_default.randomUUID && !buf && !options) {
+    return native_default.randomUUID();
+  }
+  options = options || {};
+  const rnds = options.random || (options.rng || rng)();
+  rnds[6] = rnds[6] & 15 | 64;
+  rnds[8] = rnds[8] & 63 | 128;
+  if (buf) {
+    offset = offset || 0;
+    for (let i = 0; i < 16; ++i) {
+      buf[offset + i] = rnds[i];
+    }
+    return buf;
+  }
+  return unsafeStringify(rnds);
+}
+var v4_default = v4;
+
+// src/WebBased/Common/EventsHelper.ts
+function fireEvent(event) {
+  $ui.events.broadcast(event.eventPath, event);
+}
+
 // node_modules/chalk/source/vendor/ansi-styles/index.js
 var ANSI_BACKGROUND_OFFSET = 10;
 var wrapAnsi16 = (offset = 0) => (code) => `\x1B[${code + offset}m`;
@@ -9226,7 +9278,39 @@ var nv = (name, value) => {
 };
 clearSec();
 
-// src/WebBased/IDEAspects/BaseClasses/ObjectHelpers.ts
+// src/WebBased/IDEAspects/BaseClasses/KOConverter.ts
+var ko = __toESM(require_knockout_latest());
+function toObservableObject(obj, existing) {
+  if (!existing)
+    existing = {};
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key) && key !== "__ko_mapping__" && key !== "_host") {
+      const value = obj[key];
+      if (Array.isArray(value)) {
+        if (!existing[key]) {
+          existing[key] = ko.observableArray(value.map((item) => toObservableObject(item, {})));
+        } else {
+          existing[key](value.map((item) => toObservableObject(item, {})));
+        }
+      } else if (value !== null && typeof value === "object") {
+        if (!existing[key]) {
+          existing[key] = ko.observable(toObservableObject(value, {}));
+        } else {
+          existing[key](toObservableObject(value, existing[key]()));
+        }
+      } else {
+        if (!existing[key]) {
+          existing[key] = ko.observable(value);
+        } else {
+          existing[key](value);
+        }
+      }
+    }
+  }
+  return existing;
+}
+
+// src/WebBased/Common/ObjectHelper.ts
 function setNestedProperty(obj, propertyPath, value) {
   const properties = propertyPath.split(".");
   let current = obj;
@@ -9263,89 +9347,45 @@ function getNestedProperty(obj, propertyPath) {
   return current;
 }
 
-// node_modules/uuid/dist/esm-node/rng.js
-var import_crypto = __toESM(require("crypto"));
-var rnds8Pool = new Uint8Array(256);
-var poolPtr = rnds8Pool.length;
-function rng() {
-  if (poolPtr > rnds8Pool.length - 16) {
-    import_crypto.default.randomFillSync(rnds8Pool);
-    poolPtr = 0;
+// src/Common/HtmlHelper.ts
+function escapeHtml(unsafe) {
+  return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+}
+
+// src/Common/JsonToHTMLConverter.ts
+var JsonToHtmlConverter = class {
+  static convert(json2) {
+    if (json2 == null)
+      return this.escapeHtml("<em>null</em>");
+    if (typeof json2 !== "object")
+      return this.escapeHtml(json2.toString());
+    if (Array.isArray(json2)) {
+      return this.arrayToHtml(json2);
+    } else {
+      return this.objectToHtml(json2);
+    }
   }
-  return rnds8Pool.slice(poolPtr, poolPtr += 16);
-}
-
-// node_modules/uuid/dist/esm-node/stringify.js
-var byteToHex = [];
-for (let i = 0; i < 256; ++i) {
-  byteToHex.push((i + 256).toString(16).slice(1));
-}
-function unsafeStringify(arr, offset = 0) {
-  return (byteToHex[arr[offset + 0]] + byteToHex[arr[offset + 1]] + byteToHex[arr[offset + 2]] + byteToHex[arr[offset + 3]] + "-" + byteToHex[arr[offset + 4]] + byteToHex[arr[offset + 5]] + "-" + byteToHex[arr[offset + 6]] + byteToHex[arr[offset + 7]] + "-" + byteToHex[arr[offset + 8]] + byteToHex[arr[offset + 9]] + "-" + byteToHex[arr[offset + 10]] + byteToHex[arr[offset + 11]] + byteToHex[arr[offset + 12]] + byteToHex[arr[offset + 13]] + byteToHex[arr[offset + 14]] + byteToHex[arr[offset + 15]]).toLowerCase();
-}
-
-// node_modules/uuid/dist/esm-node/native.js
-var import_crypto2 = __toESM(require("crypto"));
-var native_default = {
-  randomUUID: import_crypto2.default.randomUUID
+  static arrayToHtml(arr) {
+    const itemsHtml = arr.map((item) => `<li>${this.convert(item)}</li>`).join("");
+    return `<ul>${itemsHtml}</ul>`;
+  }
+  static objectToHtml(obj) {
+    const propertiesHtml = Object.keys(obj).map((key) => `<li>${this.escapeHtml(key)}: ${this.convert(obj[key])}</li>`).join("");
+    return `<ul>${propertiesHtml}</ul>`;
+  }
+  static escapeHtml(unsafe) {
+    return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+  }
 };
-
-// node_modules/uuid/dist/esm-node/v4.js
-function v4(options, buf, offset) {
-  if (native_default.randomUUID && !buf && !options) {
-    return native_default.randomUUID();
+var json = {
+  code: "ERROR_CODE",
+  message: "Something went wrong",
+  details: {
+    info: "Detailed information about the error",
+    timestamp: (/* @__PURE__ */ new Date()).toISOString(),
+    items: [1, 2, 3]
   }
-  options = options || {};
-  const rnds = options.random || (options.rng || rng)();
-  rnds[6] = rnds[6] & 15 | 64;
-  rnds[8] = rnds[8] & 63 | 128;
-  if (buf) {
-    offset = offset || 0;
-    for (let i = 0; i < 16; ++i) {
-      buf[offset + i] = rnds[i];
-    }
-    return buf;
-  }
-  return unsafeStringify(rnds);
-}
-var v4_default = v4;
-
-// src/WebBased/Common/EventsHelper.ts
-function fireEvent(event) {
-  $ui.events.broadcast(event.eventPath, event);
-}
-
-// src/WebBased/IDEAspects/BaseClasses/KOConverter.ts
-var ko = __toESM(require_knockout_latest());
-function toObservableObject(obj, existing) {
-  if (!existing)
-    existing = {};
-  for (const key in obj) {
-    if (Object.prototype.hasOwnProperty.call(obj, key) && key !== "__ko_mapping__" && key !== "_host") {
-      const value = obj[key];
-      if (Array.isArray(value)) {
-        if (!existing[key]) {
-          existing[key] = ko.observableArray(value.map((item) => toObservableObject(item, {})));
-        } else {
-          existing[key](value.map((item) => toObservableObject(item, {})));
-        }
-      } else if (value !== null && typeof value === "object") {
-        if (!existing[key]) {
-          existing[key] = ko.observable(toObservableObject(value, {}));
-        } else {
-          existing[key](toObservableObject(value, existing[key]()));
-        }
-      } else {
-        if (!existing[key]) {
-          existing[key] = ko.observable(value);
-        } else {
-          existing[key](value);
-        }
-      }
-    }
-  }
-  return existing;
-}
+};
 
 // src/WebBased/IDEAspects/BaseClasses/BaseIDEAspect.ts
 console.log("v: - 5.27");
@@ -9459,10 +9499,19 @@ var BaseIDEAspect = class {
           let newConfig = JSON.parse(config());
           this._initialise(this.element, newConfig, this.baseModel);
           this.reset(newConfig);
-        }, 5e3);
+        }, 500);
         timeout = true;
       });
     }, 3e3);
+  }
+  ensureStylesLoaded(href) {
+    if (!document.querySelector(`link[href="${href}"]`)) {
+      const link = document.createElement("link");
+      link.href = href;
+      link.rel = "stylesheet";
+      link.type = "text/css";
+      document.head.appendChild(link);
+    }
   }
   createLiveConfigDiv() {
     const outerDiv = document.createElement("div");
@@ -9489,47 +9538,72 @@ var BaseIDEAspect = class {
   buildErrorDiv() {
     this.inf("Building error div");
     let errorDiv = this.element.querySelector(this.errorDivSelector);
-    if (!errorDiv || !this.errors || this.errors() || this.errors().length === 0) {
+    if (!errorDiv) {
       return;
     }
     l("errorDiv.innerHTML");
     errorDiv.innerHTML = "";
+    if (!this.errors) {
+      this.errors = ko2.observableArray();
+    }
+    if (this.errors().length === 0) {
+      return;
+    }
     let errorContainerDiv = document.createElement("div");
     errorDiv.appendChild(errorContainerDiv);
-    errorContainerDiv.className = "ems-error-container";
+    errorContainerDiv.className = "ide-aspect-error-container";
     let titleDiv = document.createElement("div");
-    titleDiv.className = "ems-error-title";
+    titleDiv.className = "ide-aspect-error-title";
     titleDiv.innerText = "There has been an error:";
     errorContainerDiv.appendChild(titleDiv);
     let foreachDiv = document.createElement("div");
     errorContainerDiv.appendChild(foreachDiv);
     this.errors().forEach((error) => {
       let userMessageDiv = document.createElement("div");
-      userMessageDiv.className = "ems-error-user-message";
+      userMessageDiv.className = "ide-aspect-error-user-message";
       userMessageDiv.innerHTML = error.userMessage;
+      userMessageDiv.onclick = () => {
+        let detailedMessageDiv = document.createElement("div");
+        detailedMessageDiv.className = "ide-aspect-error-detailed-message";
+        const code = escapeHtml(error.code || "");
+        const message = escapeHtml(error.message || "");
+        const userMessage = escapeHtml(error.userMessage || "");
+        const errorStack = escapeHtml(error.errorStack || "");
+        const additionalInfo = JsonToHtmlConverter.convert(error.additionalInfo || {});
+        const html = `
+                            <div>
+                            <h2>Error: ${code}</h2>
+                            <p><strong>Message:</strong> ${message}</p>
+                            <p><strong>User Message:</strong> ${userMessage}</p>
+                            <p><strong>Stack:</strong> ${errorStack}</p>
+                            <p><strong>Additional Info:</strong> ${additionalInfo}</p>
+                            </div>`;
+        detailedMessageDiv.innerHTML = html;
+        $ui.errorDialog(detailedMessageDiv);
+      };
       foreachDiv.appendChild(userMessageDiv);
       if (error.suggestions && error.suggestions.length > 0) {
         let suggestionsDiv = document.createElement("div");
-        suggestionsDiv.className = "ems-error-suggestions";
+        suggestionsDiv.className = "ide-aspect-error-suggestions";
         suggestionsDiv.innerHTML = `<b>Suggestions:</b><br/>${error.suggestions.join("<br/>")}`;
         foreachDiv.appendChild(suggestionsDiv);
       }
       if (error.actions && error.actions.length > 0) {
         let actionsDiv = document.createElement("div");
-        actionsDiv.className = "ems-error-actions";
+        actionsDiv.className = "ide-aspect-error-actions";
         actionsDiv.innerHTML = `<b>Actions:</b><br/>${error.actions.join("<br/>")}`;
         foreachDiv.appendChild(actionsDiv);
       }
       if (error.internalSuggestions && error.internalSuggestions.length > 0) {
         let internalSuggestionsDiv = document.createElement("div");
-        internalSuggestionsDiv.className = "ems-error-internal-suggestions";
+        internalSuggestionsDiv.className = "ide-aspect-error-internal-suggestions";
         internalSuggestionsDiv.innerHTML = `<b>Internal Suggestions:</b><br/>${error.internalSuggestions.join("<br/>")}`;
         foreachDiv.appendChild(internalSuggestionsDiv);
       }
     });
     if (this.options.debug().supportRequestEnabled) {
       let actionDiv = document.createElement("div");
-      actionDiv.className = "ems-error-support-action";
+      actionDiv.className = "ide-aspect-error-support-action";
       errorContainerDiv.appendChild(actionDiv);
       let button = document.createElement("button");
       button.className = "btn btn-primary";

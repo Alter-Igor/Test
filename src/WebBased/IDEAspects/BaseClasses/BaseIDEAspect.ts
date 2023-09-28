@@ -1,7 +1,6 @@
 import * as ko from "knockout";
 import { ISharedoBladeModel, TShareDoBlade, IConfigurationHost } from "../../../Interfaces/SharedoAspectModels";
 import { IDebug, ObservableIDebug } from "./IDebug";
-import { getNestedProperty, setNestedProperty } from "./ObjectHelpers";
 import { v4 as uuid } from 'uuid';
 import { TSharedo } from "../../../Interfaces/TSharedo";
 import { IWidgetJson, I_IDE_Aspect_Modeller_Configuration } from "./IWidgetJson";
@@ -10,6 +9,9 @@ import { clearSec, err, inf, l, lh1, nv, wrn } from "../../../Common/Log"
 import { IFormBuilderData } from "../../../Interfaces/Aspect/IFormBuilder";
 import { TUserErrors } from "../../Common/api/api";
 import { NestedObservableObject, toObservableObject } from "./KOConverter";
+import { getNestedProperty, setNestedProperty } from "../../Common/ObjectHelper";
+import { escapeHtml } from "../../../Common/HtmlHelper";
+import { JsonToHtmlConverter } from "../../../Common/JsonToHTMLConverter";
 
 
 console.log("v: - 5.27")
@@ -39,13 +41,13 @@ type Observableify<T> = {
     [P in keyof T]: ko.Observable<T[P]>;
 };
 
-export type ObservableConfigurationOptions<TConfig> = 
-{ [K in keyof IBaseIDEAspectConfiguration<TConfig>]: ko.Observable<IBaseIDEAspectConfiguration<TConfig>[K]>; }
+export type ObservableConfigurationOptions<TConfig> =
+    { [K in keyof IBaseIDEAspectConfiguration<TConfig>]: ko.Observable<IBaseIDEAspectConfiguration<TConfig>[K]>; }
 
 // export type IObservableConfigurationOptions<TConfig> =  {debug: ko.Observable<ObservableIDebug>} &
 // {
 //     [K in keyof TConfig]: NestedObservableObject<TConfig>[K];
-   
+
 // }
 
 export type IBaseIDEAspectConfiguration<TConfig> = IConfigurationHost & I_IDE_Aspect_Modeller_Configuration<TConfig>;
@@ -176,7 +178,7 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
 
         (this.options as any) = toObservableObject(this.configuration, (this.options as any));
 
- 
+
         // Validation
         this.validation = {};
         this.validationErrorCount = this.validationErrorCount || ko.observable(0);
@@ -185,7 +187,7 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
         this.fireEvent("onInitialise", this.model);
     }
 
-    clearErrors(){
+    clearErrors() {
         this.errors?.removeAll();
     }
 
@@ -200,19 +202,19 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
     }
 
     setupLiveConfig() {
-        this.options.debug.subscribe((newValue:any) => {
+        this.options.debug.subscribe((newValue: any) => {
             if (newValue.liveConfig) {
                 this.activateLiveConfig(newValue.liveConfig);
-            }});
+            }
+        });
 
-      
-     
+
+
         this.activateLiveConfig((this.options.debug().liveConfig as any)()); //TODO fix typings
     }
 
-    activateLiveConfig(active: boolean | undefined){
-        if(!active)
-        {
+    activateLiveConfig(active: boolean | undefined) {
+        if (!active) {
             this.liveConfigDiv?.remove();
             return;
         }
@@ -234,7 +236,7 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
         let config = ko.observable(serializedData);
 
         this.liveConfigData = {
-            config: config, 
+            config: config,
         };
 
         let timeout: boolean = false;
@@ -257,7 +259,7 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
                     let newConfig = JSON.parse(config())
                     this._initialise(this.element, newConfig, this.baseModel);
                     this.reset(newConfig);
-                }, 5000);
+                }, 500);
                 timeout = true;
 
             });
@@ -281,6 +283,15 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
     */
     abstract reset(newConfig: any): void;
 
+    ensureStylesLoaded(href: string): void {
+        if (!document.querySelector(`link[href="${href}"]`)) {
+            const link = document.createElement('link');
+            link.href = href;
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            document.head.appendChild(link);
+        }
+    }
 
     createLiveConfigDiv(): HTMLElement {
         // Create the outer <div> with class "col-sm-12 formbuilder-editor-json"
@@ -319,61 +330,101 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
     buildErrorDiv() {
         this.inf("Building error div")
         let errorDiv = this.element.querySelector(this.errorDivSelector);
-        if (!errorDiv || !this.errors || this.errors() || this.errors().length === 0) {
+        if (!errorDiv ) {
+
             return;
         }
 
         l("errorDiv.innerHTML")
         errorDiv.innerHTML = ""; //clean out the div
 
+        if(!this.errors)
+        {
+            this.errors = ko.observableArray<TUserErrors>();
+        }
+        if(this.errors().length === 0)
+        {
+            return;
+        }
 
         let errorContainerDiv = document.createElement("div");
         errorDiv.appendChild(errorContainerDiv);
 
-        errorContainerDiv.className = "ems-error-container";
+        errorContainerDiv.className = "ide-aspect-error-container";
         let titleDiv = document.createElement("div");
-        titleDiv.className = "ems-error-title";
+        titleDiv.className = "ide-aspect-error-title";
         titleDiv.innerText = "There has been an error:";
         errorContainerDiv.appendChild(titleDiv);
         let foreachDiv = document.createElement("div");
         errorContainerDiv.appendChild(foreachDiv);
+       
         this.errors().forEach((error) => {
-            
+
             let userMessageDiv = document.createElement("div");
-            userMessageDiv.className = "ems-error-user-message";
+            userMessageDiv.className = "ide-aspect-error-user-message";
             userMessageDiv.innerHTML = error.userMessage;
+
+
+         
+            userMessageDiv.onclick = () => {
+
+                //create a div that can scoll
+                let detailedMessageDiv = document.createElement("div");
+                detailedMessageDiv.className = "ide-aspect-error-detailed-message";
+               
+
+                const code = escapeHtml(error.code || "");
+                const message = escapeHtml(error.message || "");
+                const userMessage = escapeHtml(error.userMessage || "");
+                const errorStack = escapeHtml(error.errorStack || "");
+
+                const additionalInfo = JsonToHtmlConverter.convert(error.additionalInfo || {});
+
+                const html = `
+                            <div>
+                            <h2>Error: ${code}</h2>
+                            <p><strong>Message:</strong> ${message}</p>
+                            <p><strong>User Message:</strong> ${userMessage}</p>
+                            <p><strong>Stack:</strong> ${errorStack}</p>
+                            <p><strong>Additional Info:</strong> ${additionalInfo}</p>
+                            </div>`;
+
+
+                detailedMessageDiv.innerHTML = html;
+
+                $ui.errorDialog(detailedMessageDiv);
+
+            }
+
+
             foreachDiv.appendChild(userMessageDiv);
 
-            if(error.suggestions && error.suggestions.length > 0)
-            {
+            if (error.suggestions && error.suggestions.length > 0) {
                 let suggestionsDiv = document.createElement("div");
-                suggestionsDiv.className = "ems-error-suggestions";
+                suggestionsDiv.className = "ide-aspect-error-suggestions";
                 suggestionsDiv.innerHTML = `<b>Suggestions:</b><br/>${error.suggestions.join("<br/>")}`;
                 foreachDiv.appendChild(suggestionsDiv);
             }
 
-            if(error.actions && error.actions.length > 0)
-            {
+            if (error.actions && error.actions.length > 0) {
                 let actionsDiv = document.createElement("div");
-                actionsDiv.className = "ems-error-actions";
+                actionsDiv.className = "ide-aspect-error-actions";
                 actionsDiv.innerHTML = `<b>Actions:</b><br/>${error.actions.join("<br/>")}`;
                 foreachDiv.appendChild(actionsDiv);
             }
 
-            if(error.internalSuggestions && error.internalSuggestions.length > 0)
-            {
+            if (error.internalSuggestions && error.internalSuggestions.length > 0) {
                 let internalSuggestionsDiv = document.createElement("div");
-                internalSuggestionsDiv.className = "ems-error-internal-suggestions";
+                internalSuggestionsDiv.className = "ide-aspect-error-internal-suggestions";
                 internalSuggestionsDiv.innerHTML = `<b>Internal Suggestions:</b><br/>${error.internalSuggestions.join("<br/>")}`;
                 foreachDiv.appendChild(internalSuggestionsDiv);
             }
 
         });
 
-        if(this.options.debug().supportRequestEnabled)
-        {
+        if (this.options.debug().supportRequestEnabled) {
             let actionDiv = document.createElement("div");
-            actionDiv.className = "ems-error-support-action";
+            actionDiv.className = "ide-aspect-error-support-action";
             errorContainerDiv.appendChild(actionDiv);
             let button = document.createElement("button");
             button.className = "btn btn-primary";
@@ -382,8 +433,8 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
             actionDiv.appendChild(button);
         }
 
-        
-       
+
+
 
     }
 

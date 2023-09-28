@@ -131,7 +131,6 @@ function addStyle(style: string | IStyleRule[] | INameValue | null | undefined, 
 
 function addField(field: IFieldRowField, dataContextName: string, rowDiv: HTMLDivElement) {
   const fieldDiv = document.createElement('div');
-  fieldDiv.classList.add(`ems-${field.field}`);
   fieldDiv.classList.add('ems-row-group');
   //if (field.cssClass) fieldDiv.classList.add(field.cssClass);
   addCSS(field.cssClass, fieldDiv, dataContextName);
@@ -153,13 +152,13 @@ function addField(field: IFieldRowField, dataContextName: string, rowDiv: HTMLDi
   }
 
   const spanElem = document.createElement('span');
-  if (field.formatter) {
-    spanElem.setAttribute('data-bind', `text:$root.formatFunc(${dataContextName}.${field.field},'${field.formatter}')`);
-  }
+  // if (field.formatter) {
+    spanElem.setAttribute('data-bind', `text:$root.formatFunc(${dataContextName},'${field.field}','${field.formatter}','${dataContextName}.${field.field}')`);
+  // }
 
-  else {
-    spanElem.setAttribute('data-bind', `text:${dataContextName}.${field.field}`);
-  }
+  // else {
+  //   spanElem.setAttribute('data-bind', `text:${dataContextName}.${field.field}`);
+  // }
   spanElem.classList.add('ems-field-value');
   fieldDiv.appendChild(spanElem);
   rowDiv.appendChild(fieldDiv);
@@ -184,7 +183,13 @@ function addIcons(icons: IIconRule[] | string | undefined, dataContextName: stri
     if (typeof iconRule.style === "string") iconElem.setAttribute('style', iconRule.style);
     if (iconRule.rule) {
       console.log("iconRule.rule", iconRule.rule);
-      iconElem.setAttribute('data-bind', `visible:$root.evalFunc("${dataContextName}.${iconRule.rule}",${dataContextName}, "${dataContextName}")`);
+
+      let fullRulePath = `${iconRule.rule}`
+      if(dataContextName) {
+        fullRulePath = `${dataContextName}.${iconRule.rule}`;
+      }
+
+      iconElem.setAttribute('data-bind', `visible:$root.evalFunc("${fullRulePath}",${dataContextName}, "${dataContextName}")`);
     }
 
     if (iconRule.position === 'before') {
