@@ -85,6 +85,10 @@ export async function executeFetch<T>(api: string, method: string, data: any): P
             error: []
         }
     }
+        //to get new token TODO: check if fail then call
+    await $ajax.get("https://hsf-vnext.sharedo.co.uk/security/refreshTokens?_=" + Date.now);
+
+    
 
     let url = validateApi(api);
     let fetchHeaders = buildHeaders();

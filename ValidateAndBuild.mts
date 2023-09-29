@@ -153,20 +153,20 @@ async function run()
     });
   });
 
-
   ("- - ".repeat(1000).blue.underline.bold)
   l("Starting Webpack".blue.underline.bold)
   webpack(webpackConfigs, (err, stats) => {
+    console.log("Webpack completed")
     if (err || stats?.hasErrors()) {
       console.error('There was an error:', err || stats?.toJson().errors);
-      console.log(JSON.stringify(webpackConfigs, null, 2));
+      // console.log(JSON.stringify(webpackConfigs, null, 2));
       return;
     }
     stats?.stats.forEach((stat) => {
       console.log(stat.toString({
         colors: true,
         modules: false,
-        children: false,
+        children: false, 
         chunks: true,
         chunkModules: false,
         entrypoints: true,

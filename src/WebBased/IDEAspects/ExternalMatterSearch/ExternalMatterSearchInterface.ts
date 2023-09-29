@@ -59,7 +59,7 @@ export interface IFieldRow {
 }
 
 export interface IFieldRowField {
-  field: string;
+  field: IFieldRule[] | string | null;
   valueOnNull?: string | null;
   valueOnEmpty?: string | null;
   formatter?: string | null;
@@ -69,6 +69,11 @@ export interface IFieldRowField {
   icon?: IIconRule[] | string | null;
   cssClass?: ICSSRule[] | string | null;
   style?: IStyleEntry;
+}
+
+export interface IFieldRule {
+  rule: string;
+  field: string;
 }
 
 export interface IIconRule {

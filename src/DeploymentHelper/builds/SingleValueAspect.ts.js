@@ -4716,11 +4716,16 @@ var BaseIDEAspect = class {
   }
 };
 
-// src/WebBased/IDEAspects/BaseClasses/IDebug.ts
-var DEBUG_DEFAULT = {
-  enabled: false,
-  logToConsole: false,
-  showInAspect: false
+// src/WebBased/IDEAspects/BaseClasses/DebugDefaults.ts
+var DEBUG_DEFAULT = () => {
+  let retValue = {
+    supportRequestEnabled: false,
+    enabled: true,
+    logToConsole: true,
+    showInAspect: false,
+    liveConfig: true
+  };
+  return retValue;
 };
 
 // src/WebBased/IDEAspects/SingleValueAspect/SingleValueAspectConfig.ts
@@ -4733,7 +4738,7 @@ var Default = {
   searchParents: false,
   maxDepth: 0,
   formatter: "value",
-  debug: DEBUG_DEFAULT,
+  debug: DEBUG_DEFAULT(),
   eventsToReactTo: [
     {
       eventPath: "sharedo.core.case.phase-changed",

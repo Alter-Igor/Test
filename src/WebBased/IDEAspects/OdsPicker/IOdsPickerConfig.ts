@@ -1,5 +1,5 @@
 import { IDefaultSettings } from "../BaseClasses/BaseIDEAspect";
-import { DEBUG_DEFAULT } from "../BaseClasses/IDebug";
+import { DEBUG_DEFAULT } from "../BaseClasses/DebugDefaults";
 
 export interface IODSPickerConfiguration {
   showPreSharedo: boolean;
@@ -48,7 +48,7 @@ export const Default: IDefaultSettings<IODSPickerConfiguration>=
               "displayName": "Matter Party"
           }
       ],
-      debug:DEBUG_DEFAULT,
+      debug:DEBUG_DEFAULT(),
       eventsToReactTo: []
   
   }

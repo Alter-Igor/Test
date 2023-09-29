@@ -11,8 +11,3 @@ export interface IDebug {
     [K in keyof IDebug]: ko.Observable<IDebug[K]>;
   }
 
-  export const DEBUG_DEFAULT: IDebug = {
-    enabled: false,
-    logToConsole: false,
-    showInAspect: false
-  }

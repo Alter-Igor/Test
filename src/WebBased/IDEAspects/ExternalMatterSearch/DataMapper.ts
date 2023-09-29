@@ -6,6 +6,29 @@ import { IDataMapping } from "./ExternalMatterSearchInterface";
 //     return path.split('.').reduce((acc, part) => acc && acc[part], obj);
 //   }
   
+/**
+ * Maps data from one format to another according to a provided mapping. 
+ * Below is a step-by-step explanation of this function
+ * @param data The input data that needs to be mapped.
+ * @param dataMapping An array of mapping objects that defines how the data should be transformed.
+ * @param rawJSONField An optional string parameter to store the original data as a Base64-encoded JSON string.
+ * @returns  It returns the mappedData object containing all the mapped values.
+ * 1. Iteration Over Mappings: The function iterates over each mapping object in the dataMapping array.
+      Destructuring Mapping Object: For each mapping object, it extracts formBuilderField and searchResultField.
+   2.  Handle Wildcard Mappings:
+      If searchResultField contains the string "{*}", the function handles wildcard mappings.
+      It retrieves the base string of searchResultField by removing the "{*}" and subsequent characters.
+      It removes curly braces and trims the trailing period if present.
+      It retrieves the value from the data object using getNestedProperty(data, objectBase).
+      If the retrieved value is an object, it iterates over the object's entries, capitalizes the first letter of each key, and adds the subvalue to mappedData with a key constructed by replacing "{*}" in formBuilderField with the capitalized key.
+   3. Handle Regular Mappings:
+      For searchResultField values without "{*}", it handles regular mappings.
+      If searchResultField contains curly braces, it retrieves the value by removing the curly braces, splitting by '-', retrieving nested properties for each part, and joining the parts with '-'.
+      Otherwise, it retrieves the value by removing curly braces from searchResultField and getting the nested property.
+      It assigns the retrieved value to mappedData using formBuilderField as the key.
+      Optional Base64 Encoding:
+      If rawJSONField is provided, it converts the data object to a JSON string, encodes it in Base64, and assigns it to mappedData with the key specified by rawJSONField.
+ */
   export function mapData(data: any, dataMapping: IDataMapping[], rawJSONField?: string): any {
     const mappedData: any = {};
   
@@ -51,7 +74,12 @@ import { IDataMapping } from "./ExternalMatterSearchInterface";
   }
 
 
-
+/**
+ * Attemps reverse mapping of data from one format to another according to a provided mapping.
+ * @param mappedData 
+ * @param dataMapping 
+ * @returns 
+ */
 export function reverseMapData(mappedData: any, dataMapping: IDataMapping[]): any {
     const originalData: any = {};
   

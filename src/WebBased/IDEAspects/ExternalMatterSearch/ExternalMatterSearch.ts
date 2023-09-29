@@ -9,8 +9,8 @@ import { Default } from "./ExternalMatterSearchDefaults";
 import { formatFunc } from "../../../helpers/Formatter";
 import { evaluteRule, executeFunc } from "../../../helpers/evaluteRule";
 import { Section, inf, lh, secBackOne } from "../../../Common/Log";
-import { IExternalMatterSearchConfiguration, IFieldPlacement, INameValue, IRule, IStyleEntry, IStyleRule, TAPIExecutionSettings } from "./ExternalMatterSearchInterface";
-import { autoGenerateTemplate, generateHtmlDiv } from "./ExternalMatterSearchTemplateGenerator";
+import { IExternalMatterSearchConfiguration, IFieldPlacement, IFieldRowField, INameValue, IRule, IStyleEntry, IStyleRule, TAPIExecutionSettings } from "./ExternalMatterSearchInterface";
+import { autoGenerateTemplate, generateHtmlDiv } from "./Template/TemplateGenerator";
 import { validateJSON } from "../../../helpers/Schema";
 import { DEFAULT_SEARCH_FIELDS_CONFIG } from "./DefaultSearchFields";
 import * as SCHEMA from "./ConfigSchema.json";
@@ -20,6 +20,7 @@ import { forEach, set } from "lodash";
 import { NestedObservableObject } from "../BaseClasses/KOConverter";
 import { data, error } from "jquery";
 import { replaceValues } from "../../Common/TemplateValueReplaces";
+import { TemplateApplicator } from "./Template/TemplateApplicator";
 
 const CSS_CLASS_SELECTED_ITEM = "ems-selected-item";
 const CSS_CLASS_RESULT_ITEM = "ems-result-item";
@@ -234,6 +235,7 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
 
     private ensureSearchTemplate() {
 
+        let applicator = new TemplateApplicator();
 
         this.customTemplateContentId = CUSTOM_TEMPLATE_CONTENT_ID;
         this.searchCustomTemplateId = "__custom_matter_search_item_template";
@@ -247,13 +249,63 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
                     this.searchTemplateGeneratedDiv.remove();
                 }
                 let unwrap = ko.toJS(this.options.searchFields());
-                this.searchTemplateGeneratedDiv = generateHtmlDiv(unwrap, "data", this.searchCustomTemplateContentsDiv);
+
+
+                this.searchTemplateGeneratedDiv = generateHtmlDiv(unwrap, "data", this.searchCustomTemplateContentsDiv, applicator);
                 // this.searchCustomTemplateContentsDiv.appendChild(this.searchTemplateGeneratedDiv);
                 // ko.applyBindings(this, this.searchTemplateGeneratedDiv);
                 this.searchTemplateToUseName = this.searchCustomTemplateId;
             }
         }
     }
+
+
+
+    // setDynamic(setType:string,dataContext: IFieldRowField, field: string, dataContextName: string) {
+
+    //     //setType: text or style or visability or value 
+    //     //dataContext: { data:{ matterCode: "1234"}}
+    //     //field: matterCode
+    //     //dataContextName: "data" or "dataContext"
+
+    //     this.lh1("setDynamic")
+    //     this.l("setType:", setType)
+    //     this.l("dataContext:", dataContext)
+    //     this.l("field:", field)
+    //     this.l("dataContextName:", dataContextName)
+
+    //     if (!dataContext) {
+    //         this.err("No value passed to formatFunc", dataContextName)
+    //         this.errors?.push({
+    //             code: "CONFIG_ERROR",
+    //             message: "No value passed to formatFunc",
+    //             userMessage: "No value passed to formatFunc, contact a system administrator.",
+    //             additionalInfo: {
+    //                 "Trying to apply type ": setType,
+    //                 "To this field ": field,
+    //                 "On this object ": dataContext,
+    //                 "Using this key ": dataContextName,
+    //             }
+    //         })
+    //         return;
+    //     }
+
+    //     if (!field) {
+    //         return "";
+    //     }
+
+    //     let retValue = field //replaceValues(`${field}`, object);
+
+    //     // if (formatter && formatter !== "undefined") {
+    //     retValue = executeFunc(retValue, dataContext)
+    //     // }
+    //     // if (formatter && formatter !== "undefined") {
+    //     //     retValue = formatFunc(retValue, formatter)
+    //     // }
+
+
+    //     return retValue;
+    // };
 
     private ensureSelectedMatterTemplate() {
 
@@ -283,10 +335,15 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
             throw new Error("No searchIFieldPlacement defined");
         }
 
-        this.selectedTemplateGeneratedDiv = generateHtmlDiv(ko.toJS(this.options.selectedFields()), "selectedMatter()", this.selectedDiv);
+        let applicator = new TemplateApplicator();
+
+        this.selectedTemplateGeneratedDiv = generateHtmlDiv(ko.toJS(this.options.selectedFields()), "selectedMatter()", this.selectedDiv, applicator);
         // this.selectedDiv.appendChild(this.selectedTemplateGeneratedDiv);
         // ko.cleanNode(this.selectedDiv);
-        ko.applyBindings(this, this.selectedTemplateGeneratedDiv);
+        if (this.selectedMatter && this.selectedMatter()) {
+            let data = { data: this.selectedMatter() } //! we do this so there is consistency between the search and selected templates
+            ko.applyBindings(data, this.selectedTemplateGeneratedDiv);
+        }
 
         this.clearSec();
 
@@ -410,28 +467,6 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
     save(model: any) {
         let mappedData = mapData(this.selectedMatter!(), ko.toJS(this.options.dataMapping()), this.options.formBuilderFieldSerialisedData());
         this.inf("save", mappedData)
-        // var matter = {
-        //     externalMatter_Code: null,
-        //     externalMatter_Title: null,
-        //     externalMatter_Client: null,
-        //     externalMatter_Partner: null,
-        //     externalMatter_Status: null,
-        //     externalMatter_IsSecure: false
-        // };
-
-        // var modelMatter = this.selectedMatter();
-
-        // if (modelMatter) {
-        //     matter.externalMatter_Client = modelMatter.client;
-        //     matter.externalMatter_Partner = modelMatter.partner;
-        //     matter.externalMatter_Title = modelMatter.title;
-        //     matter.externalMatter_Code = modelMatter.code;
-        //     matter.externalMatter_Status = modelMatter.status;
-        //     matter.externalMatter_IsSecure = modelMatter.isSecure;
-        // }
-
-        //this.ensureFormbuilder(model) //make sure there is a formbuilder
-
         let dataToSave = this.ensureFormbuilder(model);
         $.extend(this.ensureFormbuilder(model), mappedData);
         this.l("dataToSave", dataToSave)
@@ -439,19 +474,17 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
     };
 
 
+    /**
+     * This method is called by the auto complete when the user types in the search box
+     * @param searchTerm the term the user has typed in
+     * @param handler The auto complete handler - not used
+     * @returns This method returns an array of cards to display in the auto complete
+     */
     async querySearchAPI(searchTerm: string, handler: any) {
         this.clearErrors();
         this.ensureSearchTemplate();
         let results = new Array<any>();
         var search = searchTerm.toLowerCase();
-        // var result = $.Deferred();
-
-        // this.log("Searching for: " + search, "green");
-        // let url = this.options.searchApiUrl();
-
-        // if (url.indexOf(SEARCH_TERM) > -1) {
-        //     url = url.replace(SEARCH_TERM, search);
-        // }
 
         let multiAPICallResults: Promise<any> | undefined = undefined;
         if (this.options.searchApiExecutionSettings && this.options.searchApiExecutionSettings()) {
@@ -465,33 +498,12 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
                 }
             });
         }
-
-        // let singleAPICallResults = executeGetv2(url).then((response) => {
-        //     let dataPath = this.options.searchApiResultCollectionPath();
-        //     let dataItems = this.validateResponseData(response, dataPath);
-
-        //     if (!Array.isArray(dataItems)) {
-        //         this.err("Data at path: " + dataPath + " is not an array");
-        //         return [];
-        //     }
-
-        //     return dataItems
-        // }).then((data) => {
-        //     if (!data) {
-        //         this.wrn("No results from single search")
-        //     }
-        //     else {
-        //         results.push(...data);
-        //         this.l("results after single api call:", results)
-        //     }
-        // });
-
         return Promise.all([multiAPICallResults]).then(() => {
 
             let cards = new Array<Sharedo.UI.Framework.Components.AutoCompleteFindCard>();
             results.forEach((d: any) => {
                 // addVisualExtension(d);
-                d.forma = this.formatFunc;
+                //d.forma = this.formatFunc;
 
                 cards.push(new Sharedo.UI.Framework.Components.AutoCompleteFindCard({
                     type: AUTOCOMPLETE_CARD_TYPE.RESULT,
@@ -502,62 +514,109 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
                     cssClass: d.cssClass,
                 }));
             });
-
-
             return cards;
         });
     };
 
 
+    /**
+     * This method is called by the querySearchAPI when the user types in the search box
+     * It will call the search API and return the results by itterating through the searchApiExecutionSettings
+     * It calls the APIs in parallel and returns the results in the order they are defined in the configuration
+     * @param searchTerm 
+     * @param dataContext 
+     * @returns 
+     */
     async querySearchAPIMulti(searchTerm: string, dataContext: any) {
-
         let executionResults: Promise<any>[] = [];
-        this.clearErrors();
+        this.clearErrors(); //clear any errors from previous searches
         var search = searchTerm.toLowerCase();
-        var result = $.Deferred();
 
-        this.log("Searching for: " + search, "green");
-
+        this.log("Searching for: " + search);
         if (!this.options.searchApiExecutionSettings) {
             this.err("No searchApiExecutionSettings defined");
             return;
         }
 
-        dataContext = dataContext || {};
+        dataContext = dataContext || {}; //ensure there is a data context
 
         //create div to hold the results
         let searchStatusInfoDiv = document.createElement("div");
         searchStatusInfoDiv.id = "searchResults";
 
+        //Find the seach status div in the HTML and add the results div to it
         this.searchStatusDiv = this.element.querySelector(`#${SEARCH_STATUS_ID}`) as HTMLDivElement;
+        if (!this.searchStatusDiv) {
+            this.err(`Could not find element with id '${SEARCH_STATUS_ID}'`);
+            throw new Error(`Could not find element with id '${SEARCH_STATUS_ID}'`);
+        }
+
+        //clear any existing results
         if (this.searchStatusDiv) {
             this.searchStatusDiv.innerHTML = "";
             this.searchStatusDiv.appendChild(searchStatusInfoDiv);
+            this.searchStatusDiv.classList.add("ems-search-status");
         }
 
 
+        //loop through each searchApiExecutionSetting and call the API for each one
         this.options.searchApiExecutionSettings()?.forEach((setting) => {
+
+            //convert the setting to a plain object
             setting = ko.toJS(setting)
 
+            //create a timer to show the user that the search is taking place
+            let weAreStillSearching: boolean = true;
+            let startTime = new Date();
+
+            //create a div to hold the status of this individual search
             let searchDiv = document.createElement("div");
-            searchDiv.classList.add("search-result");;
-            searchDiv.innerHTML = `<div class='search-result-status'>Searching <span class="search-result-name">${setting.name || setting.url}</span> <img style="width:15px" src="/theme/images/ajax-loader.gif"></div>`
+            searchDiv.classList.add("ems-search-result");;
             searchStatusInfoDiv.appendChild(searchDiv);
 
+            //`<div class='ems-search-result-status searching'></div>`
+            let forEachSearchStatusDiv = document.createElement("div");
+            forEachSearchStatusDiv.classList.add("ems-each-search-status");
+            forEachSearchStatusDiv.classList.add("searching");
+            searchDiv.appendChild(forEachSearchStatusDiv);
+
+            // Searching <span class="ems-search-result-name">${setting.name || setting.url}</span>
+            let eachSearchResultMessage = document.createElement("div");
+            eachSearchResultMessage.classList.add("ems-search-result-message");
+            eachSearchResultMessage.innerHTML = `Searching <span class="ems-search-result-name">${setting.name || setting.url}</span>`
+            forEachSearchStatusDiv.appendChild(eachSearchResultMessage);
+
+            let elapsedTimeDiv = document.createElement("div");
+            elapsedTimeDiv.classList.add("ems-search-result-elapsed-time");
+            forEachSearchStatusDiv.appendChild(elapsedTimeDiv);
+
+            //set a timer to show the user that the search is taking place
+            let interVal = setInterval(() => {
+
+                this.l("Still searching for:", setting.name || setting.url)
+                let elapsed = new Date().getTime() - startTime.getTime();
+                if (elapsedTimeDiv) {
+                    elapsedTimeDiv.innerHTML = `Elapsed time: ${elapsed / 1000} seconds`;
+                }
+                if (!weAreStillSearching) {
+                    clearInterval(interVal);
+                    return;
+                }
+
+            }, 1000);
 
 
-            this.lh1("querySearchAPIMulti")
-            this.log("Searching for: " + search, "green");
             let data: any | undefined = undefined; //Data for the fetch
             let url: string | undefined = undefined; //url for the fetch
             let method = setting.method || "GET"; //default to GET
 
-
-
+            //ensure there is a search term in the data context
+            //this is used to replace the {searchTerm} in the url 
             if (!dataContext[SEARCH_TERM]) {
-                dataContext[SEARCH_TERM] = searchTerm; //ensure there is a search term
+                dataContext[SEARCH_TERM] = searchTerm;
             }
 
+            //make sure there is a url defined
             if (!setting.url) {
                 this.err("No url defined in searchApiExecutionSettings");
                 this.errors?.push({
@@ -567,49 +626,65 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
                 })
                 return [];
             }
-            url = replaceValues(setting.url, dataContext); //TODO fix typing
+            //replace any values in the url with the values from the data context i.e. searchTerm and any other values
+            url = replaceValues(setting.url, dataContext);
 
+            //if there is data defined in the setting, then replace any values in the data with the values from the data context
             if (setting.data) {
                 data = replaceValues(setting.data, dataContext);
             }
 
+            try {
+                //execute the fetch and add the promise to the executionResults array
+                let executionResult = executeFetch(url, method, data).then((response) => {
 
-            let executionResult = executeFetch(url, method, data).then((response) => {
-                let data: any;
-                this.lh1(`Results from ${url}`)
-                this.l("Response:", response)
-                let dataPath = setting.resultDataPath || "";
-                this.l("dataPath:", dataPath)
-                let dataItems = this.validateResponseData(response, dataPath, setting, false);
-                if (!dataItems) {
-                    this.err("No data items returned from search")
-                    searchDiv.innerHTML = `<div class='search-result-status'>No results found for <span class="search-result-name">${setting.name || setting.url}</span></div>`
-                    return [];
-                }
-                this.l("dataItems:", dataItems)
-
-
-                if (!Array.isArray(dataItems)) {
-                    dataItems = [dataItems]; //convert to array as the result could be a single object
-                    this.l(inf(`Data Items is not an array, converting to array`))
-                }
-                this.nv("Total results:", dataItems.length)
-
-                searchDiv.innerHTML = `<div class='search-result-status'>Found <span class="search-result-name">${dataItems.length}</span> results for <span class="search-result-name">${setting.name || setting.url}</span></div>`
-
-                dataItems.forEach((d: any) => {
-                    if (setting.resultDatapPrefixName) {
-                        d[setting.resultDatapPrefixName] = d;
+                    this.lh1(`Results from ${url}`)
+                    this.l("Response:", response)
+                    let dataPath = setting.resultDataPath || "";
+                    this.l("dataPath:", dataPath)
+                    let dataItems = this.validateResponseData(response, dataPath, setting, false);
+                    if (!dataItems) {
+                        this.err("No data items returned from search")
+                        eachSearchResultMessage.classList.add("no-results");
+                        eachSearchResultMessage.innerHTML = `Search <span class="ems-search-result-name">${setting.name || setting.url}</span> returned no results`
+                        return [];
                     }
+                    this.l("dataItems:", dataItems)
+                    if (!Array.isArray(dataItems)) {
+                        dataItems = [dataItems]; //convert to array as the result could be a single object
+                        this.l(inf(`Data Items is not an array, converting to array`))
+                    }
+                    this.nv("Total results:", dataItems.length)
+                    eachSearchResultMessage.classList.add("completed");
+                    eachSearchResultMessage.innerHTML = `Search <span class="ems-search-result-name">${setting.name || setting.url}</span> returned <span class="ems-search-result-count">${dataItems.length}</span> results`
 
+                    dataItems.forEach((d: any) => {
+                        if (setting.resultDatapPrefixName) {
+                            d[setting.resultDatapPrefixName] = d;
+                        }
+
+                    });
+                    secBackOne();
+                    return dataItems;
+
+
+                }).catch((error: any) => {
+                    eachSearchResultMessage.classList.add("error");
+                    eachSearchResultMessage.innerHTML = `Search <span class="ems-search-result-name">${setting.name || setting.url}</span> returned an error <span class="ems-search-result-error">${error}</span>`
+
+                }).finally(() => {
+                    weAreStillSearching = false;
                 });
-                secBackOne();
-                return dataItems;
+                executionResults.push(executionResult);
+            }
+            catch (e) {
+                weAreStillSearching = false;
+                this.err("Error executing search", e)
+                eachSearchResultMessage.classList.add("error");
+            }
 
 
-            });
 
-            executionResults.push(executionResult);
         });
 
 
@@ -624,16 +699,6 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
 
             return ultimateResult
         });
-
-        // let url = this.options.searchApiUrl();
-
-        // if (url.indexOf(SEARCH_TERM) > -1) {
-        //     url = url.replace(SEARCH_TERM, search);
-        // }
-
-
-
-
 
     }
 
@@ -654,6 +719,14 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
 
 
 
+    /**
+     * This method checks the response from the search API and returns the data from the dataPath
+     * @param response the response from the search API
+     * @param dataPath the path to the data in the response
+     * @param setting the searchApiExecutionSetting that was used to call the API
+     * @param addErrors if set to false then no errors will be added to the errors array
+     * @returns 
+     */
     validateResponseData(response: TExecuteFetchResponse, dataPath: string, setting?: TAPIExecutionSettings, addErrors?: boolean) {
         let retValue: any | undefined = undefined
 
@@ -662,8 +735,13 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
 
         }
 
-        if (typeof response.data === "string") {
-            retValue = JSON.parse(response.data);
+        try {
+            if (typeof response.data === "string") {
+                retValue = JSON.parse(response.data);
+            }
+        }
+        catch (e) {
+            retValue = "";
         }
 
         if (typeof response.data === "object") {
@@ -711,76 +789,6 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
         // this.selectedIFieldPlacement = this.options.selectedFields();
     }
 
-    // formatFunc(value: any, formatter: string, info: string) {
-
-    //     if (!value) {
-    //         this.err("No value passed to formatFunc", info)
-    //         this.errors?.push({
-    //             code: "CONFIG_ERROR",
-    //             message: "No value passed to formatFunc",
-    //             userMessage: "No value passed to formatFunc, contact a system administrator.",
-    //             additionalInfo: {
-    //                 "Trying to apply formatter ": formatter,
-    //                 "To this object ": value,
-    //                 "Using this key ": info,
-
-    //             }
-
-    //         })
-
-    //         return;
-    //     }
-
-    //     return formatFunc(value, formatter)
-    // };
-    formatFunc(object: any, field: string, formatter: string, info: string) {
-
-        //object: { data:{ matterCode: "1234"}}
-        //field: matterCode
-        //formatter: undefined or "value.toUpperCase()"
-        //info: "data.matterCode"
-
-        if (!object) {
-            this.err("No value passed to formatFunc", info)
-            this.errors?.push({
-                code: "CONFIG_ERROR",
-                message: "No value passed to formatFunc",
-                userMessage: "No value passed to formatFunc, contact a system administrator.",
-                additionalInfo: {
-                    "Trying to apply formatter ": formatter,
-                    "To this object ": object,
-                    "Using this key ": info,
-                }
-            })
-            return;
-        }
-
-        if (!field) {
-            return "";
-        }
-
-        let retValue = field //replaceValues(`${field}`, object);
-
-        // if (formatter && formatter !== "undefined") {
-        retValue = executeFunc(retValue, object)
-        // }
-        if (formatter && formatter !== "undefined") {
-            retValue = formatFunc(retValue, formatter)
-        }
-
-
-        return retValue;
-    };
-
-    evalFunc(value: any, dataContext: string, dataContextName: string) {
-        this.inf("evalFunc", value, dataContext, dataContextName)
-        return evaluteRule(value, dataContext, dataContextName)
-    }
-
-    // constructor(element: HTMLElement, configuration: IExternalMatterSearchConfiguration, baseModel: any) {
-    //     super(thisWidgetSystemName, "aspectData.odsEntityPicker", element, configuration, baseModel)
-    // }
-
     setWidgetJsonSettings(): IWidgetJson<IExternalMatterSearchConfiguration> {
         return Settings
     }
@@ -797,87 +805,6 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
         return undefined;
     }
 
-    setStyles(strStyle: string, data: any, dataContextName: string): any {
-        let retValue: INameValue = {};
-
-        //base64 decode
-        strStyle = atob(strStyle);
-
-        let style: IStyleEntry = JSON.parse(strStyle);
-
-        if (!style) {
-            this.err("No style defined");
-            return "";
-
-        };
-
-        this.inf("setStyles", style)
-
-        if (typeof style === "string") {
-            let n: IStyleRule = {
-                style: style
-            }
-            return this.buildStyling(n, retValue);
-        }
-
-        if (Array.isArray(style)) {
-            let arrItem = style as IStyleRule[];
-            if (Array.isArray(arrItem)) {
-                for (let i = 0; i < arrItem.length; i++) {
-                    let styleRuleOrNameValue = arrItem[i];
-                    if (styleRuleOrNameValue.rule) {
-                        if (evaluteRule(`${dataContextName}.${styleRuleOrNameValue.rule}`, data, dataContextName)) {
-                            if (!styleRuleOrNameValue.style) continue;
-                            retValue = this.buildStyling(styleRuleOrNameValue, retValue);
-                        }
-                    }
-                    else {
-                        retValue = this.buildStyling(styleRuleOrNameValue, retValue);
-                    }
-                }
-            }
-
-            for (let i = 0; i < arrItem.length; i++) {
-                let styleRuleOrNameValue = arrItem[i];
-                if (styleRuleOrNameValue.rule) {
-                    if (evaluteRule(`${dataContextName}.${styleRuleOrNameValue.rule}`, data, dataContextName)) {
-                        if (!styleRuleOrNameValue.style) continue;
-                        retValue = this.buildStyling(styleRuleOrNameValue, retValue);
-                    }
-                }
-                else {
-                    retValue = this.buildStyling(styleRuleOrNameValue, retValue);
-                }
-            }
-        }
-        else {
-
-            if (typeof style === "object") { //must be a NameValue
-                return style;
-            }
-        }
-
-
-        return retValue;
-    }
-    buildStyling(rule: IStyleRule, retValue: INameValue) {
-
-        if (typeof rule.style === "object") {
-            retValue = { ...retValue, ...rule.style };
-        }
-
-        if (typeof rule.style === "string") {
-            let styleItems = rule.style.split(";");
-            for (let i = 0; i < styleItems.length; i++) {
-                let styleItem = styleItems[i];
-                let nameValue = styleItem.split(":");
-                if (nameValue.length == 2) {
-                    retValue[nameValue[0].trim()] = nameValue[1].trim();
-                }
-            }
-        }
-        return retValue;
-    }
 
 
     getInputVisability() {

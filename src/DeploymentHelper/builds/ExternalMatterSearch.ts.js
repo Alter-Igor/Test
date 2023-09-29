@@ -10965,7 +10965,19 @@ var BaseIDEAspect = class {
 };
 
 // src/WebBased/IDEAspects/ExternalMatterSearch/ExternalMatterSearch.ts
-var import_knockout = __toESM(require_knockout_latest());
+var import_knockout2 = __toESM(require_knockout_latest());
+
+// src/WebBased/IDEAspects/BaseClasses/DebugDefaults.ts
+var DEBUG_DEFAULT = () => {
+  let retValue = {
+    supportRequestEnabled: false,
+    enabled: true,
+    logToConsole: true,
+    showInAspect: false,
+    liveConfig: true
+  };
+  return retValue;
+};
 
 // src/WebBased/IDEAspects/ExternalMatterSearch/DefaultSearchFields.ts
 var DEFAULT_SEARCH_FIELDS_CONFIG = {
@@ -10977,7 +10989,7 @@ var DEFAULT_SEARCH_FIELDS_CONFIG = {
   ],
   style: [
     {
-      rule: "status.toLowerCase()==='closed'",
+      rule: "dataContext.data.data.status.toLowerCase()==='closed'",
       style: {
         color: "lightgrey"
       }
@@ -10987,7 +10999,82 @@ var DEFAULT_SEARCH_FIELDS_CONFIG = {
     {
       fields: [
         {
-          field: "matterCode",
+          field: "`${dataContext.data.data.matterCode||dataContext.data.data.code}`",
+          style: "font-weight:bold",
+          icon: [
+            {
+              rule: "dataContext.data.data.status.toLowerCase()==='open'",
+              icon: "fa-folder-open text-success",
+              position: "before"
+            },
+            {
+              rule: "dataContext.data.data.status.toLowerCase()==='closed'",
+              icon: "fa-folder text-danger",
+              position: "before"
+            }
+          ],
+          width: null
+        },
+        {
+          field: "dataContext.data.title"
+        },
+        {
+          field: "dataContext.data.data.status",
+          formatter: "value.toUpperCase()",
+          label: "Status",
+          position: "right",
+          width: null
+        }
+      ]
+    },
+    {
+      fields: [
+        {
+          field: ""
+        },
+        {
+          label: "Client",
+          field: "dataContext.data.data.client",
+          width: null
+        },
+        {
+          field: ""
+        }
+      ]
+    }
+  ]
+};
+
+// src/WebBased/IDEAspects/ExternalMatterSearch/DefaultSelectedFields.ts
+var DEFAULT_SELECTED_FIELDS_CONFIG = {
+  container: {
+    style: [
+      {
+        rule: "secure",
+        style: {
+          "box-shadow": "1px 1px 62px #cb8383"
+        }
+      },
+      {
+        rule: "!secure",
+        style: {
+          "box-shadow": "1px 1px 10px #a4a3a3"
+        }
+      }
+    ]
+  },
+  icon: [
+    {
+      rule: "secure",
+      icon: "fa-shield text-warning fa-2x",
+      position: "before"
+    }
+  ],
+  rows: [
+    {
+      fields: [
+        {
+          field: "dataContext.data.matterCode",
           style: "font-weight:bold",
           icon: [
             {
@@ -11004,83 +11091,34 @@ var DEFAULT_SEARCH_FIELDS_CONFIG = {
           width: null
         },
         {
-          field: "status",
-          formatter: "value.toUpperCase()",
-          label: "Status",
-          position: "right",
-          width: null
-        }
-      ]
-    },
-    {
-      fields: [
-        {
-          label: "Client",
-          field: "client",
-          width: null
-        }
-      ]
-    }
-  ]
-};
-
-// src/WebBased/IDEAspects/ExternalMatterSearch/DefaultSelectedFields.ts
-var DEFAULT_SELECTED_FIELDS_CONFIG = {
-  container: {
-    style: [
-      {
-        rule: "data.secure",
-        style: {
-          "box-shadow": "1px 1px 62px #cb8383"
-        }
-      }
-    ]
-  },
-  icon: [
-    {
-      rule: "data.secure",
-      icon: "fa-shield text-warning fa-2x",
-      position: "before"
-    }
-  ],
-  rows: [
-    {
-      fields: [
-        {
-          field: "data.matterCode",
-          style: "font-weight:bold",
-          icon: [
-            {
-              rule: "data.status.toLowerCase()==='open'",
-              icon: "fa-folder-open text-success",
-              position: "before"
-            },
-            {
-              rule: "data.status.toLowerCase()==='closed'",
-              icon: "fa-folder text-danger",
-              position: "before"
-            }
-          ],
-          width: null
+          field: "dataContext.data.shortName",
+          width: null,
+          style: "font-weight:bold;color:red;font-size:larger"
         },
         {
-          field: "data.status",
+          field: "dataContext.data.status",
           formatter: "value.toUpperCase()",
           label: "Status",
           position: "right",
           width: null,
-          style: {
-            "font-size": "0.8em",
-            "font-weight": "bold"
-          }
+          style: "font-weight:bold"
         }
       ]
     },
     {
       fields: [
         {
-          field: "data.shortName",
-          width: null
+          field: ""
+        },
+        {
+          style: {
+            "font-size": "smaller",
+            "margin-top": "-10px"
+          },
+          field: "dataContext.data.practiceGroup"
+        },
+        {
+          field: ""
         }
       ]
     },
@@ -11088,8 +11126,48 @@ var DEFAULT_SELECTED_FIELDS_CONFIG = {
       fields: [
         {
           label: "Client",
-          field: "data.client.name",
+          field: "dataContext.data.client.name",
           width: null
+        },
+        {
+          field: "dataContext.data.client.code",
+          width: null,
+          style: {}
+        }
+      ]
+    },
+    {
+      fields: [
+        {
+          label: "Partner",
+          field: "dataContext.data.partner.name",
+          width: null
+        },
+        {
+          field: "dataContext.data.partner.code",
+          width: null,
+          style: {}
+        }
+      ]
+    },
+    {
+      fields: [
+        {
+          label: "Location",
+          field: "dataContext.data.location.country",
+          width: null
+        },
+        {
+          label: "Office",
+          field: "dataContext.data.location.office",
+          width: null,
+          style: {}
+        },
+        {
+          label: "Region",
+          field: "dataContext.data.location.region",
+          width: null,
+          style: {}
         }
       ]
     }
@@ -11105,40 +11183,60 @@ var Default = {
     }
   ],
   fackMode: false,
-  formBuilderFieldSerialisedData: "matterJSON",
-  selectedFieldDisplayValue: "{matterCode} - {shortName}",
-  searchApiResultCollectionPath: "data[0].results",
-  loadApiResultDataPath: "data",
-  searchApiUrl: "api/externalMatterProvider/query/{searchTerm}",
-  loadApiUrl: "api/externalMatterProvider/details/{code}",
-  dataMapping: [
-    { formBuilderField: "matterNumber", searchResultField: "{matterCode}" },
-    { formBuilderField: "matterShortName", searchResultField: "{shortName}" },
-    { formBuilderField: "matterClient{*}", searchResultField: "{client}.{*}" },
-    { formBuilderField: "matterPartner{*}", searchResultField: "{partner}.{*}" },
-    { formBuilderField: "matterIsSecure", searchResultField: "{isSecure}" }
-  ],
-  fackSearchDataIDEPath: void 0,
   fackLoadDataIDEPath: void 0,
-  debug: {
-    enabled: true,
-    logToConsole: true,
-    showInAspect: true,
-    liveConfig: true,
-    supportRequestEnabled: true
-  },
-  eventsToReactTo: [],
+  fackSearchDataIDEPath: void 0,
+  formBuilderFieldSerialisedData: "matterJSON",
+  selectedFieldDisplayValue: "`${dataContext.matterCode} - ${dataContext.shortName}`",
+  loadApiResultDataPath: "data",
+  loadApiUrl: "`/api/proxy/hurricane-api/_/v2/matters/${dataContext.data.matterCode||dataContext.data.code}`",
+  dataMapping: [
+    {
+      formBuilderField: "expert-matter-number",
+      searchResultField: "`${dataContext.data.matterCode}`"
+    },
+    {
+      formBuilderField: "expert-matter-number-value",
+      searchResultField: "`${dataContext.data.matterCode}`"
+    },
+    {
+      formBuilderField: "matter-details-ib",
+      searchResultField: "`${dataContext.data.secure}`"
+    },
+    {
+      formBuilderField: "matter-details-name",
+      searchResultField: "`${dataContext.data.shortName}`"
+    },
+    {
+      formBuilderField: "matter-details-client-name",
+      searchResultField: "`${dataContext.data.client.name}`"
+    },
+    {
+      formBuilderField: "matter-details-client-code",
+      searchResultField: "`${dataContext.data.client.code}`"
+    },
+    {
+      formBuilderField: "matter-details-partner-name",
+      searchResultField: "`${dataContext.data.partner.name}`"
+    }
+  ],
+  debug: DEBUG_DEFAULT(),
   searchFields: DEFAULT_SEARCH_FIELDS_CONFIG,
   selectedFields: DEFAULT_SELECTED_FIELDS_CONFIG,
   searchApiExecutionSettings: [
     {
       method: "GET",
-      url: "api/externalMatterProvider/query/{searchTerm}",
-      data: void 0,
+      url: "/api/proxy/hurricane-api/_/v1/find?q={searchTerm}&engines=MBN",
       resultDataPath: "data[0].results",
-      resultDatapPrefixName: void 0
+      name: "Matter Number"
+    },
+    {
+      method: "GET",
+      url: "/api/proxy/hurricane-api/_/v1/find?q={searchTerm}&engines=MBC",
+      resultDataPath: "data[0].results",
+      name: "Matter Content"
     }
-  ]
+  ],
+  eventsToReactTo: []
 };
 
 // src/WebBased/IDEAspects/ExternalMatterSearch/ExternalMatterSearchSettings.ts
@@ -11172,34 +11270,10 @@ var Settings = {
   ]
 };
 
-// src/helpers/Formatter.ts
-function formatValue(value, formatter) {
-  const dynamicFunc = new Function("value", `return (${formatter});`);
-  let returnValue;
-  try {
-    returnValue = dynamicFunc(value);
-  } catch (e) {
-    console.log(`Error formatting value [${value}] with formatter [${formatter}]`, e);
-    returnValue = "Error formatting value - see console";
-  }
-  return returnValue;
-}
-var formatFunc = formatValue;
-
 // src/helpers/evaluteRule.ts
 function evaluteRule(rule, dataContext, dataContextName) {
-  l(inf(`evaluteRule(${rule})`), dataContext);
-  let dataContextNameToUse = "dataContext";
-  if (dataContextName) {
-    const escapedDataContextName = dataContextName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    const regex = new RegExp(escapedDataContextName, "g");
-    rule = rule.replace(regex, dataContextNameToUse);
-  }
-  checkAndLogUndefined(dataContext, rule, dataContextNameToUse);
-  const dynamicFunc = new Function(`${dataContextNameToUse}`, `return (${rule});`);
-  l(inf(`evaluteRule(${rule}) - dynamicFunc: `), dynamicFunc);
   try {
-    const returnValue = dynamicFunc(dataContext);
+    const returnValue = executeFunc(rule, dataContext, dataContextName);
     if (typeof returnValue === "boolean") {
       return returnValue;
     } else {
@@ -11209,6 +11283,38 @@ function evaluteRule(rule, dataContext, dataContextName) {
   } catch (e) {
     console.log(`Error evaluating rule [${rule}] with data context`, e);
     return false;
+  }
+}
+function executeFunc(expression, dataContext, dataContextName) {
+  l(inf(`evaluteRule(${expression})`), dataContext);
+  if (expression === "") {
+    return "";
+  }
+  if (!expression) {
+    return void 0;
+  }
+  let dataContextNameToUse = "dataContext";
+  if (dataContextName) {
+    const escapedDataContextName = dataContextName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const regex = new RegExp(escapedDataContextName, "g");
+    expression = expression.replace(regex, dataContextNameToUse);
+  }
+  checkAndLogUndefined(dataContext, expression, dataContextNameToUse);
+  let dynamicFunc;
+  try {
+    dynamicFunc = new Function(`${dataContextNameToUse}`, `return (${expression});`);
+  } catch (e) {
+    let errMessage = `Error creating function for expression [${expression}]`;
+    l(err(errMessage), e);
+    return errMessage;
+  }
+  l(inf(`evaluteRule(${expression}) - dynamicFunc: `), dynamicFunc);
+  try {
+    const returnValue = dynamicFunc(dataContext);
+    return returnValue;
+  } catch (e) {
+    console.log(`Error evaluating rule [${expression}] with data context`, e);
+    return `${e}`;
   }
 }
 function checkAndLogUndefined(obj, rule, dataContextName) {
@@ -11226,7 +11332,8 @@ function checkAndLogUndefined(obj, rule, dataContextName) {
   return current;
 }
 
-// src/WebBased/IDEAspects/ExternalMatterSearch/ExternalMatterSearchTemplateGenerator.ts
+// src/WebBased/IDEAspects/ExternalMatterSearch/Template/TemplateGenerator.ts
+var import_knockout = __toESM(require_knockout_latest());
 function autoGenerateTemplate(fieldNames) {
   const rows = [];
   for (let i = 0; i < fieldNames.length; i++) {
@@ -11257,131 +11364,31 @@ function autoGenerateTemplate(fieldNames) {
     // for example: cssClass, style, icon, etc.
   };
 }
-function generateHtmlDiv(placement, dataContextName, container) {
+function generateHtmlDiv(placement, dataContextName, container, applicator) {
+  import_knockout.default.bindingHandlers.matterSearchBinding = {
+    init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
+      applicator.setupElement(element, valueAccessor, allBindings, viewModel, bindingContext);
+    },
+    update: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
+      applicator.updateElement(element, valueAccessor, allBindings, viewModel, bindingContext);
+    }
+  };
   const rootDiv = document.createElement("div");
   container.appendChild(rootDiv);
-  if (placement.container) {
-    container.classList.add("ems-container");
-    addCSS(placement.container.cssClass, container, dataContextName);
-    addStyle(placement.container.style, container, dataContextName);
-  }
-  rootDiv.classList.add("ems-result-item");
-  rootDiv.id = "resultItem";
-  addCSS(placement.cssClass, rootDiv, dataContextName);
-  addStyle(placement.style, rootDiv, dataContextName);
-  if (placement.icon) {
-    addIcons(placement.icon, dataContextName, rootDiv);
-  }
   const divElemColumn = document.createElement("div");
-  divElemColumn.classList.add("ems-row-container");
-  rootDiv.appendChild(divElemColumn);
-  let rowCounter = 0;
-  placement.rows?.forEach((row) => {
-    rowCounter++;
-    const rowDiv = document.createElement("div");
-    rowDiv.style.alignItems = row.alignItems || "space-between";
-    rowDiv.classList.add("ems-row" + rowCounter);
-    rowDiv.classList.add("ems-row");
-    addCSS(row.cssClass, rowDiv, dataContextName);
-    addStyle(row.style, rowDiv, dataContextName);
-    row.fields?.forEach((field) => {
-      addField(field, dataContextName, rowDiv);
-    });
-    divElemColumn.appendChild(rowDiv);
-  });
+  addCustomBinding(rootDiv, placement, "IFieldPlacement");
   return rootDiv;
 }
-function addCSS(cssClass, rootDiv, dataContextName) {
-  if (typeof cssClass === "string") {
-    cssClass = [{ cssClass }];
-  }
-  if (cssClass instanceof Array) {
-    let arrItem = cssClass;
-    for (let i = 0; i < arrItem.length; i++) {
-      let cssRule = arrItem[i];
-      if (cssRule.rule) {
-        let currentDataBind = rootDiv.getAttribute("data-bind") || "";
-        if (currentDataBind) {
-          currentDataBind += ",";
-        }
-        rootDiv.setAttribute("data-bind", `${currentDataBind} css: { ${cssRule.cssClass} : $root.evalFunc("${dataContextName}.${cssRule.rule}",${dataContextName}, "${dataContextName}") }`);
-      } else {
-        rootDiv.classList.add(cssRule.cssClass);
-      }
-    }
-  }
-}
-function addStyle(style, rootDiv, dataContextName) {
-  if (!style)
-    return;
-  if (style instanceof String) {
-    style = [{ style }];
-  }
-  let currentDataBind = rootDiv.getAttribute("data-bind") || "";
+function addCustomBinding(element, field, type) {
+  let currentDataBind = element.getAttribute("data-bind") || "";
   if (currentDataBind) {
     currentDataBind += ",";
   }
-  let jsonStyleRules = JSON.stringify(style);
-  jsonStyleRules = btoa(jsonStyleRules);
-  rootDiv.setAttribute("data-bind", `${currentDataBind} style: $root.setStyles('${jsonStyleRules}',${dataContextName},"${dataContextName}")`);
-}
-function addField(field, dataContextName, rowDiv) {
-  const fieldDiv = document.createElement("div");
-  fieldDiv.classList.add(`ems-${field.field}`);
-  fieldDiv.classList.add("ems-row-group");
-  addCSS(field.cssClass, fieldDiv, dataContextName);
-  if (field.width)
-    fieldDiv.style.width = `${field.width}px`;
-  if (field.position)
-    fieldDiv.style.textAlign = field.position;
-  addStyle(field.style, fieldDiv, dataContextName);
-  if (field.label) {
-    const labelElem = document.createElement("label");
-    labelElem.textContent = field.label;
-    labelElem.classList.add("ems-label");
-    fieldDiv.appendChild(labelElem);
-  }
-  if (field.icon && field.icon.length > 0) {
-    addIcons(field.icon, dataContextName, fieldDiv);
-  }
-  const spanElem = document.createElement("span");
-  if (field.formatter) {
-    spanElem.setAttribute("data-bind", `text:$root.formatFunc(${dataContextName}.${field.field},'${field.formatter}','${dataContextName}.${field.field}')`);
-  } else {
-    spanElem.setAttribute("data-bind", `text:${dataContextName}.${field.field}`);
-  }
-  spanElem.classList.add("ems-field-value");
-  fieldDiv.appendChild(spanElem);
-  rowDiv.appendChild(fieldDiv);
-}
-function addIcons(icons, dataContextName, fieldDiv) {
-  if (!icons)
-    return;
-  if (typeof icons === "string") {
-    icons = [{ icon: icons }];
-  }
-  icons.forEach((iconRule) => {
-    const iconElem = document.createElement("span");
-    iconElem.className = "fa card-icon " + iconRule.icon;
-    iconElem.classList.add("ems-icon");
-    if (iconRule.cssClass)
-      iconElem.classList.add(iconRule.cssClass);
-    if (typeof iconRule.style === "string")
-      iconElem.setAttribute("style", iconRule.style);
-    if (iconRule.rule) {
-      console.log("iconRule.rule", iconRule.rule);
-      iconElem.setAttribute("data-bind", `visible:$root.evalFunc("${dataContextName}.${iconRule.rule}",${dataContextName}, "${dataContextName}")`);
-    }
-    if (iconRule.position === "before") {
-      fieldDiv.insertBefore(iconElem, fieldDiv.firstChild);
-    }
-    if (iconRule.position === "after") {
-      fieldDiv.appendChild(iconElem);
-    }
-    if (!iconRule.position) {
-      fieldDiv.appendChild(iconElem);
-    }
-  });
+  let customContext = {
+    type,
+    object: field
+  };
+  element.setAttribute("data-bind", `${currentDataBind} matterSearchBinding: ${JSON.stringify(customContext, null, 2)}`);
 }
 
 // src/helpers/Schema.ts
@@ -11753,12 +11760,259 @@ function replaceValues(template, data) {
   });
 }
 
+// src/helpers/Formatter.ts
+function formatValue(value, formatter) {
+  const dynamicFunc = new Function("value", `return (${formatter});`);
+  let returnValue;
+  try {
+    returnValue = dynamicFunc(value);
+  } catch (e) {
+    console.log(`Error formatting value [${value}] with formatter [${formatter}]`, e);
+    returnValue = "Error formatting value - see console";
+  }
+  return returnValue;
+}
+var formatFunc = formatValue;
+
+// src/WebBased/IDEAspects/ExternalMatterSearch/Template/TemplateApplicator.ts
+var TemplateApplicator = class {
+  constructor() {
+  }
+  setupElement(element, valueAccessor, allBindings, viewModel, bindingContext) {
+    let instruction = allBindings().matterSearchBinding;
+    if (!instruction) {
+      l(err("No instruction defined"));
+      return;
+    }
+    if (instruction.type == "IFieldPlacement") {
+      let rowField = instruction.object;
+      this.buildPlacements(rowField, "dataContextName", viewModel, element);
+    }
+  }
+  updateElement(element, valueAccessor, allBindings, viewModel, bindingContext) {
+    l("updateElement", element, valueAccessor, allBindings, viewModel, bindingContext);
+  }
+  buildPlacements(placement, dataContextName, viewModel, container) {
+    let rowCounter = 0;
+    const rootDiv = document.createElement("div");
+    container.appendChild(rootDiv);
+    if (placement.container) {
+      let containerParent = container.parentElement?.parentElement;
+      if (containerParent) {
+        containerParent.classList.add("ems-container-parent");
+        this.addCSS(placement.container.cssClass, containerParent, dataContextName, viewModel);
+        this.addStyle(placement.container.style, containerParent, dataContextName, viewModel);
+      }
+    }
+    rootDiv.classList.add("ems-placement-item");
+    rootDiv.id = "resultItem";
+    this.addCSS(placement.cssClass, rootDiv, dataContextName, viewModel);
+    this.addStyle(placement.style, rootDiv, dataContextName, viewModel);
+    if (placement.icon) {
+      this.addIcons(placement.icon, dataContextName, rootDiv, viewModel);
+    }
+    const divRowContainer = document.createElement("div");
+    divRowContainer.classList.add("ems-row-container");
+    rootDiv.appendChild(divRowContainer);
+    placement.rows?.forEach((row) => {
+      rowCounter++;
+      const rowDiv = document.createElement("div");
+      rowDiv.style.alignItems = row.alignItems || "space-between";
+      rowDiv.classList.add("ems-row" + rowCounter);
+      rowDiv.classList.add("ems-row");
+      this.addCSS(row.cssClass, rowDiv, dataContextName, viewModel);
+      this.addStyle(row.style, rowDiv, dataContextName, viewModel);
+      row.fields?.forEach((field) => {
+        this.addField(field, dataContextName, rowDiv, viewModel);
+      });
+      divRowContainer.appendChild(rowDiv);
+    });
+  }
+  addField(field, dataContextName, rowDiv, viewModel) {
+    const fieldDiv = document.createElement("div");
+    fieldDiv.classList.add("ems-row-group");
+    this.addCSS(field.cssClass, fieldDiv, dataContextName, viewModel);
+    if (field.width)
+      fieldDiv.style.width = `${field.width}px`;
+    if (field.position)
+      fieldDiv.style.textAlign = field.position;
+    this.addStyle(field.style, fieldDiv, dataContextName, viewModel);
+    if (field.label) {
+      const labelElem = document.createElement("label");
+      labelElem.textContent = field.label;
+      labelElem.classList.add("ems-label");
+      fieldDiv.appendChild(labelElem);
+    }
+    this.addIcons(field.icon, dataContextName, fieldDiv, viewModel);
+    const spanElem = document.createElement("span");
+    spanElem.classList.add("ems-field-value");
+    let valueToSet = executeFunc(field.field, viewModel);
+    if (typeof valueToSet !== "string") {
+      valueToSet = JSON.stringify(valueToSet, null, 2);
+    }
+    if (field.formatter) {
+      valueToSet = formatFunc(valueToSet, field.formatter);
+    }
+    spanElem.innerHTML = valueToSet;
+    fieldDiv.appendChild(spanElem);
+    rowDiv.appendChild(fieldDiv);
+  }
+  addIcons(icons, dataContextName, fieldDiv, viewModel) {
+    if (!icons)
+      return;
+    if (typeof icons === "string") {
+      icons = [{ icon: icons }];
+    }
+    icons.forEach((iconRule) => {
+      const iconElem = document.createElement("span");
+      iconElem.className = "fa card-icon " + iconRule.icon;
+      iconElem.classList.add("ems-icon");
+      if (iconRule.cssClass)
+        iconElem.classList.add(iconRule.cssClass);
+      if (typeof iconRule.style === "string")
+        iconElem.setAttribute("style", iconRule.style);
+      if (iconRule.rule) {
+        console.log("iconRule.rule", iconRule.rule);
+        let value = evaluteRule(iconRule.rule, viewModel);
+        if (!value) {
+          iconElem.style.display = "none";
+        }
+      }
+      if (iconRule.position === "before") {
+        fieldDiv.insertBefore(iconElem, fieldDiv.firstChild);
+      }
+      if (iconRule.position === "after") {
+        fieldDiv.appendChild(iconElem);
+      }
+      if (!iconRule.position) {
+        fieldDiv.appendChild(iconElem);
+      }
+    });
+  }
+  addCSS(cssClass, rootDiv, dataContextName, viewModel) {
+    if (typeof cssClass === "string") {
+      cssClass = [{ cssClass }];
+    }
+    if (cssClass instanceof Array) {
+      let arrItem = cssClass;
+      for (let i = 0; i < arrItem.length; i++) {
+        let cssRule = arrItem[i];
+        let cssValue = executeFunc(cssRule.cssClass, viewModel);
+        if (cssRule.rule) {
+          let currentDataBind = rootDiv.getAttribute("data-bind") || "";
+          if (currentDataBind) {
+            currentDataBind += ",";
+          }
+          let rule = cssRule.rule;
+          let value = evaluteRule(rule, viewModel);
+          if (value) {
+            rootDiv.classList.add(cssValue);
+          }
+        } else {
+          rootDiv.classList.add(cssValue);
+        }
+      }
+    }
+  }
+  addStyle(style, rootDiv, dataContextName, viewModel) {
+    if (style == void 0)
+      return;
+    if (typeof style === "string") {
+      style = [{ style }];
+    }
+    if (style instanceof Array) {
+      let arrItem = style;
+      for (let i = 0; i < arrItem.length; i++) {
+        let styleRule = arrItem[i].rule;
+        if (styleRule) {
+          let currentDataBind = rootDiv.getAttribute("data-bind") || "";
+          if (currentDataBind) {
+            currentDataBind += ",";
+          }
+          let value = evaluteRule(styleRule, viewModel);
+          if (value) {
+            this.setStyles(style, viewModel, dataContextName, rootDiv);
+          }
+        } else {
+          this.setStyles(style, viewModel, dataContextName, rootDiv);
+        }
+      }
+    }
+  }
+  setStyles(style, data, dataContextName, rootDiv) {
+    let retValue = {};
+    if (!style) {
+      return "";
+    }
+    ;
+    if (typeof style === "string") {
+      let n = {
+        style
+      };
+      return this.buildStyling(n, retValue);
+    }
+    if (Array.isArray(style)) {
+      let arrItem = style;
+      if (Array.isArray(arrItem)) {
+        for (let i = 0; i < arrItem.length; i++) {
+          let styleRuleOrNameValue = arrItem[i];
+          if (styleRuleOrNameValue.rule) {
+            if (evaluteRule(styleRuleOrNameValue.rule, data)) {
+              if (!styleRuleOrNameValue.style)
+                continue;
+              retValue = this.buildStyling(styleRuleOrNameValue, retValue);
+            }
+          } else {
+            retValue = this.buildStyling(styleRuleOrNameValue, retValue);
+          }
+        }
+      }
+      for (let i = 0; i < arrItem.length; i++) {
+        let styleRuleOrNameValue = arrItem[i];
+        if (styleRuleOrNameValue.rule) {
+          if (evaluteRule(styleRuleOrNameValue.rule, data)) {
+            if (!styleRuleOrNameValue.style)
+              continue;
+            retValue = this.buildStyling(styleRuleOrNameValue, retValue);
+          }
+        } else {
+          retValue = this.buildStyling(styleRuleOrNameValue, retValue);
+        }
+      }
+    } else {
+      if (typeof style === "object") {
+        return style;
+      }
+    }
+    for (let key in retValue) {
+      if (retValue.hasOwnProperty(key)) {
+        rootDiv.style[key] = retValue[key];
+      }
+    }
+  }
+  buildStyling(rule, retValue) {
+    if (typeof rule.style === "object") {
+      retValue = { ...retValue, ...rule.style };
+    }
+    if (typeof rule.style === "string") {
+      let styleItems = rule.style.split(";");
+      for (let i = 0; i < styleItems.length; i++) {
+        let styleItem = styleItems[i];
+        let nameValue = styleItem.split(":");
+        if (nameValue.length == 2) {
+          retValue[nameValue[0].trim()] = nameValue[1].trim();
+        }
+      }
+    }
+    return retValue;
+  }
+};
+
 // src/WebBased/IDEAspects/ExternalMatterSearch/ExternalMatterSearch.ts
 var CSS_CLASS_SELECTED_ITEM = "ems-selected-item";
-var CSS_CLASS_RESULT_ITEM = "ems-result-item";
 var CUSTOM_TEMPLATE_CONTENT_ID = "resultItem";
-var SEARCH_TEMPLATE_NAME = "__matter_search_item_template";
 var SEARCH_TERM = "searchTerm";
+var SEARCH_STATUS_ID = "searchStatus";
 var ExternalMatterSearch = class extends BaseIDEAspect {
   // private initialise() {//! Note: UI framework looks for this method name and if found behaves differently and wont call loadAndBind
   /**
@@ -11770,7 +12024,7 @@ var ExternalMatterSearch = class extends BaseIDEAspect {
     if (!validateJSON(this.configuration, ConfigSchema_exports)) {
       this.wrn("SearchFields does not match schema");
     }
-    this.inputVisability = import_knockout.default.computed(() => {
+    this.inputVisability = import_knockout2.default.computed(() => {
       this.getInputVisability();
       return true;
     });
@@ -11783,29 +12037,14 @@ var ExternalMatterSearch = class extends BaseIDEAspect {
       this.wrn("No selectedFields defined, using searchFields as selectedFields");
       this.options.selectedFields(this.options.searchFields());
     }
-    this.customTemplateContentId = CUSTOM_TEMPLATE_CONTENT_ID;
-    this.searchCustomTemplateId = "__custom_matter_search_item_template";
-    this.searchCustomTemplateDiv = this.element.querySelector("#" + this.searchCustomTemplateId);
-    if (this.searchCustomTemplateDiv) {
-      const content = this.searchCustomTemplateDiv.content;
-      const resultItem = content.querySelector(`.${CSS_CLASS_RESULT_ITEM}`);
-      this.searchCustomTemplateContentsDiv = content.querySelector("#" + this.customTemplateContentId);
-      if (this.searchCustomTemplateContentsDiv) {
-        if (this.searchTemplateGeneratedDiv) {
-          this.searchTemplateGeneratedDiv.remove();
-        }
-        let unwrap = import_knockout.default.toJS(this.options.searchFields());
-        this.searchTemplateGeneratedDiv = generateHtmlDiv(unwrap, "data", this.searchCustomTemplateContentsDiv);
-        this.searchTemplateToUseName = this.searchCustomTemplateId;
-      }
-    }
+    this.ensureSearchTemplate();
     this.selectedDiv = this.element.querySelector(`.${CSS_CLASS_SELECTED_ITEM}`);
     if (!this.selectedDiv) {
       this.err(`Could not find element with class '${CSS_CLASS_SELECTED_ITEM}'`);
       throw new Error(`Could not find element with class '${CSS_CLASS_SELECTED_ITEM}'`);
     }
     this.autoComplete = this.autoComplete || this.setupAutoComplete();
-    this.selectedMatter = import_knockout.default.observable();
+    this.selectedMatter = import_knockout2.default.observable();
     this.selectedMatter.subscribe((newValue) => {
       this.ensureSelectedMatterTemplate();
     });
@@ -11814,7 +12053,6 @@ var ExternalMatterSearch = class extends BaseIDEAspect {
     });
   }
   setupAutoComplete() {
-    this.searchTemplateToUseName = SEARCH_TEMPLATE_NAME;
     return new Sharedo.UI.Framework.Components.AutoCompleteHandler(
       {
         enabled: true,
@@ -11857,7 +12095,7 @@ var ExternalMatterSearch = class extends BaseIDEAspect {
       let data = this.formbuilder()[this.options.formBuilderFieldSerialisedData()];
       if (data) {
         let base64Decoded = atob(data);
-        this.selectedMatter = import_knockout.default.observable();
+        this.selectedMatter = import_knockout2.default.observable();
         this.selectedMatter(JSON.parse(base64Decoded));
       }
     }
@@ -11879,9 +12117,9 @@ var ExternalMatterSearch = class extends BaseIDEAspect {
       } else {
         model = await this.loadMatterDetailsFromLoadAPI(model);
         this.selectedMatter(model);
-        let mappedData = mapData(this.selectedMatter(), import_knockout.default.toJS(this.options.dataMapping()));
+        let mappedData = mapData(this.selectedMatter(), import_knockout2.default.toJS(this.options.dataMapping()));
         this.inf("Mapped Data", mappedData);
-        let reverse = reverseMapData(mappedData, import_knockout.default.toJS(this.options.dataMapping()));
+        let reverse = reverseMapData(mappedData, import_knockout2.default.toJS(this.options.dataMapping()));
         this.inf("Mapped Reverse", mappedData);
         $ui.stacks.unlock(self);
       }
@@ -11889,14 +12127,7 @@ var ExternalMatterSearch = class extends BaseIDEAspect {
       if (!textValue) {
         textValue = "{matterCode} - {shortName}";
       }
-      let matches = textValue.match(/{([^}]+)}/g);
-      if (matches) {
-        matches.forEach((m) => {
-          let key = m.replace("{", "").replace("}", "");
-          let val = getNestedProperty(model, key);
-          textValue = textValue.replace(m, val);
-        });
-      }
+      textValue = executeFunc(textValue, model);
       return new Sharedo.UI.Framework.Components.AutoCompleteDisplayCard({
         id: model,
         icon: null,
@@ -11907,6 +12138,61 @@ var ExternalMatterSearch = class extends BaseIDEAspect {
       this.err("Error loading matter details", e);
     }
   }
+  ensureSearchTemplate() {
+    let applicator = new TemplateApplicator();
+    this.customTemplateContentId = CUSTOM_TEMPLATE_CONTENT_ID;
+    this.searchCustomTemplateId = "__custom_matter_search_item_template";
+    this.searchCustomTemplateDiv = this.element.querySelector("#" + this.searchCustomTemplateId);
+    if (this.searchCustomTemplateDiv) {
+      const content = this.searchCustomTemplateDiv.content;
+      this.searchCustomTemplateContentsDiv = content.querySelector("#" + this.customTemplateContentId);
+      if (this.searchCustomTemplateContentsDiv) {
+        if (this.searchTemplateGeneratedDiv) {
+          this.searchTemplateGeneratedDiv.remove();
+        }
+        let unwrap = import_knockout2.default.toJS(this.options.searchFields());
+        this.searchTemplateGeneratedDiv = generateHtmlDiv(unwrap, "data", this.searchCustomTemplateContentsDiv, applicator);
+        this.searchTemplateToUseName = this.searchCustomTemplateId;
+      }
+    }
+  }
+  // setDynamic(setType:string,dataContext: IFieldRowField, field: string, dataContextName: string) {
+  //     //setType: text or style or visability or value 
+  //     //dataContext: { data:{ matterCode: "1234"}}
+  //     //field: matterCode
+  //     //dataContextName: "data" or "dataContext"
+  //     this.lh1("setDynamic")
+  //     this.l("setType:", setType)
+  //     this.l("dataContext:", dataContext)
+  //     this.l("field:", field)
+  //     this.l("dataContextName:", dataContextName)
+  //     if (!dataContext) {
+  //         this.err("No value passed to formatFunc", dataContextName)
+  //         this.errors?.push({
+  //             code: "CONFIG_ERROR",
+  //             message: "No value passed to formatFunc",
+  //             userMessage: "No value passed to formatFunc, contact a system administrator.",
+  //             additionalInfo: {
+  //                 "Trying to apply type ": setType,
+  //                 "To this field ": field,
+  //                 "On this object ": dataContext,
+  //                 "Using this key ": dataContextName,
+  //             }
+  //         })
+  //         return;
+  //     }
+  //     if (!field) {
+  //         return "";
+  //     }
+  //     let retValue = field //replaceValues(`${field}`, object);
+  //     // if (formatter && formatter !== "undefined") {
+  //     retValue = executeFunc(retValue, dataContext)
+  //     // }
+  //     // if (formatter && formatter !== "undefined") {
+  //     //     retValue = formatFunc(retValue, formatter)
+  //     // }
+  //     return retValue;
+  // };
   ensureSelectedMatterTemplate() {
     if (!this.selectedDiv) {
       this.err("No selectedDiv defined");
@@ -11920,15 +12206,19 @@ var ExternalMatterSearch = class extends BaseIDEAspect {
     this.selectedDiv.classList.add("ems-show");
     this.lh1("ensureSelectedMatterTemplate");
     if (this.selectedTemplateGeneratedDiv) {
-      import_knockout.default.cleanNode(this.selectedTemplateGeneratedDiv);
+      import_knockout2.default.cleanNode(this.selectedTemplateGeneratedDiv);
       this.selectedTemplateGeneratedDiv.remove();
     }
     if (!this.options.selectedFields()) {
       this.err("No searchIFieldPlacement defined");
       throw new Error("No searchIFieldPlacement defined");
     }
-    this.selectedTemplateGeneratedDiv = generateHtmlDiv(import_knockout.default.toJS(this.options.selectedFields()), "selectedMatter()", this.selectedDiv);
-    import_knockout.default.applyBindings(this, this.selectedTemplateGeneratedDiv);
+    let applicator = new TemplateApplicator();
+    this.selectedTemplateGeneratedDiv = generateHtmlDiv(import_knockout2.default.toJS(this.options.selectedFields()), "selectedMatter()", this.selectedDiv, applicator);
+    if (this.selectedMatter && this.selectedMatter()) {
+      let data = { data: this.selectedMatter() };
+      import_knockout2.default.applyBindings(data, this.selectedTemplateGeneratedDiv);
+    }
     this.clearSec();
   }
   async loadMatterDetailsFromLoadAPI(model) {
@@ -11936,6 +12226,11 @@ var ExternalMatterSearch = class extends BaseIDEAspect {
     try {
       let retValue = model;
       let url = this.options.loadApiUrl();
+      try {
+        url = executeFunc(url, model);
+      } catch (e) {
+        this.err("Error executing url function", e);
+      }
       let matches = url.match(/{([^}]+)}/g);
       if (matches) {
         matches.forEach((m) => {
@@ -12008,14 +12303,21 @@ var ExternalMatterSearch = class extends BaseIDEAspect {
     });
   }
   save(model) {
-    let mappedData = mapData(this.selectedMatter(), import_knockout.default.toJS(this.options.dataMapping()), this.options.formBuilderFieldSerialisedData());
+    let mappedData = mapData(this.selectedMatter(), import_knockout2.default.toJS(this.options.dataMapping()), this.options.formBuilderFieldSerialisedData());
     this.inf("save", mappedData);
     let dataToSave = this.ensureFormbuilder(model);
     $.extend(this.ensureFormbuilder(model), mappedData);
     this.l("dataToSave", dataToSave);
   }
+  /**
+   * This method is called by the auto complete when the user types in the search box
+   * @param searchTerm the term the user has typed in
+   * @param handler The auto complete handler - not used
+   * @returns This method returns an array of cards to display in the auto complete
+   */
   async querySearchAPI(searchTerm, handler) {
     this.clearErrors();
+    this.ensureSearchTemplate();
     let results = new Array();
     var search = searchTerm.toLowerCase();
     let multiAPICallResults = void 0;
@@ -12032,7 +12334,6 @@ var ExternalMatterSearch = class extends BaseIDEAspect {
     return Promise.all([multiAPICallResults]).then(() => {
       let cards = new Array();
       results.forEach((d) => {
-        d.forma = this.formatFunc;
         cards.push(new Sharedo.UI.Framework.Components.AutoCompleteFindCard({
           type: "result" /* RESULT */,
           data: d,
@@ -12045,21 +12346,66 @@ var ExternalMatterSearch = class extends BaseIDEAspect {
       return cards;
     });
   }
+  /**
+   * This method is called by the querySearchAPI when the user types in the search box
+   * It will call the search API and return the results by itterating through the searchApiExecutionSettings
+   * It calls the APIs in parallel and returns the results in the order they are defined in the configuration
+   * @param searchTerm 
+   * @param dataContext 
+   * @returns 
+   */
   async querySearchAPIMulti(searchTerm, dataContext) {
     let executionResults = [];
     this.clearErrors();
     var search = searchTerm.toLowerCase();
-    var result = $.Deferred();
-    this.log("Searching for: " + search, "green");
+    this.log("Searching for: " + search);
     if (!this.options.searchApiExecutionSettings) {
       this.err("No searchApiExecutionSettings defined");
       return;
     }
     dataContext = dataContext || {};
+    let searchStatusInfoDiv = document.createElement("div");
+    searchStatusInfoDiv.id = "searchResults";
+    this.searchStatusDiv = this.element.querySelector(`#${SEARCH_STATUS_ID}`);
+    if (!this.searchStatusDiv) {
+      this.err(`Could not find element with id '${SEARCH_STATUS_ID}'`);
+      throw new Error(`Could not find element with id '${SEARCH_STATUS_ID}'`);
+    }
+    if (this.searchStatusDiv) {
+      this.searchStatusDiv.innerHTML = "";
+      this.searchStatusDiv.appendChild(searchStatusInfoDiv);
+      this.searchStatusDiv.classList.add("ems-search-status");
+    }
     this.options.searchApiExecutionSettings()?.forEach((setting) => {
-      setting = import_knockout.default.toJS(setting);
-      this.lh1("querySearchAPIMulti");
-      this.log("Searching for: " + search, "green");
+      setting = import_knockout2.default.toJS(setting);
+      let weAreStillSearching = true;
+      let startTime = /* @__PURE__ */ new Date();
+      let searchDiv = document.createElement("div");
+      searchDiv.classList.add("ems-search-result");
+      ;
+      searchStatusInfoDiv.appendChild(searchDiv);
+      let forEachSearchStatusDiv = document.createElement("div");
+      forEachSearchStatusDiv.classList.add("ems-each-search-status");
+      forEachSearchStatusDiv.classList.add("searching");
+      searchDiv.appendChild(forEachSearchStatusDiv);
+      let eachSearchResultMessage = document.createElement("div");
+      eachSearchResultMessage.classList.add("ems-search-result-message");
+      eachSearchResultMessage.innerHTML = `Searching <span class="ems-search-result-name">${setting.name || setting.url}</span>`;
+      forEachSearchStatusDiv.appendChild(eachSearchResultMessage);
+      let elapsedTimeDiv = document.createElement("div");
+      elapsedTimeDiv.classList.add("ems-search-result-elapsed-time");
+      forEachSearchStatusDiv.appendChild(elapsedTimeDiv);
+      let interVal = setInterval(() => {
+        this.l("Still searching for:", setting.name || setting.url);
+        let elapsed = (/* @__PURE__ */ new Date()).getTime() - startTime.getTime();
+        if (elapsedTimeDiv) {
+          elapsedTimeDiv.innerHTML = `Elapsed time: ${elapsed / 1e3} seconds`;
+        }
+        if (!weAreStillSearching) {
+          clearInterval(interVal);
+          return;
+        }
+      }, 1e3);
       let data = void 0;
       let url = void 0;
       let method = setting.method || "GET";
@@ -12079,33 +12425,51 @@ var ExternalMatterSearch = class extends BaseIDEAspect {
       if (setting.data) {
         data = replaceValues(setting.data, dataContext);
       }
-      let executionResult = executeFetch(url, method, data).then((response) => {
-        let data2;
-        this.lh1(`Results from ${url}`);
-        this.l("Response:", response);
-        let dataPath = setting.resultDataPath || "";
-        this.l("dataPath:", dataPath);
-        let dataItems = this.validateResponseData(response, dataPath, setting);
-        this.l("dataItems:", dataItems);
-        if (!Array.isArray(dataItems)) {
-          dataItems = [dataItems];
-          this.l(inf(`Data Items is not an array, converting to array`));
-        }
-        this.nv("Total results:", dataItems.length);
-        dataItems.forEach((d) => {
-          if (setting.resultDatapPrefixName) {
-            d[setting.resultDatapPrefixName] = d;
+      try {
+        let executionResult = executeFetch(url, method, data).then((response) => {
+          this.lh1(`Results from ${url}`);
+          this.l("Response:", response);
+          let dataPath = setting.resultDataPath || "";
+          this.l("dataPath:", dataPath);
+          let dataItems = this.validateResponseData(response, dataPath, setting, false);
+          if (!dataItems) {
+            this.err("No data items returned from search");
+            eachSearchResultMessage.classList.add("no-results");
+            eachSearchResultMessage.innerHTML = `Search <span class="ems-search-result-name">${setting.name || setting.url}</span> returned no results`;
+            return [];
           }
+          this.l("dataItems:", dataItems);
+          if (!Array.isArray(dataItems)) {
+            dataItems = [dataItems];
+            this.l(inf(`Data Items is not an array, converting to array`));
+          }
+          this.nv("Total results:", dataItems.length);
+          eachSearchResultMessage.classList.add("completed");
+          eachSearchResultMessage.innerHTML = `Search <span class="ems-search-result-name">${setting.name || setting.url}</span> returned <span class="ems-search-result-count">${dataItems.length}</span> results`;
+          dataItems.forEach((d) => {
+            if (setting.resultDatapPrefixName) {
+              d[setting.resultDatapPrefixName] = d;
+            }
+          });
+          secBackOne();
+          return dataItems;
+        }).catch((error) => {
+          eachSearchResultMessage.classList.add("error");
+          eachSearchResultMessage.innerHTML = `Search <span class="ems-search-result-name">${setting.name || setting.url}</span> returned an error <span class="ems-search-result-error">${error}</span>`;
+        }).finally(() => {
+          weAreStillSearching = false;
         });
-        secBackOne();
-        return dataItems;
-      });
-      executionResults.push(executionResult);
+        executionResults.push(executionResult);
+      } catch (e) {
+        weAreStillSearching = false;
+        this.err("Error executing search", e);
+        eachSearchResultMessage.classList.add("error");
+      }
     });
     return Promise.all(executionResults).then(() => {
       let ultimateResult = [];
-      executionResults.forEach((result2) => {
-        result2.then((data) => {
+      executionResults.forEach((result) => {
+        result.then((data) => {
           this.l("Data:", data);
           ultimateResult.push(...data);
         });
@@ -12123,7 +12487,15 @@ var ExternalMatterSearch = class extends BaseIDEAspect {
     this.validateFormbuilderJSONFieldSetup();
     this.save(model);
   }
-  validateResponseData(response, dataPath, setting) {
+  /**
+   * This method checks the response from the search API and returns the data from the dataPath
+   * @param response the response from the search API
+   * @param dataPath the path to the data in the response
+   * @param setting the searchApiExecutionSetting that was used to call the API
+   * @param addErrors if set to false then no errors will be added to the errors array
+   * @returns 
+   */
+  validateResponseData(response, dataPath, setting, addErrors) {
     let retValue = void 0;
     if (response.info.success === false) {
       this.buildUserErrors(response);
@@ -12138,18 +12510,20 @@ var ExternalMatterSearch = class extends BaseIDEAspect {
     let dataItems = getNestedProperty(retValue, dataPath);
     if (!dataItems) {
       this.err("No data found at path: " + dataPath);
-      this.errors?.push({
-        code: "DATA_ERROR",
-        message: "No data found at path: " + dataPath,
-        userMessage: "Results from the search API are not in the expected format, contact a system administrator.",
-        additionalInfo: {
-          responseUrl: response.response?.url || "",
-          responseStatus: response.response?.status || "",
-          responseStatusText: response.response?.statusText || "",
-          responseData: response.data || "",
-          widgetConfig: import_knockout.default.toJS(this.options)
-        }
-      });
+      if (addErrors) {
+        this.errors?.push({
+          code: "DATA_ERROR",
+          message: "No data found at path: " + dataPath,
+          userMessage: "Results from the search API are not in the expected format, contact a system administrator.",
+          additionalInfo: {
+            responseUrl: response.response?.url || "",
+            responseStatus: response.response?.status || "",
+            responseStatusText: response.response?.statusText || "",
+            responseData: response.data || "",
+            widgetConfig: import_knockout2.default.toJS(this.options)
+          }
+        });
+      }
       return [];
     }
     return dataItems;
@@ -12158,30 +12532,6 @@ var ExternalMatterSearch = class extends BaseIDEAspect {
   }
   reset(newConfig) {
   }
-  formatFunc(value, formatter, info) {
-    if (!value) {
-      this.err("No value passed to formatFunc", info);
-      this.errors?.push({
-        code: "CONFIG_ERROR",
-        message: "No value passed to formatFunc",
-        userMessage: "No value passed to formatFunc, contact a system administrator.",
-        additionalInfo: {
-          "Trying to apply formatter ": formatter,
-          "To this object ": value,
-          "Using this key ": info
-        }
-      });
-      return;
-    }
-    return formatFunc(value, formatter);
-  }
-  evalFunc(value, dataContext, dataContextName) {
-    this.inf("evalFunc", value, dataContext, dataContextName);
-    return evaluteRule(value, dataContext, dataContextName);
-  }
-  // constructor(element: HTMLElement, configuration: IExternalMatterSearchConfiguration, baseModel: any) {
-  //     super(thisWidgetSystemName, "aspectData.odsEntityPicker", element, configuration, baseModel)
-  // }
   setWidgetJsonSettings() {
     return Settings;
   }
@@ -12193,73 +12543,6 @@ var ExternalMatterSearch = class extends BaseIDEAspect {
   }
   setLocationOfDataToLoadAndSave() {
     return void 0;
-  }
-  setStyles(strStyle, data, dataContextName) {
-    let retValue = {};
-    strStyle = atob(strStyle);
-    let style = JSON.parse(strStyle);
-    if (!style) {
-      this.err("No style defined");
-      return "";
-    }
-    ;
-    this.inf("setStyles", style);
-    if (typeof style === "string") {
-      let n = {
-        style
-      };
-      return this.buildStyling(n, retValue);
-    }
-    if (Array.isArray(style)) {
-      let arrItem = style;
-      if (Array.isArray(arrItem)) {
-        for (let i = 0; i < arrItem.length; i++) {
-          let styleRuleOrNameValue = arrItem[i];
-          if (styleRuleOrNameValue.rule) {
-            if (evaluteRule(`${dataContextName}.${styleRuleOrNameValue.rule}`, data, dataContextName)) {
-              if (!styleRuleOrNameValue.style)
-                continue;
-              retValue = this.buildStyling(styleRuleOrNameValue, retValue);
-            }
-          } else {
-            retValue = this.buildStyling(styleRuleOrNameValue, retValue);
-          }
-        }
-      }
-      for (let i = 0; i < arrItem.length; i++) {
-        let styleRuleOrNameValue = arrItem[i];
-        if (styleRuleOrNameValue.rule) {
-          if (evaluteRule(`${dataContextName}.${styleRuleOrNameValue.rule}`, data, dataContextName)) {
-            if (!styleRuleOrNameValue.style)
-              continue;
-            retValue = this.buildStyling(styleRuleOrNameValue, retValue);
-          }
-        } else {
-          retValue = this.buildStyling(styleRuleOrNameValue, retValue);
-        }
-      }
-    } else {
-      if (typeof style === "object") {
-        return style;
-      }
-    }
-    return retValue;
-  }
-  buildStyling(rule, retValue) {
-    if (typeof rule.style === "object") {
-      retValue = { ...retValue, ...rule.style };
-    }
-    if (typeof rule.style === "string") {
-      let styleItems = rule.style.split(";");
-      for (let i = 0; i < styleItems.length; i++) {
-        let styleItem = styleItems[i];
-        let nameValue = styleItem.split(":");
-        if (nameValue.length == 2) {
-          retValue[nameValue[0].trim()] = nameValue[1].trim();
-        }
-      }
-    }
-    return retValue;
   }
   getInputVisability() {
     let retValue = true;
@@ -12294,10 +12577,10 @@ var ExternalMatterSearch = class extends BaseIDEAspect {
     return this.configuration;
   }
   getSearchFieldPlacement() {
-    return import_knockout.default.toJS(this.options.searchFields());
+    return import_knockout2.default.toJS(this.options.searchFields());
   }
   getSelectedIFieldPlacement() {
-    let retValue = import_knockout.default.toJS(this.options.selectedFields());
+    let retValue = import_knockout2.default.toJS(this.options.selectedFields());
     return retValue;
   }
   /**
@@ -12313,6 +12596,7 @@ var ExternalMatterSearch = class extends BaseIDEAspect {
 0 && (module.exports = {
   ExternalMatterSearch
 });
+//! we do this so there is consistency between the search and selected templates
 /*! Bundled license information:
 
 knockout/build/output/knockout-latest.js:

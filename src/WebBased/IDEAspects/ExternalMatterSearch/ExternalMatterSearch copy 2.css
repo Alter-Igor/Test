@@ -2,11 +2,6 @@
   padding: 15px;
 }
 
-.ems-result-item
-{
-  background-color:white;
-}
-
 
 .ems-result-item {
   padding: 5px;
@@ -20,20 +15,13 @@
   /* border: blue 1px solid; */
 }
 
-
-.card-result:hover
-{
-   box-shadow: 1px 1px 10px #eb8a8a;
-}
-
 .ems-selected-item {
   box-shadow: 1px 1px 10px #a4a3a3;
   margin-top: 10px;
   border-radius: 20px;
-  /* padding-left: 5px; */
-  /* padding-right: 5px; */
+  padding-left: 5px;
+  padding-right: 5px;
   display: none;
-  padding: 20px;
 }
 
 .ems-selected-item.ems-show {
@@ -51,13 +39,10 @@
 
 .ems-placement-item {
   
-/* width: 100%; */
-  
-display: flex;
-  
-flex-direction: row;
-  
-align-items: center;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-content: space-between;
 }
 
 .ems-row-container {
@@ -73,16 +58,11 @@ align-items: center;
 
 .ems-row-group {
   line-height: 20px;
-  /* width: 100%; */
-  /* display: flex; */
-  justify-content: space-between;
-  /* align-items: center; */
-  /* border: 1px red solid; */
-  flex-direction: row;
+
 }
 
 .ems-field-value {
-  /* margin-right: 5px; */
+  margin-right: 5px;
 }
 
 .ems-icon {
@@ -92,10 +72,9 @@ align-items: center;
 .ems-row {
   display: flex;
   /* border: red 2px solid; */
-  /* width: 100%; */
-  flex-direction: row;
-  /* text-align: center; */
+  flex-wrap: nowrap;
   justify-content: space-between;
+  width: 100%;
 }
 
 .ems-label {
@@ -107,7 +86,7 @@ align-items: center;
 }
 
 .ems-icon-container {
-  /* border: red; */
+  border: red;
   display: flex;
   align-items: center;
   margin: 10px;
@@ -135,7 +114,7 @@ align-items: center;
 
 .ide-aspect-error-user-message:before {
   content: "- ";
-  color: red; 
+  color: red;
 }
 
 .ide-aspect-error-user-message:after {
@@ -150,64 +129,4 @@ align-items: center;
   overflow: unset;
   overflow-wrap: anywhere;
   width: 100%;
-}
-
-.ems-search-result
-{
-  
-display: inline-flex;
-}
-
-.ems-each-search-status
-{
-    /* height: 100px; */
-    font-family: 'Barlow';
-    display: flex;
-    /* flex-direction: row; */
-}
-
-
-
-.ems-search-result-message 
-{
-  
-}
-
-.ems-search-result-message.completed
-{
-  
-}
-
-.ems-search-result-name
-{
-  font-weight: bold;
-}
-
-.ems-search-result-name::before
-{
-  content:"["
-}
-.ems-search-result-name::after
-{
-  content:"]"
-}
-
-
-.ems-search-result-count
-{
-  font-weight:bold;
-}
-
-.ems-search-result-count::before
-{
-  content:"["
-}
-.ems-search-result-count::after
-{
-  content:"]"
-}
-
-.ems-search-result-elapsed-time::before
-{
-   content:" - "
 }

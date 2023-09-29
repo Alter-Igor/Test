@@ -13,40 +13,40 @@
     "dataMapping": [
         {
             "formBuilderField": "expert-matter-number",
-            "searchResultField": "`${data.matterCode}`"
+            "searchResultField": "`${dataContext.data.matterCode}`"
         },
         {
             "formBuilderField": "expert-matter-number-value",
-            "searchResultField": "`${data.matterCode}`"
+            "searchResultField": "`${dataContext.data.matterCode}`"
         },
         {
             "formBuilderField": "matter-details-ib",
-            "searchResultField": "`${data.secure}`"
+            "searchResultField": "`${dataContext.data.secure}`"
         },
         {
             "formBuilderField": "matter-details-name",
-            "searchResultField": "`${data.shortName}`"
+            "searchResultField": "`${dataContext.data.shortName}`"
         },
         {
             "formBuilderField": "matter-details-client-name",
-            "searchResultField": "`${data.client.name}`"
+            "searchResultField": "`${dataContext.data.client.name}`"
         },
         {
             "formBuilderField": "matter-details-client-code",
-            "searchResultField": "`${data.client.code}`"
+            "searchResultField": "`${dataContext.data.client.code}`"
         },
         {
             "formBuilderField": "matter-details-partner-name",
-            "searchResultField": "`${data.partner.name}`"
+            "searchResultField": "`${dataContext.data.partner.name}`"
         }
     ],
     "debug": {
         "enabled": true,
         "logToConsole": true,
         "showInAspect": false,
-        "liveConfig": true
+        "liveConfig": true,
+        "supportRequestEnabled": false
     },
-    "eventsToReactTo": [],
     "searchFields": {
         "container": {},
         "icon": [
@@ -56,7 +56,7 @@
         ],
         "style": [
             {
-                "rule": "dataContext.data.status.toLowerCase()==='closed'",
+                "rule": "dataContext.data.data.status.toLowerCase()==='closed'",
                 "style": {
                     "color": "lightgrey"
                 }
@@ -66,7 +66,83 @@
             {
                 "fields": [
                     {
-                        "field": "`${dataContext.data.matterCode||dataContext.data.code}`",
+                        "field": "`${dataContext.data.data.matterCode||dataContext.data.data.code}`",
+                        "style": "font-weight:bold",
+                        "icon": [
+                            {
+                                "rule": "dataContext.data.data.status.toLowerCase()==='open'",
+                                "icon": "fa-folder-open text-success",
+                                "position": "before"
+                            },
+                            {
+                                "rule": "dataContext.data.data.status.toLowerCase()==='closed'",
+                                "icon": "fa-folder text-danger",
+                                "position": "before"
+                            }
+                        ],
+                        "width": null
+                    },
+                    {
+                        "style": {
+                            "color": "blue"
+                        },
+                        "field": "dataContext.data.title"
+                    },
+                    {
+                        "field": "dataContext.data.data.status",
+                        "formatter": "value.toUpperCase()",
+                        "label": "Status",
+                        "position": "right",
+                        "width": null
+                    }
+                ]
+            },
+            {
+                "fields": [
+                    {
+                        "field": ""
+                    },
+                    {
+                        "label": "Client",
+                        "field": "dataContext.data.data.client",
+                        "width": null
+                    },
+                    {
+                        "field": ""
+                    }
+                ]
+            }
+        ]
+    },
+    "selectedFields": {
+        "container": {
+            "style": [
+                {
+                    "rule": "dataContext.data.secure",
+                    "style": {
+                        "box-shadow": "1px 1px 62px #cb8383"
+                    }
+                },
+                {
+                    "rule": "!dataContext.data.secure",
+                    "style": {
+                        "box-shadow": "1px 1px 10px #a4a3a3"
+                    }
+                }
+            ]
+        },
+        "icon": [
+            {
+                "rule": "dataContext.data.secure",
+                "icon": "fa-shield text-warning fa-2x",
+                "position": "before"
+            }
+        ],
+        "rows": [
+            {
+                "fields": [
+                    {
+                        "field": "dataContext.data.matterCode",
                         "style": "font-weight:bold",
                         "icon": [
                             {
@@ -83,105 +159,70 @@
                         "width": null
                     },
                     {
-                        "field": "dataContext.title"
+                        "field": "dataContext.data.shortName",
+                        "width": null,
+                        "style": {
+                            "font-weight": "bold",
+                            "color": "red",
+                            "font-size": "larger"
+                        }
                     },
                     {
                         "field": "dataContext.data.status",
                         "formatter": "value.toUpperCase()",
                         "label": "Status",
                         "position": "right",
-                        "width": null
+                        "width": null,
+                        "style": "font-weight:bold"
                     }
+                   
                 ]
             },
             {
                 "fields": [
                     {
-
-                    },
-                    {
-                        "label": "Client",
-                        "field": "dataContext.data.client",
-                        "width": null
-                    },
-                    {}
-                ]
-            }
-        ]
-    },
-    "selectedFields": {
-        "container": {
-            "style": [
-                {
-                    "rule": "secure",
-                    "style": {
-                        "box-shadow": "1px 1px 62px #cb8383"
-                    }
-                },
-                {
-                    "rule": "!secure",
-                    "style": {
-                        "box-shadow": "1px 1px 10px #a4a3a3"
-                    }
-                }
-            ]
-        },
-        "icon": [
-            {
-                "rule": "secure",
-                "icon": "fa-shield text-warning fa-2x",
-                "position": "before"
-            }
-        ],
-        "rows": [
-            {
-                "fields": [
-                    {
-                        "field": "dataContext.matterCode",
-                        "style": "font-weight:bold",
-                        "icon": [
+                        "field": [
                             {
-                                "rule": "status.toLowerCase()==='open'",
-                                "icon": "fa-folder-open text-success",
-                                "position": "before"
+                                "rule": "dataContext.data.secure",
+                                "field": "'Secured!'"
                             },
                             {
-                                "rule": "status.toLowerCase()==='closed'",
-                                "icon": "fa-folder text-danger",
-                                "position": "before"
+                                "rule": "!dataContext.data.secure",
+                                "field": "'Not Secured'"
                             }
                         ],
-                        "width": null
-                    },
-                    {
-                        "field": "dataContext.shortName",
-                        "width": null,
-                        "style": "font-weight:bold"
-                    },
-                    {
-                        "field": "dataContext.status",
-                        "formatter": "value.toUpperCase()",
-                        "label": "Status",
-                        "position": "right",
-                        "width": null,
-                        "style": "font-weight:bold"
-                    }
-                ]
-            },
-            {
-                "fields": [
-                    {
-                        "fields": "dataContext.practiceGroup"
+                        "style": [
+                           {
+                               "style": {
+                                    "margin-top":"-10px",
+                                    "font-size":"x-small"
+                                }
+                           },
+                            {
+                                "rule": "!dataContext.data.secure",
+                                "style": {
+                                    "color": "green",
+                                    "font-weight": "bold"
+                                }
+                            },
+                            {
+                                "rule": "dataContext.data.secure",
+                                "style": {
+                                    "color": "red",
+                                    "font-weight": "bold"
+                                }
+                            }
+                        ]
                     },
                     {
                         "style": {
                             "font-size": "smaller",
                             "margin-top": "-10px"
                         },
-                        "field": "dataContext.practiceGroup"
+                        "field": "dataContext.data.practiceGroup"
                     },
                     {
-                        "fields": "dataContext.practiceGroup"
+                        "field": ""
                     }
                 ]
             },
@@ -189,11 +230,11 @@
                 "fields": [
                     {
                         "label": "Client",
-                        "field": "dataContext.client.name",
+                        "field": "dataContext.data.client.name",
                         "width": null
                     },
                     {
-                        "field": "dataContext.client.code",
+                        "field": "dataContext.data.client.code",
                         "width": null,
                         "style": {}
                     }
@@ -203,11 +244,11 @@
                 "fields": [
                     {
                         "label": "Partner",
-                        "field": "dataContext.partner.name",
+                        "field": "dataContext.data.partner.name",
                         "width": null
                     },
                     {
-                        "field": "dataContext.partner.code",
+                        "field": "dataContext.data.partner.code",
                         "width": null,
                         "style": {}
                     }
@@ -217,18 +258,18 @@
                 "fields": [
                     {
                         "label": "Location",
-                        "field": "dataContext.location.country",
+                        "field": "dataContext.data.location.country",
                         "width": null
                     },
                     {
                         "label": "Office",
-                        "field": "dataContext.location.office",
+                        "field": "dataContext.data.location.office",
                         "width": null,
                         "style": {}
                     },
                     {
                         "label": "Region",
-                        "field": "dataContext.location.region",
+                        "field": "dataContext.data.location.region",
                         "width": null,
                         "style": {}
                     }
@@ -241,20 +282,14 @@
             "method": "GET",
             "url": "/api/proxy/hurricane-api/_/v1/find?q={searchTerm}&engines=MBN",
             "resultDataPath": "data[0].results",
-            "name":"Matter By Number"
+            "name": "Matter Number"
         },
         {
             "method": "GET",
             "url": "/api/proxy/hurricane-api/_/v1/find?q={searchTerm}&engines=MBC",
             "resultDataPath": "data[0].results",
-            "name":"Matter By Content"
+            "name": "Matter Content"
         }
     ],
-    "searchApiResultCollectionPath": "data[0].results",
-    "searchApiUrl": "/api/proxy/hurricane-api/_/v1/find?q={searchTerm}&engines=MBN",
-    "readOnly": [
-        {
-            "rule": "matterIsSecure"
-        }
-    ]
+    "eventsToReactTo": []
 }

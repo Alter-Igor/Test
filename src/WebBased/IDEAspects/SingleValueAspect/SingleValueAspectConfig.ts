@@ -1,5 +1,5 @@
 import { IDefaultSettings } from "../BaseClasses/BaseIDEAspect";
-import { DEBUG_DEFAULT } from "../BaseClasses/IDebug";
+import { DEBUG_DEFAULT } from "../BaseClasses/DebugDefaults";
 import { IWidgetJson } from "../BaseClasses/IWidgetJson";
 
 export interface ISingleValueAspectConfiguration {
@@ -23,7 +23,7 @@ export const Default: IDefaultSettings<ISingleValueAspectConfiguration> = {
     searchParents: false,
     maxDepth: 0,
     formatter: "value",
-    debug: DEBUG_DEFAULT,
+    debug: DEBUG_DEFAULT(),
     eventsToReactTo: [
         {
             eventPath: "sharedo.core.case.phase-changed",

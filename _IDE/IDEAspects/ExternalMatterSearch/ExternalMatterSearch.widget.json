@@ -21,41 +21,46 @@
       ],
       "fackMode": false,
       "formBuilderFieldSerialisedData": "matterJSON",
-      "selectedFieldDisplayValue": "{matterCode} - {shortName}",
-      "searchApiResultCollectionPath": "data[0].results",
+      "selectedFieldDisplayValue": "`${dataContext.matterCode} - ${dataContext.shortName}`",
       "loadApiResultDataPath": "data",
-      "searchApiUrl": "api/externalMatterProvider/query/{searchTerm}",
-      "loadApiUrl": "api/externalMatterProvider/details/{code}",
+      "loadApiUrl": "`/api/proxy/hurricane-api/_/v2/matters/${dataContext.data.matterCode||dataContext.data.code}`",
       "dataMapping": [
         {
-          "formBuilderField": "matterNumber",
-          "searchResultField": "{matterCode}"
+          "formBuilderField": "expert-matter-number",
+          "searchResultField": "`${dataContext.data.matterCode}`"
         },
         {
-          "formBuilderField": "matterShortName",
-          "searchResultField": "{shortName}"
+          "formBuilderField": "expert-matter-number-value",
+          "searchResultField": "`${dataContext.data.matterCode}`"
         },
         {
-          "formBuilderField": "matterClient{*}",
-          "searchResultField": "{client}.{*}"
+          "formBuilderField": "matter-details-ib",
+          "searchResultField": "`${dataContext.data.secure}`"
         },
         {
-          "formBuilderField": "matterPartner{*}",
-          "searchResultField": "{partner}.{*}"
+          "formBuilderField": "matter-details-name",
+          "searchResultField": "`${dataContext.data.shortName}`"
         },
         {
-          "formBuilderField": "matterIsSecure",
-          "searchResultField": "{isSecure}"
+          "formBuilderField": "matter-details-client-name",
+          "searchResultField": "`${dataContext.data.client.name}`"
+        },
+        {
+          "formBuilderField": "matter-details-client-code",
+          "searchResultField": "`${dataContext.data.client.code}`"
+        },
+        {
+          "formBuilderField": "matter-details-partner-name",
+          "searchResultField": "`${dataContext.data.partner.name}`"
         }
       ],
       "debug": {
+        "supportRequestEnabled": false,
         "enabled": true,
         "logToConsole": true,
-        "showInAspect": true,
-        "liveConfig": true,
-        "supportRequestEnabled": true
+        "showInAspect": false,
+        "liveConfig": true
       },
-      "eventsToReactTo": [],
       "searchFields": {
         "container": {},
         "icon": [
@@ -65,7 +70,7 @@
         ],
         "style": [
           {
-            "rule": "status.toLowerCase()==='closed'",
+            "rule": "dataContext.data.data.status.toLowerCase()==='closed'",
             "style": {
               "color": "lightgrey"
             }
@@ -75,7 +80,80 @@
           {
             "fields": [
               {
-                "field": "matterCode",
+                "field": "`${dataContext.data.data.matterCode||dataContext.data.data.code}`",
+                "style": "font-weight:bold",
+                "icon": [
+                  {
+                    "rule": "dataContext.data.data.status.toLowerCase()==='open'",
+                    "icon": "fa-folder-open text-success",
+                    "position": "before"
+                  },
+                  {
+                    "rule": "dataContext.data.data.status.toLowerCase()==='closed'",
+                    "icon": "fa-folder text-danger",
+                    "position": "before"
+                  }
+                ],
+                "width": null
+              },
+              {
+                "field": "dataContext.data.title"
+              },
+              {
+                "field": "dataContext.data.data.status",
+                "formatter": "value.toUpperCase()",
+                "label": "Status",
+                "position": "right",
+                "width": null
+              }
+            ]
+          },
+          {
+            "fields": [
+              {
+                "field": ""
+              },
+              {
+                "label": "Client",
+                "field": "dataContext.data.data.client",
+                "width": null
+              },
+              {
+                "field": ""
+              }
+            ]
+          }
+        ]
+      },
+      "selectedFields": {
+        "container": {
+          "style": [
+            {
+              "rule": "secure",
+              "style": {
+                "box-shadow": "1px 1px 62px #cb8383"
+              }
+            },
+            {
+              "rule": "!secure",
+              "style": {
+                "box-shadow": "1px 1px 10px #a4a3a3"
+              }
+            }
+          ]
+        },
+        "icon": [
+          {
+            "rule": "secure",
+            "icon": "fa-shield text-warning fa-2x",
+            "position": "before"
+          }
+        ],
+        "rows": [
+          {
+            "fields": [
+              {
+                "field": "dataContext.data.matterCode",
                 "style": "font-weight:bold",
                 "icon": [
                   {
@@ -92,81 +170,34 @@
                 "width": null
               },
               {
-                "field": "status",
-                "formatter": "value.toUpperCase()",
-                "label": "Status",
-                "position": "right",
-                "width": null
-              }
-            ]
-          },
-          {
-            "fields": [
-              {
-                "label": "Client",
-                "field": "client",
-                "width": null
-              }
-            ]
-          }
-        ]
-      },
-      "selectedFields": {
-        "container": {
-          "style": [
-            {
-              "rule": "data.secure",
-              "style": {
-                "box-shadow": "1px 1px 62px #cb8383"
-              }
-            }
-          ]
-        },
-        "icon": [
-          {
-            "rule": "data.secure",
-            "icon": "fa-shield text-warning fa-2x",
-            "position": "before"
-          }
-        ],
-        "rows": [
-          {
-            "fields": [
-              {
-                "field": "data.matterCode",
-                "style": "font-weight:bold",
-                "icon": [
-                  {
-                    "rule": "data.status.toLowerCase()==='open'",
-                    "icon": "fa-folder-open text-success",
-                    "position": "before"
-                  },
-                  {
-                    "rule": "data.status.toLowerCase()==='closed'",
-                    "icon": "fa-folder text-danger",
-                    "position": "before"
-                  }
-                ],
-                "width": null
+                "field": "dataContext.data.shortName",
+                "width": null,
+                "style": "font-weight:bold;color:red;font-size:larger"
               },
               {
-                "field": "data.status",
+                "field": "dataContext.data.status",
                 "formatter": "value.toUpperCase()",
                 "label": "Status",
                 "position": "right",
                 "width": null,
-                "style": {
-                  "font-size": "0.8em",
-                  "font-weight": "bold"
-                }
+                "style": "font-weight:bold"
               }
             ]
           },
           {
             "fields": [
               {
-                "field": "data.shortName",
-                "width": null
+                "field": ""
+              },
+              {
+                "style": {
+                  "font-size": "smaller",
+                  "margin-top": "-10px"
+                },
+                "field": "dataContext.data.practiceGroup"
+              },
+              {
+                "field": ""
               }
             ]
           },
@@ -174,8 +205,48 @@
             "fields": [
               {
                 "label": "Client",
-                "field": "data.client.name",
+                "field": "dataContext.data.client.name",
                 "width": null
+              },
+              {
+                "field": "dataContext.data.client.code",
+                "width": null,
+                "style": {}
+              }
+            ]
+          },
+          {
+            "fields": [
+              {
+                "label": "Partner",
+                "field": "dataContext.data.partner.name",
+                "width": null
+              },
+              {
+                "field": "dataContext.data.partner.code",
+                "width": null,
+                "style": {}
+              }
+            ]
+          },
+          {
+            "fields": [
+              {
+                "label": "Location",
+                "field": "dataContext.data.location.country",
+                "width": null
+              },
+              {
+                "label": "Office",
+                "field": "dataContext.data.location.office",
+                "width": null,
+                "style": {}
+              },
+              {
+                "label": "Region",
+                "field": "dataContext.data.location.region",
+                "width": null,
+                "style": {}
               }
             ]
           }
@@ -184,10 +255,18 @@
       "searchApiExecutionSettings": [
         {
           "method": "GET",
-          "url": "api/externalMatterProvider/query/{searchTerm}",
-          "resultDataPath": "data[0].results"
+          "url": "/api/proxy/hurricane-api/_/v1/find?q={searchTerm}&engines=MBN",
+          "resultDataPath": "data[0].results",
+          "name": "Matter Number"
+        },
+        {
+          "method": "GET",
+          "url": "/api/proxy/hurricane-api/_/v1/find?q={searchTerm}&engines=MBC",
+          "resultDataPath": "data[0].results",
+          "name": "Matter Content"
         }
-      ]
+      ],
+      "eventsToReactTo": []
     }
   },
   "scripts": [
