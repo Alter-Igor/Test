@@ -3,7 +3,7 @@ import { ISharedoBladeModel, TShareDoBlade, IConfigurationHost } from "../../../
 import { IDebug, ObservableIDebug } from "./IDebug";
 import { v4 as uuid } from 'uuid';
 import { TSharedo } from "../../../Interfaces/TSharedo";
-import { IWidgetJson, I_IDE_Aspect_Modeller_Configuration } from "./IWidgetJson";
+import { IDefaultSettings, IWidgetJson, I_IDE_Aspect_Modeller_Configuration } from "./IWidgetJson";
 import { ShareDoEvent, fireEvent } from "../../Common/EventsHelper";
 import { clearSec, err, inf, l, lh1, nv, wrn } from "../../../Common/Log"
 import { IFormBuilderData } from "../../../Interfaces/Aspect/IFormBuilder";
@@ -12,6 +12,7 @@ import { NestedObservableObject, toObservableObject } from "./KOConverter";
 import { getNestedProperty, setNestedProperty } from "../../Common/ObjectHelper";
 import { escapeHtml } from "../../../Common/HtmlHelper";
 import { JsonToHtmlConverter } from "../../../Common/JsonToHTMLConverter";
+import { searchForAttributeRecursive } from "../../Common/api/searchForAttributeWithParents";
 
 
 console.log("v: - 5.27")
@@ -19,18 +20,10 @@ console.log("v: - 5.27")
 export const FOMR_BUILDER_PATH_STRING = "aspectData.formBuilder.formData";
 export const ERROR_DIV_SELECTOR = "#render-errors-here";
 
-export type IDefaultSettings<T> = T &
-{
-    debug: IDebug,
-    eventsToReactTo: Array<EventToReactTo>
-}
 
 
 
-interface EventToReactTo {
-    eventPath: string;
-    methodToCall: string;
-}
+
 
 interface IDEAspectConfiguration {
     model: ISharedoBladeModel;
@@ -89,6 +82,8 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
     liveConfigData: any;
     errorDivSelector: string;
     errors: ko.ObservableArray<TUserErrors> | undefined;
+    
+    
 
 
 
@@ -120,6 +115,7 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
         if (arr.length === 3) {
             //This is the constructor that is called by the IDE
             this.uniqueId = uuid();
+            
             this._initialise(arr[0], arr[1], arr[2]);
             this.LocationToSaveOrLoadData = this.setLocationOfDataToLoadAndSave();
             this.fireEvent("onSetup", this.model);
@@ -312,7 +308,7 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
         return outerDiv;
     }
 
-    get data(): TPersitance | undefined {
+    async getData() {
 
         if (this.LocationToSaveOrLoadData === undefined) {
             this.log("No location to load data from set - this method should be overriden", "red");
@@ -321,10 +317,27 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
 
         let nestedData = getNestedProperty(this.model, this.LocationToSaveOrLoadData);
 
-        this.log("Data found at location", "green", nestedData);
-        let retValue = ko.toJS(nestedData);
-        this.log("Data found at location", "green", retValue);
-        return retValue;
+        if(nestedData !== undefined)
+        {
+            this.log("Data found at location", "green", nestedData);
+            let retValue = ko.toJS(nestedData);
+            this.log("Data found at location", "green", retValue);
+            return retValue;
+        }
+
+    
+
+        if(nestedData === undefined && this.options.dataSettings().getValueUsingParents === true)
+        {
+            return searchForAttributeRecursive(this.sharedoId,this.LocationToSaveOrLoadData,this.options.dataSettings().getValueUsingParents!,this.options.dataSettings().maxDepth).then((data)=>{
+                if(data.found)
+                {
+                    return data.value;
+                }
+                return nestedData;
+            })
+        }
+
     }
 
     buildErrorDiv() {
@@ -438,7 +451,7 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
 
     }
 
-    set data(value: TPersitance | undefined) {
+    setData(value: TPersitance | undefined) {
 
         if (this.LocationToSaveOrLoadData === undefined) {
             this.log("No location to save data to set - this method should be overriden", "red");
@@ -520,9 +533,11 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
      * Called by the aspect IDE adapter when the model is saved. Manipulate the
      * model as required.
      */
-    public onSave(model: any): void {
+     async onSave(model: any) {
         this.fireEvent("onSave", model);
-        this.log("Saving, model passed in we need to persist to", "green", this.data);
+
+        let dataToSave = await this.getData();
+        this.log("Saving, model passed in we need to persist to", "green", dataToSave);
 
         if (this.LocationToSaveOrLoadData === undefined) {
             this.log("No location to save data to set - this method should be overriden", "red");
@@ -530,7 +545,7 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
         }
 
 
-        let dataToPersist = this.data;
+        let dataToPersist = await this.getData();
         let currentData = getNestedProperty(model, this.LocationToSaveOrLoadData);
         if (currentData) {
             this.log(`Current data at location ${this.LocationToSaveOrLoadData} :`, "magenta", currentData);

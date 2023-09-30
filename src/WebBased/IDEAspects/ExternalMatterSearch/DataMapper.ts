@@ -1,3 +1,4 @@
+import { extractValue } from "../../../helpers/VakueExtractor";
 import { getNestedProperty, setNestedProperty } from "../../Common/ObjectHelper";
 import { IDataMapping } from "./ExternalMatterSearchInterface";
 
@@ -29,9 +30,10 @@ import { IDataMapping } from "./ExternalMatterSearchInterface";
       Optional Base64 Encoding:
       If rawJSONField is provided, it converts the data object to a JSON string, encodes it in Base64, and assigns it to mappedData with the key specified by rawJSONField.
  */
-  export function mapData(data: any, dataMapping: IDataMapping[], rawJSONField?: string): any {
+  export function mapData(data: any, dataMapping: IDataMapping[], dataContextName?:string): any {
     const mappedData: any = {};
   
+
     for (const mapping of dataMapping) {
       const { formBuilderField, searchResultField } = mapping;
   
@@ -43,7 +45,8 @@ import { IDataMapping } from "./ExternalMatterSearchInterface";
           objectBase = objectBase.substring(0, objectBase.length - 1);
         }
   
-        const value = getNestedProperty(data, objectBase);
+        // const value = getNestedProperty(data, objectBase);
+        const value = extractValue(objectBase, data, null,dataContextName);
         if (typeof value === 'object') {
           for (const [key, subValue] of Object.entries(value)) {
             let keyWithFirstLetterCapitalized = key.charAt(0).toUpperCase() + key.slice(1);
@@ -54,21 +57,21 @@ import { IDataMapping } from "./ExternalMatterSearchInterface";
         // Handle regular mappings
         if (searchResultField.includes("{") && searchResultField.includes("}")) {
           let value = searchResultField.replace(/{|}/g, '');
-          value = value.split('-').map((part) => {
-            return getNestedProperty(data, part);
-          }).join('-');
+          value = extractValue(value, data, null,dataContextName);
+          // value = value.split('-').map((part) => {
+          //   // return getNestedProperty(data, part);
+          //   return extractValue(part, data, null);
+          // }).join('-');
           mappedData[formBuilderField] = value;
         } else {
-          const value = getNestedProperty(data, searchResultField.replace(/{|}/g, ''));
+          let value = getNestedProperty(data, searchResultField.replace(/{|}/g, ''));
+          value = extractValue(value, data, null,dataContextName);
           mappedData[formBuilderField] = value;
         }
       }
     }
 
-    if(rawJSONField){
-      let base64EncodedData = btoa(JSON.stringify(data));
-      mappedData[rawJSONField] =  base64EncodedData;
-    }
+    
   
     return mappedData;
   }

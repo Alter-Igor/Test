@@ -1,7 +1,11 @@
 import { l, inf, err, lh1 } from "../Common/Log";
 
-export function evaluteRule(rule: string, dataContext: any, dataContextName?: string): boolean {
-  
+export function evaluteRule(rule: string | undefined | null, dataContext: any, dataContextName?: string): boolean {
+
+  if(!rule)
+  {
+    return false;
+  }
 
   try {
     const returnValue: any = executeFunc(rule, dataContext, dataContextName);
@@ -28,25 +32,26 @@ export function executeFunc(expression: string | undefined | null, dataContext: 
   if (!expression) {
     return undefined;
   }
-
-
-  let dataContextNameToUse = 'dataContext';
-
-  //replace the dataContextName with the dataContextNameToUse
-  // Replace the dataContextName with the dataContextNameToUse
-  if (dataContextName) {
-    // Escape special characters in the string for use in regular expressions
-    const escapedDataContextName = dataContextName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
-    const regex = new RegExp(escapedDataContextName, 'g');
-    expression = expression.replace(regex, dataContextNameToUse);
-  }
-
-  checkAndLogUndefined(dataContext, expression, dataContextNameToUse);
-
   let dynamicFunc: Function
-
   try {
+    let dataContextNameToUse = 'dataContext';
+
+    //replace the dataContextName with the dataContextNameToUse
+    // Replace the dataContextName with the dataContextNameToUse
+    if (dataContextName) {
+
+      // Escape special characters in the string for use in regular expressions
+      const escapedDataContextName = dataContextName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+      const regex = new RegExp(escapedDataContextName, 'g');
+      expression = expression.replace(regex, dataContextNameToUse);
+    }
+
+    checkAndLogUndefined(dataContext, expression, dataContextNameToUse);
+
+
+
+
     dynamicFunc = new Function(`${dataContextNameToUse}`, `return (${expression});`);
 
   }

@@ -1,8 +1,8 @@
 
 import { formatValue } from "../../../helpers/Formatter";
 import { searchForAttributeRecursive } from "../../Common/api/searchForAttributeWithParents";
-import { BaseIDEAspect, IDefaultSettings } from "../BaseClasses/BaseIDEAspect";
-import { IWidgetJson } from "../BaseClasses/IWidgetJson";
+import { BaseIDEAspect } from "../BaseClasses/BaseIDEAspect";
+import { IDefaultSettings, IWidgetJson } from "../BaseClasses/IWidgetJson";
 import { Default, ISingleValueAspectConfiguration, WidgetSettings } from "./SingleValueAspectConfig";
 
 let thisWidgetSystemName = "SingleValueAspect";
@@ -36,12 +36,12 @@ export class SingleValueAspect extends BaseIDEAspect<ISingleValueAspectConfigura
 
     // private initialise() {//! Note: UI framework looks for this method name and if found behaves differently and wont call loadAndBind
 
-    setup() {
+    async setup() {
         
-        this.data = {
+        this.setData({
             value: "",
             title: this.options.title() || "Title Value"
-        };
+        });
 
         // Map the roleConfigModels
         this.options.fieldPath.subscribe((newValue) => {
@@ -75,7 +75,7 @@ export class SingleValueAspect extends BaseIDEAspect<ISingleValueAspectConfigura
             return;
         }
 
-        searchForAttributeRecursive(this.sharedoId(), this.options.fieldPath()!, this.options.searchParents()!, this.options.maxDepth()).then((data)=>
+        searchForAttributeRecursive(this.sharedoId(), this.options.fieldPath()!, this.options.dataSettings().getValueUsingParents!, this.options.dataSettings().maxDepth).then((data)=>
         {
             if (!data || data.found == false)
             {
@@ -90,7 +90,7 @@ export class SingleValueAspect extends BaseIDEAspect<ISingleValueAspectConfigura
         });
     };
 
-    override onSave(model: any): void {
+    override async onSave(model: any) {
 
         this.log("No Save Implemented", "green");
         // super.onSave(model);

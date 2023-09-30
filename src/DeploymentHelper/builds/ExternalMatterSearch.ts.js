@@ -10278,6 +10278,9 @@ function getNestedProperty(obj, propertyPath) {
 }
 
 // src/WebBased/Common/api/api.ts
+async function executePost(api, postBody) {
+  return (await executeFetch(api, "POST", postBody)).data;
+}
 async function executeGetv2(api) {
   return executeFetch(api, "GET", void 0);
 }
@@ -10385,585 +10388,6 @@ function getBearerToken() {
   return null;
 }
 
-// src/WebBased/IDEAspects/BaseClasses/BaseIDEAspect.ts
-var ko2 = __toESM(require_knockout_latest());
-
-// node_modules/uuid/dist/esm-node/rng.js
-var import_crypto = __toESM(require("crypto"));
-var rnds8Pool = new Uint8Array(256);
-var poolPtr = rnds8Pool.length;
-function rng() {
-  if (poolPtr > rnds8Pool.length - 16) {
-    import_crypto.default.randomFillSync(rnds8Pool);
-    poolPtr = 0;
-  }
-  return rnds8Pool.slice(poolPtr, poolPtr += 16);
-}
-
-// node_modules/uuid/dist/esm-node/stringify.js
-var byteToHex = [];
-for (let i = 0; i < 256; ++i) {
-  byteToHex.push((i + 256).toString(16).slice(1));
-}
-function unsafeStringify(arr, offset = 0) {
-  return (byteToHex[arr[offset + 0]] + byteToHex[arr[offset + 1]] + byteToHex[arr[offset + 2]] + byteToHex[arr[offset + 3]] + "-" + byteToHex[arr[offset + 4]] + byteToHex[arr[offset + 5]] + "-" + byteToHex[arr[offset + 6]] + byteToHex[arr[offset + 7]] + "-" + byteToHex[arr[offset + 8]] + byteToHex[arr[offset + 9]] + "-" + byteToHex[arr[offset + 10]] + byteToHex[arr[offset + 11]] + byteToHex[arr[offset + 12]] + byteToHex[arr[offset + 13]] + byteToHex[arr[offset + 14]] + byteToHex[arr[offset + 15]]).toLowerCase();
-}
-
-// node_modules/uuid/dist/esm-node/native.js
-var import_crypto2 = __toESM(require("crypto"));
-var native_default = {
-  randomUUID: import_crypto2.default.randomUUID
-};
-
-// node_modules/uuid/dist/esm-node/v4.js
-function v4(options, buf, offset) {
-  if (native_default.randomUUID && !buf && !options) {
-    return native_default.randomUUID();
-  }
-  options = options || {};
-  const rnds = options.random || (options.rng || rng)();
-  rnds[6] = rnds[6] & 15 | 64;
-  rnds[8] = rnds[8] & 63 | 128;
-  if (buf) {
-    offset = offset || 0;
-    for (let i = 0; i < 16; ++i) {
-      buf[offset + i] = rnds[i];
-    }
-    return buf;
-  }
-  return unsafeStringify(rnds);
-}
-var v4_default = v4;
-
-// src/WebBased/Common/EventsHelper.ts
-function fireEvent(event) {
-  $ui.events.broadcast(event.eventPath, event);
-}
-
-// src/WebBased/IDEAspects/BaseClasses/KOConverter.ts
-var ko = __toESM(require_knockout_latest());
-function toObservableObject(obj, existing) {
-  if (!existing)
-    existing = {};
-  for (const key in obj) {
-    if (Object.prototype.hasOwnProperty.call(obj, key) && key !== "__ko_mapping__" && key !== "_host") {
-      const value = obj[key];
-      if (Array.isArray(value)) {
-        if (!existing[key]) {
-          existing[key] = ko.observableArray(value.map((item) => toObservableObject(item, {})));
-        } else {
-          existing[key](value.map((item) => toObservableObject(item, {})));
-        }
-      } else if (value !== null && typeof value === "object") {
-        if (!existing[key]) {
-          existing[key] = ko.observable(toObservableObject(value, {}));
-        } else {
-          existing[key](toObservableObject(value, existing[key]()));
-        }
-      } else {
-        if (!existing[key]) {
-          existing[key] = ko.observable(value);
-        } else {
-          existing[key](value);
-        }
-      }
-    }
-  }
-  return existing;
-}
-
-// src/Common/HtmlHelper.ts
-function escapeHtml(unsafe) {
-  return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-}
-
-// src/Common/JsonToHTMLConverter.ts
-var JsonToHtmlConverter = class {
-  static convert(json2) {
-    if (json2 == null)
-      return this.escapeHtml("<em>null</em>");
-    if (typeof json2 !== "object")
-      return this.escapeHtml(json2.toString());
-    if (Array.isArray(json2)) {
-      return this.arrayToHtml(json2);
-    } else {
-      return this.objectToHtml(json2);
-    }
-  }
-  static arrayToHtml(arr) {
-    const itemsHtml = arr.map((item) => `<li>${this.convert(item)}</li>`).join("");
-    return `<ul>${itemsHtml}</ul>`;
-  }
-  static objectToHtml(obj) {
-    const propertiesHtml = Object.keys(obj).map((key) => `<li>${this.escapeHtml(key)}: ${this.convert(obj[key])}</li>`).join("");
-    return `<ul>${propertiesHtml}</ul>`;
-  }
-  static escapeHtml(unsafe) {
-    return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-  }
-};
-var json = {
-  code: "ERROR_CODE",
-  message: "Something went wrong",
-  details: {
-    info: "Detailed information about the error",
-    timestamp: (/* @__PURE__ */ new Date()).toISOString(),
-    items: [1, 2, 3]
-  }
-};
-
-// src/WebBased/IDEAspects/BaseClasses/BaseIDEAspect.ts
-console.log("v: - 5.27");
-var ERROR_DIV_SELECTOR = "#render-errors-here";
-var BaseIDEAspect = class {
-  constructor(...arr) {
-    this.widgetSettings = this.setWidgetJsonSettings();
-    this.thisComponentName = this.setThisComponentName();
-    this.defaults = this.setDefaults();
-    this.errorDivSelector = ERROR_DIV_SELECTOR;
-    this.errors = ko2.observableArray();
-    if (arr.length === 0) {
-      return;
-    }
-    if (arr.length === 3) {
-      this.uniqueId = v4_default();
-      this._initialise(arr[0], arr[1], arr[2]);
-      this.LocationToSaveOrLoadData = this.setLocationOfDataToLoadAndSave();
-      this.fireEvent("onSetup", this.model);
-      this.setup();
-      this.fireEvent("afterSetup", this.model);
-      this.setupLiveConfig();
-      this.setupErrorManager();
-      this.addAspectLogOutput();
-      return;
-    }
-  }
-  _initialise(element, configuration, baseModel) {
-    this.element = element;
-    this.originalConfiguration = configuration;
-    this.baseModel = baseModel;
-    let baseDefaults = {
-      debug: {
-        enabled: false,
-        logToConsole: false,
-        showInAspect: false,
-        liveConfig: false
-      }
-    };
-    configuration.debug = $.extend(baseDefaults.debug, configuration.debug);
-    this.configuration = $.extend(this.defaults, this.originalConfiguration);
-    this.model = this.configuration._host.model;
-    this.enabled = this.model.canEdit;
-    this.blade = this.configuration._host.blade;
-    this.loaded = this.loaded || ko2.observable(false);
-    this.sharedoId = this.configuration._host?.model.id;
-    if (!this.sharedoId || this.sharedoId()) {
-      this.log("No sharedoId found");
-    }
-    this.sharedoTypeSystemName = this.configuration._host.model.sharedoTypeSystemName;
-    if (!this.sharedoTypeSystemName || this.sharedoTypeSystemName()) {
-      this.log("No sharedoTypeSystemName found");
-    }
-    this.options = toObservableObject(this.configuration, this.options);
-    this.validation = {};
-    this.validationErrorCount = this.validationErrorCount || ko2.observable(0);
-    this.LocationToSaveOrLoadData = this.setLocationOfDataToLoadAndSave();
-    this.fireEvent("onInitialise", this.model);
-  }
-  clearErrors() {
-    this.errors?.removeAll();
-  }
-  setupErrorManager() {
-    this.l("Setting up error manager");
-    this.errors?.subscribe((newValue) => {
-      this.inf("Errors changed", newValue);
-      this.buildErrorDiv();
-    });
-  }
-  setupLiveConfig() {
-    this.options.debug.subscribe((newValue) => {
-      if (newValue.liveConfig) {
-        this.activateLiveConfig(newValue.liveConfig);
-      }
-    });
-    this.activateLiveConfig(this.options.debug().liveConfig());
-  }
-  activateLiveConfig(active) {
-    if (!active) {
-      this.liveConfigDiv?.remove();
-      return;
-    }
-    if (this.liveConfigDiv) {
-      return;
-    }
-    this.l("Setting up live config");
-    const serializedData = JSON.stringify(this.configuration, (key, value) => {
-      if (key === "_host") {
-        return void 0;
-      }
-      return value;
-    }, 4);
-    let config = ko2.observable(serializedData);
-    this.liveConfigData = {
-      config
-    };
-    let timeout = false;
-    this.liveConfigDiv = this.createLiveConfigDiv();
-    this.element.prepend(this.liveConfigDiv);
-    setTimeout(() => {
-      config.subscribe((newValue) => {
-        if (timeout) {
-          return;
-        }
-        setTimeout(() => {
-          timeout = false;
-          let newConfig = JSON.parse(config());
-          this._initialise(this.element, newConfig, this.baseModel);
-          this.reset(newConfig);
-        }, 500);
-        timeout = true;
-      });
-    }, 3e3);
-  }
-  ensureStylesLoaded(href) {
-    if (!document.querySelector(`link[href="${href}"]`)) {
-      const link = document.createElement("link");
-      link.href = href;
-      link.rel = "stylesheet";
-      link.type = "text/css";
-      document.head.appendChild(link);
-    }
-  }
-  createLiveConfigDiv() {
-    const outerDiv = document.createElement("div");
-    outerDiv.className = "col-sm-12 formbuilder-editor-json";
-    const innerDiv = document.createElement("div");
-    innerDiv.id = "liveConfig";
-    innerDiv.className = "form-control textarea";
-    innerDiv.style.height = "300px";
-    innerDiv.setAttribute("data-bind", "syntaxEditor: liveConfigData.config");
-    outerDiv.appendChild(innerDiv);
-    return outerDiv;
-  }
-  get data() {
-    if (this.LocationToSaveOrLoadData === void 0) {
-      this.log("No location to load data from set - this method should be overriden", "red");
-      return this._data;
-    }
-    let nestedData = getNestedProperty(this.model, this.LocationToSaveOrLoadData);
-    this.log("Data found at location", "green", nestedData);
-    let retValue = ko2.toJS(nestedData);
-    this.log("Data found at location", "green", retValue);
-    return retValue;
-  }
-  buildErrorDiv() {
-    this.inf("Building error div");
-    let errorDiv = this.element.querySelector(this.errorDivSelector);
-    if (!errorDiv) {
-      return;
-    }
-    l("errorDiv.innerHTML");
-    errorDiv.innerHTML = "";
-    if (!this.errors) {
-      this.errors = ko2.observableArray();
-    }
-    if (this.errors().length === 0) {
-      return;
-    }
-    let errorContainerDiv = document.createElement("div");
-    errorDiv.appendChild(errorContainerDiv);
-    errorContainerDiv.className = "ide-aspect-error-container";
-    let titleDiv = document.createElement("div");
-    titleDiv.className = "ide-aspect-error-title";
-    titleDiv.innerText = "There has been an error:";
-    errorContainerDiv.appendChild(titleDiv);
-    let foreachDiv = document.createElement("div");
-    errorContainerDiv.appendChild(foreachDiv);
-    this.errors().forEach((error) => {
-      let userMessageDiv = document.createElement("div");
-      userMessageDiv.className = "ide-aspect-error-user-message";
-      userMessageDiv.innerHTML = error.userMessage;
-      userMessageDiv.onclick = () => {
-        let detailedMessageDiv = document.createElement("div");
-        detailedMessageDiv.className = "ide-aspect-error-detailed-message";
-        const code = escapeHtml(error.code || "");
-        const message = escapeHtml(error.message || "");
-        const userMessage = escapeHtml(error.userMessage || "");
-        const errorStack = escapeHtml(error.errorStack || "");
-        const additionalInfo = JsonToHtmlConverter.convert(error.additionalInfo || {});
-        const html = `
-                            <div>
-                            <h2>Error: ${code}</h2>
-                            <p><strong>Message:</strong> ${message}</p>
-                            <p><strong>User Message:</strong> ${userMessage}</p>
-                            <p><strong>Stack:</strong> ${errorStack}</p>
-                            <p><strong>Additional Info:</strong> ${additionalInfo}</p>
-                            </div>`;
-        detailedMessageDiv.innerHTML = html;
-        $ui.errorDialog(detailedMessageDiv);
-      };
-      foreachDiv.appendChild(userMessageDiv);
-      if (error.suggestions && error.suggestions.length > 0) {
-        let suggestionsDiv = document.createElement("div");
-        suggestionsDiv.className = "ide-aspect-error-suggestions";
-        suggestionsDiv.innerHTML = `<b>Suggestions:</b><br/>${error.suggestions.join("<br/>")}`;
-        foreachDiv.appendChild(suggestionsDiv);
-      }
-      if (error.actions && error.actions.length > 0) {
-        let actionsDiv = document.createElement("div");
-        actionsDiv.className = "ide-aspect-error-actions";
-        actionsDiv.innerHTML = `<b>Actions:</b><br/>${error.actions.join("<br/>")}`;
-        foreachDiv.appendChild(actionsDiv);
-      }
-      if (error.internalSuggestions && error.internalSuggestions.length > 0) {
-        let internalSuggestionsDiv = document.createElement("div");
-        internalSuggestionsDiv.className = "ide-aspect-error-internal-suggestions";
-        internalSuggestionsDiv.innerHTML = `<b>Internal Suggestions:</b><br/>${error.internalSuggestions.join("<br/>")}`;
-        foreachDiv.appendChild(internalSuggestionsDiv);
-      }
-    });
-    if (this.options.debug().supportRequestEnabled) {
-      let actionDiv = document.createElement("div");
-      actionDiv.className = "ide-aspect-error-support-action";
-      errorContainerDiv.appendChild(actionDiv);
-      let button = document.createElement("button");
-      button.className = "btn btn-primary";
-      button.innerText = "Create Support Task";
-      actionDiv.appendChild(button);
-    }
-  }
-  set data(value) {
-    if (this.LocationToSaveOrLoadData === void 0) {
-      this.log("No location to save data to set - this method should be overriden", "red");
-      this._data = value;
-      return;
-    }
-    let valueToSet = value;
-    this.log("Setting data at location", "green", valueToSet);
-    setNestedProperty(this.model, this.LocationToSaveOrLoadData, valueToSet);
-    this.fireEvent("onDataChanged", this.model);
-  }
-  // abstract setDependantScriptFiles(): string[];
-  // abstract setDependantStyleFiles(): string[];
-  // abstract setDependantTemplateFiles(): string[];
-  // abstract setDependantMenuTemplateFiles(): string[];
-  // abstract setDependantComponentFiles(): string[];
-  // abstract setWidgetDesignerSettings(): IWidgetJsonDesigner;
-  // abstract setPriority() : number;
-  /**
-   * Called by the aspect IDE adapter when the model is saved. Manipulate the
-   * model as required.
-   */
-  onSave(model) {
-    this.fireEvent("onSave", model);
-    this.log("Saving, model passed in we need to persist to", "green", this.data);
-    if (this.LocationToSaveOrLoadData === void 0) {
-      this.log("No location to save data to set - this method should be overriden", "red");
-      return;
-    }
-    let dataToPersist = this.data;
-    let currentData = getNestedProperty(model, this.LocationToSaveOrLoadData);
-    if (currentData) {
-      this.log(`Current data at location ${this.LocationToSaveOrLoadData} :`, "magenta", currentData);
-    }
-    if (!currentData) {
-    }
-    this.log(`New data to persist to location ${this.LocationToSaveOrLoadData} :`, "blue", dataToPersist);
-    setNestedProperty(model, this.LocationToSaveOrLoadData, dataToPersist);
-  }
-  onDestroy(model) {
-    this.log("IDEAspects.Example : onDestroy");
-    this.fireEvent("onDestroy", model);
-  }
-  /**
-   * Called by the UI framework after initial creation and binding to load data
-   * into it's model
-   */
-  loadAndBind() {
-    this.log("IDEAspects.Example : loadAndBind");
-    this.log("Loading data (model:any) passed in", "green");
-    this.log("Loading data based on location to save", "green", this.LocationToSaveOrLoadData);
-    this.fireEvent("onLoad", this.model);
-  }
-  /**
-   * Called by the aspect IDE adapter before the model is saved
-   */
-  onBeforeSave(model) {
-    this.log("IDEAspects.Example : onBeforeSave");
-    this.fireEvent("onBeforeSave", model);
-  }
-  /**
-   * Called by the aspect IDE adapter after the model has been saved.
-   */
-  onAfterSave(model) {
-    this.log("IDEAspects.Example : onAfterSave");
-    this.fireEvent("onAfterSave", model);
-  }
-  /**
-   * Called by the aspect IDE adapter when it reloads aspect data
-   */
-  onReload(model) {
-    this.log("IDEAspects.Example : onReload");
-    this.fireEvent("onReload", model);
-  }
-  /**
-   * Provides logging for the component based on the debug configuration
-   * @param message 
-   * @param color 
-   * @param data 
-   */
-  log(message, color, data) {
-    if (this.configuration.debug?.enabled) {
-      if (this.configuration.debug.logToConsole) {
-        if (!color)
-          color = "black";
-        console.log(`%c ${this.thisComponentName} - ${message}`, `color:${color}`, data);
-      }
-    }
-  }
-  canLog() {
-    return this.configuration.debug?.enabled;
-  }
-  logToConsole() {
-    return this.canLog() && this.configuration.debug?.logToConsole;
-  }
-  logToAspect() {
-    return this.canLog() && this.configuration.debug?.showInAspect;
-  }
-  inf(message, ...args) {
-    if (this.logToConsole()) {
-      l(inf(message), ...args);
-    }
-  }
-  wrn(message, ...args) {
-    if (this.logToConsole()) {
-      l(wrn(message), ...args);
-    }
-  }
-  err(message, ...args) {
-    if (this.logToConsole()) {
-      l(err(message), ...args);
-    }
-  }
-  nv(name, value) {
-    if (this.logToConsole()) {
-      l(nv(name, value));
-    }
-  }
-  lh1(message, ...args) {
-    if (this.logToConsole()) {
-      l(lh1(message), ...args);
-    }
-  }
-  clearSec() {
-    clearSec();
-  }
-  l(message, ...args) {
-    if (this.logToConsole()) {
-      l(message, ...args);
-    }
-    if (this.logToAspect()) {
-      let aspectLogOutput = this.aspectLogOutput;
-      if (aspectLogOutput) {
-        aspectLogOutput.innerText += `${message}
-`;
-      }
-    }
-  }
-  addAspectLogOutput() {
-    if (!this.logToAspect()) {
-      return;
-    }
-    ;
-    this.aspectLogOutput = document.createElement("div");
-    let aspectLogOutput = this.aspectLogOutput;
-    aspectLogOutput.id = `aspectLogOutput-${this.uniqueId}`;
-    aspectLogOutput.style.border = "1px solid black";
-    aspectLogOutput.style.padding = "5px";
-    aspectLogOutput.style.margin = "5px";
-    aspectLogOutput.style.height = "200px";
-    aspectLogOutput.style.overflow = "auto";
-    aspectLogOutput.style.backgroundColor = "white";
-    aspectLogOutput.style.color = "black";
-    aspectLogOutput.style.fontSize = "10px";
-    aspectLogOutput.style.fontFamily = "monospace";
-    aspectLogOutput.style.whiteSpace = "pre-wrap";
-    aspectLogOutput.style.wordWrap = "break-word";
-    aspectLogOutput.style.display = "none";
-    aspectLogOutput.style.position = "relative";
-    aspectLogOutput.style.zIndex = "1000";
-    aspectLogOutput.style.bottom = "0px";
-    aspectLogOutput.style.left = "0px";
-    aspectLogOutput.style.right = "0px";
-    aspectLogOutput.style.marginLeft = "auto";
-    aspectLogOutput.style.marginRight = "auto";
-    aspectLogOutput.style.marginBottom = "auto";
-    aspectLogOutput.style.marginTop = "auto";
-    aspectLogOutput.style.backgroundColor = "rgba(255,255,255,0.8)";
-    aspectLogOutput.style.borderRadius = "5px";
-    aspectLogOutput.style.padding = "5px";
-    aspectLogOutput.style.boxShadow = "0px 0px 5px 0px rgba(0,0,0,0.75)";
-    this.element.prepend(aspectLogOutput);
-  }
-  fireEvent(eventName, data) {
-    let event = {
-      eventPath: this.thisComponentName + "." + eventName,
-      eventName,
-      source: this,
-      data
-    };
-    fireEvent(event);
-  }
-  /**
-   * 
-   * @returns Formbuild if it exists or creates it if it does not
-   * 
-   */
-  formbuilder() {
-    if (!this.blade?.model?.aspectData?.formBuilder?.formData) {
-      this.log("blade.model.aspectData.formBuilder.formData not found - will create the path", "blue");
-    } else {
-      this.log("blade.model.aspectData.formBuilder.formData found", "green");
-    }
-    this.blade = this.blade || {};
-    return this.ensureFormbuilder(this.blade.model);
-  }
-  /**
-   * Ensures there is a form builder in the passed in model and returns it
-   * @param model 
-   * @returns 
-   */
-  ensureFormbuilder(model) {
-    if (!model?.aspectData?.formBuilder?.formData) {
-      this.log("blade.model.aspectData.formBuilder.formData not found - will create the path", "blue");
-    } else {
-      this.log("blade.model.aspectData.formBuilder.formData found", "green");
-    }
-    model = model || {};
-    model.aspectData = model.aspectData || {};
-    model.aspectData.formBuilder = model.aspectData.formBuilder || { formData: {} };
-    return model.aspectData.formBuilder.formData;
-  }
-  formbuilderField(formbuilderField, setValue) {
-    if (!this.formbuilder()) {
-      this.log("Form builder does not exist! ", "red");
-      throw new Error("Form builder does not exist!");
-    }
-    let foundValue = this.formbuilder()[formbuilderField];
-    if (!foundValue) {
-      this.log(`Form builder does not contain field ${formbuilderField} `, "orange");
-      this.log(`Creating field ${formbuilderField} `, "blue");
-      this.formbuilder()[formbuilderField] = void 0;
-    }
-    if (setValue) {
-      this.log(`Setting ${formbuilderField} to ${setValue}`, "green");
-      this.formbuilder()[formbuilderField] = setValue;
-      return setValue;
-    }
-    return foundValue;
-  }
-};
-
 // src/WebBased/IDEAspects/ExternalMatterSearch/ExternalMatterSearch.ts
 var import_knockout2 = __toESM(require_knockout_latest());
 
@@ -10981,64 +10405,67 @@ var DEBUG_DEFAULT = () => {
 
 // src/WebBased/IDEAspects/ExternalMatterSearch/DefaultSearchFields.ts
 var DEFAULT_SEARCH_FIELDS_CONFIG = {
-  container: {},
-  icon: [
+  "container": {},
+  "icon": [
     {
-      icon: "fa-search fa-2x text-primary"
+      "icon": "fa-search fa-2x text-primary"
     }
   ],
-  style: [
+  "style": [
     {
-      rule: "dataContext.data.data.status.toLowerCase()==='closed'",
-      style: {
-        color: "lightgrey"
+      "rule": "dataContext.data.data.status.toLowerCase()==='closed'",
+      "style": {
+        "color": "lightgrey"
       }
     }
   ],
-  rows: [
+  "rows": [
     {
-      fields: [
+      "fields": [
         {
-          field: "`${dataContext.data.data.matterCode||dataContext.data.data.code}`",
-          style: "font-weight:bold",
-          icon: [
+          "field": "`${dataContext.data.data.matterCode||dataContext.data.data.code}`",
+          "style": "font-weight:bold",
+          "icon": [
             {
-              rule: "dataContext.data.data.status.toLowerCase()==='open'",
-              icon: "fa-folder-open text-success",
-              position: "before"
+              "rule": "dataContext.data.data.status.toLowerCase()==='open'",
+              "icon": "fa-folder-open text-success",
+              "position": "before"
             },
             {
-              rule: "dataContext.data.data.status.toLowerCase()==='closed'",
-              icon: "fa-folder text-danger",
-              position: "before"
+              "rule": "dataContext.data.data.status.toLowerCase()==='closed'",
+              "icon": "fa-folder text-danger",
+              "position": "before"
             }
           ],
-          width: null
+          "width": null
         },
         {
-          field: "dataContext.data.title"
+          "style": {
+            "color": "blue"
+          },
+          "field": "dataContext.data.title"
         },
         {
-          field: "dataContext.data.data.status",
-          formatter: "value.toUpperCase()",
-          label: "Status",
-          position: "right",
-          width: null
+          "field": "dataContext.data.data.status",
+          "formatter": "value.toUpperCase()",
+          "label": "Status",
+          "position": "right",
+          "width": null
         }
       ]
     },
     {
-      fields: [
+      "fields": [
         {
-          field: ""
+          "field": ""
         },
         {
-          label: "Client",
-          field: "dataContext.data.data.client",
-          width: null
+          "label": "Client",
+          "field": "dataContext.data.data.client",
+          "width": null
         },
         {
-          field: ""
+          "field": ""
         }
       ]
     }
@@ -11047,127 +10474,162 @@ var DEFAULT_SEARCH_FIELDS_CONFIG = {
 
 // src/WebBased/IDEAspects/ExternalMatterSearch/DefaultSelectedFields.ts
 var DEFAULT_SELECTED_FIELDS_CONFIG = {
-  container: {
-    style: [
+  "container": {
+    "style": [
       {
-        rule: "secure",
-        style: {
+        "rule": "dataContext.data.secure",
+        "style": {
           "box-shadow": "1px 1px 62px #cb8383"
         }
       },
       {
-        rule: "!secure",
-        style: {
+        "rule": "!dataContext.data.secure",
+        "style": {
           "box-shadow": "1px 1px 10px #a4a3a3"
         }
       }
     ]
   },
-  icon: [
+  "icon": [
     {
-      rule: "secure",
-      icon: "fa-shield text-warning fa-2x",
-      position: "before"
+      "rule": "dataContext.data.secure",
+      "icon": "fa-shield text-warning fa-2x",
+      "position": "before"
     }
   ],
-  rows: [
+  "rows": [
     {
-      fields: [
+      "fields": [
         {
-          field: "dataContext.data.matterCode",
-          style: "font-weight:bold",
-          icon: [
+          "field": "dataContext.data.matterCode",
+          "style": "font-weight:bold",
+          "icon": [
             {
-              rule: "status.toLowerCase()==='open'",
-              icon: "fa-folder-open text-success",
-              position: "before"
+              "rule": "dataContext.data.status.toLowerCase()==='open'",
+              "icon": "fa-folder-open text-success",
+              "position": "before"
             },
             {
-              rule: "status.toLowerCase()==='closed'",
-              icon: "fa-folder text-danger",
-              position: "before"
+              "rule": "dataContext.data.status.toLowerCase()==='closed'",
+              "icon": "fa-folder text-danger",
+              "position": "before"
             }
           ],
-          width: null
+          "width": null
         },
         {
-          field: "dataContext.data.shortName",
-          width: null,
-          style: "font-weight:bold;color:red;font-size:larger"
+          "field": "dataContext.data.shortName",
+          "width": null,
+          "style": {
+            "font-weight": "bold",
+            "color": "red",
+            "font-size": "larger"
+          }
         },
         {
-          field: "dataContext.data.status",
-          formatter: "value.toUpperCase()",
-          label: "Status",
-          position: "right",
-          width: null,
-          style: "font-weight:bold"
+          "field": "dataContext.data.status",
+          "formatter": "value.toUpperCase()",
+          "label": "Status",
+          "position": "right",
+          "width": null,
+          "style": "font-weight:bold"
         }
       ]
     },
     {
-      fields: [
+      "fields": [
         {
-          field: ""
+          "field": [
+            {
+              "rule": "dataContext.data.secure",
+              "field": "'Secured!'"
+            },
+            {
+              "rule": "!dataContext.data.secure",
+              "field": "'Not Secured'"
+            }
+          ],
+          "style": [
+            {
+              "style": {
+                "margin-top": "-10px",
+                "font-size": "x-small"
+              }
+            },
+            {
+              "rule": "!dataContext.data.secure",
+              "style": {
+                "color": "green",
+                "font-weight": "bold"
+              }
+            },
+            {
+              "rule": "dataContext.data.secure",
+              "style": {
+                "color": "red",
+                "font-weight": "bold"
+              }
+            }
+          ]
         },
         {
-          style: {
+          "style": {
             "font-size": "smaller",
             "margin-top": "-10px"
           },
-          field: "dataContext.data.practiceGroup"
+          "field": "dataContext.data.practiceGroup"
         },
         {
-          field: ""
+          "field": ""
         }
       ]
     },
     {
-      fields: [
+      "fields": [
         {
-          label: "Client",
-          field: "dataContext.data.client.name",
-          width: null
+          "label": "Client",
+          "field": "dataContext.data.client.name",
+          "width": null
         },
         {
-          field: "dataContext.data.client.code",
-          width: null,
-          style: {}
+          "field": "dataContext.data.client.code",
+          "width": null,
+          "style": {}
         }
       ]
     },
     {
-      fields: [
+      "fields": [
         {
-          label: "Partner",
-          field: "dataContext.data.partner.name",
-          width: null
+          "label": "Partner",
+          "field": "dataContext.data.partner.name",
+          "width": null
         },
         {
-          field: "dataContext.data.partner.code",
-          width: null,
-          style: {}
+          "field": "dataContext.data.partner.code",
+          "width": null,
+          "style": {}
         }
       ]
     },
     {
-      fields: [
+      "fields": [
         {
-          label: "Location",
-          field: "dataContext.data.location.country",
-          width: null
+          "label": "Location",
+          "field": "dataContext.data.location.country",
+          "width": null
         },
         {
-          label: "Office",
-          field: "dataContext.data.location.office",
-          width: null,
-          style: {}
+          "label": "Office",
+          "field": "dataContext.data.location.office",
+          "width": null,
+          "style": {}
         },
         {
-          label: "Region",
-          field: "dataContext.data.location.region",
-          width: null,
-          style: {}
+          "label": "Region",
+          "field": "dataContext.data.location.region",
+          "width": null,
+          "style": {}
         }
       ]
     }
@@ -11192,31 +10654,31 @@ var Default = {
   dataMapping: [
     {
       formBuilderField: "expert-matter-number",
-      searchResultField: "`${dataContext.data.matterCode}`"
+      searchResultField: "{dataContext.data.matterCode}"
     },
     {
       formBuilderField: "expert-matter-number-value",
-      searchResultField: "`${dataContext.data.matterCode}`"
+      searchResultField: "{dataContext.data.matterCode}"
     },
     {
       formBuilderField: "matter-details-ib",
-      searchResultField: "`${dataContext.data.secure}`"
+      searchResultField: "{dataContext.data.secure}"
     },
     {
       formBuilderField: "matter-details-name",
-      searchResultField: "`${dataContext.data.shortName}`"
+      searchResultField: "{dataContext.data.shortName}"
     },
     {
       formBuilderField: "matter-details-client-name",
-      searchResultField: "`${dataContext.data.client.name}`"
+      searchResultField: "{dataContext.data.client.name}"
     },
     {
       formBuilderField: "matter-details-client-code",
-      searchResultField: "`${dataContext.data.client.code}`"
+      searchResultField: "{dataContext.data.client.code}"
     },
     {
       formBuilderField: "matter-details-partner-name",
-      searchResultField: "`${dataContext.data.partner.name}`"
+      searchResultField: "{dataContext.data.partner.name}"
     }
   ],
   debug: DEBUG_DEFAULT(),
@@ -11236,7 +10698,11 @@ var Default = {
       name: "Matter Content"
     }
   ],
-  eventsToReactTo: []
+  eventsToReactTo: [],
+  dataSettings: {
+    getValueUsingParents: false,
+    maxDepth: 0
+  }
 };
 
 // src/WebBased/IDEAspects/ExternalMatterSearch/ExternalMatterSearchSettings.ts
@@ -11677,8 +11143,34 @@ var ConfigSchema_default = {
   definitions
 };
 
+// src/helpers/Formatter.ts
+function formatValue(value, formatter) {
+  const dynamicFunc = new Function("value", `return (${formatter});`);
+  let returnValue;
+  try {
+    returnValue = dynamicFunc(value);
+  } catch (e) {
+    console.log(`Error formatting value [${value}] with formatter [${formatter}]`, e);
+    returnValue = "Error formatting value - see console";
+  }
+  return returnValue;
+}
+var formatFunc = formatValue;
+
+// src/helpers/VakueExtractor.ts
+function extractValue(value, viewModel, formatter, dataContextName) {
+  let valueToSet = executeFunc(value, viewModel, dataContextName);
+  if (typeof valueToSet !== "string") {
+    valueToSet = JSON.stringify(valueToSet, null, 2);
+  }
+  if (formatter) {
+    valueToSet = formatFunc(valueToSet, formatter);
+  }
+  return valueToSet;
+}
+
 // src/WebBased/IDEAspects/ExternalMatterSearch/DataMapper.ts
-function mapData(data, dataMapping, rawJSONField) {
+function mapData(data, dataMapping, rawJSONField, dataContextName) {
   const mappedData = {};
   for (const mapping of dataMapping) {
     const { formBuilderField, searchResultField } = mapping;
@@ -11688,7 +11180,7 @@ function mapData(data, dataMapping, rawJSONField) {
       if (objectBase.endsWith(".")) {
         objectBase = objectBase.substring(0, objectBase.length - 1);
       }
-      const value = getNestedProperty(data, objectBase);
+      const value = extractValue(objectBase, data, null, dataContextName);
       if (typeof value === "object") {
         for (const [key, subValue] of Object.entries(value)) {
           let keyWithFirstLetterCapitalized = key.charAt(0).toUpperCase() + key.slice(1);
@@ -11698,12 +11190,11 @@ function mapData(data, dataMapping, rawJSONField) {
     } else {
       if (searchResultField.includes("{") && searchResultField.includes("}")) {
         let value = searchResultField.replace(/{|}/g, "");
-        value = value.split("-").map((part) => {
-          return getNestedProperty(data, part);
-        }).join("-");
+        value = extractValue(value, data, null, dataContextName);
         mappedData[formBuilderField] = value;
       } else {
-        const value = getNestedProperty(data, searchResultField.replace(/{|}/g, ""));
+        let value = getNestedProperty(data, searchResultField.replace(/{|}/g, ""));
+        value = extractValue(value, data, null, dataContextName);
         mappedData[formBuilderField] = value;
       }
     }
@@ -11760,20 +11251,6 @@ function replaceValues(template, data) {
   });
 }
 
-// src/helpers/Formatter.ts
-function formatValue(value, formatter) {
-  const dynamicFunc = new Function("value", `return (${formatter});`);
-  let returnValue;
-  try {
-    returnValue = dynamicFunc(value);
-  } catch (e) {
-    console.log(`Error formatting value [${value}] with formatter [${formatter}]`, e);
-    returnValue = "Error formatting value - see console";
-  }
-  return returnValue;
-}
-var formatFunc = formatValue;
-
 // src/WebBased/IDEAspects/ExternalMatterSearch/Template/TemplateApplicator.ts
 var TemplateApplicator = class {
   constructor() {
@@ -11797,7 +11274,8 @@ var TemplateApplicator = class {
     const rootDiv = document.createElement("div");
     container.appendChild(rootDiv);
     if (placement.container) {
-      let containerParent = container.parentElement?.parentElement;
+      container.classList.add("ems-container");
+      let containerParent = container.parentElement;
       if (containerParent) {
         containerParent.classList.add("ems-container-parent");
         this.addCSS(placement.container.cssClass, containerParent, dataContextName, viewModel);
@@ -11846,16 +11324,18 @@ var TemplateApplicator = class {
     this.addIcons(field.icon, dataContextName, fieldDiv, viewModel);
     const spanElem = document.createElement("span");
     spanElem.classList.add("ems-field-value");
-    let valueToSet = executeFunc(field.field, viewModel);
-    if (typeof valueToSet !== "string") {
-      valueToSet = JSON.stringify(valueToSet, null, 2);
+    if (field.field instanceof Array) {
+      this.addFieldArray(field.field, field.formatter, spanElem, viewModel);
     }
-    if (field.formatter) {
-      valueToSet = formatFunc(valueToSet, field.formatter);
+    if (typeof field.field === "string") {
+      this.setInnerHTML(field.field, field.formatter, viewModel, spanElem);
     }
-    spanElem.innerHTML = valueToSet;
     fieldDiv.appendChild(spanElem);
     rowDiv.appendChild(fieldDiv);
+  }
+  setInnerHTML(value, formatter, viewModel, element) {
+    let valueToSet = extractValue(value, viewModel, formatter);
+    element.innerHTML = valueToSet;
   }
   addIcons(icons, dataContextName, fieldDiv, viewModel) {
     if (!icons)
@@ -11914,6 +11394,21 @@ var TemplateApplicator = class {
       }
     }
   }
+  addFieldArray(fields, formatter, fieldDiv, viewModel) {
+    if (!fields)
+      return;
+    fields.forEach((field) => {
+      if (field.rule) {
+        console.log("fieldRule.rule", field.rule);
+        let value = evaluteRule(field.rule, viewModel);
+        if (value) {
+          this.setInnerHTML(field.field, formatter, viewModel, fieldDiv);
+        }
+      } else {
+        this.setInnerHTML(field.field, formatter, viewModel, fieldDiv);
+      }
+    });
+  }
   addStyle(style, rootDiv, dataContextName, viewModel) {
     if (style == void 0)
       return;
@@ -11937,6 +11432,8 @@ var TemplateApplicator = class {
           this.setStyles(style, viewModel, dataContextName, rootDiv);
         }
       }
+    } else {
+      this.setStyles(style, viewModel, dataContextName, rootDiv);
     }
   }
   setStyles(style, data, dataContextName, rootDiv) {
@@ -11949,7 +11446,7 @@ var TemplateApplicator = class {
       let n = {
         style
       };
-      return this.buildStyling(n, retValue);
+      return this.buildStyleNameValue(n, retValue);
     }
     if (Array.isArray(style)) {
       let arrItem = style;
@@ -11960,10 +11457,10 @@ var TemplateApplicator = class {
             if (evaluteRule(styleRuleOrNameValue.rule, data)) {
               if (!styleRuleOrNameValue.style)
                 continue;
-              retValue = this.buildStyling(styleRuleOrNameValue, retValue);
+              retValue = this.buildStyleNameValue(styleRuleOrNameValue, retValue);
             }
           } else {
-            retValue = this.buildStyling(styleRuleOrNameValue, retValue);
+            retValue = this.buildStyleNameValue(styleRuleOrNameValue, retValue);
           }
         }
       }
@@ -11973,15 +11470,15 @@ var TemplateApplicator = class {
           if (evaluteRule(styleRuleOrNameValue.rule, data)) {
             if (!styleRuleOrNameValue.style)
               continue;
-            retValue = this.buildStyling(styleRuleOrNameValue, retValue);
+            retValue = this.buildStyleNameValue(styleRuleOrNameValue, retValue);
           }
         } else {
-          retValue = this.buildStyling(styleRuleOrNameValue, retValue);
+          retValue = this.buildStyleNameValue(styleRuleOrNameValue, retValue);
         }
       }
     } else {
       if (typeof style === "object") {
-        return style;
+        retValue = style;
       }
     }
     for (let key in retValue) {
@@ -11990,7 +11487,7 @@ var TemplateApplicator = class {
       }
     }
   }
-  buildStyling(rule, retValue) {
+  buildStyleNameValue(rule, retValue) {
     if (typeof rule.style === "object") {
       retValue = { ...retValue, ...rule.style };
     }
@@ -12005,6 +11502,714 @@ var TemplateApplicator = class {
       }
     }
     return retValue;
+  }
+};
+
+// src/WebBased/IDEAspects/BaseClasses/BaseIDEAspect.ts
+var ko3 = __toESM(require_knockout_latest());
+
+// node_modules/uuid/dist/esm-node/rng.js
+var import_crypto = __toESM(require("crypto"));
+var rnds8Pool = new Uint8Array(256);
+var poolPtr = rnds8Pool.length;
+function rng() {
+  if (poolPtr > rnds8Pool.length - 16) {
+    import_crypto.default.randomFillSync(rnds8Pool);
+    poolPtr = 0;
+  }
+  return rnds8Pool.slice(poolPtr, poolPtr += 16);
+}
+
+// node_modules/uuid/dist/esm-node/stringify.js
+var byteToHex = [];
+for (let i = 0; i < 256; ++i) {
+  byteToHex.push((i + 256).toString(16).slice(1));
+}
+function unsafeStringify(arr, offset = 0) {
+  return (byteToHex[arr[offset + 0]] + byteToHex[arr[offset + 1]] + byteToHex[arr[offset + 2]] + byteToHex[arr[offset + 3]] + "-" + byteToHex[arr[offset + 4]] + byteToHex[arr[offset + 5]] + "-" + byteToHex[arr[offset + 6]] + byteToHex[arr[offset + 7]] + "-" + byteToHex[arr[offset + 8]] + byteToHex[arr[offset + 9]] + "-" + byteToHex[arr[offset + 10]] + byteToHex[arr[offset + 11]] + byteToHex[arr[offset + 12]] + byteToHex[arr[offset + 13]] + byteToHex[arr[offset + 14]] + byteToHex[arr[offset + 15]]).toLowerCase();
+}
+
+// node_modules/uuid/dist/esm-node/native.js
+var import_crypto2 = __toESM(require("crypto"));
+var native_default = {
+  randomUUID: import_crypto2.default.randomUUID
+};
+
+// node_modules/uuid/dist/esm-node/v4.js
+function v4(options, buf, offset) {
+  if (native_default.randomUUID && !buf && !options) {
+    return native_default.randomUUID();
+  }
+  options = options || {};
+  const rnds = options.random || (options.rng || rng)();
+  rnds[6] = rnds[6] & 15 | 64;
+  rnds[8] = rnds[8] & 63 | 128;
+  if (buf) {
+    offset = offset || 0;
+    for (let i = 0; i < 16; ++i) {
+      buf[offset + i] = rnds[i];
+    }
+    return buf;
+  }
+  return unsafeStringify(rnds);
+}
+var v4_default = v4;
+
+// src/WebBased/Common/EventsHelper.ts
+function fireEvent(event) {
+  $ui.events.broadcast(event.eventPath, event);
+}
+
+// src/WebBased/IDEAspects/BaseClasses/KOConverter.ts
+var ko2 = __toESM(require_knockout_latest());
+function toObservableObject(obj, existing) {
+  if (!existing)
+    existing = {};
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key) && key !== "__ko_mapping__" && key !== "_host") {
+      const value = obj[key];
+      if (Array.isArray(value)) {
+        if (!existing[key]) {
+          existing[key] = ko2.observableArray(value.map((item) => toObservableObject(item, {})));
+        } else {
+          existing[key](value.map((item) => toObservableObject(item, {})));
+        }
+      } else if (value !== null && typeof value === "object") {
+        if (!existing[key]) {
+          existing[key] = ko2.observable(toObservableObject(value, {}));
+        } else {
+          existing[key](toObservableObject(value, existing[key]()));
+        }
+      } else {
+        if (!existing[key]) {
+          existing[key] = ko2.observable(value);
+        } else {
+          existing[key](value);
+        }
+      }
+    }
+  }
+  return existing;
+}
+
+// src/Common/HtmlHelper.ts
+function escapeHtml(unsafe) {
+  return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+}
+
+// src/Common/JsonToHTMLConverter.ts
+var JsonToHtmlConverter = class {
+  static convert(json2) {
+    if (json2 == null)
+      return this.escapeHtml("<em>null</em>");
+    if (typeof json2 !== "object")
+      return this.escapeHtml(json2.toString());
+    if (Array.isArray(json2)) {
+      return this.arrayToHtml(json2);
+    } else {
+      return this.objectToHtml(json2);
+    }
+  }
+  static arrayToHtml(arr) {
+    const itemsHtml = arr.map((item) => `<li>${this.convert(item)}</li>`).join("");
+    return `<ul>${itemsHtml}</ul>`;
+  }
+  static objectToHtml(obj) {
+    const propertiesHtml = Object.keys(obj).map((key) => `<li>${this.escapeHtml(key)}: ${this.convert(obj[key])}</li>`).join("");
+    return `<ul>${propertiesHtml}</ul>`;
+  }
+  static escapeHtml(unsafe) {
+    return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+  }
+};
+var json = {
+  code: "ERROR_CODE",
+  message: "Something went wrong",
+  details: {
+    info: "Detailed information about the error",
+    timestamp: (/* @__PURE__ */ new Date()).toISOString(),
+    items: [1, 2, 3]
+  }
+};
+
+// src/WebBased/Common/api/executeFindByQuery/FindByQuery.ts
+function executeFindByQuery(inputOption) {
+  return executePost("/api/v1/public/workItem/findByQuery", inputOption).then((result) => {
+    return result;
+  });
+}
+
+// src/WebBased/Common/api/searchForAttributeWithParents.ts
+async function searchForAttributeRecursive(workItemId, attributeName, parents, maxDepth) {
+  let useMaxDepth = maxDepth ? true : false;
+  if (maxDepth && maxDepth > 0) {
+    useMaxDepth = true;
+  }
+  let retValue = { found: false, value: void 0, parentId: void 0, depth: 0, foundInWorkItemId: void 0, wasFoundInAncestor: false, foundInWorkTypeSystemName: void 0 };
+  retValue = await searchForAttribute(workItemId, attributeName);
+  if (retValue.found) {
+    return retValue;
+  }
+  if (!parents) {
+    console.log("No parents or children to search so only searching current work item");
+    return retValue;
+  }
+  if (parents) {
+    console.log("Searching parents");
+    let depth = 0;
+    let searchParent = async (parentId) => {
+      depth++;
+      let r = {
+        found: false,
+        value: void 0,
+        parentId: void 0,
+        depth,
+        //depth here will be overriden if there is a parent
+        foundInWorkItemId: void 0,
+        wasFoundInAncestor: false,
+        foundInWorkTypeSystemName: void 0
+      };
+      if (!parentId) {
+        console.log("No parent found");
+        return r;
+      }
+      r = await searchForAttribute(parentId, attributeName);
+      r.depth = depth;
+      if (r.found) {
+        console.log("Found attribute in parent");
+        r.wasFoundInAncestor = true;
+        return r;
+      } else {
+        if (useMaxDepth && depth >= maxDepth) {
+          console.log("Max depth reached");
+          return r;
+        }
+        if (!r.parentId) {
+          console.log("No parent found");
+          return r;
+        }
+        console.log("Not found in parent");
+        return searchParent(r.parentId);
+      }
+    };
+    retValue = await searchParent(retValue.parentId);
+  }
+  return retValue;
+}
+async function searchForAttribute(workItemId, attributeName) {
+  let retValue = {
+    found: false,
+    value: void 0,
+    parentId: void 0,
+    depth: 0,
+    foundInWorkItemId: void 0,
+    wasFoundInAncestor: false,
+    foundInWorkTypeSystemName: void 0
+  };
+  let req = {
+    "search": {
+      "workItemIds": [
+        workItemId
+      ]
+    },
+    "enrich": [
+      {
+        "path": "title"
+      },
+      {
+        "path": "parent.id"
+      },
+      {
+        "path": "type.systemName"
+      },
+      {
+        "path": "reference"
+      },
+      {
+        "path": attributeName
+      }
+    ]
+  };
+  console.log("Searching using ShareDo Id: " + workItemId);
+  let httpResultFindByQuery = await executeFindByQuery(req);
+  console.log(`Work item ${workItemId} found`);
+  console.log(JSON.stringify(httpResultFindByQuery.results));
+  let typeSystemName = httpResultFindByQuery.results[0].data["type.systemName"];
+  let parentId = httpResultFindByQuery.results[0].data["parent.id"];
+  let attribute = httpResultFindByQuery.results[0].data[attributeName];
+  console.log(`Type system name is ${typeSystemName}`);
+  console.log(`Parent Id is ${parentId}`);
+  console.log(`Attribute [${attributeName}] is ${attribute}`);
+  retValue.value = attribute;
+  if (attribute) {
+    retValue.found = true;
+    retValue.foundInWorkItemId = workItemId;
+    retValue.foundInWorkTypeSystemName = typeSystemName;
+  }
+  retValue.parentId = parentId;
+  return retValue;
+}
+
+// src/WebBased/IDEAspects/BaseClasses/BaseIDEAspect.ts
+console.log("v: - 5.27");
+var ERROR_DIV_SELECTOR = "#render-errors-here";
+var BaseIDEAspect = class {
+  constructor(...arr) {
+    this.widgetSettings = this.setWidgetJsonSettings();
+    this.thisComponentName = this.setThisComponentName();
+    this.defaults = this.setDefaults();
+    this.errorDivSelector = ERROR_DIV_SELECTOR;
+    this.errors = ko3.observableArray();
+    if (arr.length === 0) {
+      return;
+    }
+    if (arr.length === 3) {
+      this.uniqueId = v4_default();
+      this._initialise(arr[0], arr[1], arr[2]);
+      this.LocationToSaveOrLoadData = this.setLocationOfDataToLoadAndSave();
+      this.fireEvent("onSetup", this.model);
+      this.setup();
+      this.fireEvent("afterSetup", this.model);
+      this.setupLiveConfig();
+      this.setupErrorManager();
+      this.addAspectLogOutput();
+      return;
+    }
+  }
+  _initialise(element, configuration, baseModel) {
+    this.element = element;
+    this.originalConfiguration = configuration;
+    this.baseModel = baseModel;
+    let baseDefaults = {
+      debug: {
+        enabled: false,
+        logToConsole: false,
+        showInAspect: false,
+        liveConfig: false
+      }
+    };
+    configuration.debug = $.extend(baseDefaults.debug, configuration.debug);
+    this.configuration = $.extend(this.defaults, this.originalConfiguration);
+    this.model = this.configuration._host.model;
+    this.enabled = this.model.canEdit;
+    this.blade = this.configuration._host.blade;
+    this.loaded = this.loaded || ko3.observable(false);
+    this.sharedoId = this.configuration._host?.model.id;
+    if (!this.sharedoId || this.sharedoId()) {
+      this.log("No sharedoId found");
+    }
+    this.sharedoTypeSystemName = this.configuration._host.model.sharedoTypeSystemName;
+    if (!this.sharedoTypeSystemName || this.sharedoTypeSystemName()) {
+      this.log("No sharedoTypeSystemName found");
+    }
+    this.options = toObservableObject(this.configuration, this.options);
+    this.validation = {};
+    this.validationErrorCount = this.validationErrorCount || ko3.observable(0);
+    this.LocationToSaveOrLoadData = this.setLocationOfDataToLoadAndSave();
+    this.fireEvent("onInitialise", this.model);
+  }
+  clearErrors() {
+    this.errors?.removeAll();
+  }
+  setupErrorManager() {
+    this.l("Setting up error manager");
+    this.errors?.subscribe((newValue) => {
+      this.inf("Errors changed", newValue);
+      this.buildErrorDiv();
+    });
+  }
+  setupLiveConfig() {
+    this.options.debug.subscribe((newValue) => {
+      if (newValue.liveConfig) {
+        this.activateLiveConfig(newValue.liveConfig);
+      }
+    });
+    this.activateLiveConfig(this.options.debug().liveConfig());
+  }
+  activateLiveConfig(active) {
+    if (!active) {
+      this.liveConfigDiv?.remove();
+      return;
+    }
+    if (this.liveConfigDiv) {
+      return;
+    }
+    this.l("Setting up live config");
+    const serializedData = JSON.stringify(this.configuration, (key, value) => {
+      if (key === "_host") {
+        return void 0;
+      }
+      return value;
+    }, 4);
+    let config = ko3.observable(serializedData);
+    this.liveConfigData = {
+      config
+    };
+    let timeout = false;
+    this.liveConfigDiv = this.createLiveConfigDiv();
+    this.element.prepend(this.liveConfigDiv);
+    setTimeout(() => {
+      config.subscribe((newValue) => {
+        if (timeout) {
+          return;
+        }
+        setTimeout(() => {
+          timeout = false;
+          let newConfig = JSON.parse(config());
+          this._initialise(this.element, newConfig, this.baseModel);
+          this.reset(newConfig);
+        }, 500);
+        timeout = true;
+      });
+    }, 3e3);
+  }
+  ensureStylesLoaded(href) {
+    if (!document.querySelector(`link[href="${href}"]`)) {
+      const link = document.createElement("link");
+      link.href = href;
+      link.rel = "stylesheet";
+      link.type = "text/css";
+      document.head.appendChild(link);
+    }
+  }
+  createLiveConfigDiv() {
+    const outerDiv = document.createElement("div");
+    outerDiv.className = "col-sm-12 formbuilder-editor-json";
+    const innerDiv = document.createElement("div");
+    innerDiv.id = "liveConfig";
+    innerDiv.className = "form-control textarea";
+    innerDiv.style.height = "300px";
+    innerDiv.setAttribute("data-bind", "syntaxEditor: liveConfigData.config");
+    outerDiv.appendChild(innerDiv);
+    return outerDiv;
+  }
+  async getData() {
+    if (this.LocationToSaveOrLoadData === void 0) {
+      this.log("No location to load data from set - this method should be overriden", "red");
+      return this._data;
+    }
+    let nestedData = getNestedProperty(this.model, this.LocationToSaveOrLoadData);
+    if (nestedData !== void 0) {
+      this.log("Data found at location", "green", nestedData);
+      let retValue = ko3.toJS(nestedData);
+      this.log("Data found at location", "green", retValue);
+      return retValue;
+    }
+    if (nestedData === void 0 && this.options.dataSettings().getValueUsingParents === true) {
+      return searchForAttributeRecursive(this.sharedoId, this.LocationToSaveOrLoadData, this.options.dataSettings().getValueUsingParents, this.options.dataSettings().maxDepth).then((data) => {
+        if (data.found) {
+          return data.value;
+        }
+        return nestedData;
+      });
+    }
+  }
+  buildErrorDiv() {
+    this.inf("Building error div");
+    let errorDiv = this.element.querySelector(this.errorDivSelector);
+    if (!errorDiv) {
+      return;
+    }
+    l("errorDiv.innerHTML");
+    errorDiv.innerHTML = "";
+    if (!this.errors) {
+      this.errors = ko3.observableArray();
+    }
+    if (this.errors().length === 0) {
+      return;
+    }
+    let errorContainerDiv = document.createElement("div");
+    errorDiv.appendChild(errorContainerDiv);
+    errorContainerDiv.className = "ide-aspect-error-container";
+    let titleDiv = document.createElement("div");
+    titleDiv.className = "ide-aspect-error-title";
+    titleDiv.innerText = "There has been an error:";
+    errorContainerDiv.appendChild(titleDiv);
+    let foreachDiv = document.createElement("div");
+    errorContainerDiv.appendChild(foreachDiv);
+    this.errors().forEach((error) => {
+      let userMessageDiv = document.createElement("div");
+      userMessageDiv.className = "ide-aspect-error-user-message";
+      userMessageDiv.innerHTML = error.userMessage;
+      userMessageDiv.onclick = () => {
+        let detailedMessageDiv = document.createElement("div");
+        detailedMessageDiv.className = "ide-aspect-error-detailed-message";
+        const code = escapeHtml(error.code || "");
+        const message = escapeHtml(error.message || "");
+        const userMessage = escapeHtml(error.userMessage || "");
+        const errorStack = escapeHtml(error.errorStack || "");
+        const additionalInfo = JsonToHtmlConverter.convert(error.additionalInfo || {});
+        const html = `
+                            <div>
+                            <h2>Error: ${code}</h2>
+                            <p><strong>Message:</strong> ${message}</p>
+                            <p><strong>User Message:</strong> ${userMessage}</p>
+                            <p><strong>Stack:</strong> ${errorStack}</p>
+                            <p><strong>Additional Info:</strong> ${additionalInfo}</p>
+                            </div>`;
+        detailedMessageDiv.innerHTML = html;
+        $ui.errorDialog(detailedMessageDiv);
+      };
+      foreachDiv.appendChild(userMessageDiv);
+      if (error.suggestions && error.suggestions.length > 0) {
+        let suggestionsDiv = document.createElement("div");
+        suggestionsDiv.className = "ide-aspect-error-suggestions";
+        suggestionsDiv.innerHTML = `<b>Suggestions:</b><br/>${error.suggestions.join("<br/>")}`;
+        foreachDiv.appendChild(suggestionsDiv);
+      }
+      if (error.actions && error.actions.length > 0) {
+        let actionsDiv = document.createElement("div");
+        actionsDiv.className = "ide-aspect-error-actions";
+        actionsDiv.innerHTML = `<b>Actions:</b><br/>${error.actions.join("<br/>")}`;
+        foreachDiv.appendChild(actionsDiv);
+      }
+      if (error.internalSuggestions && error.internalSuggestions.length > 0) {
+        let internalSuggestionsDiv = document.createElement("div");
+        internalSuggestionsDiv.className = "ide-aspect-error-internal-suggestions";
+        internalSuggestionsDiv.innerHTML = `<b>Internal Suggestions:</b><br/>${error.internalSuggestions.join("<br/>")}`;
+        foreachDiv.appendChild(internalSuggestionsDiv);
+      }
+    });
+    if (this.options.debug().supportRequestEnabled) {
+      let actionDiv = document.createElement("div");
+      actionDiv.className = "ide-aspect-error-support-action";
+      errorContainerDiv.appendChild(actionDiv);
+      let button = document.createElement("button");
+      button.className = "btn btn-primary";
+      button.innerText = "Create Support Task";
+      actionDiv.appendChild(button);
+    }
+  }
+  setData(value) {
+    if (this.LocationToSaveOrLoadData === void 0) {
+      this.log("No location to save data to set - this method should be overriden", "red");
+      this._data = value;
+      return;
+    }
+    let valueToSet = value;
+    this.log("Setting data at location", "green", valueToSet);
+    setNestedProperty(this.model, this.LocationToSaveOrLoadData, valueToSet);
+    this.fireEvent("onDataChanged", this.model);
+  }
+  // abstract setDependantScriptFiles(): string[];
+  // abstract setDependantStyleFiles(): string[];
+  // abstract setDependantTemplateFiles(): string[];
+  // abstract setDependantMenuTemplateFiles(): string[];
+  // abstract setDependantComponentFiles(): string[];
+  // abstract setWidgetDesignerSettings(): IWidgetJsonDesigner;
+  // abstract setPriority() : number;
+  /**
+   * Called by the aspect IDE adapter when the model is saved. Manipulate the
+   * model as required.
+   */
+  async onSave(model) {
+    this.fireEvent("onSave", model);
+    let dataToSave = await this.getData();
+    this.log("Saving, model passed in we need to persist to", "green", dataToSave);
+    if (this.LocationToSaveOrLoadData === void 0) {
+      this.log("No location to save data to set - this method should be overriden", "red");
+      return;
+    }
+    let dataToPersist = await this.getData();
+    let currentData = getNestedProperty(model, this.LocationToSaveOrLoadData);
+    if (currentData) {
+      this.log(`Current data at location ${this.LocationToSaveOrLoadData} :`, "magenta", currentData);
+    }
+    if (!currentData) {
+    }
+    this.log(`New data to persist to location ${this.LocationToSaveOrLoadData} :`, "blue", dataToPersist);
+    setNestedProperty(model, this.LocationToSaveOrLoadData, dataToPersist);
+  }
+  onDestroy(model) {
+    this.log("IDEAspects.Example : onDestroy");
+    this.fireEvent("onDestroy", model);
+  }
+  /**
+   * Called by the UI framework after initial creation and binding to load data
+   * into it's model
+   */
+  loadAndBind() {
+    this.log("IDEAspects.Example : loadAndBind");
+    this.log("Loading data (model:any) passed in", "green");
+    this.log("Loading data based on location to save", "green", this.LocationToSaveOrLoadData);
+    this.fireEvent("onLoad", this.model);
+  }
+  /**
+   * Called by the aspect IDE adapter before the model is saved
+   */
+  onBeforeSave(model) {
+    this.log("IDEAspects.Example : onBeforeSave");
+    this.fireEvent("onBeforeSave", model);
+  }
+  /**
+   * Called by the aspect IDE adapter after the model has been saved.
+   */
+  onAfterSave(model) {
+    this.log("IDEAspects.Example : onAfterSave");
+    this.fireEvent("onAfterSave", model);
+  }
+  /**
+   * Called by the aspect IDE adapter when it reloads aspect data
+   */
+  onReload(model) {
+    this.log("IDEAspects.Example : onReload");
+    this.fireEvent("onReload", model);
+  }
+  /**
+   * Provides logging for the component based on the debug configuration
+   * @param message 
+   * @param color 
+   * @param data 
+   */
+  log(message, color, data) {
+    if (this.configuration.debug?.enabled) {
+      if (this.configuration.debug.logToConsole) {
+        if (!color)
+          color = "black";
+        console.log(`%c ${this.thisComponentName} - ${message}`, `color:${color}`, data);
+      }
+    }
+  }
+  canLog() {
+    return this.configuration.debug?.enabled;
+  }
+  logToConsole() {
+    return this.canLog() && this.configuration.debug?.logToConsole;
+  }
+  logToAspect() {
+    return this.canLog() && this.configuration.debug?.showInAspect;
+  }
+  inf(message, ...args) {
+    if (this.logToConsole()) {
+      l(inf(message), ...args);
+    }
+  }
+  wrn(message, ...args) {
+    if (this.logToConsole()) {
+      l(wrn(message), ...args);
+    }
+  }
+  err(message, ...args) {
+    if (this.logToConsole()) {
+      l(err(message), ...args);
+    }
+  }
+  nv(name, value) {
+    if (this.logToConsole()) {
+      l(nv(name, value));
+    }
+  }
+  lh1(message, ...args) {
+    if (this.logToConsole()) {
+      l(lh1(message), ...args);
+    }
+  }
+  clearSec() {
+    clearSec();
+  }
+  l(message, ...args) {
+    if (this.logToConsole()) {
+      l(message, ...args);
+    }
+    if (this.logToAspect()) {
+      let aspectLogOutput = this.aspectLogOutput;
+      if (aspectLogOutput) {
+        aspectLogOutput.innerText += `${message}
+`;
+      }
+    }
+  }
+  addAspectLogOutput() {
+    if (!this.logToAspect()) {
+      return;
+    }
+    ;
+    this.aspectLogOutput = document.createElement("div");
+    let aspectLogOutput = this.aspectLogOutput;
+    aspectLogOutput.id = `aspectLogOutput-${this.uniqueId}`;
+    aspectLogOutput.style.border = "1px solid black";
+    aspectLogOutput.style.padding = "5px";
+    aspectLogOutput.style.margin = "5px";
+    aspectLogOutput.style.height = "200px";
+    aspectLogOutput.style.overflow = "auto";
+    aspectLogOutput.style.backgroundColor = "white";
+    aspectLogOutput.style.color = "black";
+    aspectLogOutput.style.fontSize = "10px";
+    aspectLogOutput.style.fontFamily = "monospace";
+    aspectLogOutput.style.whiteSpace = "pre-wrap";
+    aspectLogOutput.style.wordWrap = "break-word";
+    aspectLogOutput.style.display = "none";
+    aspectLogOutput.style.position = "relative";
+    aspectLogOutput.style.zIndex = "1000";
+    aspectLogOutput.style.bottom = "0px";
+    aspectLogOutput.style.left = "0px";
+    aspectLogOutput.style.right = "0px";
+    aspectLogOutput.style.marginLeft = "auto";
+    aspectLogOutput.style.marginRight = "auto";
+    aspectLogOutput.style.marginBottom = "auto";
+    aspectLogOutput.style.marginTop = "auto";
+    aspectLogOutput.style.backgroundColor = "rgba(255,255,255,0.8)";
+    aspectLogOutput.style.borderRadius = "5px";
+    aspectLogOutput.style.padding = "5px";
+    aspectLogOutput.style.boxShadow = "0px 0px 5px 0px rgba(0,0,0,0.75)";
+    this.element.prepend(aspectLogOutput);
+  }
+  fireEvent(eventName, data) {
+    let event = {
+      eventPath: this.thisComponentName + "." + eventName,
+      eventName,
+      source: this,
+      data
+    };
+    fireEvent(event);
+  }
+  /**
+   * 
+   * @returns Formbuild if it exists or creates it if it does not
+   * 
+   */
+  formbuilder() {
+    if (!this.blade?.model?.aspectData?.formBuilder?.formData) {
+      this.log("blade.model.aspectData.formBuilder.formData not found - will create the path", "blue");
+    } else {
+      this.log("blade.model.aspectData.formBuilder.formData found", "green");
+    }
+    this.blade = this.blade || {};
+    return this.ensureFormbuilder(this.blade.model);
+  }
+  /**
+   * Ensures there is a form builder in the passed in model and returns it
+   * @param model 
+   * @returns 
+   */
+  ensureFormbuilder(model) {
+    if (!model?.aspectData?.formBuilder?.formData) {
+      this.log("blade.model.aspectData.formBuilder.formData not found - will create the path", "blue");
+    } else {
+      this.log("blade.model.aspectData.formBuilder.formData found", "green");
+    }
+    model = model || {};
+    model.aspectData = model.aspectData || {};
+    model.aspectData.formBuilder = model.aspectData.formBuilder || { formData: {} };
+    return model.aspectData.formBuilder.formData;
+  }
+  formbuilderField(formbuilderField, setValue) {
+    if (!this.formbuilder()) {
+      this.log("Form builder does not exist! ", "red");
+      throw new Error("Form builder does not exist!");
+    }
+    let foundValue = this.formbuilder()[formbuilderField];
+    if (!foundValue) {
+      this.log(`Form builder does not contain field ${formbuilderField} `, "orange");
+      this.log(`Creating field ${formbuilderField} `, "blue");
+      this.formbuilder()[formbuilderField] = void 0;
+    }
+    if (setValue) {
+      this.log(`Setting ${formbuilderField} to ${setValue}`, "green");
+      this.formbuilder()[formbuilderField] = setValue;
+      return setValue;
+    }
+    return foundValue;
   }
 };
 
@@ -12303,7 +12508,11 @@ var ExternalMatterSearch = class extends BaseIDEAspect {
     });
   }
   save(model) {
-    let mappedData = mapData(this.selectedMatter(), import_knockout2.default.toJS(this.options.dataMapping()), this.options.formBuilderFieldSerialisedData());
+    let data = {
+      data: this.selectedMatter()
+      //! To keep consistency with the search template and search results
+    };
+    let mappedData = mapData(data, import_knockout2.default.toJS(this.options.dataMapping()), this.options.formBuilderFieldSerialisedData());
     this.inf("save", mappedData);
     let dataToSave = this.ensureFormbuilder(model);
     $.extend(this.ensureFormbuilder(model), mappedData);
@@ -12483,7 +12692,7 @@ var ExternalMatterSearch = class extends BaseIDEAspect {
     this.validateFormbuilderJSONFieldSetup();
     this.load(this.model);
   }
-  onSave(model) {
+  async onSave(model) {
     this.validateFormbuilderJSONFieldSetup();
     this.save(model);
   }
@@ -12500,8 +12709,12 @@ var ExternalMatterSearch = class extends BaseIDEAspect {
     if (response.info.success === false) {
       this.buildUserErrors(response);
     }
-    if (typeof response.data === "string") {
-      retValue = JSON.parse(response.data);
+    try {
+      if (typeof response.data === "string") {
+        retValue = JSON.parse(response.data);
+      }
+    } catch (e) {
+      retValue = "";
     }
     if (typeof response.data === "object") {
       retValue = response.data;

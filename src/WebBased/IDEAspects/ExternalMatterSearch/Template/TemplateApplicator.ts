@@ -1,5 +1,6 @@
 import { err, l } from "../../../../Common/Log";
 import { formatFunc } from "../../../../helpers/Formatter";
+import { extractValue } from "../../../../helpers/VakueExtractor";
 import { evaluteRule, executeFunc } from "../../../../helpers/evaluteRule";
 import { ICSSRule, IFieldPlacement, IFieldRowField, IFieldRule, IIconRule, INameValue, IStyleEntry, IStyleRule } from "../ExternalMatterSearchInterface";
 import { TCustomBindingContext } from "./TemplateGenerator";
@@ -122,15 +123,7 @@ export class TemplateApplicator {
   }
 
   setInnerHTML(value: string, formatter: string | null | undefined, viewModel: any, element: HTMLElement) {
-    let valueToSet = executeFunc(value, viewModel);
-
-    if (typeof valueToSet !== "string") {
-      valueToSet = JSON.stringify(valueToSet, null, 2);
-    }
-
-    if (formatter) {
-      valueToSet = formatFunc(valueToSet, formatter);
-    }
+    let valueToSet = extractValue(value, viewModel, formatter);
     element.innerHTML = valueToSet;
   }
 
@@ -364,3 +357,5 @@ export class TemplateApplicator {
 
 
 }
+
+

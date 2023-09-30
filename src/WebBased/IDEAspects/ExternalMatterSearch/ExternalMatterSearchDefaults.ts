@@ -1,5 +1,5 @@
-import { IDefaultSettings } from "../BaseClasses/BaseIDEAspect";
 import { DEBUG_DEFAULT } from "../BaseClasses/DebugDefaults";
+import { IDefaultSettings } from "../BaseClasses/IWidgetJson";
 import { DEFAULT_SEARCH_FIELDS_CONFIG } from "./DefaultSearchFields";
 import { DEFAULT_SELECTED_FIELDS_CONFIG } from "./DefaultSelectedFields";
 import { IExternalMatterSearchConfiguration } from "./ExternalMatterSearchInterface";
@@ -22,31 +22,31 @@ export const Default: IDefaultSettings<IExternalMatterSearchConfiguration>=
     dataMapping: [
         {
             formBuilderField: "expert-matter-number",
-            searchResultField: "`${dataContext.data.matterCode}`"
+            searchResultField: "{dataContext.data.matterCode}"
         },
         {
             formBuilderField: "expert-matter-number-value",
-            searchResultField: "`${dataContext.data.matterCode}`"
+            searchResultField: "{dataContext.data.matterCode}"
         },
         {
             formBuilderField: "matter-details-ib",
-            searchResultField: "`${dataContext.data.secure}`"
+            searchResultField: "{dataContext.data.secure}"
         },
         {
             formBuilderField: "matter-details-name",
-            searchResultField: "`${dataContext.data.shortName}`"
+            searchResultField: "{dataContext.data.shortName}"
         },
         {
             formBuilderField: "matter-details-client-name",
-            searchResultField: "`${dataContext.data.client.name}`"
+            searchResultField: "{dataContext.data.client.name}"
         },
         {
             formBuilderField: "matter-details-client-code",
-            searchResultField: "`${dataContext.data.client.code}`"
+            searchResultField: "{dataContext.data.client.code}"
         },
         {
             formBuilderField: "matter-details-partner-name",
-            searchResultField: "`${dataContext.data.partner.name}`"
+            searchResultField: "{dataContext.data.partner.name}"
         }
     ], 
     debug: DEBUG_DEFAULT(),
@@ -67,4 +67,8 @@ export const Default: IDefaultSettings<IExternalMatterSearchConfiguration>=
         }
     ],
     eventsToReactTo: [],   
+    dataSettings: {
+        getValueUsingParents: false,
+        maxDepth: 0,
+    }
 }

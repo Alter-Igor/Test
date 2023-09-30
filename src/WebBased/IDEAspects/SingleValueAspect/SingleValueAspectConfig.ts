@@ -1,6 +1,5 @@
-import { IDefaultSettings } from "../BaseClasses/BaseIDEAspect";
 import { DEBUG_DEFAULT } from "../BaseClasses/DebugDefaults";
-import { IWidgetJson } from "../BaseClasses/IWidgetJson";
+import { IDefaultSettings, IWidgetJson } from "../BaseClasses/IWidgetJson";
 
 export interface ISingleValueAspectConfiguration {
     fieldPath: string | undefined,
@@ -8,8 +7,6 @@ export interface ISingleValueAspectConfiguration {
     valueOnNotFound: string | undefined,
     calculatedValue: string;
     calculatedTitle: string;
-    searchParents: boolean | undefined,
-    maxDepth: number | undefined,
     formatter: string | undefined,
 }
 
@@ -20,8 +17,6 @@ export const Default: IDefaultSettings<ISingleValueAspectConfiguration> = {
     calculatedValue: "",
     calculatedTitle: "",
     valueOnNotFound: "Not Found",
-    searchParents: false,
-    maxDepth: 0,
     formatter: "value",
     debug: DEBUG_DEFAULT(),
     eventsToReactTo: [
@@ -41,7 +36,11 @@ export const Default: IDefaultSettings<ISingleValueAspectConfiguration> = {
             eventPath: "sharedo.core.case.sharedo-updated",
             methodToCall: "loadAndBind"
         }
-    ]
+    ],
+    dataSettings: {
+        getValueUsingParents: false,
+        maxDepth: 0,
+    }
 }
 
 export const WidgetSettings : IWidgetJson<ISingleValueAspectConfiguration> ={

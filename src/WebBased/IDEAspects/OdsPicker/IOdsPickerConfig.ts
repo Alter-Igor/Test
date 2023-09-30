@@ -1,5 +1,5 @@
-import { IDefaultSettings } from "../BaseClasses/BaseIDEAspect";
 import { DEBUG_DEFAULT } from "../BaseClasses/DebugDefaults";
+import { IDefaultSettings } from "../BaseClasses/IWidgetJson";
 
 export interface IODSPickerConfiguration {
   showPreSharedo: boolean;
@@ -49,7 +49,11 @@ export const Default: IDefaultSettings<IODSPickerConfiguration>=
           }
       ],
       debug:DEBUG_DEFAULT(),
-      eventsToReactTo: []
+      eventsToReactTo: [],
+      dataSettings:{
+          getValueUsingParents: false,
+          maxDepth: 0,
+      }
   
   }
   

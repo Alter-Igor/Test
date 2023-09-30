@@ -1,8 +1,8 @@
 import * as ko from "knockout";
 import { IODSPickerConfiguration } from "./IOdsPickerConfig"
-import { BaseIDEAspect, IDefaultSettings } from "../BaseClasses/BaseIDEAspect";
-import { IWidgetJson } from "../BaseClasses/IWidgetJson";
+import { IDefaultSettings, IWidgetJson } from "../BaseClasses/IWidgetJson";
 import { Settings } from "./DefaultConfigurationJSON";
+import { BaseIDEAspect } from "../BaseClasses/BaseIDEAspect";
 
 
 interface OdsEntityModel {
@@ -57,7 +57,11 @@ export class OdsPicker extends BaseIDEAspect<IODSPickerConfiguration, any> {
                 logToConsole: false,
                 showInAspect: false
             },
-            eventsToReactTo: []
+            eventsToReactTo: [],
+            dataSettings: {
+                getValueUsingParents: false,
+                maxDepth: 0
+            }
 
         };
     }
@@ -310,9 +314,9 @@ export class OdsPicker extends BaseIDEAspect<IODSPickerConfiguration, any> {
 
     };
 
-    override onSave(model: any): void {
+    override async onSave(model: any) {
 
-        this.log("Saving, model passed in we need to persist to", "green", this.data);
+        // this.log("Saving, model passed in we need to persist to", "green", this.data);
         let odsEntities = ko.toJS(this.odsEntities);
         if (!model.aspectData.odsEntityPicker)
             model.aspectData.odsEntityPicker = { odsEntities: [] };

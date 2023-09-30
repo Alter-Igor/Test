@@ -8563,10 +8563,14 @@ var setting = {
     "configurationWidget": null,
     "defaultConfigurationJson": {
       "formBuilderField": "eDiscoveryUpdatePlannedDate",
+      "defaultValue": {
+        "defaultDateFromNowHours": 24,
+        "getValueUsingParents": true,
+        "maxDepth": 0
+      },
       "title": "Updated planned due date:",
       "pickerEnabled": true,
       "eventToFireOnUpdate": ["IDEAspects.DatePickerAspect.Update"],
-      "defaultDateFromNowHours": 24,
       "datePickerOptions": {
         "display": {
           "inline": true,
@@ -8578,6 +8582,11 @@ var setting = {
         "enabled": true,
         "logToConsole": true,
         "showInAspect": true
+      },
+      "eventsToReactTo": [],
+      "dataSettings": {
+        "getValueUsingParents": false,
+        "maxDepth": 0
       }
     }
   },
@@ -9166,6 +9175,10 @@ function clearSec() {
   }
   lastSec = new Section("Root", defaultMode);
 }
+function secBackOne() {
+  lastSec = lastSec?.parent;
+  console.groupEnd();
+}
 var Section = class {
   constructor(sectionName, c, section) {
     this.indent = 0;
@@ -9387,6 +9400,232 @@ var json = {
   }
 };
 
+// src/WebBased/Common/api/api.ts
+async function executePost(api, postBody) {
+  return (await executeFetch(api, "POST", postBody)).data;
+}
+function validateApi(api) {
+  let location = window.document.location.origin;
+  if (api.indexOf(location) === -1) {
+    if (api.indexOf("/") !== 0) {
+      api = "/" + api;
+    }
+    api = location + api;
+  }
+  return api;
+}
+async function executeFetch(api, method, data) {
+  let retValue = {
+    data: void 0,
+    response: void 0,
+    info: {
+      success: false,
+      error: []
+    }
+  };
+  let url = validateApi(api);
+  let fetchHeaders = buildHeaders();
+  let response = await fetch(
+    url,
+    {
+      method,
+      headers: fetchHeaders,
+      body: data ? JSON.stringify(data) : void 0
+    }
+  ).then(async (response2) => {
+    retValue.response = response2;
+    if (response2.ok === false) {
+      retValue.info.error.push({
+        code: "API_ERROR",
+        message: `An error occured while trying to call the API. statusText: ${response2.statusText}`,
+        userMessage: "An error occured while trying to call the API."
+      });
+    }
+    let data2;
+    try {
+      if (response2.headers.get("content-type")?.includes("application/json")) {
+        data2 = await response2.json();
+      } else {
+        data2 = await response2.text();
+      }
+      retValue.info.success = true;
+    } catch (e) {
+      retValue.info.error.push({
+        code: "API_ERROR",
+        message: `An error occured while trying to extract the data from the API. Message: ${e?.message || "Unknown"}`,
+        userMessage: `An error occured while trying to extract the data from the API.`
+      });
+    }
+    return { data: data2, response: response2 };
+  }).catch((error) => {
+    l(err(`Error from API Call ${url}`), error);
+    retValue.info.error.push({
+      code: "API_ERROR",
+      message: error.message,
+      userMessage: error.message
+    });
+    return { data: void 0, response: void 0 };
+  });
+  lh1(`Response from ${url}`);
+  l(response);
+  retValue.data = response.data;
+  if (retValue.info.error.length > 0) {
+    retValue.info.success = false;
+    retValue.info.error.forEach((e) => {
+      l(err(`Error from API Call ${url}`), e);
+    });
+  }
+  secBackOne();
+  return retValue;
+}
+function buildHeaders() {
+  let bearer = getBearerToken();
+  let fetchHeaders = new Headers();
+  fetchHeaders.append("Content-Type", "application/json");
+  if (bearer) {
+    fetchHeaders.append("Authorization", bearer);
+  }
+  return fetchHeaders;
+}
+function getCookies() {
+  let retValue = {};
+  let cookies = document.cookie.split(";").reduce(function(cookies2, cookie) {
+    var parts = cookie.split("=");
+    if (parts.length === 2) {
+      var key = parts[0].trim();
+      var value = parts[1];
+      retValue[key] = value;
+    }
+    return cookies2;
+  }, {});
+  return retValue;
+}
+function getBearerToken() {
+  var cookies = getCookies();
+  var token = cookies["_api"];
+  if (token)
+    return "Bearer " + token;
+  return null;
+}
+
+// src/WebBased/Common/api/executeFindByQuery/FindByQuery.ts
+function executeFindByQuery(inputOption) {
+  return executePost("/api/v1/public/workItem/findByQuery", inputOption).then((result) => {
+    return result;
+  });
+}
+
+// src/WebBased/Common/api/searchForAttributeWithParents.ts
+async function searchForAttributeRecursive(workItemId, attributeName, parents, maxDepth) {
+  let useMaxDepth = maxDepth ? true : false;
+  if (maxDepth && maxDepth > 0) {
+    useMaxDepth = true;
+  }
+  let retValue = { found: false, value: void 0, parentId: void 0, depth: 0, foundInWorkItemId: void 0, wasFoundInAncestor: false, foundInWorkTypeSystemName: void 0 };
+  retValue = await searchForAttribute(workItemId, attributeName);
+  if (retValue.found) {
+    return retValue;
+  }
+  if (!parents) {
+    console.log("No parents or children to search so only searching current work item");
+    return retValue;
+  }
+  if (parents) {
+    console.log("Searching parents");
+    let depth = 0;
+    let searchParent = async (parentId) => {
+      depth++;
+      let r = {
+        found: false,
+        value: void 0,
+        parentId: void 0,
+        depth,
+        //depth here will be overriden if there is a parent
+        foundInWorkItemId: void 0,
+        wasFoundInAncestor: false,
+        foundInWorkTypeSystemName: void 0
+      };
+      if (!parentId) {
+        console.log("No parent found");
+        return r;
+      }
+      r = await searchForAttribute(parentId, attributeName);
+      r.depth = depth;
+      if (r.found) {
+        console.log("Found attribute in parent");
+        r.wasFoundInAncestor = true;
+        return r;
+      } else {
+        if (useMaxDepth && depth >= maxDepth) {
+          console.log("Max depth reached");
+          return r;
+        }
+        if (!r.parentId) {
+          console.log("No parent found");
+          return r;
+        }
+        console.log("Not found in parent");
+        return searchParent(r.parentId);
+      }
+    };
+    retValue = await searchParent(retValue.parentId);
+  }
+  return retValue;
+}
+async function searchForAttribute(workItemId, attributeName) {
+  let retValue = {
+    found: false,
+    value: void 0,
+    parentId: void 0,
+    depth: 0,
+    foundInWorkItemId: void 0,
+    wasFoundInAncestor: false,
+    foundInWorkTypeSystemName: void 0
+  };
+  let req = {
+    "search": {
+      "workItemIds": [
+        workItemId
+      ]
+    },
+    "enrich": [
+      {
+        "path": "title"
+      },
+      {
+        "path": "parent.id"
+      },
+      {
+        "path": "type.systemName"
+      },
+      {
+        "path": "reference"
+      },
+      {
+        "path": attributeName
+      }
+    ]
+  };
+  console.log("Searching using ShareDo Id: " + workItemId);
+  let httpResultFindByQuery = await executeFindByQuery(req);
+  console.log(`Work item ${workItemId} found`);
+  console.log(JSON.stringify(httpResultFindByQuery.results));
+  let typeSystemName = httpResultFindByQuery.results[0].data["type.systemName"];
+  let parentId = httpResultFindByQuery.results[0].data["parent.id"];
+  let attribute = httpResultFindByQuery.results[0].data[attributeName];
+  console.log(`Type system name is ${typeSystemName}`);
+  console.log(`Parent Id is ${parentId}`);
+  console.log(`Attribute [${attributeName}] is ${attribute}`);
+  retValue.value = attribute;
+  if (attribute) {
+    retValue.found = true;
+    retValue.foundInWorkItemId = workItemId;
+    retValue.foundInWorkTypeSystemName = typeSystemName;
+  }
+  retValue.parentId = parentId;
+  return retValue;
+}
+
 // src/WebBased/IDEAspects/BaseClasses/BaseIDEAspect.ts
 console.log("v: - 5.27");
 var FOMR_BUILDER_PATH_STRING = "aspectData.formBuilder.formData";
@@ -9524,16 +9763,26 @@ var BaseIDEAspect = class {
     outerDiv.appendChild(innerDiv);
     return outerDiv;
   }
-  get data() {
+  async getData() {
     if (this.LocationToSaveOrLoadData === void 0) {
       this.log("No location to load data from set - this method should be overriden", "red");
       return this._data;
     }
     let nestedData = getNestedProperty(this.model, this.LocationToSaveOrLoadData);
-    this.log("Data found at location", "green", nestedData);
-    let retValue = ko2.toJS(nestedData);
-    this.log("Data found at location", "green", retValue);
-    return retValue;
+    if (nestedData !== void 0) {
+      this.log("Data found at location", "green", nestedData);
+      let retValue = ko2.toJS(nestedData);
+      this.log("Data found at location", "green", retValue);
+      return retValue;
+    }
+    if (nestedData === void 0 && this.options.dataSettings().getValueUsingParents === true) {
+      return searchForAttributeRecursive(this.sharedoId, this.LocationToSaveOrLoadData, this.options.dataSettings().getValueUsingParents, this.options.dataSettings().maxDepth).then((data) => {
+        if (data.found) {
+          return data.value;
+        }
+        return nestedData;
+      });
+    }
   }
   buildErrorDiv() {
     this.inf("Building error div");
@@ -9611,7 +9860,7 @@ var BaseIDEAspect = class {
       actionDiv.appendChild(button);
     }
   }
-  set data(value) {
+  setData(value) {
     if (this.LocationToSaveOrLoadData === void 0) {
       this.log("No location to save data to set - this method should be overriden", "red");
       this._data = value;
@@ -9633,14 +9882,15 @@ var BaseIDEAspect = class {
    * Called by the aspect IDE adapter when the model is saved. Manipulate the
    * model as required.
    */
-  onSave(model) {
+  async onSave(model) {
     this.fireEvent("onSave", model);
-    this.log("Saving, model passed in we need to persist to", "green", this.data);
+    let dataToSave = await this.getData();
+    this.log("Saving, model passed in we need to persist to", "green", dataToSave);
     if (this.LocationToSaveOrLoadData === void 0) {
       this.log("No location to save data to set - this method should be overriden", "red");
       return;
     }
-    let dataToPersist = this.data;
+    let dataToPersist = await this.getData();
     let currentData = getNestedProperty(model, this.LocationToSaveOrLoadData);
     if (currentData) {
       this.log(`Current data at location ${this.LocationToSaveOrLoadData} :`, "magenta", currentData);
@@ -9869,7 +10119,11 @@ var DatePickerAspect = class extends BaseIDEAspect {
       formBuilderField: void 0,
       pickerEnabled: true,
       eventToFireOnUpdate: ["IDEAspects.DatePickerAspect.Update"],
-      defaultDateFromNowHours: 3,
+      defaultValue: {
+        defaultDateFromNowHours: 24,
+        getValueUsingParents: true,
+        maxDepth: 0
+      },
       datePickerOptions: {
         display: {
           inline: true,
@@ -9882,7 +10136,11 @@ var DatePickerAspect = class extends BaseIDEAspect {
         logToConsole: false,
         showInAspect: false
       },
-      eventsToReactTo: []
+      eventsToReactTo: [],
+      dataSettings: {
+        getValueUsingParents: false,
+        maxDepth: 0
+      }
     };
   }
   //Abstract methods - must be implemented by the derived class
@@ -9906,20 +10164,20 @@ var DatePickerAspect = class extends BaseIDEAspect {
   /**
    * Sanatise the data before saving, form build data needs to be a string
    */
-  set modelDataAsDate(newValue) {
-    this.data = newValue?.toISOString() || void 0;
+  setModelDataAsDate(newValue) {
+    this.setData(newValue?.toISOString() || void 0);
   }
   /**
    * Gets the data from form builder and converts to DateTime
    */
-  get modelDataAsDate() {
+  async getModelDataAsDate() {
     let retValue;
-    let foundValue = this.data;
+    let foundValue = await this.getData();
     if (!foundValue) {
       foundValue = this.generateDefaultDate();
     }
     retValue = this.ensureDate(foundValue);
-    this.modelDataAsDate = retValue;
+    this.setModelDataAsDate(retValue);
     return retValue;
   }
   /**
@@ -9927,8 +10185,8 @@ var DatePickerAspect = class extends BaseIDEAspect {
    */
   generateDefaultDate() {
     let defaultDate = new import_tempus_dominus.DateTime(import_tempus_dominus.DateTime.now());
-    if (this.configuration.defaultDateFromNowHours) {
-      defaultDate.setHours(defaultDate.getHours() + this.configuration.defaultDateFromNowHours);
+    if (this.configuration.defaultValue?.defaultDateFromNowHours) {
+      defaultDate.setHours(defaultDate.getHours() + this.configuration.defaultValue.defaultDateFromNowHours);
     }
     return defaultDate;
   }
@@ -9936,7 +10194,7 @@ var DatePickerAspect = class extends BaseIDEAspect {
    * Called by the UI framework after initial creation and binding to load data
    * into it's model
    */
-  loadAndBind() {
+  async loadAndBind() {
     if (this.element === void 0) {
       return;
     }
@@ -9966,8 +10224,9 @@ var DatePickerAspect = class extends BaseIDEAspect {
       this.loadAndBind();
     });
     this.setPickerEnabledState(this.options.pickerEnabled());
+    let dateToSet = await this.getModelDataAsDate();
     this.dateTimePicker.dates.setValue(
-      this.modelDataAsDate,
+      dateToSet,
       this.dateTimePicker.dates.lastPickedIndex
     );
     this.dateTimePicker.subscribe("change.td", (e) => {
@@ -9982,7 +10241,7 @@ var DatePickerAspect = class extends BaseIDEAspect {
           }
         );
       });
-      this.modelDataAsDate = this.getCurrentSelectedDate();
+      this.setModelDataAsDate(this.getCurrentSelectedDate());
     });
   }
   /**
@@ -10016,9 +10275,9 @@ var DatePickerAspect = class extends BaseIDEAspect {
   getCurrentSelectedDate() {
     return this.dateTimePicker?.dates.picked[0];
   }
-  onSave(model) {
+  async onSave(model) {
     this.log("Save");
-    this.modelDataAsDate = this.getCurrentSelectedDate();
+    this.setModelDataAsDate(this.getCurrentSelectedDate());
     super.onSave(model);
   }
 };

@@ -1,0 +1,326 @@
+{
+    "id": "81ec0946-d9e8-4181-ad5a-9496e4fdd130",
+    "systemName": "custom-alt-ediscovery-instruction-matter-details",
+    "title": "Custom ALT eDiscovery Instruction Matter Details",
+    "description": null,
+    "layout": "/_ideFiles/CustomLayouts/LabelOnTop/Custom.html",
+    "layoutParent": "bootstrap-edit-horizontal",
+    "showTitle": false,
+    "readonly": false,
+    "fields": [
+        {
+            "id": "2ca7bf7d-d411-402a-927f-00def2f3a3a3",
+            "type": 14,
+            "name": "custom-alt-ediscovery-instruction-matter-details",
+            "title": null,
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 0,
+            "attributes": {
+                "labelText": "/_ideFiles/Scripts/eDiscovery/FB_MatterDetails.js",
+                "cssClasses": "example-css-class1, example-css-class2",
+                "elementType": "module-loader",
+                "visibleIf": "false",
+                "chronologyCard": false
+            }
+        },
+        {
+            "id": "51c5d8f4-06d0-435a-b174-215ec013b274",
+            "type": 4,
+            "name": "jurisdictions-country",
+            "title": "Responsible eDiscovery Team",
+            "description": null,
+            "readonly": false,
+            "required": true,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 0,
+            "attributes": {
+                "optionSetName": "jurisdictions-country-only",
+                "allowNoSelection": true,
+                "multiple": false,
+                "placeholderText": "Select Jurisdiction",
+                "showSelectedColour": true,
+                "showSelectedIcon": false,
+                "chronologyCard": true
+            }
+        },
+        {
+            "id": "61a8412e-c89d-45ca-b3fd-3689ab14003d",
+            "type": 7,
+            "name": "information",
+            "title": "Title e",
+            "description": "Note on this section",
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 0,
+            "attributes": {
+                "labelText": "Please note this section is using fake data to represent expect and is subject to change to align with other HSF ShareDo work streams",
+                "cssClasses": "red",
+                "chronologyCard": true,
+                "visibleIf": "fale=true"
+            }
+        },
+        {
+            "id": "9812c66d-4e2c-4a92-a37f-377c4bab93b7",
+            "type": 12,
+            "name": "matterJSON",
+            "title": "Base64 Encoded Selected Matter",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 0,
+            "attributes": {
+                "rows": 10,
+                "richText": false,
+                "maxLength": 10000,
+                "showMaxLengthIndicator": true,
+                "visibleIf": "true=false",
+                "chronologyCard": false
+            }
+        },
+        {
+            "id": "2b3d4671-008a-4e2f-aa71-eb6d1fe56eb0",
+            "type": 7,
+            "name": "informationdemo",
+            "title": "Title",
+            "description": "Note on this section",
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 0,
+            "attributes": {
+                "labelText": "While testing used one of these [81735089, 81735090, 81735091, 81735092]",
+                "cssClasses": "red",
+                "chronologyCard": true,
+                "visibleIf": "fale=true"
+            }
+        },
+        {
+            "id": "a68d38be-eb04-4488-9b9d-c40991234ade",
+            "type": 13,
+            "name": "pipeline-matter",
+            "title": "Pipleline matter?",
+            "description": "If this is a pipeline matter or the matter number does not exist in expert yet then enable this toggle.",
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 5,
+            "attributes": {
+                "dataOn": "Yes",
+                "dataOff": "No",
+                "buttonWidth": "100px",
+                "buttonHeight": "",
+                "chronologyCard": true,
+                "visibleIf": "fale=true",
+                "default": false
+            }
+        },
+        {
+            "id": "d93532ea-88c6-4ef8-9edf-e3d2bcb3485d",
+            "type": 0,
+            "name": "expert-matter-number",
+            "title": "Expert Matter Number",
+            "description": "Enter the matter number from aderant",
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 10,
+            "attributes": {
+                "endpointUri": "/_ideFiles/SampleData/eDiscovery/test.json",
+                "allowNoSelection": true,
+                "multiple": false,
+                "placeholderText": "&nbsp;",
+                "chronologyCard": true,
+                "visibleIf": "fale=true"
+            }
+        },
+        {
+            "id": "3785035c-08d0-4d49-97ca-660e7a374d06",
+            "type": 0,
+            "name": "expert-matter-number-value",
+            "title": "",
+            "description": "",
+            "readonly": true,
+            "required": false,
+            "layoutLocation": ".layout-none",
+            "displayOrder": 20,
+            "attributes": {
+                "maxLength": 30,
+                "chronologyCard": true,
+                "cssClasses": "hidden"
+            }
+        },
+        {
+            "id": "8e37a4af-848b-4633-a7c6-d5a933bbc3a5",
+            "type": 0,
+            "name": "temp-matter-number",
+            "title": "Temp Matter Number",
+            "description": "Enter the temp matter number",
+            "readonly": true,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 20,
+            "attributes": {
+                "placeholder": "Will be generated on save",
+                "maxLength": 30,
+                "chronologyCard": true,
+                "visibleIf": "pipeline-matter=true"
+            }
+        },
+        {
+            "id": "d4c70e3a-c434-4f9f-bb52-f4ed643cbef6",
+            "type": 0,
+            "name": "sub-matter-code",
+            "title": "Sub Matter Code",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 40,
+            "attributes": {
+                "maxLength": 30,
+                "pattern": ".*",
+                "chronologyCard": true,
+                "visibleIf": ":([jurisdictions-country=500000085] OR [jurisdictions-country=500000086])"
+            }
+        },
+        {
+            "id": "ca87d183-7d54-4e81-8a0c-20293baf54de",
+            "type": 0,
+            "name": "abc-matter-number",
+            "title": "ABC Matter Number",
+            "description": null,
+            "readonly": false,
+            "required": false,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 50,
+            "attributes": {
+                "maxLength": 30,
+                "pattern": ".*",
+                "chronologyCard": true
+            }
+        }
+    ],
+    "sections": [
+        {
+            "id": "f8e845eb-e719-4516-827b-4aa81e50dbe4",
+            "name": "matter-details",
+            "title": "Matter Details",
+            "readonly": true,
+            "layoutLocation": ".layout-top",
+            "displayOrder": 15,
+            "fields": [
+                {
+                    "id": "aa9454a3-87e4-4c3a-8cb3-0525e1596fd7",
+                    "type": 13,
+                    "name": "matter-details-ib",
+                    "title": "Information Barrier",
+                    "description": null,
+                    "readonly": false,
+                    "required": false,
+                    "layoutLocation": ".layout-top",
+                    "displayOrder": 0,
+                    "attributes": {
+                        "dataOn": "Yes",
+                        "dataOff": "No",
+                        "buttonWidth": "100px",
+                        "buttonHeight": "",
+                        "chronologyCard": true,
+                        "default": false
+                    }
+                },
+                {
+                    "id": "141e1232-0c96-40ef-bf3e-53f53ef80e98",
+                    "type": 0,
+                    "name": "matter-details-name",
+                    "title": "Matter/Project Name",
+                    "description": null,
+                    "readonly": false,
+                    "required": false,
+                    "layoutLocation": ".layout-top",
+                    "displayOrder": 0,
+                    "attributes": {
+                        "placeholder": "Placeholder Text",
+                        "maxLength": 255,
+                        "chronologyCard": true
+                    }
+                },
+                {
+                    "id": "4fb1c76a-4250-43cd-9452-7d6001d625ae",
+                    "type": 0,
+                    "name": "matter-details-client-name",
+                    "title": "Client Name",
+                    "description": null,
+                    "readonly": false,
+                    "required": false,
+                    "layoutLocation": ".layout-top",
+                    "displayOrder": 0,
+                    "attributes": {
+                        "placeholder": "Placeholder Text",
+                        "maxLength": 255,
+                        "chronologyCard": true
+                    }
+                },
+                {
+                    "id": "e3547534-187b-4246-8905-8c6f15901fb1",
+                    "type": 3,
+                    "name": "matter-details-ib-last-check",
+                    "title": "Last Date IB Checked",
+                    "description": null,
+                    "readonly": false,
+                    "required": false,
+                    "layoutLocation": ".layout-top",
+                    "displayOrder": 0,
+                    "attributes": {
+                        "format": "YYYY-MM-DD HH:mm:ss",
+                        "visibleIf": "1=2",
+                        "chronologyCard": true
+                    }
+                },
+                {
+                    "id": "738e0abd-01a7-4878-a316-ad29c9381da5",
+                    "type": 0,
+                    "name": "matter-details-client-code",
+                    "title": "Client Code",
+                    "description": null,
+                    "readonly": false,
+                    "required": false,
+                    "layoutLocation": ".layout-top",
+                    "displayOrder": 0,
+                    "attributes": {
+                        "placeholder": "Placeholder Text",
+                        "maxLength": 255,
+                        "pattern": ".*",
+                        "chronologyCard": true
+                    }
+                },
+                {
+                    "id": "30cb3288-926c-4e1b-b356-dd0eb2be539f",
+                    "type": 0,
+                    "name": "matter-details-partner-name",
+                    "title": "Partner Name",
+                    "description": null,
+                    "readonly": false,
+                    "required": false,
+                    "layoutLocation": ".layout-top",
+                    "displayOrder": 0,
+                    "attributes": {
+                        "placeholder": "Placeholder Text",
+                        "maxLength": 255,
+                        "pattern": ".*",
+                        "chronologyCard": true
+                    }
+                }
+            ],
+            "attributes": {
+                "chronologyCard": true,
+                "visibleIf": "fale=true"
+            }
+        }
+    ],
+    "smartVariableSystemName": null
+}

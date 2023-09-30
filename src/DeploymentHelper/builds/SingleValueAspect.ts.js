@@ -4397,16 +4397,26 @@ var BaseIDEAspect = class {
     outerDiv.appendChild(innerDiv);
     return outerDiv;
   }
-  get data() {
+  async getData() {
     if (this.LocationToSaveOrLoadData === void 0) {
       this.log("No location to load data from set - this method should be overriden", "red");
       return this._data;
     }
     let nestedData = getNestedProperty(this.model, this.LocationToSaveOrLoadData);
-    this.log("Data found at location", "green", nestedData);
-    let retValue = ko2.toJS(nestedData);
-    this.log("Data found at location", "green", retValue);
-    return retValue;
+    if (nestedData !== void 0) {
+      this.log("Data found at location", "green", nestedData);
+      let retValue = ko2.toJS(nestedData);
+      this.log("Data found at location", "green", retValue);
+      return retValue;
+    }
+    if (nestedData === void 0 && this.options.dataSettings().getValueUsingParents === true) {
+      return searchForAttributeRecursive(this.sharedoId, this.LocationToSaveOrLoadData, this.options.dataSettings().getValueUsingParents, this.options.dataSettings().maxDepth).then((data) => {
+        if (data.found) {
+          return data.value;
+        }
+        return nestedData;
+      });
+    }
   }
   buildErrorDiv() {
     this.inf("Building error div");
@@ -4484,7 +4494,7 @@ var BaseIDEAspect = class {
       actionDiv.appendChild(button);
     }
   }
-  set data(value) {
+  setData(value) {
     if (this.LocationToSaveOrLoadData === void 0) {
       this.log("No location to save data to set - this method should be overriden", "red");
       this._data = value;
@@ -4506,14 +4516,15 @@ var BaseIDEAspect = class {
    * Called by the aspect IDE adapter when the model is saved. Manipulate the
    * model as required.
    */
-  onSave(model) {
+  async onSave(model) {
     this.fireEvent("onSave", model);
-    this.log("Saving, model passed in we need to persist to", "green", this.data);
+    let dataToSave = await this.getData();
+    this.log("Saving, model passed in we need to persist to", "green", dataToSave);
     if (this.LocationToSaveOrLoadData === void 0) {
       this.log("No location to save data to set - this method should be overriden", "red");
       return;
     }
-    let dataToPersist = this.data;
+    let dataToPersist = await this.getData();
     let currentData = getNestedProperty(model, this.LocationToSaveOrLoadData);
     if (currentData) {
       this.log(`Current data at location ${this.LocationToSaveOrLoadData} :`, "magenta", currentData);
@@ -4735,8 +4746,6 @@ var Default = {
   calculatedValue: "",
   calculatedTitle: "",
   valueOnNotFound: "Not Found",
-  searchParents: false,
-  maxDepth: 0,
   formatter: "value",
   debug: DEBUG_DEFAULT(),
   eventsToReactTo: [
@@ -4756,7 +4765,11 @@ var Default = {
       eventPath: "sharedo.core.case.sharedo-updated",
       methodToCall: "loadAndBind"
     }
-  ]
+  ],
+  dataSettings: {
+    getValueUsingParents: false,
+    maxDepth: 0
+  }
 };
 var WidgetSettings = {
   type: "widget",
@@ -4807,11 +4820,11 @@ var SingleValueAspect = class extends BaseIDEAspect {
     return void 0;
   }
   // private initialise() {//! Note: UI framework looks for this method name and if found behaves differently and wont call loadAndBind
-  setup() {
-    this.data = {
+  async setup() {
+    this.setData({
       value: "",
       title: this.options.title() || "Title Value"
-    };
+    });
     this.options.fieldPath.subscribe((newValue) => {
       this.log("Field path changed", "green", newValue);
       this.loadAndBind();
@@ -4834,7 +4847,7 @@ var SingleValueAspect = class extends BaseIDEAspect {
       this.log("No field path passed in", "red");
       return;
     }
-    searchForAttributeRecursive(this.sharedoId(), this.options.fieldPath(), this.options.searchParents(), this.options.maxDepth()).then((data) => {
+    searchForAttributeRecursive(this.sharedoId(), this.options.fieldPath(), this.options.dataSettings().getValueUsingParents, this.options.dataSettings().maxDepth).then((data) => {
       if (!data || data.found == false) {
         this.log("No data returned", "red");
         this.options.calculatedValue(this.options.valueOnNotFound() || "");
@@ -4844,7 +4857,7 @@ var SingleValueAspect = class extends BaseIDEAspect {
       }
     });
   }
-  onSave(model) {
+  async onSave(model) {
     this.log("No Save Implemented", "green");
   }
 };

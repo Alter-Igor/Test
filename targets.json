@@ -95,12 +95,16 @@
                     "configurationWidget": null,
                     "defaultConfigurationJson": {
                         "formBuilderField": "eDiscoveryUpdatePlannedDate",
+                        "defaultValue": {
+                            "defaultDateFromNowHours": 24,
+                            "getValueUsingParents": true,
+                            "maxDepth": 0
+                        },
                         "title": "Updated planned due date:",
                         "pickerEnabled": true,
                         "eventToFireOnUpdate": [
                             "IDEAspects.DatePickerAspect.Update"
                         ],
-                        "defaultDateFromNowHours": 24,
                         "datePickerOptions": {
                             "display": {
                                 "inline": true,
@@ -112,6 +116,11 @@
                             "enabled": true,
                             "logToConsole": true,
                             "showInAspect": true
+                        },
+                        "eventsToReactTo": [],
+                        "dataSettings": {
+                            "getValueUsingParents": false,
+                            "maxDepth": 0
                         }
                     }
                 },
@@ -196,8 +205,6 @@
                         "calculatedValue": "",
                         "calculatedTitle": "",
                         "valueOnNotFound": "Not Found",
-                        "searchParents": false,
-                        "maxDepth": 0,
                         "formatter": "value",
                         "debug": {
                             "supportRequestEnabled": false,
@@ -223,7 +230,11 @@
                                 "eventPath": "sharedo.core.case.sharedo-updated",
                                 "methodToCall": "loadAndBind"
                             }
-                        ]
+                        ],
+                        "dataSettings": {
+                            "getValueUsingParents": false,
+                            "maxDepth": 0
+                        }
                     }
                 },
                 "scripts": [
@@ -316,31 +327,31 @@
                         "dataMapping": [
                             {
                                 "formBuilderField": "expert-matter-number",
-                                "searchResultField": "`${dataContext.data.matterCode}`"
+                                "searchResultField": "{dataContext.data.matterCode}"
                             },
                             {
                                 "formBuilderField": "expert-matter-number-value",
-                                "searchResultField": "`${dataContext.data.matterCode}`"
+                                "searchResultField": "{dataContext.data.matterCode}"
                             },
                             {
                                 "formBuilderField": "matter-details-ib",
-                                "searchResultField": "`${dataContext.data.secure}`"
+                                "searchResultField": "{dataContext.data.secure}"
                             },
                             {
                                 "formBuilderField": "matter-details-name",
-                                "searchResultField": "`${dataContext.data.shortName}`"
+                                "searchResultField": "{dataContext.data.shortName}"
                             },
                             {
                                 "formBuilderField": "matter-details-client-name",
-                                "searchResultField": "`${dataContext.data.client.name}`"
+                                "searchResultField": "{dataContext.data.client.name}"
                             },
                             {
                                 "formBuilderField": "matter-details-client-code",
-                                "searchResultField": "`${dataContext.data.client.code}`"
+                                "searchResultField": "{dataContext.data.client.code}"
                             },
                             {
                                 "formBuilderField": "matter-details-partner-name",
-                                "searchResultField": "`${dataContext.data.partner.name}`"
+                                "searchResultField": "{dataContext.data.partner.name}"
                             }
                         ],
                         "debug": {
@@ -386,6 +397,9 @@
                                             "width": null
                                         },
                                         {
+                                            "style": {
+                                                "color": "blue"
+                                            },
                                             "field": "dataContext.data.title"
                                         },
                                         {
@@ -418,13 +432,13 @@
                             "container": {
                                 "style": [
                                     {
-                                        "rule": "secure",
+                                        "rule": "dataContext.data.secure",
                                         "style": {
                                             "box-shadow": "1px 1px 62px #cb8383"
                                         }
                                     },
                                     {
-                                        "rule": "!secure",
+                                        "rule": "!dataContext.data.secure",
                                         "style": {
                                             "box-shadow": "1px 1px 10px #a4a3a3"
                                         }
@@ -433,7 +447,7 @@
                             },
                             "icon": [
                                 {
-                                    "rule": "secure",
+                                    "rule": "dataContext.data.secure",
                                     "icon": "fa-shield text-warning fa-2x",
                                     "position": "before"
                                 }
@@ -446,12 +460,12 @@
                                             "style": "font-weight:bold",
                                             "icon": [
                                                 {
-                                                    "rule": "status.toLowerCase()==='open'",
+                                                    "rule": "dataContext.data.status.toLowerCase()==='open'",
                                                     "icon": "fa-folder-open text-success",
                                                     "position": "before"
                                                 },
                                                 {
-                                                    "rule": "status.toLowerCase()==='closed'",
+                                                    "rule": "dataContext.data.status.toLowerCase()==='closed'",
                                                     "icon": "fa-folder text-danger",
                                                     "position": "before"
                                                 }
@@ -461,7 +475,11 @@
                                         {
                                             "field": "dataContext.data.shortName",
                                             "width": null,
-                                            "style": "font-weight:bold;color:red;font-size:larger"
+                                            "style": {
+                                                "font-weight": "bold",
+                                                "color": "red",
+                                                "font-size": "larger"
+                                            }
                                         },
                                         {
                                             "field": "dataContext.data.status",
@@ -476,7 +494,38 @@
                                 {
                                     "fields": [
                                         {
-                                            "field": ""
+                                            "field": [
+                                                {
+                                                    "rule": "dataContext.data.secure",
+                                                    "field": "'Secured!'"
+                                                },
+                                                {
+                                                    "rule": "!dataContext.data.secure",
+                                                    "field": "'Not Secured'"
+                                                }
+                                            ],
+                                            "style": [
+                                                {
+                                                    "style": {
+                                                        "margin-top": "-10px",
+                                                        "font-size": "x-small"
+                                                    }
+                                                },
+                                                {
+                                                    "rule": "!dataContext.data.secure",
+                                                    "style": {
+                                                        "color": "green",
+                                                        "font-weight": "bold"
+                                                    }
+                                                },
+                                                {
+                                                    "rule": "dataContext.data.secure",
+                                                    "style": {
+                                                        "color": "red",
+                                                        "font-weight": "bold"
+                                                    }
+                                                }
+                                            ]
                                         },
                                         {
                                             "style": {
@@ -555,7 +604,11 @@
                                 "name": "Matter Content"
                             }
                         ],
-                        "eventsToReactTo": []
+                        "eventsToReactTo": [],
+                        "dataSettings": {
+                            "getValueUsingParents": false,
+                            "maxDepth": 0
+                        }
                     }
                 },
                 "scripts": [

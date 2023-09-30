@@ -1,8 +1,7 @@
 import { AUTOCOMPLETE_CARD_TYPE, AUTOCOMPLETE_MODE } from "../../../Interfaces/components/IAutoCompleteFindCardOptions";
 import { getNestedProperty, setAllFieldsToNull } from "../../Common/ObjectHelper";
 import { TExecuteFetchResponse, TUserErrors, executeFetch, executeGet, executeGetv2 } from "../../Common/api/api";
-import { BaseIDEAspect, IDefaultSettings } from "../BaseClasses/BaseIDEAspect";
-import { IWidgetJson } from "../BaseClasses/IWidgetJson";
+import { IDefaultSettings, IWidgetJson } from "../BaseClasses/IWidgetJson";
 import ko, { Observable } from "knockout";
 import { Settings } from "./ExternalMatterSearchSettings";
 import { Default } from "./ExternalMatterSearchDefaults";
@@ -21,6 +20,7 @@ import { NestedObservableObject } from "../BaseClasses/KOConverter";
 import { data, error } from "jquery";
 import { replaceValues } from "../../Common/TemplateValueReplaces";
 import { TemplateApplicator } from "./Template/TemplateApplicator";
+import { BaseIDEAspect } from "../BaseClasses/BaseIDEAspect";
 
 const CSS_CLASS_SELECTED_ITEM = "ems-selected-item";
 const CSS_CLASS_RESULT_ITEM = "ems-result-item";
@@ -42,7 +42,7 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
 
     autoComplete: Sharedo.UI.Framework.Components.AutoCompleteHandler | undefined;
     selectedDiv: HTMLDivElement | undefined;
-    selectedMatter: Observable<IExternalResultItem | undefined> | undefined;
+    selectedMatter!: Observable<IExternalResultItem | undefined>;
     // searchIFieldPlacement: IFieldPlacement | undefined;
     searchCustomTemplateId: string | undefined;
     customTemplateContentId: string | undefined;
@@ -66,13 +66,13 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
      */
     setup() {
 
+        this.selectedMatter = ko.observable<IExternalResultItem | undefined>(undefined);
         if (!validateJSON(this.configuration, (SCHEMA as any))) {
             this.wrn("SearchFields does not match schema");
         }
 
         this.inputVisability = ko.computed(() => {
-            this.getInputVisability();
-            return true;
+            return this.getInputVisability();
         });
 
         this.validateFormbuilderJSONFieldSetup();
@@ -96,7 +96,6 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
         }
 
         this.autoComplete = this.autoComplete || this.setupAutoComplete()
-        this.selectedMatter = ko.observable<IExternalResultItem | undefined>();
         this.selectedMatter.subscribe((newValue) => {
             this.ensureSelectedMatterTemplate();
         });
@@ -156,7 +155,6 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
             let data = this.formbuilder()[this.options.formBuilderFieldSerialisedData()];
             if (data) {
                 let base64Decoded = atob(data);
-                this.selectedMatter = ko.observable<IExternalResultItem | undefined>();
                 this.selectedMatter(JSON.parse(base64Decoded));
             }
         }
@@ -180,18 +178,18 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
             if (!this.options.loadApiUrl()) {
                 this.log(inf("No Load API URL defined, using search results"));
 
-                this.selectedMatter!(model);
+                this.selectedMatter(model);
                 $ui.stacks.unlock(self);
             }
             else {
                 model = await this.loadMatterDetailsFromLoadAPI(model);
-                this.selectedMatter!(model);
+                this.selectedMatter(model);
 
-                let mappedData = mapData(this.selectedMatter!(), ko.toJS(this.options.dataMapping()));
-                this.inf("Mapped Data", mappedData)
+                // let mappedData = mapData(this.selectedMatter!(), ko.toJS(this.options.dataMapping()));
+                // this.inf("Mapped Data", mappedData)
 
-                let reverse = reverseMapData(mappedData, ko.toJS(this.options.dataMapping()));
-                this.inf("Mapped Reverse", mappedData)
+                // let reverse = reverseMapData(mappedData, ko.toJS(this.options.dataMapping()));
+                // this.inf("Mapped Reverse", mappedData)
 
                 $ui.stacks.unlock(self);
             }
@@ -465,12 +463,23 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
     }
 
     save(model: any) {
-        let mappedData = mapData(this.selectedMatter!(), ko.toJS(this.options.dataMapping()), this.options.formBuilderFieldSerialisedData());
+        let data = 
+        { 
+            data:this.selectedMatter!() //! To keep consistency with the search template and search results
+        }
+        
+        let mappedData = mapData(data, ko.toJS(this.options.dataMapping()));
+        
+        if(this.options.formBuilderFieldSerialisedData()){
+            let base64EncodedData = btoa(JSON.stringify(this.selectedMatter!())); //! note does not include the data attribute as this is specific to the search template
+            mappedData[this.options.formBuilderFieldSerialisedData()] =  base64EncodedData;
+          }
+        
         this.inf("save", mappedData)
         let dataToSave = this.ensureFormbuilder(model);
         $.extend(this.ensureFormbuilder(model), mappedData);
         this.l("dataToSave", dataToSave)
-
+ 
     };
 
 
@@ -711,7 +720,7 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
     };
 
 
-    override onSave(model: any): void {
+    override async onSave(model: any) {
         // this.log("No Save Implemented", "green");
         this.validateFormbuilderJSONFieldSetup();
         this.save(model);
@@ -831,7 +840,9 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
                 for (let i = 0; i < rules.length; i++) {
                     const rule = rules[i] as NestedObservableObject<IRule>;
                     if (!rule.rule) continue;
-                    retValue = evaluteRule(`model.${rule.rule()}`, this.model, "model");
+                    let ruleToEval = rule.rule();
+                    let dataContext = ko.toJS(this.model);
+                    retValue = evaluteRule(ruleToEval,dataContext);
                 }
             }
         }
@@ -840,11 +851,12 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
 
         let input = this.element.querySelector("#externalMatterSearch") as HTMLDivElement
         if (input) {
-            if (retValue === true) {
+            if (retValue === false) {
                 input.style.display = "none";
             }
         }
 
+        return retValue;
 
         // return false; //default
     }
