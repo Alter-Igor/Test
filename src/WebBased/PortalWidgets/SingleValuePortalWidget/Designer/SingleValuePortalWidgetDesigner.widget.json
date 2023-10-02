@@ -1,0 +1,21 @@
+{
+    "id": "PortalWidgets.SingleValuePortalWidgetDesigner",
+    "designer": {
+        "allowInPortalDesigner": false,
+        "allowInSharedoPortalDesigner": false
+    },
+    "scripts": [
+        "/_ideFiles/PortalWidgets/SingleValuePortalWidget/Designer/SingleValuePortalWidgetDesigner.js"
+    ],
+    "styles": [
+        "/_ideFiles/PortalWidgets/SingleValuePortalWidget/Designer/SingleValuePortalWidgetDesigner.css"
+    ],
+    "templates": [
+        "/_ideFiles/PortalWidgets/SingleValuePortalWidget/Designer/SingleValuePortalWidgetDesigner.html"
+    ],
+    "menuTemplates": [
+    ],
+    "components": [
+     
+    ]
+}

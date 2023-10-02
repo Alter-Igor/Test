@@ -91,3 +91,32 @@ export function checkAndLogUndefined(obj: any, rule: string, dataContextName: st
 
   return current;
 }
+
+
+/**
+ * Example: "title: ${title.toUpperCase()} Matter Search ${2 + 2}"
+ * Resurn: "title: TITLE MATTER SEARCH 4"
+ * @param input 
+ * @param dataContext 
+ * @param dataContextName 
+ * @returns 
+ */
+export function executeEmbeddedCode(input: string | undefined | null, dataContext:any, dataContextName?: string): string {
+  
+  if(!input)
+  {
+    return "";
+  }
+  
+  return input.replace(/\$\{(.+?)\}/g, (_, code) => {
+    try {
+      // WARNING: Eval can execute arbitrary code and is unsafe
+      // Only use with trusted input
+      let val = executeFunc(code, dataContext, dataContextName);
+      return val.toString();
+    } catch (error) {
+      console.error('Failed to execute embedded code:', error);
+      return '';
+    }
+  });
+}

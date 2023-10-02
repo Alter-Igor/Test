@@ -8547,8 +8547,71 @@ __export(DatePickerAspect_exports, {
 module.exports = __toCommonJS(DatePickerAspect_exports);
 var import_tempus_dominus = __toESM(require_tempus_dominus());
 
+// src/WebBased/IDEAspects/BaseClasses/DebugDefaults.ts
+var DEBUG_DEFAULT = () => {
+  let retValue = {
+    supportRequestEnabled: false,
+    enabled: true,
+    logToConsole: true,
+    showInAspect: false,
+    liveConfig: false
+  };
+  return retValue;
+};
+var REFRESH_ON_DEFAULTS = {
+  sharedoIdChanged: false,
+  sharedoParentIdChanged: false,
+  sharedoPhaseChanged: false
+};
+var DefaultDataSettings = {
+  debug: DEBUG_DEFAULT(),
+  refreshOn: REFRESH_ON_DEFAULTS,
+  eventsToReactTo: [
+    {
+      eventPath: "sharedo.updated",
+      methodToCall: "refresh"
+    },
+    {
+      eventPath: "sharedo.core.case.sharedo-updated",
+      methodToCall: "refresh"
+    }
+  ],
+  dataSettings: {
+    getValueUsingParents: false,
+    maxDepth: 0
+  }
+};
+
 // src/WebBased/IDEAspects/DatePickerAspect/DatePickerAspectConfiguration.ts
-var setting = {
+var DATE_PICKER_DEFAULTS = {
+  "formBuilderField": "eDiscoveryUpdatePlannedDate",
+  "hideInputBox": true,
+  "defaultValue": {
+    "defaultDateFromNowHours": 24
+  },
+  "title": "Updated planned due date:",
+  "pickerEnabled": true,
+  "eventToFireOnUpdate": ["IDEAspects.DatePickerAspect.Update"],
+  "datePickerOptions": {
+    "display": {
+      "inline": true,
+      "sideBySide": true,
+      "theme": "light"
+    }
+  },
+  "debug": DEBUG_DEFAULT(),
+  "refreshOn": {
+    "sharedoIdChanged": false,
+    "sharedoParentIdChanged": false,
+    "sharedoPhaseChanged": false
+  },
+  "eventsToReactTo": [],
+  "dataSettings": {
+    "getValueUsingParents": false,
+    "maxDepth": 0
+  }
+};
+var DATE_PICKER_WIDGET_DEFAULTS = {
   type: "widget",
   "priority": 6e3,
   "designer": {
@@ -8561,34 +8624,7 @@ var setting = {
     "categories": [],
     "isConfigurable": true,
     "configurationWidget": null,
-    "defaultConfigurationJson": {
-      "formBuilderField": "eDiscoveryUpdatePlannedDate",
-      "defaultValue": {
-        "defaultDateFromNowHours": 24,
-        "getValueUsingParents": true,
-        "maxDepth": 0
-      },
-      "title": "Updated planned due date:",
-      "pickerEnabled": true,
-      "eventToFireOnUpdate": ["IDEAspects.DatePickerAspect.Update"],
-      "datePickerOptions": {
-        "display": {
-          "inline": true,
-          "sideBySide": true,
-          "theme": "light"
-        }
-      },
-      "debug": {
-        "enabled": true,
-        "logToConsole": true,
-        "showInAspect": true
-      },
-      "eventsToReactTo": [],
-      "dataSettings": {
-        "getValueUsingParents": false,
-        "maxDepth": 0
-      }
-    }
+    "defaultConfigurationJson": { configuration: DATE_PICKER_DEFAULTS }
   },
   "scripts": [],
   "styles": [
@@ -9359,6 +9395,15 @@ function getNestedProperty(obj, propertyPath) {
   }
   return current;
 }
+function getValueFromKOObject(koObject) {
+  if (typeof koObject === "function") {
+    return koObject();
+  }
+  return koObject;
+}
+function gvko(koObject) {
+  return getValueFromKOObject(koObject);
+}
 
 // src/Common/HtmlHelper.ts
 function escapeHtml(unsafe) {
@@ -9414,7 +9459,7 @@ function validateApi(api) {
   }
   return api;
 }
-async function executeFetch(api, method, data) {
+async function executeFetch(api, method, data, retryCounter) {
   let retValue = {
     data: void 0,
     response: void 0,
@@ -9435,18 +9480,31 @@ async function executeFetch(api, method, data) {
   ).then(async (response2) => {
     retValue.response = response2;
     if (response2.ok === false) {
+      if (response2.status === 401) {
+        retryCounter = retryCounter || 1;
+        if (retryCounter > 3) {
+          retValue.info.error.push({
+            code: "API_ERROR",
+            message: `An error occured while trying to call the API after 3 attempts. statusText: ${response2.statusText}`,
+            userMessage: "An error occured while trying to call the API."
+          });
+          return { data: void 0, response: response2 };
+        }
+        await $ajax.get("https://hsf-vnext.sharedo.co.uk/security/refreshTokens?_=" + Date.now);
+        return await executeFetch(api, method, data, retryCounter);
+      }
       retValue.info.error.push({
         code: "API_ERROR",
         message: `An error occured while trying to call the API. statusText: ${response2.statusText}`,
         userMessage: "An error occured while trying to call the API."
       });
     }
-    let data2;
+    let responseData;
     try {
       if (response2.headers.get("content-type")?.includes("application/json")) {
-        data2 = await response2.json();
+        responseData = await response2.json();
       } else {
-        data2 = await response2.text();
+        responseData = await response2.text();
       }
       retValue.info.success = true;
     } catch (e) {
@@ -9456,7 +9514,7 @@ async function executeFetch(api, method, data) {
         userMessage: `An error occured while trying to extract the data from the API.`
       });
     }
-    return { data: data2, response: response2 };
+    return { data: responseData, response: response2 };
   }).catch((error) => {
     l(err(`Error from API Call ${url}`), error);
     retValue.info.error.push({
@@ -9627,7 +9685,7 @@ async function searchForAttribute(workItemId, attributeName) {
 }
 
 // src/WebBased/IDEAspects/BaseClasses/BaseIDEAspect.ts
-console.log("v: - 5.27");
+console.log("v: - 3.29");
 var FOMR_BUILDER_PATH_STRING = "aspectData.formBuilder.formData";
 var ERROR_DIV_SELECTOR = "#render-errors-here";
 function getFormBuilderFieldPath(formBuilderField) {
@@ -9638,6 +9696,8 @@ var BaseIDEAspect = class {
     this.widgetSettings = this.setWidgetJsonSettings();
     this.thisComponentName = this.setThisComponentName();
     this.defaults = this.setDefaults();
+    this.disposables = [];
+    this.refreshLog = new Array();
     this.errorDivSelector = ERROR_DIV_SELECTOR;
     this.errors = ko2.observableArray();
     if (arr.length === 0) {
@@ -9646,47 +9706,52 @@ var BaseIDEAspect = class {
     if (arr.length === 3) {
       this.uniqueId = v4_default();
       this._initialise(arr[0], arr[1], arr[2]);
-      this.LocationToSaveOrLoadData = this.setLocationOfDataToLoadAndSave();
       this.fireEvent("onSetup", this.model);
       this.setup();
       this.fireEvent("afterSetup", this.model);
       this.setupLiveConfig();
+      this.setupEventWatcher();
       this.setupErrorManager();
       this.addAspectLogOutput();
       return;
     }
   }
-  _initialise(element, configuration, baseModel) {
+  _initialise(element, polutedConfiguration, baseModel) {
+    this.sharedoConfiguration = polutedConfiguration;
     this.element = element;
-    this.originalConfiguration = configuration;
+    this.originalConfiguration = polutedConfiguration;
     this.baseModel = baseModel;
-    let baseDefaults = {
-      debug: {
-        enabled: false,
-        logToConsole: false,
-        showInAspect: false,
-        liveConfig: false
-      }
-    };
-    configuration.debug = $.extend(baseDefaults.debug, configuration.debug);
-    this.configuration = $.extend(this.defaults, this.originalConfiguration);
-    this.model = this.configuration._host.model;
-    this.enabled = this.model.canEdit;
-    this.blade = this.configuration._host.blade;
+    if (!this.sharedoConfiguration.configuration) {
+      console.error("No configuration found in the sharedoConfiguration - check the aspect or widget config that ther eis a base configuration of configuration:{}");
+      throw new Error("No configuration found in the sharedoConfiguration");
+    }
+    this.sharedoConfiguration.configuration.debug = $.extend(DEBUG_DEFAULT(), this.sharedoConfiguration.configuration.debug);
+    this.sharedoConfiguration.configuration = $.extend(this.defaults, this.originalConfiguration.configuration);
+    this.model = this.sharedoConfiguration._host?.model;
+    this.blade = this.sharedoConfiguration._host?.blade;
     this.loaded = this.loaded || ko2.observable(false);
-    this.sharedoId = this.configuration._host?.model.id;
+    this.sharedoId = this.sharedoConfiguration._host?.model.id || $ui.pageContext?.sharedoId || ko2.observable(void 0);
     if (!this.sharedoId || this.sharedoId()) {
       this.log("No sharedoId found");
     }
-    this.sharedoTypeSystemName = this.configuration._host.model.sharedoTypeSystemName;
-    if (!this.sharedoTypeSystemName || this.sharedoTypeSystemName()) {
+    this.sharedoTypeSystemName = this.sharedoConfiguration._host?.model?.sharedoTypeSystemName || $ui.pageContext?.sharedoTypeName || ko2.observable(void 0);
+    if (!this.sharedoTypeSystemName || !this.sharedoTypeSystemName()) {
       this.log("No sharedoTypeSystemName found");
     }
-    this.options = toObservableObject(this.configuration, this.options);
+    this.parentSharedoId = this.sharedoConfiguration._host?.model?.parentSharedoId || ko2.observable(void 0);
+    this.phaseName = this.sharedoConfiguration._host?.model?.phaseName || $ui.pageContext?.phaseName || ko2.observable(void 0);
+    this.phaseIsOpen = this.sharedoConfiguration._host?.model?.phaseIsOpen || $ui.pageContext?.phaseIsOpen || ko2.observable(void 0);
     this.validation = {};
     this.validationErrorCount = this.validationErrorCount || ko2.observable(0);
+    this.applyComponentConfiguration(this.sharedoConfiguration.configuration);
     this.LocationToSaveOrLoadData = this.setLocationOfDataToLoadAndSave();
     this.fireEvent("onInitialise", this.model);
+  }
+  applyComponentConfiguration(configuration) {
+    let configurationAsObservables = toObservableObject(configuration, this.options);
+    this.configuration = configuration;
+    this.options = configurationAsObservables;
+    this._options = configurationAsObservables;
   }
   clearErrors() {
     this.errors?.removeAll();
@@ -9699,12 +9764,12 @@ var BaseIDEAspect = class {
     });
   }
   setupLiveConfig() {
-    this.options.debug.subscribe((newValue) => {
+    this._options?.debug.subscribe((newValue) => {
       if (newValue.liveConfig) {
         this.activateLiveConfig(newValue.liveConfig);
       }
     });
-    this.activateLiveConfig(this.options.debug().liveConfig());
+    this.activateLiveConfig(this._options?.debug().liveConfig());
   }
   activateLiveConfig(active) {
     if (!active) {
@@ -9715,7 +9780,7 @@ var BaseIDEAspect = class {
       return;
     }
     this.l("Setting up live config");
-    const serializedData = JSON.stringify(this.configuration, (key, value) => {
+    const serializedData = JSON.stringify(this.sharedoConfiguration, (key, value) => {
       if (key === "_host") {
         return void 0;
       }
@@ -9736,8 +9801,8 @@ var BaseIDEAspect = class {
         setTimeout(() => {
           timeout = false;
           let newConfig = JSON.parse(config());
-          this._initialise(this.element, newConfig, this.baseModel);
-          this.reset(newConfig);
+          this.applyComponentConfiguration(newConfig.configuration);
+          this.liveConfigurationRefreshed();
         }, 500);
         timeout = true;
       });
@@ -9763,25 +9828,69 @@ var BaseIDEAspect = class {
     outerDiv.appendChild(innerDiv);
     return outerDiv;
   }
-  async getData() {
-    if (this.LocationToSaveOrLoadData === void 0) {
-      this.log("No location to load data from set - this method should be overriden", "red");
-      return this._data;
+  setupEventWatcher() {
+    this._options?.eventsToReactTo()?.forEach((eventToWatch) => {
+      console.log("Subscribing to event", eventToWatch);
+      this.disposables.push(
+        $ui.events.subscribe(eventToWatch.eventPath(), (e) => {
+          this.refreshComponent(eventToWatch.eventPath(), eventToWatch.methodToCall());
+        }, this)
+      );
+    });
+    let refreshOn = ko2.toJS(this._options?.refreshOn());
+    if (refreshOn) {
+      if (refreshOn.sharedoIdChanged) {
+        this.disposables.push(
+          this.sharedoId.subscribe((newValue) => {
+            this.refreshComponent("sharedoIdChanged", "refresh");
+          })
+        );
+      }
+      if (refreshOn.sharedoParentIdChanged) {
+        this.disposables.push(
+          this.parentSharedoId.subscribe((newValue) => {
+            this.refreshComponent("sharedoParentIdChanged", "refresh");
+          })
+        );
+      }
+      if (refreshOn.sharedoPhaseChanged) {
+        this.disposables.push(
+          this.phaseName.subscribe((newValue) => {
+            this.refreshComponent("sharedoPhaseChanged", "refresh");
+          })
+        );
+      }
     }
-    let nestedData = getNestedProperty(this.model, this.LocationToSaveOrLoadData);
-    if (nestedData !== void 0) {
-      this.log("Data found at location", "green", nestedData);
-      let retValue = ko2.toJS(nestedData);
-      this.log("Data found at location", "green", retValue);
-      return retValue;
+  }
+  refreshComponent(eventPath, methodToCall) {
+    this.refreshLog = this.refreshLog || [];
+    if (this.lastRefresh) {
+      let secondsSinceLastRefresh = ((/* @__PURE__ */ new Date()).getTime() - this.lastRefresh.getTime()) / 100;
+      console.log("Seconds since last refresh", secondsSinceLastRefresh);
+      if (secondsSinceLastRefresh < 10) {
+        console.log("Skipping refresh, too soon");
+        return;
+      }
     }
-    if (nestedData === void 0 && this.options.dataSettings().getValueUsingParents === true) {
-      return searchForAttributeRecursive(this.sharedoId, this.LocationToSaveOrLoadData, this.options.dataSettings().getValueUsingParents, this.options.dataSettings().maxDepth).then((data) => {
-        if (data.found) {
-          return data.value;
+    this.lastRefresh = /* @__PURE__ */ new Date();
+    console.log("Refreshing component");
+    let logItem = { eventPath, methodToCall, time: /* @__PURE__ */ new Date(), success: false };
+    try {
+      if (methodToCall) {
+        console.log("Executing method", methodToCall);
+        let componentToRefresh = this;
+        if (!componentToRefresh[methodToCall]) {
+          console.log(`Method not found on component ${this.thisComponentName}`, methodToCall);
         }
-        return nestedData;
-      });
+        {
+          componentToRefresh[methodToCall]();
+        }
+      }
+    } catch (e) {
+      console.log(e);
+    } finally {
+      logItem.success = true;
+      this.refreshLog.push(logItem);
     }
   }
   buildErrorDiv() {
@@ -9850,7 +9959,7 @@ var BaseIDEAspect = class {
         foreachDiv.appendChild(internalSuggestionsDiv);
       }
     });
-    if (this.options.debug().supportRequestEnabled) {
+    if (this._options?.debug().supportRequestEnabled) {
       let actionDiv = document.createElement("div");
       actionDiv.className = "ide-aspect-error-support-action";
       errorContainerDiv.appendChild(actionDiv);
@@ -9859,17 +9968,6 @@ var BaseIDEAspect = class {
       button.innerText = "Create Support Task";
       actionDiv.appendChild(button);
     }
-  }
-  setData(value) {
-    if (this.LocationToSaveOrLoadData === void 0) {
-      this.log("No location to save data to set - this method should be overriden", "red");
-      this._data = value;
-      return;
-    }
-    let valueToSet = value;
-    this.log("Setting data at location", "green", valueToSet);
-    setNestedProperty(this.model, this.LocationToSaveOrLoadData, valueToSet);
-    this.fireEvent("onDataChanged", this.model);
   }
   // abstract setDependantScriptFiles(): string[];
   // abstract setDependantStyleFiles(): string[];
@@ -9882,15 +9980,15 @@ var BaseIDEAspect = class {
    * Called by the aspect IDE adapter when the model is saved. Manipulate the
    * model as required.
    */
-  async onSave(model) {
+  onSave(model) {
     this.fireEvent("onSave", model);
-    let dataToSave = await this.getData();
+    let dataToSave = this._data;
     this.log("Saving, model passed in we need to persist to", "green", dataToSave);
     if (this.LocationToSaveOrLoadData === void 0) {
       this.log("No location to save data to set - this method should be overriden", "red");
       return;
     }
-    let dataToPersist = await this.getData();
+    let dataToPersist = this._data;
     let currentData = getNestedProperty(model, this.LocationToSaveOrLoadData);
     if (currentData) {
       this.log(`Current data at location ${this.LocationToSaveOrLoadData} :`, "magenta", currentData);
@@ -9899,10 +9997,65 @@ var BaseIDEAspect = class {
     }
     this.log(`New data to persist to location ${this.LocationToSaveOrLoadData} :`, "blue", dataToPersist);
     setNestedProperty(model, this.LocationToSaveOrLoadData, dataToPersist);
+    this.l("Data saved", model);
+  }
+  async getData() {
+    if (this._data) {
+      return this._data;
+    }
+    let useParents = this._options?.dataSettings().getValueUsingParents();
+    let shareDoId = this.sharedoId();
+    let maxDepth = this._options?.dataSettings().maxDepth();
+    let LocationToSaveOrLoadData = gvko(this.LocationToSaveOrLoadData);
+    if (LocationToSaveOrLoadData === void 0) {
+      this.log("No location to load data from set - this method should be overriden", "red");
+      return this._data;
+    }
+    this._data = getNestedProperty(this.model, LocationToSaveOrLoadData);
+    if (this._data !== void 0) {
+      this.l("Data found at location", this._data);
+      this._data = ko2.toJS(this._data);
+      return this._data;
+    }
+    if (this._data === void 0 && useParents === false && shareDoId) {
+      return searchForAttributeRecursive(shareDoId, LocationToSaveOrLoadData, false).then((data) => {
+        if (data.found) {
+          this._data = data.value;
+        }
+        return this._data;
+      });
+    }
+    if (this._data === void 0 && useParents === true) {
+      let idToUser = this.sharedoId() || this.parentSharedoId();
+      if (!idToUser) {
+        this.log("No id to use for search both sharedoId and parentSharedoId are undefined");
+        return this._data;
+      }
+      return searchForAttributeRecursive(idToUser, LocationToSaveOrLoadData, useParents, maxDepth).then((data) => {
+        if (data.found) {
+          this._data = data.value;
+        }
+        return this._data;
+      });
+    }
+  }
+  setData(value) {
+    let valueToPersist = ko2.toJS(value);
+    let previousValue = ko2.toJS(this._data);
+    this._data = valueToPersist;
+    this.fireValueChangedEvent("onDataBeforeChanged", { previousValue, newValue: valueToPersist });
+    if (this.LocationToSaveOrLoadData === void 0) {
+      return;
+    }
+    let valueToSet = value;
+    this.log("Setting data at location", "green", valueToSet);
+    setNestedProperty(this.model, this.LocationToSaveOrLoadData, this._data);
+    this.fireEvent("onDataChanged", this.model);
   }
   onDestroy(model) {
     this.log("IDEAspects.Example : onDestroy");
     this.fireEvent("onDestroy", model);
+    $ui.util.dispose(this.disposables);
   }
   /**
    * Called by the UI framework after initial creation and binding to load data
@@ -9935,6 +10088,13 @@ var BaseIDEAspect = class {
     this.log("IDEAspects.Example : onReload");
     this.fireEvent("onReload", model);
   }
+  debugSettings() {
+    let debugSetting = DEBUG_DEFAULT();
+    if (this._options?.debug()) {
+      debugSetting = ko2.toJS(this._options?.debug());
+    }
+    return debugSetting;
+  }
   /**
    * Provides logging for the component based on the debug configuration
    * @param message 
@@ -9942,8 +10102,8 @@ var BaseIDEAspect = class {
    * @param data 
    */
   log(message, color, data) {
-    if (this.configuration.debug?.enabled) {
-      if (this.configuration.debug.logToConsole) {
+    if (this.debugSettings().enabled) {
+      if (this.debugSettings().logToConsole) {
         if (!color)
           color = "black";
         console.log(`%c ${this.thisComponentName} - ${message}`, `color:${color}`, data);
@@ -9951,13 +10111,13 @@ var BaseIDEAspect = class {
     }
   }
   canLog() {
-    return this.configuration.debug?.enabled;
+    return this.debugSettings().enabled;
   }
   logToConsole() {
-    return this.canLog() && this.configuration.debug?.logToConsole;
+    return this.canLog() && this.debugSettings().logToConsole;
   }
   logToAspect() {
-    return this.canLog() && this.configuration.debug?.showInAspect;
+    return this.canLog() && this.debugSettings().showInAspect;
   }
   inf(message, ...args) {
     if (this.logToConsole()) {
@@ -10043,6 +10203,15 @@ var BaseIDEAspect = class {
     };
     fireEvent(event);
   }
+  fireValueChangedEvent(eventName, changedData) {
+    let event = {
+      eventPath: this.thisComponentName + "." + eventName,
+      eventName,
+      source: this,
+      data: changedData
+    };
+    fireEvent(event);
+  }
   /**
    * 
    * @returns Formbuild if it exists or creates it if it does not
@@ -10053,6 +10222,9 @@ var BaseIDEAspect = class {
       this.log("blade.model.aspectData.formBuilder.formData not found - will create the path", "blue");
     } else {
       this.log("blade.model.aspectData.formBuilder.formData found", "green");
+    }
+    if (!this.blade) {
+      return void 0;
     }
     this.blade = this.blade || {};
     return this.ensureFormbuilder(this.blade.model);
@@ -10078,15 +10250,19 @@ var BaseIDEAspect = class {
       this.log("Form builder does not exist! ", "red");
       throw new Error("Form builder does not exist!");
     }
-    let foundValue = this.formbuilder()[formbuilderField];
+    let formBuilder = this.formbuilder();
+    if (!formBuilder) {
+      return;
+    }
+    let foundValue = formBuilder[formbuilderField];
     if (!foundValue) {
       this.log(`Form builder does not contain field ${formbuilderField} `, "orange");
       this.log(`Creating field ${formbuilderField} `, "blue");
-      this.formbuilder()[formbuilderField] = void 0;
+      formBuilder[formbuilderField] = void 0;
     }
     if (setValue) {
       this.log(`Setting ${formbuilderField} to ${setValue}`, "green");
-      this.formbuilder()[formbuilderField] = setValue;
+      formBuilder[formbuilderField] = setValue;
       return setValue;
     }
     return foundValue;
@@ -10094,7 +10270,10 @@ var BaseIDEAspect = class {
 };
 
 // src/WebBased/IDEAspects/DatePickerAspect/DatePickerAspect.ts
+var import_knockout = __toESM(require_knockout_latest());
 var DatePickerAspect = class extends BaseIDEAspect {
+  liveConfigurationRefreshed() {
+  }
   refresh(newConfig) {
   }
   reset(newConfig) {
@@ -10110,46 +10289,18 @@ var DatePickerAspect = class extends BaseIDEAspect {
     document.head.insertAdjacentHTML("beforeend", `<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">`);
   }
   setWidgetJsonSettings() {
-    return setting;
+    return DATE_PICKER_WIDGET_DEFAULTS;
   }
   setDefaults() {
-    return {
-      // Aspect widget config parameters
-      title: void 0,
-      formBuilderField: void 0,
-      pickerEnabled: true,
-      eventToFireOnUpdate: ["IDEAspects.DatePickerAspect.Update"],
-      defaultValue: {
-        defaultDateFromNowHours: 24,
-        getValueUsingParents: true,
-        maxDepth: 0
-      },
-      datePickerOptions: {
-        display: {
-          inline: true,
-          sideBySide: true,
-          theme: "light"
-        }
-      },
-      debug: {
-        enabled: false,
-        logToConsole: false,
-        showInAspect: false
-      },
-      eventsToReactTo: [],
-      dataSettings: {
-        getValueUsingParents: false,
-        maxDepth: 0
-      }
-    };
+    return DATE_PICKER_DEFAULTS;
   }
   //Abstract methods - must be implemented by the derived class
   setLocationOfDataToLoadAndSave() {
-    if (!this.configuration.formBuilderField) {
-      this.log("No formbuilder field set in configuration - check aspect configuration", "red");
+    if (!this.sharedoConfiguration.configuration.formBuilderField) {
+      this.err("No formbuilder field set in configuration - check aspect configuration");
       throw new Error("No formbuilder field set in configuration - check aspect configuration");
     }
-    return getFormBuilderFieldPath(this.configuration.formBuilderField);
+    return getFormBuilderFieldPath(this.sharedoConfiguration.configuration.formBuilderField);
   }
   setPickerEnabledState(newValue) {
     if (!this.datePickerDiv) {
@@ -10167,7 +10318,7 @@ var DatePickerAspect = class extends BaseIDEAspect {
   setModelDataAsDate(newValue) {
     this.setData(newValue?.toISOString() || void 0);
   }
-  /**
+  /** 
    * Gets the data from form builder and converts to DateTime
    */
   async getModelDataAsDate() {
@@ -10185,8 +10336,9 @@ var DatePickerAspect = class extends BaseIDEAspect {
    */
   generateDefaultDate() {
     let defaultDate = new import_tempus_dominus.DateTime(import_tempus_dominus.DateTime.now());
-    if (this.configuration.defaultValue?.defaultDateFromNowHours) {
-      defaultDate.setHours(defaultDate.getHours() + this.configuration.defaultValue.defaultDateFromNowHours);
+    let defaultDateFromNowHours = this.options?.defaultValue().defaultDateFromNowHours();
+    if (defaultDateFromNowHours) {
+      defaultDate.setHours(defaultDate.getHours() + defaultDateFromNowHours);
     }
     return defaultDate;
   }
@@ -10217,13 +10369,24 @@ var DatePickerAspect = class extends BaseIDEAspect {
     input.type = "text";
     input.classList.add("form-control");
     input.setAttribute("data-td-target", "#" + this.uniqueId);
+    if (this.options?.hideInputBox()) {
+      input.classList.add("hidden");
+    }
+    this.options?.hideInputBox.subscribe((newValue) => {
+      if (newValue) {
+        input.classList.add("hidden");
+      } else {
+        input.classList.remove("hidden");
+      }
+    });
     this.datePickerDiv.appendChild(input);
     element.appendChild(this.datePickerDiv);
-    this.dateTimePicker = new import_tempus_dominus.TempusDominus(this.datePickerDiv, this.configuration.datePickerOptions || {});
-    this.options.datePickerOptions.subscribe((newValue) => {
+    let datePickerOption = import_knockout.default.toJS(this.options?.datePickerOptions());
+    this.dateTimePicker = new import_tempus_dominus.TempusDominus(this.datePickerDiv, datePickerOption);
+    this.options?.datePickerOptions.subscribe((newValue) => {
       this.loadAndBind();
     });
-    this.setPickerEnabledState(this.options.pickerEnabled());
+    this.setPickerEnabledState(this.options?.pickerEnabled());
     let dateToSet = await this.getModelDataAsDate();
     this.dateTimePicker.dates.setValue(
       dateToSet,
@@ -10231,12 +10394,12 @@ var DatePickerAspect = class extends BaseIDEAspect {
     );
     this.dateTimePicker.subscribe("change.td", (e) => {
       this.log("Date Changed", "red", e);
-      this.options.eventToFireOnUpdate()?.forEach((event) => {
+      this.options?.eventToFireOnUpdate()?.forEach((event) => {
         $ui.events.broadcast(
           event,
           {
             source: this,
-            formbuilderField: this.formbuilderField,
+            formbuilderField: this.options?.formBuilderField(),
             value: this.getCurrentSelectedDate()
           }
         );
@@ -10275,7 +10438,7 @@ var DatePickerAspect = class extends BaseIDEAspect {
   getCurrentSelectedDate() {
     return this.dateTimePicker?.dates.picked[0];
   }
-  async onSave(model) {
+  onSave(model) {
     this.log("Save");
     this.setModelDataAsDate(this.getCurrentSelectedDate());
     super.onSave(model);
@@ -10285,6 +10448,7 @@ var DatePickerAspect = class extends BaseIDEAspect {
 0 && (module.exports = {
   DatePickerAspect
 });
+//! --> LocationToSaveOrLoadData <-- - this should be called at the end of this function to ensure that the options and configuration data is availabel to the child class
 /*! Bundled license information:
 
 @eonasdan/tempus-dominus/dist/js/tempus-dominus.js:

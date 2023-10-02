@@ -2,12 +2,15 @@
 import { formatValue } from "../../../helpers/Formatter";
 import { searchForAttributeRecursive } from "../../Common/api/searchForAttributeWithParents";
 import { BaseIDEAspect } from "../BaseClasses/BaseIDEAspect";
-import { IDefaultSettings, IWidgetJson } from "../BaseClasses/IWidgetJson";
+import { IDefaultSettingsWithSpecificComponentConfig, IWidgetJson } from "../BaseClasses/IWidgetJson";
 import { Default, ISingleValueAspectConfiguration, WidgetSettings } from "./SingleValueAspectConfig";
 
 let thisWidgetSystemName = "SingleValueAspect";
 
 export class SingleValueAspect extends BaseIDEAspect<ISingleValueAspectConfiguration, any> {
+    liveConfigurationRefreshed(): void {
+        //nothing
+    }
     refresh(newConfig: any): void {
         //nothing
     }
@@ -21,7 +24,7 @@ export class SingleValueAspect extends BaseIDEAspect<ISingleValueAspectConfigura
         return WidgetSettings;
     }
 
-    setDefaults(): IDefaultSettings<ISingleValueAspectConfiguration> {
+    setDefaults(): IDefaultSettingsWithSpecificComponentConfig<ISingleValueAspectConfiguration> {
         return  Default
     }
     
@@ -40,20 +43,20 @@ export class SingleValueAspect extends BaseIDEAspect<ISingleValueAspectConfigura
         
         this.setData({
             value: "",
-            title: this.options.title() || "Title Value"
+            title: this.options?.title() || "Title Value"
         });
 
         // Map the roleConfigModels
-        this.options.fieldPath.subscribe((newValue) => {
+        this.options?.fieldPath.subscribe((newValue) => {
             this.log("Field path changed", "green",newValue);
             this.loadAndBind();
         });
-        this.options.calculatedTitle(this.options.title() || "Title Value");
-        this.options.title.subscribe((newValue) => {
+        this.options?.calculatedTitle(this.options?.title() || "Title Value");
+        this.options?.title.subscribe((newValue) => {
             this.log("Title changed", "green", newValue);
             if(newValue)
             {
-                 this.options.calculatedTitle(newValue);
+                 this.options?.calculatedTitle(newValue);
             }
         });
     }
@@ -63,29 +66,31 @@ export class SingleValueAspect extends BaseIDEAspect<ISingleValueAspectConfigura
         this.log("Loading data (model) passed in", "green");
         // super.loadAndBind(); //No need to load and bind as we are not using the base model
 
-        if(!this.sharedoId)
+        let sharedoId = this.sharedoId();
+
+        if(!sharedoId)
         {
             this.log("No sharedoId passed in", "red");
             return;
         }
 
-        if(!this.options.fieldPath())
+        if(!this.options?.fieldPath())
         {
             this.log("No field path passed in", "red");
             return;
         }
 
-        searchForAttributeRecursive(this.sharedoId(), this.options.fieldPath()!, this.options.dataSettings().getValueUsingParents!, this.options.dataSettings().maxDepth).then((data)=>
+        searchForAttributeRecursive(sharedoId, this.options?.fieldPath()!, this.options?.dataSettings().getValueUsingParents(), this.options?.dataSettings().maxDepth()).then((data)=>
         {
             if (!data || data.found == false)
             {
                 this.log("No data returned", "red");
-                this.options.calculatedValue(this.options.valueOnNotFound() || "");
+                this.options?.calculatedValue(this.options?.valueOnNotFound() || "");
             }
             else
             {
-                let formattedValue = formatValue(data.value, this.options.formatter() || "value");
-                this.options.calculatedValue(formattedValue || "");
+                let formattedValue = formatValue(data.value, this.options?.formatter() || "value");
+                this.options?.calculatedValue(formattedValue || "");
             }
         });
     };

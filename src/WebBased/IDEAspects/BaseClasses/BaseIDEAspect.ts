@@ -3,26 +3,26 @@ import { ISharedoBladeModel, TShareDoBlade, IConfigurationHost } from "../../../
 import { IDebug, ObservableIDebug } from "./IDebug";
 import { v4 as uuid } from 'uuid';
 import { TSharedo } from "../../../Interfaces/TSharedo";
-import { IDefaultSettings, IWidgetJson, I_IDE_Aspect_Modeller_Configuration } from "./IWidgetJson";
+import { EventToReactTo, IDefaultSettingsWithSpecificComponentConfig, IWidgetJson, I_IDE_Aspect_Modeller_Configuration } from "./IWidgetJson";
 import { ShareDoEvent, fireEvent } from "../../Common/EventsHelper";
 import { clearSec, err, inf, l, lh1, nv, wrn } from "../../../Common/Log"
 import { IFormBuilderData } from "../../../Interfaces/Aspect/IFormBuilder";
 import { TUserErrors } from "../../Common/api/api";
 import { NestedObservableObject, toObservableObject } from "./KOConverter";
-import { getNestedProperty, setNestedProperty } from "../../Common/ObjectHelper";
+import { getNestedProperty, gvko, setNestedProperty, strToClass } from "../../Common/ObjectHelper";
 import { escapeHtml } from "../../../Common/HtmlHelper";
 import { JsonToHtmlConverter } from "../../../Common/JsonToHTMLConverter";
 import { searchForAttributeRecursive } from "../../Common/api/searchForAttributeWithParents";
+import { DEBUG_DEFAULT } from "./DebugDefaults";
+import { forEach } from "lodash";
+import color from "color";
+import { data } from "jquery";
 
 
-console.log("v: - 5.27")
+console.log("v: - 3.29")
 
 export const FOMR_BUILDER_PATH_STRING = "aspectData.formBuilder.formData";
 export const ERROR_DIV_SELECTOR = "#render-errors-here";
-
-
-
-
 
 
 interface IDEAspectConfiguration {
@@ -34,8 +34,15 @@ type Observableify<T> = {
     [P in keyof T]: ko.Observable<T[P]>;
 };
 
-export type ObservableConfigurationOptions<TConfig> =
+export type ObservableConfigurationOptions2<TConfig> =
     { [K in keyof IBaseIDEAspectConfiguration<TConfig>]: ko.Observable<IBaseIDEAspectConfiguration<TConfig>[K]>; }
+
+
+export type ObservableSharedoConfigurationOptions<TConfig> = NestedObservableObject<I_IDE_Aspect_Modeller_Configuration<TConfig>>
+
+export type ObservableConfigurationOptions<TConfig> = NestedObservableObject<IDefaultSettingsWithSpecificComponentConfig<TConfig>>
+
+
 
 // export type IObservableConfigurationOptions<TConfig> =  {debug: ko.Observable<ObservableIDebug>} &
 // {
@@ -57,24 +64,35 @@ export function getFormBuilderFieldPath(formBuilderField: string) {
 
 type ObservablePerson<TConfig> = Observableify<IBaseIDEAspectConfiguration<TConfig>>;
 
+interface IModel {
+    [key: string]: any;
+}
+
 export abstract class BaseIDEAspect<TConfig, TPersitance>  {
     _data: any; //non model data storage
-    originalConfiguration!: TConfig;
-    configuration!: IBaseIDEAspectConfiguration<TConfig>;
-    defaults: IDefaultSettings<TConfig> | undefined;
+    originalConfiguration!: I_IDE_Aspect_Modeller_Configuration<TConfig>;
+    configuration: IDefaultSettingsWithSpecificComponentConfig<TConfig> | undefined;
+    sharedoConfiguration!: IBaseIDEAspectConfiguration<TConfig>;
+    defaults: IDefaultSettingsWithSpecificComponentConfig<TConfig> | undefined;
     element!: HTMLElement;
-    model: any;
-    enabled!: boolean;
-    blade!: TShareDoBlade;
+    model: IModel | undefined;
+    // enabled!: boolean;
+    blade: TShareDoBlade | undefined;
     loaded!: ko.Observable<boolean>;
-    sharedoId: any;
-    sharedoTypeSystemName!: ko.Observable<string>;
+    sharedoId!: ko.Observable<string | undefined>;
+    parentSharedoId!: ko.Observable<string | undefined>;
+    sharedoTypeSystemName!: ko.Observable<string | undefined>;
+    phaseName!: ko.Observable<string | undefined>;
+    phaseIsOpen!: ko.Observable<boolean | undefined>;
     validation: any;
     validationErrorCount!: ko.Observable<number>;
     baseModel!: TSharedo<any>;
     thisComponentName!: string;
     LocationToSaveOrLoadData: string | undefined; //The location to load and save the data from
-    options!: ObservableConfigurationOptions<TConfig>
+    shareDoOptions!: ObservableSharedoConfigurationOptions<TConfig>
+    _shareDoOptions!: ObservableSharedoConfigurationOptions<unknown> //use for typings of this base ide as TConfig caused issue
+    options: ObservableConfigurationOptions<IDefaultSettingsWithSpecificComponentConfig<TConfig>> | undefined
+    _options: ObservableConfigurationOptions<IDefaultSettingsWithSpecificComponentConfig<unknown>> | undefined
     uniqueId!: string;
     widgetSettings!: IWidgetJson<TConfig>;
     aspectLogOutput: HTMLDivElement | undefined;
@@ -82,8 +100,11 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
     liveConfigData: any;
     errorDivSelector: string;
     errors: ko.ObservableArray<TUserErrors> | undefined;
-    
-    
+    refreshLog: Array<any>;
+    lastRefresh: Date | undefined;
+    disposables: Array<any>;
+
+
 
 
 
@@ -103,6 +124,8 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
         this.widgetSettings = this.setWidgetJsonSettings();
         this.thisComponentName = this.setThisComponentName();
         this.defaults = this.setDefaults(); //setup the default by calling the abstract method in the child class
+        this.disposables = [];
+        this.refreshLog = new Array<any>()
 
         this.errorDivSelector = ERROR_DIV_SELECTOR;
         this.errors = ko.observableArray<TUserErrors>();
@@ -115,13 +138,14 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
         if (arr.length === 3) {
             //This is the constructor that is called by the IDE
             this.uniqueId = uuid();
-            
+
             this._initialise(arr[0], arr[1], arr[2]);
-            this.LocationToSaveOrLoadData = this.setLocationOfDataToLoadAndSave();
+            // this.LocationToSaveOrLoadData = this.setLocationOfDataToLoadAndSave();
             this.fireEvent("onSetup", this.model);
             this.setup();
             this.fireEvent("afterSetup", this.model);
             this.setupLiveConfig();
+            this.setupEventWatcher();
             this.setupErrorManager();
             this.addAspectLogOutput();
             return;
@@ -129,58 +153,86 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
 
     }
 
-    _initialise(element: HTMLElement, configuration: I_IDE_Aspect_Modeller_Configuration<TConfig>, baseModel: TSharedo<any>) {
+    _initialise(element: HTMLElement, polutedConfiguration: I_IDE_Aspect_Modeller_Configuration<TConfig>, baseModel: TSharedo<any>) {
 
+        //let configuration = polutedConfiguration.configuration; //Poluted as Sharedo added additional information to thsi object depending on where its instansiated
+        this.sharedoConfiguration = polutedConfiguration;
         this.element = element;
         //ShareDo passes the config as well as other stuff, so we need to extract the config
-        this.originalConfiguration = configuration as IBaseIDEAspectConfiguration<TConfig>;
+        this.originalConfiguration = polutedConfiguration
         this.baseModel = baseModel;
 
         // this.originalConfiguration
 
-        let baseDefaults: I_IDE_Aspect_Modeller_Configuration<any> = {
-            debug: {
-                enabled: false,
-                logToConsole: false,
-                showInAspect: false,
-                liveConfig: false
-            }
+        // let baseDefaults: IDefaultConfigSettings<any> = {
+        //     debug: {
+        //         enabled: false,
+        //         logToConsole: false,
+        //         showInAspect: false,
+        //         liveConfig: false
+        //     }
+        // }
+
+        //check that we have a sub configuration
+        if (!this.sharedoConfiguration.configuration) {
+            console.error("No configuration found in the sharedoConfiguration - check the aspect or widget config that ther eis a base configuration of configuration:{}")
+            throw new Error("No configuration found in the sharedoConfiguration");
+
         }
-        configuration.debug = $.extend(baseDefaults.debug, configuration.debug) as IDebug;
 
+        this.sharedoConfiguration.configuration.debug = $.extend(DEBUG_DEFAULT(), this.sharedoConfiguration.configuration.debug) as IDebug; //make sure debug is set or use defaults
         // this.originalConfiguration.debug = $.extend(baseDefaults.debug, this.originalConfiguration.debug) as IDebug;
-
         // configuration.debug = $.extend(baseDefaults, configuration.debug) as IDebug;
 
-        // this.configuration = $.extend(baseDefaults, this.originalConfiguration) as IBaseIDEAspectConfiguration<TConfig>;
+
         // this.data = undefined;
         // Merge the configuration with the defaults
-        this.configuration = $.extend(this.defaults, this.originalConfiguration) as IBaseIDEAspectConfiguration<TConfig>;
+        this.sharedoConfiguration.configuration = $.extend(this.defaults, this.originalConfiguration.configuration)
+
+
 
         //create a new model
-        this.model = this.configuration._host.model;
-        this.enabled = this.model.canEdit;
-        this.blade = this.configuration._host.blade;
+        this.model = this.sharedoConfiguration._host?.model;
+        // this.enabled = this.model?.canEdit;
+        this.blade = this.sharedoConfiguration._host?.blade;
         this.loaded = this.loaded || ko.observable(false);
         // Map the base model properties
-        this.sharedoId = this.configuration._host?.model.id;
+        this.sharedoId = this.sharedoConfiguration._host?.model.id || $ui.pageContext?.sharedoId || ko.observable(undefined);
         if (!this.sharedoId || this.sharedoId()) {
             this.log("No sharedoId found");
         }
-        this.sharedoTypeSystemName = this.configuration._host.model.sharedoTypeSystemName;
-        if (!this.sharedoTypeSystemName || this.sharedoTypeSystemName()) {
+
+        this.sharedoTypeSystemName = this.sharedoConfiguration._host?.model?.sharedoTypeSystemName || $ui.pageContext?.sharedoTypeName || ko.observable(undefined);
+        if (!this.sharedoTypeSystemName || !this.sharedoTypeSystemName()) {
             this.log("No sharedoTypeSystemName found");
         }
 
-        (this.options as any) = toObservableObject(this.configuration, (this.options as any));
-
+        this.parentSharedoId = this.sharedoConfiguration._host?.model?.parentSharedoId || ko.observable(undefined);
+        this.phaseName = this.sharedoConfiguration._host?.model?.phaseName || $ui.pageContext?.phaseName || ko.observable(undefined);
+        this.phaseIsOpen = this.sharedoConfiguration._host?.model?.phaseIsOpen || $ui.pageContext?.phaseIsOpen || ko.observable(undefined);
+        // this.shareDoOptions = toObservableObject(this.sharedoConfiguration, this.shareDoOptions);
+        // this._shareDoOptions = this.shareDoOptions as ObservableSharedoConfigurationOptions<unknown>
 
         // Validation
         this.validation = {};
         this.validationErrorCount = this.validationErrorCount || ko.observable(0);
 
-        this.LocationToSaveOrLoadData = this.setLocationOfDataToLoadAndSave(); //setup the location to load and save the data from by calling the abstract method in the child class
+        this.applyComponentConfiguration(this.sharedoConfiguration.configuration);
+        //setup the location to load and save the data from by calling the abstract method in the child class
+        //! --> LocationToSaveOrLoadData <-- - this should be called at the end of this function to ensure that the options and configuration data is availabel to the child class
+        this.LocationToSaveOrLoadData = this.setLocationOfDataToLoadAndSave(); 
         this.fireEvent("onInitialise", this.model);
+    }
+
+    private applyComponentConfiguration(configuration: IDefaultSettingsWithSpecificComponentConfig<TConfig>) {
+
+        let configurationAsObservables = toObservableObject(configuration, this.options);
+        this.configuration = configuration;
+
+        this.options = configurationAsObservables;
+        // ! Note line below is for typing within the IDEBase, the line above is for typing within the child class
+        this._options = configurationAsObservables as ObservableConfigurationOptions<IDefaultSettingsWithSpecificComponentConfig<unknown>>;
+     
     }
 
     clearErrors() {
@@ -198,7 +250,7 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
     }
 
     setupLiveConfig() {
-        this.options.debug.subscribe((newValue: any) => {
+        this._options?.debug.subscribe((newValue: any) => {
             if (newValue.liveConfig) {
                 this.activateLiveConfig(newValue.liveConfig);
             }
@@ -206,7 +258,7 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
 
 
 
-        this.activateLiveConfig((this.options.debug().liveConfig as any)()); //TODO fix typings
+        this.activateLiveConfig(this._options?.debug().liveConfig()); //TODO fix typings
     }
 
     activateLiveConfig(active: boolean | undefined) {
@@ -221,7 +273,7 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
 
         this.l("Setting up live config");
 
-        const serializedData = JSON.stringify(this.configuration, (key, value) => {
+        const serializedData = JSON.stringify(this.sharedoConfiguration, (key, value) => {
             if (key === "_host") {
                 return undefined;
             }
@@ -253,8 +305,11 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
                 setTimeout(() => {
                     timeout = false;
                     let newConfig = JSON.parse(config())
-                    this._initialise(this.element, newConfig, this.baseModel);
-                    this.reset(newConfig);
+
+                    this.applyComponentConfiguration(newConfig.configuration);
+                    this.liveConfigurationRefreshed();
+                    // this.refresh(newConfig);
+                    // this.reset(newConfig);
                 }, 500);
                 timeout = true;
 
@@ -267,17 +322,7 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
         // }
     }
 
-    /**
-     * Abstract method to be implemented by the child class to refresh the aspect based on the new config
-     * @param newConfig 
-     */
-    abstract refresh(newConfig: any): void;
 
-    /**
-    * Abstract method to be implemented by the child class to reset the aspect based on the new config
-    * @param newConfig 
-    */
-    abstract reset(newConfig: any): void;
 
     ensureStylesLoaded(href: string): void {
         if (!document.querySelector(`link[href="${href}"]`)) {
@@ -308,34 +353,86 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
         return outerDiv;
     }
 
-    async getData() {
+    setupEventWatcher() {
+        this._options?.eventsToReactTo()?.forEach((eventToWatch) => {
+            console.log("Subscribing to event", eventToWatch);
+            this.disposables.push(
+                $ui.events.subscribe(eventToWatch.eventPath(), (e: any) => {
 
-        if (this.LocationToSaveOrLoadData === undefined) {
-            this.log("No location to load data from set - this method should be overriden", "red");
-            return this._data;
+                    this.refreshComponent(eventToWatch.eventPath(), eventToWatch.methodToCall());
+                }, this));
+        });
+
+
+        let refreshOn = ko.toJS(this._options?.refreshOn());
+        if (refreshOn) {
+
+            if (refreshOn.sharedoIdChanged) {
+                this.disposables.push(
+                    this.sharedoId.subscribe((newValue) => {
+                        this.refreshComponent("sharedoIdChanged", "refresh");
+                    })
+                );
+            }
+
+            if (refreshOn.sharedoParentIdChanged) {
+                this.disposables.push(
+                    this.parentSharedoId.subscribe((newValue) => {
+                        this.refreshComponent("sharedoParentIdChanged", "refresh");
+                    })
+                );
+            }
+
+            if (refreshOn.sharedoPhaseChanged) {
+                this.disposables.push(
+                    this.phaseName.subscribe((newValue) => {
+                        this.refreshComponent("sharedoPhaseChanged", "refresh");
+                    })
+                );
+            }
+
+
+
+
         }
 
-        let nestedData = getNestedProperty(this.model, this.LocationToSaveOrLoadData);
+    }
 
-        if(nestedData !== undefined)
+    refreshComponent(eventPath: string | undefined, methodToCall: string | undefined) {
+        this.refreshLog = this.refreshLog || [];
+        if (this.lastRefresh) //TODO: change this so we collect all refreshes and do them in one go
         {
-            this.log("Data found at location", "green", nestedData);
-            let retValue = ko.toJS(nestedData);
-            this.log("Data found at location", "green", retValue);
-            return retValue;
+            let secondsSinceLastRefresh = (new Date().getTime() - this.lastRefresh.getTime()) / 100;
+            console.log("Seconds since last refresh", secondsSinceLastRefresh);
+            if (secondsSinceLastRefresh < 10) {
+                console.log("Skipping refresh, too soon");
+                return;
+            }
         }
 
-    
-
-        if(nestedData === undefined && this.options.dataSettings().getValueUsingParents === true)
-        {
-            return searchForAttributeRecursive(this.sharedoId,this.LocationToSaveOrLoadData,this.options.dataSettings().getValueUsingParents!,this.options.dataSettings().maxDepth).then((data)=>{
-                if(data.found)
-                {
-                    return data.value;
+        this.lastRefresh = new Date();
+        console.log("Refreshing component");
+        let logItem = { eventPath: eventPath, methodToCall: methodToCall, time: new Date(), success: false };
+        try {
+            if (methodToCall) {
+                // let params = widgets.parameters;
+                console.log("Executing method", methodToCall);
+                let componentToRefresh = (this as any);
+                if (!componentToRefresh[methodToCall]) {
+                    console.log(`Method not found on component ${this.thisComponentName}`, methodToCall);
                 }
-                return nestedData;
-            })
+                {
+                    componentToRefresh[methodToCall](); //todo: parameters
+                }
+            }
+        }
+        catch (e) {
+            console.log(e);
+
+        }
+        finally {
+            logItem.success = true;
+            this.refreshLog.push(logItem);
         }
 
     }
@@ -343,7 +440,7 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
     buildErrorDiv() {
         this.inf("Building error div")
         let errorDiv = this.element.querySelector(this.errorDivSelector);
-        if (!errorDiv ) {
+        if (!errorDiv) {
 
             return;
         }
@@ -351,12 +448,10 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
         l("errorDiv.innerHTML")
         errorDiv.innerHTML = ""; //clean out the div
 
-        if(!this.errors)
-        {
+        if (!this.errors) {
             this.errors = ko.observableArray<TUserErrors>();
         }
-        if(this.errors().length === 0)
-        {
+        if (this.errors().length === 0) {
             return;
         }
 
@@ -370,7 +465,7 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
         errorContainerDiv.appendChild(titleDiv);
         let foreachDiv = document.createElement("div");
         errorContainerDiv.appendChild(foreachDiv);
-       
+
         this.errors().forEach((error) => {
 
             let userMessageDiv = document.createElement("div");
@@ -378,13 +473,13 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
             userMessageDiv.innerHTML = error.userMessage;
 
 
-         
+
             userMessageDiv.onclick = () => {
 
                 //create a div that can scoll
                 let detailedMessageDiv = document.createElement("div");
                 detailedMessageDiv.className = "ide-aspect-error-detailed-message";
-               
+
 
                 const code = escapeHtml(error.code || "");
                 const message = escapeHtml(error.message || "");
@@ -435,7 +530,7 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
 
         });
 
-        if (this.options.debug().supportRequestEnabled) {
+        if (this._options?.debug().supportRequestEnabled) {
             let actionDiv = document.createElement("div");
             actionDiv.className = "ide-aspect-error-support-action";
             errorContainerDiv.appendChild(actionDiv);
@@ -451,30 +546,19 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
 
     }
 
-    setData(value: TPersitance | undefined) {
+    /**
+       * Abstract method to be implemented by the child class to refresh the aspect
+       * @param newConfig 
+       */
+    abstract refresh(newConfig: any): void;
 
-        if (this.LocationToSaveOrLoadData === undefined) {
-            this.log("No location to save data to set - this method should be overriden", "red");
-            this._data = value;
-            return;
-        }
+    /**
+    * Abstract method to be implemented by the child class to reset the aspect based 
+    * @param newConfig 
+    */
+    abstract reset(newConfig: any): void;
 
-
-        let valueToSet: any = value;
-        // if(this.LocationToSaveOrLoadData.includes("formBuilder"))
-        // {
-        //     //formbuilder Data always need to be string
-        //     this.log("Setting formbuilder data - converting to string", "green", value)
-        //     valueToSet = JSON.stringify(value);
-        //     this.log("after Setting formbuilder data - converted to string", "green", valueToSet)
-        // }
-        this.log("Setting data at location", "green", valueToSet);
-        setNestedProperty(this.model, this.LocationToSaveOrLoadData, valueToSet);
-        this.fireEvent("onDataChanged", this.model);
-
-    }
-
-
+    abstract liveConfigurationRefreshed():void;
 
     /**
      * ! important: Mandatory method to be implemented by the child class to set the defaults
@@ -484,7 +568,7 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
      * @abstract
      * 
      */
-    abstract setDefaults(): IDefaultSettings<TConfig>;
+    abstract setDefaults(): IDefaultSettingsWithSpecificComponentConfig<TConfig>;
 
     // /**
     //  * ! important: Mandatory method to be implemented by the child class to set the defaults for the widget.json
@@ -533,10 +617,10 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
      * Called by the aspect IDE adapter when the model is saved. Manipulate the
      * model as required.
      */
-     async onSave(model: any) {
+    onSave(model: any) {
         this.fireEvent("onSave", model);
 
-        let dataToSave = await this.getData();
+        let dataToSave = this._data
         this.log("Saving, model passed in we need to persist to", "green", dataToSave);
 
         if (this.LocationToSaveOrLoadData === undefined) {
@@ -545,7 +629,7 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
         }
 
 
-        let dataToPersist = await this.getData();
+        let dataToPersist = this._data;
         let currentData = getNestedProperty(model, this.LocationToSaveOrLoadData);
         if (currentData) {
             this.log(`Current data at location ${this.LocationToSaveOrLoadData} :`, "magenta", currentData);
@@ -558,14 +642,101 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
         this.log(`New data to persist to location ${this.LocationToSaveOrLoadData} :`, "blue", dataToPersist);
         setNestedProperty(model, this.LocationToSaveOrLoadData, dataToPersist);
 
+        this.l("Data saved", model);
+
     };
 
+    async getData() {
+        if (this._data) {
+            return this._data;
+        }
 
+        //This section is d=use due to typing issue that needs to be resolved.
+        // let useParents = gvko(this._options.dataSettings().getValueUsingParents) as boolean | undefined
+        // let shareDoId= gvko(this.sharedoId)
+        // let maxDepth = gvko(this._options.dataSettings().maxDepth) as number | undefined
+        // let LocationToSaveOrLoadData = gvko(this.LocationToSaveOrLoadData) as string | undefined
+        //end area of typing issue
+
+        let useParents = this._options?.dataSettings().getValueUsingParents()
+        let shareDoId = this.sharedoId()
+        let maxDepth = this._options?.dataSettings().maxDepth()
+        let LocationToSaveOrLoadData = gvko(this.LocationToSaveOrLoadData);
+
+        if (LocationToSaveOrLoadData === undefined) {
+            this.log("No location to load data from set - this method should be overriden", "red");
+            return this._data;
+        }
+
+        this._data = getNestedProperty(this.model, LocationToSaveOrLoadData);
+
+        if (this._data !== undefined) {
+            this.l("Data found at location", this._data);
+            this._data = ko.toJS(this._data);
+            return this._data;
+        }
+
+        //if data ot found in the current model, look via the search
+        if (this._data === undefined && useParents === false && shareDoId) //! TODO Fix Typings
+        {
+            return searchForAttributeRecursive(shareDoId, LocationToSaveOrLoadData, false).then((data) => {
+                if (data.found) {
+                    this._data = data.value;
+                }
+                return this._data;
+            })
+        }
+
+        if (this._data === undefined && useParents === true) //! TODO Fix Typings
+        {
+
+            let idToUser = this.sharedoId() || this.parentSharedoId();
+
+            if (!idToUser) {
+                this.log("No id to use for search both sharedoId and parentSharedoId are undefined");
+                return this._data;
+            }
+            return searchForAttributeRecursive(idToUser, LocationToSaveOrLoadData, useParents, maxDepth).then((data) => {
+                if (data.found) {
+                    this._data = data.value;
+                }
+                return this._data;
+            })
+        }
+    }
+
+
+
+
+    setData(value: TPersitance | undefined) {
+
+        let valueToPersist = ko.toJS(value);
+        let previousValue = ko.toJS(this._data);
+        this._data = valueToPersist;
+        this.fireValueChangedEvent("onDataBeforeChanged", { previousValue: previousValue, newValue: valueToPersist });
+
+        if (this.LocationToSaveOrLoadData === undefined) {
+            return;
+        }
+
+        let valueToSet: any = value;
+        // if(this.LocationToSaveOrLoadData.includes("formBuilder"))
+        // {
+        //     //formbuilder Data always need to be string
+        //     this.log("Setting formbuilder data - converting to string", "green", value)
+        //     valueToSet = JSON.stringify(value);
+        //     this.log("after Setting formbuilder data - converted to string", "green", valueToSet)
+        // }
+        this.log("Setting data at location", "green", valueToSet);
+        setNestedProperty(this.model, this.LocationToSaveOrLoadData, this._data);
+        this.fireEvent("onDataChanged", this.model);
+    }
 
 
     onDestroy(model?: any) {
         this.log("IDEAspects.Example : onDestroy");
         this.fireEvent("onDestroy", model);
+        $ui.util.dispose(this.disposables);
     };
 
     /**
@@ -605,6 +776,16 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
     }
 
 
+    debugSettings() {
+        let debugSetting: IDebug = DEBUG_DEFAULT();
+
+        if (this._options?.debug()) {
+            debugSetting = ko.toJS(this._options?.debug())
+        }
+
+        return debugSetting;
+    }
+
     /**
      * Provides logging for the component based on the debug configuration
      * @param message 
@@ -612,8 +793,11 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
      * @param data 
      */
     log(message: string, color?: string, data?: any): void {
-        if (this.configuration.debug?.enabled) {
-            if (this.configuration.debug.logToConsole) {
+
+
+
+        if (this.debugSettings().enabled) {
+            if (this.debugSettings().logToConsole) {
                 if (!color) color = "black";
                 // let lineNo = extractLineNumberFromStack((new Error()).stack);
                 console.log(`%c ${this.thisComponentName} - ${message}`, `color:${color}`, data);
@@ -622,13 +806,14 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
     }
 
     canLog(): boolean {
-        return this.configuration.debug?.enabled;
+
+        return this.debugSettings().enabled;
     }
     logToConsole(): boolean {
-        return this.canLog() && this.configuration.debug?.logToConsole;
+        return this.canLog() && this.debugSettings().logToConsole;
     }
     logToAspect(): boolean {
-        return this.canLog() && this.configuration.debug?.showInAspect
+        return this.canLog() && this.debugSettings().showInAspect
     }
 
 
@@ -730,6 +915,15 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
         fireEvent(event);
     }
 
+    fireValueChangedEvent(eventName: string, changedData: { previousValue: any, newValue: any }) {
+        let event: ShareDoEvent = {
+            eventPath: this.thisComponentName + "." + eventName,
+            eventName: eventName,
+            source: this,
+            data: changedData
+        }
+        fireEvent(event);
+    }
 
     /**
      * 
@@ -746,6 +940,10 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
         }
 
         //Ensure the path exists
+        if (!this.blade) {
+            //TODO: if no blade where is form builder data
+            return undefined
+        }
         this.blade = this.blade || {};
         return this.ensureFormbuilder(this.blade.model);
 
@@ -784,17 +982,22 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
             throw new Error("Form builder does not exist!");
         }
 
-        let foundValue = this.formbuilder()[formbuilderField]
+        let formBuilder = this.formbuilder()!;
+        if (!formBuilder) {
+            return;
+        }
+
+        let foundValue = formBuilder[formbuilderField]
         if (!foundValue) {
             this.log(`Form builder does not contain field ${formbuilderField} `, "orange");
             this.log(`Creating field ${formbuilderField} `, "blue");
-            this.formbuilder()[formbuilderField] = undefined;
+            formBuilder[formbuilderField] = undefined;
         }
 
         //Are we doing a set
         if (setValue) {
             this.log(`Setting ${formbuilderField} to ${setValue}`, "green");
-            this.formbuilder()[formbuilderField] = setValue;
+            formBuilder[formbuilderField] = setValue;
             return setValue;
         }
 

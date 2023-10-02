@@ -4,7 +4,7 @@ export interface IDebug {
     enabled: boolean;
     logToConsole: boolean;
     showInAspect: boolean;
-    liveConfig?: boolean;
+    liveConfig: boolean;
   }
 
   export type ObservableIDebug ={

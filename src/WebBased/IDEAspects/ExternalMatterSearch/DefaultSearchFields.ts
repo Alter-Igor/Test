@@ -20,7 +20,7 @@ export const DEFAULT_SEARCH_FIELDS_CONFIG : IFieldPlacement =
         {
             "fields": [
                 {
-                    "field": "`${dataContext.data.data.matterCode||dataContext.data.data.code}`",
+                    "field": "${dataContext.data.data.matterCode||dataContext.data.data.code}",
                     "style": "font-weight:bold",
                     "icon": [
                         {
@@ -40,10 +40,10 @@ export const DEFAULT_SEARCH_FIELDS_CONFIG : IFieldPlacement =
                     "style": {
                         "color": "blue"
                     },
-                    "field": "dataContext.data.title"
+                    "field": "${dataContext.data.title}"
                 },
                 {
-                    "field": "dataContext.data.data.status",
+                    "field": "${dataContext.data.data.status}",
                     "formatter": "value.toUpperCase()",
                     "label": "Status",
                     "position": "right",
@@ -58,7 +58,7 @@ export const DEFAULT_SEARCH_FIELDS_CONFIG : IFieldPlacement =
                 },
                 {
                     "label": "Client",
-                    "field": "dataContext.data.data.client",
+                    "field": "${dataContext.data.data.client}",
                     "width": null
                 },
                 {

@@ -1,4 +1,4 @@
-import { executeFunc } from "./evaluteRule";
+import { executeEmbeddedCode, executeFunc } from "./evaluteRule";
 import { formatFunc } from "./Formatter";
 
 
@@ -11,7 +11,7 @@ import { formatFunc } from "./Formatter";
  * @returns 
  */
 export function extractValue(value: string, viewModel: any, formatter: string | null | undefined,dataContextName?:string) {
-    let valueToSet = executeFunc(value, viewModel,dataContextName);
+    let valueToSet = executeEmbeddedCode(value, viewModel,dataContextName);
   
     if (typeof valueToSet !== "string") {
       valueToSet = JSON.stringify(valueToSet, null, 2);

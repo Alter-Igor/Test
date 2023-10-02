@@ -1,15 +1,21 @@
-import { DateTime, TempusDominus } from '@eonasdan/tempus-dominus';
+import { DateTime, Options, TempusDominus } from '@eonasdan/tempus-dominus';
 //https://getdatepicker.com/6/options/display.html
-import { IDatePickerAspectOptions, setting} from "./DatePickerAspectConfiguration";
-import { IDefaultSettings, IWidgetJson} from '../BaseClasses/IWidgetJson';
+import { IDatePickerAspectOptions, DATE_PICKER_DEFAULTS, DATE_PICKER_WIDGET_DEFAULTS} from "./DatePickerAspectConfiguration";
+import { IDefaultSettingsWithSpecificComponentConfig, IWidgetJson} from '../BaseClasses/IWidgetJson';
 import { BaseIDEAspect, getFormBuilderFieldPath } from '../BaseClasses/BaseIDEAspect';
+import { DEBUG_DEFAULT } from '../BaseClasses/DebugDefaults';
+import ko from 'knockout';
 
 let thisWidgetSystemName = "DatePickerAspect";
 
-
+// "fieldPath": "form-alt-ediscovery-job-desired-completion-date-date-only.job-desired-completion-date",
+// "title": "Desired Date",
 //add style to head: https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css
 
 export class DatePickerAspect extends BaseIDEAspect<IDatePickerAspectOptions, any> {
+    liveConfigurationRefreshed(): void {
+        //TODO: implement
+    }
     refresh(newConfig: any): void {
         // throw new Error('Method not implemented.');
     }
@@ -37,50 +43,21 @@ export class DatePickerAspect extends BaseIDEAspect<IDatePickerAspectOptions, an
     }
     
     setWidgetJsonSettings(): IWidgetJson<IDatePickerAspectOptions> {
-        return setting;
+        return DATE_PICKER_WIDGET_DEFAULTS;
     }
    
-
-    setDefaults(): IDefaultSettings<IDatePickerAspectOptions> {
-        return {
-            // Aspect widget config parameters
-            title: undefined,
-            formBuilderField: undefined,
-            pickerEnabled: true,
-            eventToFireOnUpdate: ["IDEAspects.DatePickerAspect.Update"],
-            defaultValue: {
-                defaultDateFromNowHours: 24,
-                getValueUsingParents: true,
-                maxDepth: 0,
-            },
-            datePickerOptions: {
-                display: {
-                    inline: true,
-                    sideBySide: true,
-                    theme: "light"
-                }
-            },
-            debug: {
-                enabled: false,
-                logToConsole: false,
-                showInAspect: false
-            },
-            eventsToReactTo: [],
-            dataSettings: {
-                getValueUsingParents: false,
-                maxDepth: 0,
-            }
-        }
-    }
+setDefaults(): IDefaultSettingsWithSpecificComponentConfig<IDatePickerAspectOptions> {
+    return DATE_PICKER_DEFAULTS;
+}
 
    //Abstract methods - must be implemented by the derived class
     setLocationOfDataToLoadAndSave(): string {
-        if(!this.configuration.formBuilderField)
+        if(!this.sharedoConfiguration.configuration.formBuilderField)
         {
-            this.log("No formbuilder field set in configuration - check aspect configuration", "red");
+            this.err("No formbuilder field set in configuration - check aspect configuration");
             throw new Error("No formbuilder field set in configuration - check aspect configuration");
         }
-        return getFormBuilderFieldPath(this.configuration.formBuilderField);
+        return getFormBuilderFieldPath(this.sharedoConfiguration.configuration.formBuilderField);
     }
 
     private setPickerEnabledState(newValue: boolean | null | undefined) {
@@ -104,7 +81,7 @@ export class DatePickerAspect extends BaseIDEAspect<IDatePickerAspectOptions, an
         this.setData(newValue?.toISOString() || undefined);
     }
 
-    /**
+    /** 
      * Gets the data from form builder and converts to DateTime
      */
     async getModelDataAsDate() {
@@ -128,8 +105,9 @@ export class DatePickerAspect extends BaseIDEAspect<IDatePickerAspectOptions, an
      */
     private generateDefaultDate() {
         let defaultDate = new DateTime(DateTime.now());
-        if (this.configuration.defaultValue?.defaultDateFromNowHours) {
-            defaultDate.setHours(defaultDate.getHours() + this.configuration.defaultValue.defaultDateFromNowHours);
+        let defaultDateFromNowHours = this.options?.defaultValue().defaultDateFromNowHours();
+        if (defaultDateFromNowHours) {
+            defaultDate.setHours(defaultDate.getHours() + defaultDateFromNowHours);
         }
         return defaultDate;
     }
@@ -168,6 +146,22 @@ export class DatePickerAspect extends BaseIDEAspect<IDatePickerAspectOptions, an
         input.type = "text";
         input.classList.add("form-control");
         input.setAttribute("data-td-target", "#" + this.uniqueId);
+
+        if(this.options?.hideInputBox())
+        {
+            input.classList.add("hidden");
+        }
+        this.options?.hideInputBox.subscribe((newValue) => { 
+            if(newValue)
+            {
+                input.classList.add("hidden");
+            }
+            else
+            {
+                input.classList.remove("hidden");
+            }
+        });
+
         this.datePickerDiv.appendChild(input);
 
         // let span = document.createElement("span");
@@ -182,13 +176,14 @@ export class DatePickerAspect extends BaseIDEAspect<IDatePickerAspectOptions, an
 
         element.appendChild(this.datePickerDiv);
 
-        this.dateTimePicker = new TempusDominus(this.datePickerDiv, this.configuration.datePickerOptions || {});
-        this.options.datePickerOptions.subscribe((newValue) => {
+        let datePickerOption = ko.toJS(this.options?.datePickerOptions()) as Options | undefined;
+        this.dateTimePicker = new TempusDominus(this.datePickerDiv, datePickerOption);
+        this.options?.datePickerOptions.subscribe((newValue) => {
             this.loadAndBind();
         });
 
 
-        this.setPickerEnabledState(this.options.pickerEnabled());
+        this.setPickerEnabledState(this.options?.pickerEnabled());
         //Set the value of the picker to the value in the model
         let dateToSet = await this.getModelDataAsDate()
         this.dateTimePicker.dates.setValue(
@@ -198,11 +193,11 @@ export class DatePickerAspect extends BaseIDEAspect<IDatePickerAspectOptions, an
 
         this.dateTimePicker.subscribe("change.td", (e: any) => {
             this.log("Date Changed", "red", e);
-            this.options.eventToFireOnUpdate()?.forEach((event) => {
+            this.options?.eventToFireOnUpdate()?.forEach((event) => {
                 $ui.events.broadcast(event,
                     {
                         source: this,
-                        formbuilderField: this.formbuilderField,
+                        formbuilderField: this.options?.formBuilderField(),
                         value: this.getCurrentSelectedDate()
                     }); //fire event and pass in the date
             });
@@ -252,7 +247,7 @@ export class DatePickerAspect extends BaseIDEAspect<IDatePickerAspectOptions, an
         return this.dateTimePicker?.dates.picked[0];
     }
 
-    public override async onSave(model: any) {
+    public override onSave(model: any) {
         this.log("Save");
         this.setModelDataAsDate(this.getCurrentSelectedDate());
         super.onSave(model);

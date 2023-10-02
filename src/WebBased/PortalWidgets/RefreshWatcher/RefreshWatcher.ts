@@ -2,6 +2,8 @@ import { IRefreshWatcherConfiguration } from "./RefreshWatcherConfiguration";
 import { TSharedo } from "../../../Interfaces/TSharedo";
 import { IBaseIDEAspectConfiguration} from "../../IDEAspects/BaseClasses/BaseIDEAspect";
 import { strToClass } from "../../Common/ObjectHelper";
+import ko from "knockout";
+import { IDefaultSettingsWithSpecificComponentConfig } from "../../IDEAspects/BaseClasses/IWidgetJson";
 
 
 
@@ -24,19 +26,20 @@ class RefreshWatcherClass {
             eventsToListenTo: [],
             intervalSeconds: 0
         }
-    configuration: IBaseIDEAspectConfiguration<IConfig>; disposables: any;
+    configuration: IBaseIDEAspectConfiguration<IRefreshWatcherConfiguration>; disposables: any;
     interval: NodeJS.Timeout | undefined;
-    model: ko.Observable<IRefreshWatcherConfiguration>;
-    originalConfiguration: IBaseIDEAspectConfiguration<IConfig>;
+    model: ko.Observable<IDefaultSettingsWithSpecificComponentConfig<IRefreshWatcherConfiguration>>
+    originalConfiguration: IBaseIDEAspectConfiguration<IRefreshWatcherConfiguration>;
     lastRefresh: Date = new Date();
     refreshLog: any[] = [];
 
-    constructor(element: HTMLElement, configuration: IBaseIDEAspectConfiguration<IConfig>, baseModel: TSharedo<any>) {
+    constructor(element: HTMLElement, configuration: IBaseIDEAspectConfiguration<IRefreshWatcherConfiguration>, baseModel: TSharedo<any>) {
 
-        this.originalConfiguration = configuration as IBaseIDEAspectConfiguration<IConfig>;;
+        this.originalConfiguration = configuration as IBaseIDEAspectConfiguration<IRefreshWatcherConfiguration>;;
         this.configuration = $.extend(true, {}, this.defaults, configuration);
 
-        this.model = ko.observable(this.configuration.configuration);
+        let x = ko.observable(this.configuration.configuration);
+        this.model = x;
 
     }
 

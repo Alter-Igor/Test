@@ -136,6 +136,16 @@ import { IShareDoGetResponse } from "../../../Interfaces/Workflows/IShareDoGetRe
 
         let order = actionPlanModel.order;
         actionPlan = actionPlan.WithOrder(order);
+ 
+        if(actionPlanModel.enableComment)
+        {
+            try{
+            actionPlan = actionPlan.EnableComment();
+            }
+            catch(e){
+                log.Error("EnableComment failed");
+            }
+        }
 
 
         if (actionPlanModel.callToActionVar) {

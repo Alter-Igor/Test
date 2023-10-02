@@ -1,0 +1,73 @@
+{
+  "id": "PortalWidgets.SingleValuePortalWidget",
+  "type": "widget",
+  "priority": 6000,
+  "designer": {
+    "allowInPortalDesigner": true,
+    "allowInSharedoPortalDesigner": true,
+    "allowAspectAdapter": false,
+    "title": "Single Value Portal Widget",
+    "icon": "fa-cog",
+    "description": "Show a single value in a portal widget",
+    "categories": [
+      "UD - IDEAspects"
+    ],
+    "isConfigurable": true,
+    "configurationWidget": "PortalWidgets.SingleValuePortalWidgetDesigner",
+    "defaultConfigurationJson": {
+      "configuration": {
+        "fieldPath": "title",
+        "title": null,
+        "calculatedValue": "",
+        "calculatedTitle": "",
+        "valueOnNotFound": "Not Found",
+        "formatter": "value",
+        "debug": {
+          "supportRequestEnabled": false,
+          "enabled": true,
+          "logToConsole": true,
+          "showInAspect": false,
+          "liveConfig": false
+        },
+        "eventsToReactTo": [
+          {
+            "eventPath": "sharedo.core.case.phase-changed",
+            "methodToCall": "loadAndBind"
+          },
+          {
+            "eventPath": "sharedo.core.case.forms.phase.phase-changed",
+            "methodToCall": "loadAndBind"
+          },
+          {
+            "eventPath": "sharedo.updated",
+            "methodToCall": "loadAndBind"
+          },
+          {
+            "eventPath": "sharedo.core.case.sharedo-updated",
+            "methodToCall": "loadAndBind"
+          }
+        ],
+        "refreshOn": {
+          "sharedoIdChanged": true,
+          "sharedoParentIdChanged": true,
+          "sharedoPhaseChanged": true
+        },
+        "dataSettings": {
+          "getValueUsingParents": false,
+          "maxDepth": 0
+        }
+      }
+    }
+  },
+  "scripts": [
+    "/_ideFiles/PortalWidgets/SingleValuePortalWidget/SingleValuePortalWidget.js"
+  ],
+  "styles": [
+    "/_ideFiles/PortalWidgets/SingleValuePortalWidget/SingleValuePortalWidget.css"
+  ],
+  "templates": [
+    "/_ideFiles/PortalWidgets/SingleValuePortalWidget/SingleValuePortalWidget.html"
+  ],
+  "menuTemplates": [],
+  "components": []
+}

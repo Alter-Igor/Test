@@ -139,6 +139,12 @@ async function run()
     
     l(manifestFilePath);
     l("Writing manifest file");
+
+    //check if the manifestFilePath exists and if it does not create it
+    if (!fs.existsSync(manifestFilePath)) {
+      fs.mkdirSync(path.dirname(manifestFilePath), { recursive: true });
+    }
+
     fs.writeFileSync(manifestFilePath, manifestFileContents);
 
     

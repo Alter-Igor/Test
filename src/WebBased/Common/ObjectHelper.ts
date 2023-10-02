@@ -88,3 +88,21 @@ export function getNestedProperty(obj: any, propertyPath: string): any {
 
     return current;
 }
+
+    /**
+     * This function should be temporary and will be removed once the typescript typing are fixed
+     * What is does is check if the passed in object is a knockout observable and if it is it returns the value
+     * @param koObject 
+     * @returns 
+     */
+    export function getValueFromKOObject<T>(koObject: any) {
+        if(typeof koObject === "function")
+        {
+            return koObject();
+        }
+        return koObject
+    }
+
+    export function gvko(koObject: any): any {
+        return getValueFromKOObject(koObject);
+    }

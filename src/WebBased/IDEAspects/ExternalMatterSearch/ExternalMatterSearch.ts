@@ -1,12 +1,11 @@
 import { AUTOCOMPLETE_CARD_TYPE, AUTOCOMPLETE_MODE } from "../../../Interfaces/components/IAutoCompleteFindCardOptions";
-import { getNestedProperty, setAllFieldsToNull } from "../../Common/ObjectHelper";
+import { getNestedProperty, gvko, setAllFieldsToNull } from "../../Common/ObjectHelper";
 import { TExecuteFetchResponse, TUserErrors, executeFetch, executeGet, executeGetv2 } from "../../Common/api/api";
-import { IDefaultSettings, IWidgetJson } from "../BaseClasses/IWidgetJson";
+import { IDefaultSettingsWithSpecificComponentConfig, IWidgetJson } from "../BaseClasses/IWidgetJson";
 import ko, { Observable } from "knockout";
 import { Settings } from "./ExternalMatterSearchSettings";
 import { Default } from "./ExternalMatterSearchDefaults";
 import { formatFunc } from "../../../helpers/Formatter";
-import { evaluteRule, executeFunc } from "../../../helpers/evaluteRule";
 import { Section, inf, lh, secBackOne } from "../../../Common/Log";
 import { IExternalMatterSearchConfiguration, IFieldPlacement, IFieldRowField, INameValue, IRule, IStyleEntry, IStyleRule, TAPIExecutionSettings } from "./ExternalMatterSearchInterface";
 import { autoGenerateTemplate, generateHtmlDiv } from "./Template/TemplateGenerator";
@@ -21,6 +20,8 @@ import { data, error } from "jquery";
 import { replaceValues } from "../../Common/TemplateValueReplaces";
 import { TemplateApplicator } from "./Template/TemplateApplicator";
 import { BaseIDEAspect } from "../BaseClasses/BaseIDEAspect";
+import { deserializeObjectFromBase64, serializeObjectToBase64 } from "../../../helpers/Serialization";
+import { executeEmbeddedCode, evaluteRule } from "../../../helpers/evaluteRule";
 
 const CSS_CLASS_SELECTED_ITEM = "ems-selected-item";
 const CSS_CLASS_RESULT_ITEM = "ems-result-item";
@@ -39,6 +40,7 @@ interface IExternalResultItem {
 
 
 export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchConfiguration, any> {
+  
 
     autoComplete: Sharedo.UI.Framework.Components.AutoCompleteHandler | undefined;
     selectedDiv: HTMLDivElement | undefined;
@@ -54,7 +56,8 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
     // selectedIFieldPlacement: IFieldPlacement | undefined;
     inputVisability: ko.Computed<boolean> | undefined;
     searchStatusDiv: HTMLDivElement | undefined;
-
+    selectedFieldsSubscription: ko.Subscription | undefined;
+    title : ko.Computed<string> | undefined;
 
 
     // private initialise() {//! Note: UI framework looks for this method name and if found behaves differently and wont call loadAndBind
@@ -66,30 +69,31 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
      */
     setup() {
 
-        this.selectedMatter = ko.observable<IExternalResultItem | undefined>(undefined);
+        this.selectedMatter =this.selectedMatter || ko.observable<IExternalResultItem | undefined>(undefined);
         if (!validateJSON(this.configuration, (SCHEMA as any))) {
             this.wrn("SearchFields does not match schema");
         }
 
-        this.inputVisability = ko.computed(() => {
+        this.inputVisability = this.inputVisability || ko.computed(() => {
             return this.getInputVisability();
         });
 
         this.validateFormbuilderJSONFieldSetup();
 
-        if (!this.options.searchFields() || !this.options.searchFields().rows) {
+
+        if (!gvko(this.options?.searchFields) || !gvko(this.options?.searchFields).rows) {
             this.err("No searchFields defined");
             throw new Error("No searchFields defined");
         }
 
-        if (!this.options.selectedFields() || !this.options.selectedFields().rows) {
+        if (!gvko(this.options?.selectedFields) || !gvko(this.options?.selectedFields).rows) {
             this.wrn("No selectedFields defined, using searchFields as selectedFields");
-            this.options.selectedFields(this.options.searchFields());
+            this.options?.selectedFields(this.options?.searchFields());
         }
 
         this.ensureSearchTemplate();
 
-        this.selectedDiv = this.element.querySelector(`.${CSS_CLASS_SELECTED_ITEM}`) as HTMLDivElement;
+        this.selectedDiv = this.selectedDiv || this.element.querySelector(`.${CSS_CLASS_SELECTED_ITEM}`) as HTMLDivElement;
         if (!this.selectedDiv) {
             this.err(`Could not find element with class '${CSS_CLASS_SELECTED_ITEM}'`);
             throw new Error(`Could not find element with class '${CSS_CLASS_SELECTED_ITEM}'`);
@@ -98,10 +102,23 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
         this.autoComplete = this.autoComplete || this.setupAutoComplete()
         this.selectedMatter.subscribe((newValue) => {
             this.ensureSelectedMatterTemplate();
+            this.updateFields();
         });
 
-        this.options.selectedFields.subscribe((newValue) => {
+
+
+        this.selectedFieldsSubscription = this.selectedFieldsSubscription || this.options?.selectedFields.subscribe((newValue) => {
             this.ensureSelectedMatterTemplate();
+
+           
+        });
+
+       
+        
+  
+        this.title  = ko.computed(() => {
+            let title= executeEmbeddedCode(this.options?.title(), this); 
+            return title;
         });
 
 
@@ -135,8 +152,13 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
         );
     }
 
+    liveConfigurationRefreshed(): void {
+        this.ensureSelectedMatterTemplate();
+        this.updateFields();
+    }
+
     private validateFormbuilderJSONFieldSetup() {
-        if (!this.options.formBuilderFieldSerialisedData()) {
+        if (!this.options?.formBuilderFieldSerialisedData()) {
             this.wrn("No formBuilderFieldSerialisedData defined - this will prevent the matter from being saved and loaded");
             this.wrn("Add a field to the form builder and set the formBuilderFieldSerialisedData to the field name in the configuration of the aspect");
         }
@@ -148,14 +170,16 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
      * @param {IExternalResultItem} model - The model to load from
      * @returns {void}
      */
-    load(model: any) {
-        if (!this.sharedoId()) return;
+    async load(model: any) {
+    
         this.inf("Loading Data", this.model)
-        if (this.options.formBuilderFieldSerialisedData()) {
-            let data = this.formbuilder()[this.options.formBuilderFieldSerialisedData()];
+        if (this.options?.formBuilderFieldSerialisedData()) {
+
+            //let data = this.formbuilder()[this.options?.formBuilderFieldSerialisedData()];
+            let data = await this.getData();
             if (data) {
-                let base64Decoded = atob(data);
-                this.selectedMatter(JSON.parse(base64Decoded));
+                let base64Decoded = deserializeObjectFromBase64<any>(data);
+                this.selectedMatter(base64Decoded);
             }
         }
     }
@@ -172,10 +196,15 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
         try {
             //https://hsf-vnext.sharedo.co.uk/api/externalMatterProvider/details/81735089
 
+            if (this.searchStatusDiv) {
+                this.searchStatusDiv.classList.remove("show");
+
+            }
+
             // if (!model || !model.code) return null; //removed in favor of generic result
             $ui.stacks.lock(self, "Loading");
 
-            if (!this.options.loadApiUrl()) {
+            if (!this.options?.loadApiUrl()) {
                 this.log(inf("No Load API URL defined, using search results"));
 
                 this.selectedMatter(model);
@@ -185,10 +214,10 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
                 model = await this.loadMatterDetailsFromLoadAPI(model);
                 this.selectedMatter(model);
 
-                // let mappedData = mapData(this.selectedMatter!(), ko.toJS(this.options.dataMapping()));
+                // let mappedData = mapData(this.selectedMatter!(), ko.toJS(this.options?.dataMapping()));
                 // this.inf("Mapped Data", mappedData)
 
-                // let reverse = reverseMapData(mappedData, ko.toJS(this.options.dataMapping()));
+                // let reverse = reverseMapData(mappedData, ko.toJS(this.options?.dataMapping()));
                 // this.inf("Mapped Reverse", mappedData)
 
                 $ui.stacks.unlock(self);
@@ -198,7 +227,7 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
             // this.ensureSelectedMatterTemplate();
 
 
-            let textValue = this.options.selectedFieldDisplayValue();
+            let textValue = this.options?.selectedFieldDisplayValue();
             if (!textValue) {
                 textValue = "{matterCode} - {shortName}";
             }
@@ -212,7 +241,7 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
             //         textValue = textValue.replace(m, val);
             //     });
             // }
-            textValue = executeFunc(textValue, model)
+            textValue = executeEmbeddedCode(textValue, model)
 
 
             //Resut the basic selected display card to the auto complete
@@ -246,10 +275,17 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
                 if (this.searchTemplateGeneratedDiv) {
                     this.searchTemplateGeneratedDiv.remove();
                 }
-                let unwrap = ko.toJS(this.options.searchFields());
+                let unwrap = ko.toJS(this.options?.searchFields());
 
 
-                this.searchTemplateGeneratedDiv = generateHtmlDiv(unwrap, "data", this.searchCustomTemplateContentsDiv, applicator);
+                if(!unwrap)
+                {
+                    this.err("No searchFields defined");
+                    throw new Error("No searchFields defined");
+                }
+                
+                    this.searchTemplateGeneratedDiv = generateHtmlDiv(unwrap, "data", this.searchCustomTemplateContentsDiv, applicator);
+                
                 // this.searchCustomTemplateContentsDiv.appendChild(this.searchTemplateGeneratedDiv);
                 // ko.applyBindings(this, this.searchTemplateGeneratedDiv);
                 this.searchTemplateToUseName = this.searchCustomTemplateId;
@@ -328,14 +364,14 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
             ko.cleanNode(this.selectedTemplateGeneratedDiv);
             this.selectedTemplateGeneratedDiv.remove();
         }
-        if (!this.options.selectedFields()) {
+        if (!this.options?.selectedFields()) {
             this.err("No searchIFieldPlacement defined");
             throw new Error("No searchIFieldPlacement defined");
         }
 
         let applicator = new TemplateApplicator();
 
-        this.selectedTemplateGeneratedDiv = generateHtmlDiv(ko.toJS(this.options.selectedFields()), "selectedMatter()", this.selectedDiv, applicator);
+        this.selectedTemplateGeneratedDiv = generateHtmlDiv(ko.toJS(this.options?.selectedFields()), "selectedMatter()", this.selectedDiv, applicator);
         // this.selectedDiv.appendChild(this.selectedTemplateGeneratedDiv);
         // ko.cleanNode(this.selectedDiv);
         if (this.selectedMatter && this.selectedMatter()) {
@@ -347,6 +383,63 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
 
     }
 
+    async updateFields()
+    {
+        if(!this.options?.fieldMapping || !this.options?.fieldMapping()) 
+        {
+            return  
+        }
+
+        this.options?.fieldMapping()?.forEach((mapping) => {
+
+            let searchResultField = gvko(mapping.searchResultField);
+            let formBuilderField = gvko(mapping.formBuilderField)
+ 
+            let data =  { data: this.selectedMatter()}
+            let value = executeEmbeddedCode( searchResultField,data,undefined)
+            this.updateFieldValue(formBuilderField, value);
+        });
+
+
+    }
+    async updateFieldValue(fieldName: string, value: any) {
+        let divElement = document.querySelector(`div[data-alpaca-container-item-name="${fieldName}"]`);
+
+        if (!divElement) {
+            this.err(`Could not find element with data-alpaca-container-item-name='${fieldName}'`)
+            return;
+        }
+ 
+        try {
+            let alp = ($(divElement) as any).alpaca()
+            if (alp.selectOptions) {
+                let found = alp.selectOptions.find((s: any) => s.text.toLowerCase() === value.toLowerCase());
+                if (found) {
+                    let currValue =  alp.getValue()
+                    if(currValue)
+                    {
+                        return //dont override an already set vlaue
+                    }
+                    alp.setValue(found.value);
+                    if(alp._events.change){
+                        alp._events.change();
+                    }
+                    alp.refresh();
+                    return;
+                }
+                return;
+            }
+
+            alp.setValue(value);
+        }
+        catch (e) {
+            this.err("Error updating field value", e)
+        }
+
+
+
+    }
+
     async loadMatterDetailsFromLoadAPI(model: IExternalResultItem) {
 
         this.clearErrors();
@@ -354,13 +447,19 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
         try {
             let retValue: any = model;
 
-            let url = this.options.loadApiUrl();
+            let url = this.options?.loadApiUrl();
 
             try {
-                url = executeFunc(url, model)
+                url = executeEmbeddedCode(url, model)
             }
             catch (e) {
                 this.err("Error executing url function", e);
+            }
+
+            if(!url)
+            {
+                this.err("No url defined");
+                throw new Error("No url defined");
             }
 
             //find any values within {} and replace with the value from the model
@@ -383,13 +482,13 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
                         })
                         return;
                     }
-                    url = url.replace(m, val);
+                    url = url!.replace(m, val);
                 });
             }
             this.log("Loading Matter using : " + url, "green");
 
             return executeGetv2(url).then((response) => {
-                let dataPath = this.options.loadApiResultDataPath();
+                let dataPath = this.options?.loadApiResultDataPath();
                 let data = this.validateResponseData(response, dataPath);
                 if (response.info.success === false) {
                     this.buildUserErrors(response);
@@ -463,23 +562,30 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
     }
 
     save(model: any) {
-        let data = 
-        { 
-            data:this.selectedMatter!() //! To keep consistency with the search template and search results
+        let data =
+        {
+            data: this.selectedMatter!() //! To keep consistency with the search template and search results
         }
-        
-        let mappedData = mapData(data, ko.toJS(this.options.dataMapping()));
-        
-        if(this.options.formBuilderFieldSerialisedData()){
-            let base64EncodedData = btoa(JSON.stringify(this.selectedMatter!())); //! note does not include the data attribute as this is specific to the search template
-            mappedData[this.options.formBuilderFieldSerialisedData()] =  base64EncodedData;
-          }
-        
+
+        let dataMappings = ko.toJS(this.options?.dataMapping());
+        if(!dataMappings)
+        {
+            this.err("No dataMappings defined");
+            throw new Error("No dataMappings defined");
+        }
+
+        let mappedData = mapData(data, dataMappings);
+        if (gvko(this.options?.formBuilderFieldSerialisedData)) {
+            // let base64EncodedData = btoa(JSON.stringify(this.selectedMatter!())); //! note does not include the data attribute as this is specific to the search template
+            let base64EncodedData = serializeObjectToBase64(this.selectedMatter!()); //! note does not include the data attribute as this is specific to the search template
+            mappedData[gvko(this.options?.formBuilderFieldSerialisedData)] = base64EncodedData;
+        }
+
         this.inf("save", mappedData)
         let dataToSave = this.ensureFormbuilder(model);
         $.extend(this.ensureFormbuilder(model), mappedData);
         this.l("dataToSave", dataToSave)
- 
+
     };
 
 
@@ -496,7 +602,7 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
         var search = searchTerm.toLowerCase();
 
         let multiAPICallResults: Promise<any> | undefined = undefined;
-        if (this.options.searchApiExecutionSettings && this.options.searchApiExecutionSettings()) {
+        if (this.options?.searchApiExecutionSettings && gvko(this.options?.searchApiExecutionSettings)) {
             multiAPICallResults = this.querySearchAPIMulti(search, {}).then(data => {
                 if (!data) {
                     this.wrn("No results from multi search")
@@ -542,7 +648,7 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
         var search = searchTerm.toLowerCase();
 
         this.log("Searching for: " + search);
-        if (!this.options.searchApiExecutionSettings) {
+        if (!this.options?.searchApiExecutionSettings) {
             this.err("No searchApiExecutionSettings defined");
             return;
         }
@@ -552,9 +658,16 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
         //create div to hold the results
         let searchStatusInfoDiv = document.createElement("div");
         searchStatusInfoDiv.id = "searchResults";
+        searchStatusInfoDiv.classList.add("ems-search-results");
+
+
+
 
         //Find the seach status div in the HTML and add the results div to it
         this.searchStatusDiv = this.element.querySelector(`#${SEARCH_STATUS_ID}`) as HTMLDivElement;
+        this.searchStatusDiv.classList.remove("show");
+        this.searchStatusDiv.classList.remove("all-searches-completed");
+
         if (!this.searchStatusDiv) {
             this.err(`Could not find element with id '${SEARCH_STATUS_ID}'`);
             throw new Error(`Could not find element with id '${SEARCH_STATUS_ID}'`);
@@ -565,11 +678,15 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
             this.searchStatusDiv.innerHTML = "";
             this.searchStatusDiv.appendChild(searchStatusInfoDiv);
             this.searchStatusDiv.classList.add("ems-search-status");
+
+            if (gvko(this.options?.showSearchingStatus)) {
+                this.searchStatusDiv.classList.add("show");
+            }
         }
 
 
         //loop through each searchApiExecutionSetting and call the API for each one
-        this.options.searchApiExecutionSettings()?.forEach((setting) => {
+        gvko(this.options?.searchApiExecutionSettings)?.forEach((setting:TAPIExecutionSettings) => {
 
             //convert the setting to a plain object
             setting = ko.toJS(setting)
@@ -583,11 +700,19 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
             searchDiv.classList.add("ems-search-result");;
             searchStatusInfoDiv.appendChild(searchDiv);
 
+
+
             //`<div class='ems-search-result-status searching'></div>`
             let forEachSearchStatusDiv = document.createElement("div");
             forEachSearchStatusDiv.classList.add("ems-each-search-status");
             forEachSearchStatusDiv.classList.add("searching");
             searchDiv.appendChild(forEachSearchStatusDiv);
+
+            let indicatorDiv = document.createElement("div");
+            indicatorDiv.classList.add("ems-search-results-indicator");
+            indicatorDiv.classList.add("ring")
+            indicatorDiv.classList.add("show")
+            forEachSearchStatusDiv.appendChild(indicatorDiv);
 
             // Searching <span class="ems-search-result-name">${setting.name || setting.url}</span>
             let eachSearchResultMessage = document.createElement("div");
@@ -599,20 +724,67 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
             elapsedTimeDiv.classList.add("ems-search-result-elapsed-time");
             forEachSearchStatusDiv.appendChild(elapsedTimeDiv);
 
+            //elapsed time area
+            let innerSpan = document.createElement("span");
+            innerSpan.classList.add("esm-elapsed");
+            innerSpan.innerHTML = "elapsed time";
+
+            let innerSpan2 = document.createElement("span");
+            innerSpan2.classList.add("esm-elapsed-value");
+
+            let innerSpanIndicator = document.createElement("span");
+            innerSpanIndicator.classList.add("esm-elapsed-indicator");
+
+
+            elapsedTimeDiv.appendChild(innerSpan);
+            elapsedTimeDiv.appendChild(innerSpan2);
+            elapsedTimeDiv.appendChild(innerSpanIndicator);
+
             //set a timer to show the user that the search is taking place
             let interVal = setInterval(() => {
 
                 this.l("Still searching for:", setting.name || setting.url)
                 let elapsed = new Date().getTime() - startTime.getTime();
                 if (elapsedTimeDiv) {
-                    elapsedTimeDiv.innerHTML = `Elapsed time: ${elapsed / 1000} seconds`;
+                    // elapsedTimeDiv.innerHTML = `elapsed time: ${elapsed / 1000}:${elapsed / 10000} seconds`;
+                    //show elapsed with seconds and milliseconds
+                    // elapsedTimeDiv.innerHTML = `<span class="esm-elapsed">elapsed time</span><span class="ring esm-elapsed-value">${elapsed / 1000}</span>`;
+
+                    //<span class="esm-elapsed">elapsed time</span><span class="ring esm-elapsed-value">${elapsed / 1000}</span>
+                    let seconds = Math.floor(elapsed / 1000);
+                    let milliseconds = Math.floor((elapsed % 1000) / 10);
+                    let millisecondsString = milliseconds.toString();
+                    if (milliseconds < 10) {
+                        millisecondsString = "0" + millisecondsString;
+                    }
+
+                    if (seconds > 3 && seconds < 6) {
+                        innerSpan2.classList.add("long")
+                    }
+                    if (seconds > 6 && seconds < 9) {
+                        innerSpan2.classList.add("very-long")
+                        innerSpan2.classList.remove("long")
+                    }
+
+                    if (seconds > 9) {
+                        innerSpan2.classList.remove("very-long")
+                        innerSpan2.classList.add("very-very-long")
+
+                    }
+
+
+                    innerSpan2.innerHTML = `${seconds}.${millisecondsString}`;
+
                 }
                 if (!weAreStillSearching) {
+                    elapsedTimeDiv.innerHTML = `<span class="esm-elapsed">completed in</span><span class="esm-elapsed-value">${elapsed / 1000}</span>`;
+                    forEachSearchStatusDiv.classList.remove("searching");
+                    indicatorDiv.classList.remove("show")
                     clearInterval(interVal);
                     return;
                 }
 
-            }, 1000);
+            }, 10);
 
 
             let data: any | undefined = undefined; //Data for the fetch
@@ -636,11 +808,11 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
                 return [];
             }
             //replace any values in the url with the values from the data context i.e. searchTerm and any other values
-            url = replaceValues(setting.url, dataContext);
+            url = executeEmbeddedCode(setting.url, dataContext);
 
             //if there is data defined in the setting, then replace any values in the data with the values from the data context
             if (setting.data) {
-                data = replaceValues(setting.data, dataContext);
+                data = executeEmbeddedCode(setting.data, dataContext);
             }
 
             try {
@@ -698,6 +870,12 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
 
 
         return Promise.all(executionResults).then(() => {
+            this.searchStatusDiv?.classList.add("all-searches-completed");
+
+            setTimeout(() => {
+                this.searchStatusDiv?.classList.remove("show");
+            }, 8000);
+
             let ultimateResult: any[] = []; //the final result
             executionResults.forEach((result) => {
                 result.then((data) => {
@@ -720,7 +898,7 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
     };
 
 
-    override async onSave(model: any) {
+    override onSave(model: any) {
         // this.log("No Save Implemented", "green");
         this.validateFormbuilderJSONFieldSetup();
         this.save(model);
@@ -736,8 +914,15 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
      * @param addErrors if set to false then no errors will be added to the errors array
      * @returns 
      */
-    validateResponseData(response: TExecuteFetchResponse, dataPath: string, setting?: TAPIExecutionSettings, addErrors?: boolean) {
+    validateResponseData(response: TExecuteFetchResponse, dataPath: string | undefined, setting?: TAPIExecutionSettings, addErrors?: boolean) {
         let retValue: any | undefined = undefined
+
+        if(!dataPath)
+        {
+            this.err("No dataPath defined");
+            throw new Error("No dataPath defined");
+        }
+
 
         if (response.info.success === false) {
             this.buildUserErrors(response);
@@ -786,16 +971,14 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
         return dataItems;
     }
 
-
-
     refresh(newConfig: any): void {
-        // this.setup();
+         this.loadAndBind();
     }
 
 
     reset(newConfig: any): void {
-        // this.searchIFieldPlacement = this.options.searchFields();
-        // this.selectedIFieldPlacement = this.options.selectedFields();
+        // this.searchIFieldPlacement = this.options?.searchFields();
+        // this.selectedIFieldPlacement = this.options?.selectedFields();
     }
 
     setWidgetJsonSettings(): IWidgetJson<IExternalMatterSearchConfiguration> {
@@ -806,11 +989,15 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
         return "ExternalMatterSearch";
     }
 
-    setDefaults(): IDefaultSettings<IExternalMatterSearchConfiguration> {
+    setDefaults(): IDefaultSettingsWithSpecificComponentConfig<IExternalMatterSearchConfiguration> {
         return Default
     }
 
     setLocationOfDataToLoadAndSave(): string | undefined {
+        if (this.options?.formBuilderFieldSerialisedData() && this.options?.formBuilderName()) {
+            return "form-" + this.options?.formBuilderName() + "." + this.options?.formBuilderFieldSerialisedData();
+        }
+
         return undefined;
     }
 
@@ -819,30 +1006,30 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
     getInputVisability() {
 
         let retValue = true;
-        if (!this.options.inputVisability()) {
+        if (!this.options?.inputVisability()) {
             retValue = true;
         }
 
         //check if readOnly is a boolean
-        if (typeof this.options.inputVisability() === "boolean") {
-            retValue = this.options.inputVisability() as boolean;
+        if (typeof this.options?.inputVisability() === "boolean") {
+            retValue = this.options?.inputVisability() as boolean;
         }
         //
         //check if the readOnly is a rule
-        if (typeof this.options.inputVisability() === "object") {
+        if (typeof this.options?.inputVisability() === "object") {
             //check if its an array
-            if (!Array.isArray(this.options.inputVisability())) {
-                this.options.inputVisability([this.options.inputVisability() as any]);
+            if (!Array.isArray(this.options?.inputVisability())) {
+                this.options?.inputVisability([this.options?.inputVisability() as any]);
             }
-            if (this.options.inputVisability() instanceof Array) {
-                let rules = this.options.inputVisability() as IRule[];
+            if (this.options?.inputVisability() instanceof Array) {
+                let rules = this.options?.inputVisability() as IRule[];
                 //check if any of the rules evaluate to true
                 for (let i = 0; i < rules.length; i++) {
                     const rule = rules[i] as NestedObservableObject<IRule>;
                     if (!rule.rule) continue;
                     let ruleToEval = rule.rule();
                     let dataContext = ko.toJS(this.model);
-                    retValue = evaluteRule(ruleToEval,dataContext);
+                    retValue = evaluteRule(ruleToEval, dataContext);
                 }
             }
         }
@@ -861,16 +1048,16 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
         // return false; //default
     }
 
-    getConfiguration(): IExternalMatterSearchConfiguration {
+    getConfiguration(): IExternalMatterSearchConfiguration | undefined {
         return this.configuration;
     }
 
     getSearchFieldPlacement(): IFieldPlacement | undefined {
-        return ko.toJS(this.options.searchFields());
+        return ko.toJS(this.options?.searchFields());
     }
 
     getSelectedIFieldPlacement(): IFieldPlacement | undefined {
-        let retValue = ko.toJS(this.options.selectedFields());
+        let retValue = ko.toJS(this.options?.selectedFields());
         return retValue
     }
 

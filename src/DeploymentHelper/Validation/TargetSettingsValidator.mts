@@ -127,19 +127,28 @@ export async function validateAndBuildTargetSettings(defaultSettings: IDefaults,
         return newTarget;
     }
 
-    //Get TS files
-    let getTargetTSFileNameResult = getTargetTSFileName(targetValue, newTarget);
-    if (getTargetTSFileNameResult.success === false) {
-        l(`        No Typescript file found`.red.bold);
-        newTarget.valid = false;
-        newTarget.erros.push(getTargetTSFileNameResult.error!);
-        return newTarget;
+
+    
+    //Get TS files but not for workflows ! yet
+    if(targetValue.type!=="workflow")
+    {
+        let getTargetTSFileNameResult = getTargetTSFileName(targetValue, newTarget);
+        if (getTargetTSFileNameResult.success === false) {
+            l(`        No Typescript file found`.red.bold);
+            newTarget.valid = false;
+            newTarget.erros.push(getTargetTSFileNameResult.error!);
+            return newTarget;
+        }
+        newTarget.tsFileInfo = getTargetTSFileNameResult;
+        l(`        Typescript file found: ${newTarget.tsFileInfo.tsFilePath}`);
     }
-    newTarget.tsFileInfo = getTargetTSFileNameResult;
-    l(`        Typescript file found: ${newTarget.tsFileInfo.tsFilePath}`);
+    else{
+        validateWorkflowFiles(newTarget);
+    }
 
 
     // validateTypeAndManifest(newTarget,targetValue);
+    
 
     let manifestResult = await validateManifestSetManifestJSON(newTarget, targetValue);
 
@@ -159,9 +168,7 @@ export async function validateAndBuildTargetSettings(defaultSettings: IDefaults,
     if (newTarget.type === "widget") {
         // extractWidgetFilePaths(newTarget, targetValue);
     }
-    else {
-        validateWorkflowFiles(newTarget);
-    }
+    
     validateDesignerFiles(targetValue, newTarget);
 
     //Log out the outcome results
@@ -416,6 +423,7 @@ async function validateManifestSetManifestJSON(newTarget: IFinalTargetSettings, 
         retValue.type = "wf-action";
         retValue.manifestFilePath = wfActionJsonPath;
         retValue.manifestFileName = path.basename(wfActionJsonPath);
+        
     }
     else {
         let errMessage = `Invalid ! No manifest file found`;
@@ -431,7 +439,7 @@ async function validateManifestSetManifestJSON(newTarget: IFinalTargetSettings, 
     l(`Reading Manifest File: ${newTarget.manifestFilePath}`.blue.bold);
     l(`        :${newTarget.manifestFilePath}`.blue.bold);
 
-    if (!newTarget.manifestFilePath || !fs.existsSync(newTarget.manifestFilePath)) {
+    if (!retValue.manifestFilePath || !fs.existsSync(retValue.manifestFilePath)) {
         let errMessage = `Invalid ! No manifest file found`;
         l(`        Namespace: ` + errMessage.red.bold);
         l(`             File: ${newTarget.manifestFilePath}`.blue.bold);
@@ -440,7 +448,7 @@ async function validateManifestSetManifestJSON(newTarget: IFinalTargetSettings, 
         return retValue;
     }
 
-    let manifestFileContent = await getStringContentsFromfileUri(newTarget.manifestFilePath);
+    let manifestFileContent = await getStringContentsFromfileUri(retValue.manifestFilePath);
 
     if (!manifestFileContent) {
         let errMessage = `Invalid ! No manifest file found`;
@@ -457,20 +465,21 @@ async function validateManifestSetManifestJSON(newTarget: IFinalTargetSettings, 
         retValue.success = true;
         retValue.manifest = manifestJson;
 
-        let idShouldBe = newTarget.namespace + "." + newTarget.name;
+        //TODO: Ignore for now as this is for workflows and need to deal with 
+        // let idShouldBe = newTarget.namespace + "." + newTarget.name;
 
-        let manifestValue = manifestJson.id;
-        if (newTarget.type === "wf-action") {
-            manifestValue = manifestJson.systemName;
-        }
+        // let manifestValue = manifestJson.id;
+        // if (newTarget.type === "wf-action") {
+        //     manifestValue = manifestJson.systemName;
+        // }
 
-        if (manifestValue !== idShouldBe) {
-            let errMessage = `Invalid ! Namespace in manifest is ${manifestValue} but should be ${idShouldBe}`;
-            l(`        Namespace: ` + errMessage.red.bold);
-            l(`             File: ${newTarget.manifestFilePath}`.blue.bold);
-            newTarget.erros.push(errMessage);
-            newTarget.valid = false;
-        }
+        // if (manifestValue !== idShouldBe) {
+        //     let errMessage = `Invalid ! Namespace in manifest is ${manifestValue} but should be ${idShouldBe}`;
+        //     l(`        Namespace: ` + errMessage.red.bold);
+        //     l(`             File: ${newTarget.manifestFilePath}`.blue.bold);
+        //     newTarget.erros.push(errMessage);
+        //     newTarget.valid = false;
+        // }
 
         return retValue;
         //TODO: Validate all file references

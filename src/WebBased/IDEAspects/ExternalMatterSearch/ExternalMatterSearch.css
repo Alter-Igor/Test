@@ -2,9 +2,8 @@
   padding: 15px;
 }
 
-.ems-result-item
-{
-  background-color:white;
+.ems-result-item {
+  background-color: white;
 }
 
 
@@ -21,9 +20,8 @@
 }
 
 
-.card-result:hover
-{
-   box-shadow: 1px 1px 10px #eb8a8a;
+.card-result:hover {
+  box-shadow: 1px 1px 10px #eb8a8a;
 }
 
 .ems-selected-item {
@@ -50,14 +48,14 @@
 }
 
 .ems-placement-item {
-  
-/* width: 100%; */
-  
-display: flex;
-  
-flex-direction: row;
-  
-align-items: center;
+
+  /* width: 100%; */
+
+  display: flex;
+
+  flex-direction: row;
+
+  align-items: center;
 }
 
 .ems-row-container {
@@ -135,7 +133,7 @@ align-items: center;
 
 .ide-aspect-error-user-message:before {
   content: "- ";
-  color: red; 
+  color: red;
 }
 
 .ide-aspect-error-user-message:after {
@@ -152,62 +150,197 @@ align-items: center;
   width: 100%;
 }
 
-.ems-search-result
-{
-  
-display: inline-flex;
+.ems-search-result {
+
+  display: inline-flex;
+
+  flex-direction: column;
 }
 
-.ems-each-search-status
-{
-    /* height: 100px; */
-    font-family: 'Barlow';
-    display: flex;
-    /* flex-direction: row; */
+.ems-each-search-status {
+  /* height: 100px; */
+  font-family: 'Barlow';
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 
 
 
-.ems-search-result-message 
-{
-  
-}
+.ems-search-result-message {}
 
-.ems-search-result-message.completed
-{
-  
-}
+.ems-search-result-message.completed {}
 
-.ems-search-result-name
-{
+.ems-search-result-name {
   font-weight: bold;
+  color: red;
+  margin:5px
 }
 
-.ems-search-result-name::before
-{
-  content:"["
+.ems-search-result-name::before {
+  content: "[ ";
+  color: black;
 }
-.ems-search-result-name::after
-{
-  content:"]"
+
+.ems-search-result-name::after {
+  content: " ]";
+  color: black;
+  
 }
 
 
-.ems-search-result-count
-{
-  font-weight:bold;
+.ems-search-result-count {
+  font-weight: bold;
+  margin: 10px;
+  color: green;
 }
 
-.ems-search-result-count::before
-{
-  content:"["
-}
-.ems-search-result-count::after
-{
-  content:"]"
+.ems-search-result-count::before {
+  content: "[ ";
+  color: black;
 }
 
-.ems-search-result-elapsed-time::before
+.ems-search-result-count::after {
+  content: " ]";
+  color: black;
+}
+
+.ems-search-result-elapsed-time::before {
+  content: "-"
+}
+
+.ems-search-result-elapsed-time::after {
+  content: ""
+}
+
+.ems-search-status.show {
+  opacity: 1;
+  height: auto;
+  /* Adjust this to your content's height */
+  transition: opacity 5s ease-in-out;
+  max-height: 500px;
+  transition: max-height 1.15s ease-out;
+
+}
+
+.ems-search-status {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.45s ease-out;
+}
+
+.ems-search-results {
+
+  display: flex;
+
+  flex-direction: column;
+}
+
+.ems-each-search-status.searching .ems-search-result-elapsed-time {
+  color: blue;
+}
+
+
+.ems-each-search-status .ems-search-result-elapsed-time {
+  /* color: green; */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.esm-elapsed
 {
-   content:" - "
+  margin: 5px;
+}
+
+.esm-elapsed-value.long
+{
+  color: orange
+}
+
+.esm-elapsed-value.very-long
+{
+  color: red
+}
+
+.esm-elapsed-value.very-very-long
+{
+  color: red;
+    animation: flash 0.51s infinite ease-in-out ; /* Adjust duration as needed */
+}
+
+
+.esm-elapsed-value
+{
+  font-style:italic;
+    margin: 5px;
+}
+
+
+.ems-search-status.all-searches-completed
+{
+  animation: flash 0.51s ; /* Adjust duration as needed */
+}
+
+@keyframes flash {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+.ems-selected-item
+{
+   opacity:0;
+}
+
+.ems-selected-item.ems-show
+{
+  opacity:1;
+   transition: opacity 5s ease-in-out;
+}
+
+
+.ring{
+  opacity: 0  ;
+  transform: opacity 5s ease-in-out;
+}
+
+.ring.show {
+  opacity: 1;
+  transform: opacity 5s ease-in-out;
+  /* position: relative; */
+  /* width: 80px; */
+  /* height: 80px; */
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  flex-direction: row-reverse;
+}
+.ring:after {
+  content: " ";
+  display: block;
+  border-radius: 50%;
+  width: 0;
+  height: 0;
+  margin: 8px;
+  box-sizing: border-box;
+  border: 7px solid #e54040;
+  border-color: #f00 transparent #0f0a55 transparent;
+  animation: ring 1.2s infinite;
+}
+@keyframes ring {
+  0% {
+    transform: rotate(0);
+    animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+  }
+  50% {
+    transform: rotate(900deg);
+    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+  }
+  100% {
+    transform: rotate(1800deg);
+  }
 }

@@ -94,33 +94,41 @@
                     "isConfigurable": true,
                     "configurationWidget": null,
                     "defaultConfigurationJson": {
-                        "formBuilderField": "eDiscoveryUpdatePlannedDate",
-                        "defaultValue": {
-                            "defaultDateFromNowHours": 24,
-                            "getValueUsingParents": true,
-                            "maxDepth": 0
-                        },
-                        "title": "Updated planned due date:",
-                        "pickerEnabled": true,
-                        "eventToFireOnUpdate": [
-                            "IDEAspects.DatePickerAspect.Update"
-                        ],
-                        "datePickerOptions": {
-                            "display": {
-                                "inline": true,
-                                "sideBySide": true,
-                                "theme": "light"
+                        "configuration": {
+                            "formBuilderField": "eDiscoveryUpdatePlannedDate",
+                            "hideInputBox": true,
+                            "defaultValue": {
+                                "defaultDateFromNowHours": 24
+                            },
+                            "title": "Updated planned due date:",
+                            "pickerEnabled": true,
+                            "eventToFireOnUpdate": [
+                                "IDEAspects.DatePickerAspect.Update"
+                            ],
+                            "datePickerOptions": {
+                                "display": {
+                                    "inline": true,
+                                    "sideBySide": true,
+                                    "theme": "light"
+                                }
+                            },
+                            "debug": {
+                                "supportRequestEnabled": false,
+                                "enabled": true,
+                                "logToConsole": true,
+                                "showInAspect": false,
+                                "liveConfig": false
+                            },
+                            "refreshOn": {
+                                "sharedoIdChanged": false,
+                                "sharedoParentIdChanged": false,
+                                "sharedoPhaseChanged": false
+                            },
+                            "eventsToReactTo": [],
+                            "dataSettings": {
+                                "getValueUsingParents": false,
+                                "maxDepth": 0
                             }
-                        },
-                        "debug": {
-                            "enabled": true,
-                            "logToConsole": true,
-                            "showInAspect": true
-                        },
-                        "eventsToReactTo": [],
-                        "dataSettings": {
-                            "getValueUsingParents": false,
-                            "maxDepth": 0
                         }
                     }
                 },
@@ -191,49 +199,58 @@
                 "priority": 6000,
                 "designer": {
                     "allowInPortalDesigner": false,
-                    "allowInSharedoPortalDesigner": false,
+                    "allowInSharedoPortalDesigner": true,
                     "allowAspectAdapter": true,
                     "title": "Single Value Aspect",
                     "icon": "fa-cog",
                     "description": "Single Value Aspect",
-                    "categories": [],
+                    "categories": [
+                        "UD - IDEAspects"
+                    ],
                     "isConfigurable": true,
                     "configurationWidget": null,
                     "defaultConfigurationJson": {
-                        "fieldPath": "Title",
-                        "title": "Title Value",
-                        "calculatedValue": "",
-                        "calculatedTitle": "",
-                        "valueOnNotFound": "Not Found",
-                        "formatter": "value",
-                        "debug": {
-                            "supportRequestEnabled": false,
-                            "enabled": true,
-                            "logToConsole": true,
-                            "showInAspect": false,
-                            "liveConfig": true
-                        },
-                        "eventsToReactTo": [
-                            {
-                                "eventPath": "sharedo.core.case.phase-changed",
-                                "methodToCall": "loadAndBind"
+                        "configuration": {
+                            "fieldPath": "title",
+                            "title": null,
+                            "calculatedValue": "",
+                            "calculatedTitle": "",
+                            "valueOnNotFound": "Not Found",
+                            "formatter": "value",
+                            "debug": {
+                                "supportRequestEnabled": false,
+                                "enabled": true,
+                                "logToConsole": true,
+                                "showInAspect": false,
+                                "liveConfig": false
                             },
-                            {
-                                "eventPath": "sharedo.core.case.forms.phase.phase-changed",
-                                "methodToCall": "loadAndBind"
+                            "eventsToReactTo": [
+                                {
+                                    "eventPath": "sharedo.core.case.phase-changed",
+                                    "methodToCall": "loadAndBind"
+                                },
+                                {
+                                    "eventPath": "sharedo.core.case.forms.phase.phase-changed",
+                                    "methodToCall": "loadAndBind"
+                                },
+                                {
+                                    "eventPath": "sharedo.updated",
+                                    "methodToCall": "loadAndBind"
+                                },
+                                {
+                                    "eventPath": "sharedo.core.case.sharedo-updated",
+                                    "methodToCall": "loadAndBind"
+                                }
+                            ],
+                            "refreshOn": {
+                                "sharedoIdChanged": true,
+                                "sharedoParentIdChanged": true,
+                                "sharedoPhaseChanged": true
                             },
-                            {
-                                "eventPath": "sharedo.updated",
-                                "methodToCall": "loadAndBind"
-                            },
-                            {
-                                "eventPath": "sharedo.core.case.sharedo-updated",
-                                "methodToCall": "loadAndBind"
+                            "dataSettings": {
+                                "getValueUsingParents": false,
+                                "maxDepth": 0
                             }
-                        ],
-                        "dataSettings": {
-                            "getValueUsingParents": false,
-                            "maxDepth": 0
                         }
                     }
                 },
@@ -313,301 +330,316 @@
                     "isConfigurable": true,
                     "configurationWidget": null,
                     "defaultConfigurationJson": {
-                        "title": "Matter Search",
-                        "inputVisability": [
-                            {
-                                "rule": "phaseName().toLowerCase()==='new'"
-                            }
-                        ],
-                        "fackMode": false,
-                        "formBuilderFieldSerialisedData": "matterJSON",
-                        "selectedFieldDisplayValue": "`${dataContext.matterCode} - ${dataContext.shortName}`",
-                        "loadApiResultDataPath": "data",
-                        "loadApiUrl": "`/api/proxy/hurricane-api/_/v2/matters/${dataContext.data.matterCode||dataContext.data.code}`",
-                        "dataMapping": [
-                            {
-                                "formBuilderField": "expert-matter-number",
-                                "searchResultField": "{dataContext.data.matterCode}"
-                            },
-                            {
-                                "formBuilderField": "expert-matter-number-value",
-                                "searchResultField": "{dataContext.data.matterCode}"
-                            },
-                            {
-                                "formBuilderField": "matter-details-ib",
-                                "searchResultField": "{dataContext.data.secure}"
-                            },
-                            {
-                                "formBuilderField": "matter-details-name",
-                                "searchResultField": "{dataContext.data.shortName}"
-                            },
-                            {
-                                "formBuilderField": "matter-details-client-name",
-                                "searchResultField": "{dataContext.data.client.name}"
-                            },
-                            {
-                                "formBuilderField": "matter-details-client-code",
-                                "searchResultField": "{dataContext.data.client.code}"
-                            },
-                            {
-                                "formBuilderField": "matter-details-partner-name",
-                                "searchResultField": "{dataContext.data.partner.name}"
-                            }
-                        ],
-                        "debug": {
-                            "supportRequestEnabled": false,
-                            "enabled": true,
-                            "logToConsole": true,
-                            "showInAspect": false,
-                            "liveConfig": true
-                        },
-                        "searchFields": {
-                            "container": {},
-                            "icon": [
+                        "configuration": {
+                            "title": "Matter Search",
+                            "showSearchingStatus": true,
+                            "inputVisability": [
                                 {
-                                    "icon": "fa-search fa-2x text-primary"
+                                    "rule": "dataContext.phaseName ? dataContext.phaseName.toLowerCase()==='new' : true"
                                 }
                             ],
-                            "style": [
+                            "fackMode": false,
+                            "formBuilderName": "custom-alt-ediscovery-instruction-matter-details",
+                            "formBuilderFieldSerialisedData": "matterJSON",
+                            "selectedFieldDisplayValue": "${dataContext.matterCode} - ${dataContext.shortName}",
+                            "loadApiResultDataPath": "data",
+                            "loadApiUrl": "/api/proxy/hurricane-api/_/v2/matters/${dataContext.data.matterCode||dataContext.data.code}",
+                            "dataMapping": [
                                 {
-                                    "rule": "dataContext.data.data.status.toLowerCase()==='closed'",
-                                    "style": {
-                                        "color": "lightgrey"
-                                    }
-                                }
-                            ],
-                            "rows": [
-                                {
-                                    "fields": [
-                                        {
-                                            "field": "`${dataContext.data.data.matterCode||dataContext.data.data.code}`",
-                                            "style": "font-weight:bold",
-                                            "icon": [
-                                                {
-                                                    "rule": "dataContext.data.data.status.toLowerCase()==='open'",
-                                                    "icon": "fa-folder-open text-success",
-                                                    "position": "before"
-                                                },
-                                                {
-                                                    "rule": "dataContext.data.data.status.toLowerCase()==='closed'",
-                                                    "icon": "fa-folder text-danger",
-                                                    "position": "before"
-                                                }
-                                            ],
-                                            "width": null
-                                        },
-                                        {
-                                            "style": {
-                                                "color": "blue"
-                                            },
-                                            "field": "dataContext.data.title"
-                                        },
-                                        {
-                                            "field": "dataContext.data.data.status",
-                                            "formatter": "value.toUpperCase()",
-                                            "label": "Status",
-                                            "position": "right",
-                                            "width": null
-                                        }
-                                    ]
+                                    "formBuilderField": "expert-matter-number",
+                                    "searchResultField": "${dataContext.data.matterCode}"
                                 },
                                 {
-                                    "fields": [
-                                        {
-                                            "field": ""
-                                        },
-                                        {
-                                            "label": "Client",
-                                            "field": "dataContext.data.data.client",
-                                            "width": null
-                                        },
-                                        {
-                                            "field": ""
-                                        }
-                                    ]
+                                    "formBuilderField": "expert-matter-number-value",
+                                    "searchResultField": "${dataContext.data.matterCode}"
+                                },
+                                {
+                                    "formBuilderField": "matter-details-ib",
+                                    "searchResultField": "${dataContext.data.secure}"
+                                },
+                                {
+                                    "formBuilderField": "matter-details-name",
+                                    "searchResultField": "${dataContext.data.shortName}"
+                                },
+                                {
+                                    "formBuilderField": "matter-details-client-name",
+                                    "searchResultField": "${dataContext.data.client.name}"
+                                },
+                                {
+                                    "formBuilderField": "matter-details-client-code",
+                                    "searchResultField": "${dataContext.data.client.code}"
+                                },
+                                {
+                                    "formBuilderField": "matter-details-partner-name",
+                                    "searchResultField": "${dataContext.data.partner.name}"
                                 }
-                            ]
-                        },
-                        "selectedFields": {
-                            "container": {
+                            ],
+                            "fieldMapping": [
+                                {
+                                    "formBuilderField": "jurisdictions-country",
+                                    "searchResultField": "${dataContext.data.location.country}"
+                                }
+                            ],
+                            "debug": {
+                                "supportRequestEnabled": false,
+                                "enabled": true,
+                                "logToConsole": true,
+                                "showInAspect": false,
+                                "liveConfig": false
+                            },
+                            "searchFields": {
+                                "container": {},
+                                "icon": [
+                                    {
+                                        "icon": "fa-search fa-2x text-primary"
+                                    }
+                                ],
                                 "style": [
                                     {
-                                        "rule": "dataContext.data.secure",
+                                        "rule": "dataContext.data.data.status.toLowerCase()==='closed'",
                                         "style": {
-                                            "box-shadow": "1px 1px 62px #cb8383"
+                                            "color": "lightgrey"
                                         }
+                                    }
+                                ],
+                                "rows": [
+                                    {
+                                        "fields": [
+                                            {
+                                                "field": "${dataContext.data.data.matterCode||dataContext.data.data.code}",
+                                                "style": "font-weight:bold",
+                                                "icon": [
+                                                    {
+                                                        "rule": "dataContext.data.data.status.toLowerCase()==='open'",
+                                                        "icon": "fa-folder-open text-success",
+                                                        "position": "before"
+                                                    },
+                                                    {
+                                                        "rule": "dataContext.data.data.status.toLowerCase()==='closed'",
+                                                        "icon": "fa-folder text-danger",
+                                                        "position": "before"
+                                                    }
+                                                ],
+                                                "width": null
+                                            },
+                                            {
+                                                "style": {
+                                                    "color": "blue"
+                                                },
+                                                "field": "${dataContext.data.title}"
+                                            },
+                                            {
+                                                "field": "${dataContext.data.data.status}",
+                                                "formatter": "value.toUpperCase()",
+                                                "label": "Status",
+                                                "position": "right",
+                                                "width": null
+                                            }
+                                        ]
                                     },
                                     {
-                                        "rule": "!dataContext.data.secure",
-                                        "style": {
-                                            "box-shadow": "1px 1px 10px #a4a3a3"
-                                        }
+                                        "fields": [
+                                            {
+                                                "field": ""
+                                            },
+                                            {
+                                                "label": "Client",
+                                                "field": "${dataContext.data.data.client}",
+                                                "width": null
+                                            },
+                                            {
+                                                "field": ""
+                                            }
+                                        ]
                                     }
                                 ]
                             },
-                            "icon": [
-                                {
-                                    "rule": "dataContext.data.secure",
-                                    "icon": "fa-shield text-warning fa-2x",
-                                    "position": "before"
-                                }
-                            ],
-                            "rows": [
-                                {
-                                    "fields": [
+                            "selectedFields": {
+                                "container": {
+                                    "style": [
                                         {
-                                            "field": "dataContext.data.matterCode",
-                                            "style": "font-weight:bold",
-                                            "icon": [
-                                                {
-                                                    "rule": "dataContext.data.status.toLowerCase()==='open'",
-                                                    "icon": "fa-folder-open text-success",
-                                                    "position": "before"
-                                                },
-                                                {
-                                                    "rule": "dataContext.data.status.toLowerCase()==='closed'",
-                                                    "icon": "fa-folder text-danger",
-                                                    "position": "before"
-                                                }
-                                            ],
-                                            "width": null
-                                        },
-                                        {
-                                            "field": "dataContext.data.shortName",
-                                            "width": null,
+                                            "rule": "dataContext.data.secure",
                                             "style": {
-                                                "font-weight": "bold",
-                                                "color": "red",
-                                                "font-size": "larger"
+                                                "box-shadow": "1px 1px 62px #cb8383"
                                             }
                                         },
                                         {
-                                            "field": "dataContext.data.status",
-                                            "formatter": "value.toUpperCase()",
-                                            "label": "Status",
-                                            "position": "right",
-                                            "width": null,
-                                            "style": "font-weight:bold"
-                                        }
-                                    ]
-                                },
-                                {
-                                    "fields": [
-                                        {
-                                            "field": [
-                                                {
-                                                    "rule": "dataContext.data.secure",
-                                                    "field": "'Secured!'"
-                                                },
-                                                {
-                                                    "rule": "!dataContext.data.secure",
-                                                    "field": "'Not Secured'"
-                                                }
-                                            ],
-                                            "style": [
-                                                {
-                                                    "style": {
-                                                        "margin-top": "-10px",
-                                                        "font-size": "x-small"
-                                                    }
-                                                },
-                                                {
-                                                    "rule": "!dataContext.data.secure",
-                                                    "style": {
-                                                        "color": "green",
-                                                        "font-weight": "bold"
-                                                    }
-                                                },
-                                                {
-                                                    "rule": "dataContext.data.secure",
-                                                    "style": {
-                                                        "color": "red",
-                                                        "font-weight": "bold"
-                                                    }
-                                                }
-                                            ]
-                                        },
-                                        {
+                                            "rule": "!dataContext.data.secure",
                                             "style": {
-                                                "font-size": "smaller",
-                                                "margin-top": "-10px"
+                                                "box-shadow": "1px 1px 10px #a4a3a3"
+                                            }
+                                        }
+                                    ]
+                                },
+                                "icon": [
+                                    {
+                                        "rule": "dataContext.data.secure",
+                                        "icon": "fa-shield text-warning fa-2x",
+                                        "position": "before"
+                                    }
+                                ],
+                                "rows": [
+                                    {
+                                        "fields": [
+                                            {
+                                                "field": "${dataContext.data.matterCode}",
+                                                "style": "font-weight:bold",
+                                                "icon": [
+                                                    {
+                                                        "rule": "dataContext.data.status.toLowerCase()==='open'",
+                                                        "icon": "fa-folder-open text-success",
+                                                        "position": "before"
+                                                    },
+                                                    {
+                                                        "rule": "dataContext.data.status.toLowerCase()==='closed'",
+                                                        "icon": "fa-folder text-danger",
+                                                        "position": "before"
+                                                    }
+                                                ],
+                                                "width": null
                                             },
-                                            "field": "dataContext.data.practiceGroup"
-                                        },
-                                        {
-                                            "field": ""
-                                        }
-                                    ]
-                                },
-                                {
-                                    "fields": [
-                                        {
-                                            "label": "Client",
-                                            "field": "dataContext.data.client.name",
-                                            "width": null
-                                        },
-                                        {
-                                            "field": "dataContext.data.client.code",
-                                            "width": null,
-                                            "style": {}
-                                        }
-                                    ]
-                                },
-                                {
-                                    "fields": [
-                                        {
-                                            "label": "Partner",
-                                            "field": "dataContext.data.partner.name",
-                                            "width": null
-                                        },
-                                        {
-                                            "field": "dataContext.data.partner.code",
-                                            "width": null,
-                                            "style": {}
-                                        }
-                                    ]
-                                },
-                                {
-                                    "fields": [
-                                        {
-                                            "label": "Location",
-                                            "field": "dataContext.data.location.country",
-                                            "width": null
-                                        },
-                                        {
-                                            "label": "Office",
-                                            "field": "dataContext.data.location.office",
-                                            "width": null,
-                                            "style": {}
-                                        },
-                                        {
-                                            "label": "Region",
-                                            "field": "dataContext.data.location.region",
-                                            "width": null,
-                                            "style": {}
-                                        }
-                                    ]
-                                }
-                            ]
-                        },
-                        "searchApiExecutionSettings": [
-                            {
-                                "method": "GET",
-                                "url": "/api/proxy/hurricane-api/_/v1/find?q={searchTerm}&engines=MBN",
-                                "resultDataPath": "data[0].results",
-                                "name": "Matter Number"
+                                            {
+                                                "field": "${dataContext.data.shortName}",
+                                                "width": null,
+                                                "style": {
+                                                    "font-weight": "bold",
+                                                    "color": "red",
+                                                    "font-size": "larger"
+                                                }
+                                            },
+                                            {
+                                                "field": "${dataContext.data.status}",
+                                                "formatter": "value.toUpperCase()",
+                                                "label": "Status",
+                                                "position": "right",
+                                                "width": null,
+                                                "style": "font-weight:bold"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "fields": [
+                                            {
+                                                "field": [
+                                                    {
+                                                        "rule": "dataContext.data.secure",
+                                                        "field": "Secured!"
+                                                    },
+                                                    {
+                                                        "rule": "!dataContext.data.secure",
+                                                        "field": "Not Secured"
+                                                    }
+                                                ],
+                                                "style": [
+                                                    {
+                                                        "style": {
+                                                            "margin-top": "-10px",
+                                                            "font-size": "x-small"
+                                                        }
+                                                    },
+                                                    {
+                                                        "rule": "!dataContext.data.secure",
+                                                        "style": {
+                                                            "color": "green",
+                                                            "font-weight": "bold"
+                                                        }
+                                                    },
+                                                    {
+                                                        "rule": "dataContext.data.secure",
+                                                        "style": {
+                                                            "color": "red",
+                                                            "font-weight": "bold"
+                                                        }
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "style": {
+                                                    "font-size": "smaller",
+                                                    "margin-top": "-10px"
+                                                },
+                                                "field": "${dataContext.data.practiceGroup}"
+                                            },
+                                            {
+                                                "field": ""
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "fields": [
+                                            {
+                                                "label": "Client",
+                                                "field": "${dataContext.data.client.name}",
+                                                "width": null
+                                            },
+                                            {
+                                                "field": "${dataContext.data.client.code}",
+                                                "width": null,
+                                                "style": {}
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "fields": [
+                                            {
+                                                "label": "Partner",
+                                                "field": "${dataContext.data.partner.name}",
+                                                "width": null
+                                            },
+                                            {
+                                                "field": "${dataContext.data.partner.code}",
+                                                "width": null,
+                                                "style": {}
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "fields": [
+                                            {
+                                                "label": "Location",
+                                                "field": "${dataContext.data.location.country}",
+                                                "width": null
+                                            },
+                                            {
+                                                "label": "Office",
+                                                "field": "${dataContext.data.location.office}",
+                                                "width": null,
+                                                "style": {}
+                                            },
+                                            {
+                                                "label": "Region",
+                                                "field": "${dataContext.data.location.region}",
+                                                "width": null,
+                                                "style": {}
+                                            }
+                                        ]
+                                    }
+                                ]
                             },
-                            {
-                                "method": "GET",
-                                "url": "/api/proxy/hurricane-api/_/v1/find?q={searchTerm}&engines=MBC",
-                                "resultDataPath": "data[0].results",
-                                "name": "Matter Content"
+                            "searchApiExecutionSettings": [
+                                {
+                                    "method": "GET",
+                                    "url": "/api/proxy/hurricane-api/_/v1/find?q=${dataContext.searchTerm}&engines=MBN",
+                                    "resultDataPath": "data[0].results",
+                                    "name": "Aderant Matter Content"
+                                },
+                                {
+                                    "method": "GET",
+                                    "url": "/api/proxy/hurricane-api/_/v1/find?q=${dataContext.searchTerm}&engines=MBC",
+                                    "resultDataPath": "data[0].results",
+                                    "name": "AAderant Matter Number"
+                                }
+                            ],
+                            "refreshOn": {
+                                "sharedoIdChanged": true,
+                                "sharedoParentIdChanged": true,
+                                "sharedoPhaseChanged": false
+                            },
+                            "eventsToReactTo": [],
+                            "dataSettings": {
+                                "getValueUsingParents": false,
+                                "maxDepth": 0
                             }
-                        ],
-                        "eventsToReactTo": [],
-                        "dataSettings": {
-                            "getValueUsingParents": false,
-                            "maxDepth": 0
                         }
                     }
                 },
@@ -641,7 +673,7 @@
         "name": "LargeFiles",
         "sourcePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/LargeFiles",
         "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/WorkflowActions/LargeFiles",
-        "type": "",
+        "type": "workflow",
         "designerPath": "",
         "valid": false,
         "manifestFilePath": "",
@@ -682,16 +714,18 @@
         "tsDesignerFileInfo": {
             "success": false
         },
-        "publicPath": "/_ideFiles/WorkflowActions/LargeFiles/"
+        "publicPath": "/_ideFiles/WorkflowActions/LargeFiles/",
+        "generatDefaultConfigurationJson": false
     },
     {
         "name": "CustomProgressMilestone",
         "sourcePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/CustomProgressMilestone",
         "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/WorkflowActions/CustomProgressMilestone",
-        "type": "",
-        "designerPath": "",
-        "valid": false,
+        "type": "wf-action",
+        "designerPath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/CustomProgressMilestone/Designer",
+        "valid": true,
         "manifestFilePath": "",
+        "designerManifestFilePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/CustomProgressMilestone/Designer/manifest.widget.json",
         "modulesToExtract": [
             {
                 "modules": [
@@ -703,9 +737,7 @@
         "bundleAnalyzer": false,
         "enabled": true,
         "namespace": "WorkflowActions",
-        "erros": [
-            "No Main File CustomProgressMilestone.ts Found"
-        ],
+        "erros": [],
         "widgetTSFileName": "",
         "factoryTSFileName": "",
         "factoryTSFilePath": "",
@@ -713,15 +745,57 @@
         "templateTsFilePath": "",
         "cssFiles": [],
         "htmlFiles": [],
-        "designerTSFileName": "",
-        "designerTSFilePath": "",
+        "designerTSFileName": "CustomProgressMilestoneDesigner.ts",
+        "designerTSFilePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/CustomProgressMilestone/Designer/CustomProgressMilestoneDesigner.ts",
         "designerCSSFiles": [],
         "designerHTMLFiles": [],
+        "designerManifestJSON": {
+            "id": "WorkflowActions.CustomProgressMilestoneDesigner",
+            "priority": 6000,
+            "designer": {
+                "allowInPortalDesigner": false,
+                "allowInSharedoPortalDesigner": false
+            },
+            "scripts": [
+                "/_ideFiles/WorkflowActions/CustomProgressMilestone/Designer/CustomProgressMilestoneDesigner.js"
+            ],
+            "styles": [
+                "/_ideFiles/WorkflowActions/CustomProgressMilestone/Designer/CustomProgressMilestoneDesigner.css"
+            ],
+            "templates": [
+                "/_ideFiles/WorkflowActions/CustomProgressMilestone/Designer/CustomProgressMilestoneDesigner.html"
+            ],
+            "menuTemplates": [],
+            "components": [
+                "Sharedo.Core.Case.Components.SharedoTypePicker"
+            ]
+        },
         "tsFileInfo": {
             "success": false
         },
         "manifestInfo": {
-            "success": false
+            "type": "wf-action",
+            "success": true,
+            "manifest": {
+                "systemName": "WorkflowActions.CustomProgressMilestone",
+                "category": "Actions",
+                "name": "Custom Dynamic Progress milestone",
+                "icon": "fa-forward",
+                "description": "Transition a work item to another phase with Dynamic values",
+                "configWidget": "WorkflowActions.CustomProgressMilestoneDesigner",
+                "factoryIncludes": [],
+                "factoryScript": "/_ideFiles/WorkflowActions/CustomProgressMilestone/CustomProgressMilestone-factory.js",
+                "templateScript": "/_ideFiles/WorkflowActions/CustomProgressMilestone/CustomProgressMilestone-template.js",
+                "helperScripts": [
+                    "PhaseHelpers",
+                    "StringHelpers"
+                ],
+                "requiredTypes": [
+                    "/Identifier/Work Type Identifier"
+                ]
+            },
+            "manifestFileName": "CustomProgressMilestone.wf-action.json",
+            "manifestFilePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/CustomProgressMilestone/CustomProgressMilestone.wf-action.json"
         },
         "designerManifestInfo": {
             "success": false
@@ -729,16 +803,18 @@
         "tsDesignerFileInfo": {
             "success": false
         },
-        "publicPath": "/_ideFiles/WorkflowActions/CustomProgressMilestone/"
+        "publicPath": "/_ideFiles/WorkflowActions/CustomProgressMilestone/",
+        "generatDefaultConfigurationJson": false
     },
     {
         "name": "IsSharedoInPhaseWithFeature",
         "sourcePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/IsSharedoInPhaseWithFeature",
         "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/WorkflowActions/IsSharedoInPhaseWithFeature",
-        "type": "",
-        "designerPath": "",
-        "valid": false,
+        "type": "wf-action",
+        "designerPath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/IsSharedoInPhaseWithFeature/Designer",
+        "valid": true,
         "manifestFilePath": "",
+        "designerManifestFilePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/IsSharedoInPhaseWithFeature/Designer/manifest.widget.json",
         "modulesToExtract": [
             {
                 "modules": [
@@ -750,9 +826,7 @@
         "bundleAnalyzer": false,
         "enabled": true,
         "namespace": "WorkflowActions",
-        "erros": [
-            "No Main File IsSharedoInPhaseWithFeature.ts Found"
-        ],
+        "erros": [],
         "widgetTSFileName": "",
         "factoryTSFileName": "",
         "factoryTSFilePath": "",
@@ -760,15 +834,57 @@
         "templateTsFilePath": "",
         "cssFiles": [],
         "htmlFiles": [],
-        "designerTSFileName": "",
-        "designerTSFilePath": "",
+        "designerTSFileName": "IsSharedoInPhaseWithFeatureDesigner.ts",
+        "designerTSFilePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/IsSharedoInPhaseWithFeature/Designer/IsSharedoInPhaseWithFeatureDesigner.ts",
         "designerCSSFiles": [],
         "designerHTMLFiles": [],
+        "designerManifestJSON": {
+            "id": "WorkflowActions.IsSharedoInPhaseWithFeatureDesigner",
+            "priority": 6000,
+            "designer": {
+                "allowInPortalDesigner": false,
+                "allowInSharedoPortalDesigner": false
+            },
+            "scripts": [
+                "/_ideFiles/WorkflowActions/IsSharedoInPhaseWithFeature/Designer/IsSharedoInPhaseWithFeatureDesigner.js"
+            ],
+            "styles": [
+                "/_ideFiles/WorkflowActions/IsSharedoInPhaseWithFeature/Designer/IsSharedoInPhaseWithFeatureDesigner.css"
+            ],
+            "templates": [
+                "/_ideFiles/WorkflowActions/IsSharedoInPhaseWithFeature/Designer/IsSharedoInPhaseWithFeatureDesigner.html"
+            ],
+            "menuTemplates": [],
+            "components": [
+                "Sharedo.Core.Case.Components.SharedoTypePicker"
+            ]
+        },
         "tsFileInfo": {
             "success": false
         },
         "manifestInfo": {
-            "success": false
+            "type": "wf-action",
+            "success": true,
+            "manifest": {
+                "systemName": "WorkflowActions.IsSharedoInPhaseWithFeature",
+                "category": "Actions",
+                "name": "Is Sharedo In Phase With Feature",
+                "icon": "fa-forward",
+                "description": "Checks if a Sharedo is in a phase with a specific feature.",
+                "configWidget": "WorkflowActions.IsSharedoInPhaseWithFeatureDesigner",
+                "factoryIncludes": [],
+                "factoryScript": "/_ideFiles/WorkflowActions/IsSharedoInPhaseWithFeature/IsSharedoInPhaseWithFeature-factory.js",
+                "templateScript": "/_ideFiles/WorkflowActions/IsSharedoInPhaseWithFeature/IsSharedoInPhaseWithFeature-template.js",
+                "helperScripts": [
+                    "PhaseHelpers",
+                    "StringHelpers"
+                ],
+                "requiredTypes": [
+                    "/Identifier/Work Type Identifier"
+                ]
+            },
+            "manifestFileName": "IsSharedoInPhaseWithFeature.wf-action.json",
+            "manifestFilePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/IsSharedoInPhaseWithFeature/IsSharedoInPhaseWithFeature.wf-action.json"
         },
         "designerManifestInfo": {
             "success": false
@@ -776,13 +892,14 @@
         "tsDesignerFileInfo": {
             "success": false
         },
-        "publicPath": "/_ideFiles/WorkflowActions/IsSharedoInPhaseWithFeature/"
+        "publicPath": "/_ideFiles/WorkflowActions/IsSharedoInPhaseWithFeature/",
+        "generatDefaultConfigurationJson": false
     },
     {
         "name": "RecursiveFindAttribute",
         "sourcePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/RecursiveFindAttribute",
         "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/WorkflowActions/RecursiveFindAttribute",
-        "type": "",
+        "type": "workflow",
         "designerPath": "",
         "valid": false,
         "manifestFilePath": "",
@@ -795,10 +912,10 @@
             }
         ],
         "bundleAnalyzer": false,
-        "enabled": true,
+        "enabled": false,
         "namespace": "WorkflowActions",
         "erros": [
-            "No Main File RecursiveFindAttribute.ts Found"
+            "Target is disabled"
         ],
         "widgetTSFileName": "",
         "factoryTSFileName": "",
@@ -823,13 +940,14 @@
         "tsDesignerFileInfo": {
             "success": false
         },
-        "publicPath": "/_ideFiles/WorkflowActions/RecursiveFindAttribute/"
+        "publicPath": "/_ideFiles/WorkflowActions/RecursiveFindAttribute/",
+        "generatDefaultConfigurationJson": false
     },
     {
         "name": "CreateTaskv2",
         "sourcePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/CreateTaskv2",
         "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/WorkflowActions/CreateTaskv2",
-        "type": "",
+        "type": "workflow",
         "designerPath": "",
         "valid": false,
         "manifestFilePath": "",
@@ -842,10 +960,10 @@
             }
         ],
         "bundleAnalyzer": false,
-        "enabled": true,
+        "enabled": false,
         "namespace": "WorkflowActions",
         "erros": [
-            "No Main File CreateTaskv2.ts Found"
+            "Target is disabled"
         ],
         "widgetTSFileName": "",
         "factoryTSFileName": "",
@@ -870,16 +988,114 @@
         "tsDesignerFileInfo": {
             "success": false
         },
-        "publicPath": "/_ideFiles/WorkflowActions/CreateTaskv2/"
+        "publicPath": "/_ideFiles/WorkflowActions/CreateTaskv2/",
+        "generatDefaultConfigurationJson": false
+    },
+    {
+        "name": "CreateCallToAction",
+        "sourcePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/CreateCallToAction",
+        "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/WorkflowActions/CreateCallToAction",
+        "type": "workflow",
+        "designerPath": "",
+        "valid": false,
+        "manifestFilePath": "",
+        "modulesToExtract": [
+            {
+                "modules": [
+                    "lodash"
+                ],
+                "extractedFileName": "lodash.js"
+            }
+        ],
+        "bundleAnalyzer": false,
+        "enabled": false,
+        "namespace": "WorkflowActions",
+        "erros": [
+            "Target is disabled"
+        ],
+        "widgetTSFileName": "",
+        "factoryTSFileName": "",
+        "factoryTSFilePath": "",
+        "templateTsFileName": "",
+        "templateTsFilePath": "",
+        "cssFiles": [],
+        "htmlFiles": [],
+        "designerTSFileName": "",
+        "designerTSFilePath": "",
+        "designerCSSFiles": [],
+        "designerHTMLFiles": [],
+        "tsFileInfo": {
+            "success": false
+        },
+        "manifestInfo": {
+            "success": false
+        },
+        "designerManifestInfo": {
+            "success": false
+        },
+        "tsDesignerFileInfo": {
+            "success": false
+        },
+        "publicPath": "/_ideFiles/WorkflowActions/CreateCallToAction/",
+        "generatDefaultConfigurationJson": false
+    },
+    {
+        "name": "CreateActionPlan",
+        "sourcePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/CreateActionPlan",
+        "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/WorkflowActions/CreateActionPlan",
+        "type": "workflow",
+        "designerPath": "",
+        "valid": false,
+        "manifestFilePath": "",
+        "modulesToExtract": [
+            {
+                "modules": [
+                    "lodash"
+                ],
+                "extractedFileName": "lodash.js"
+            }
+        ],
+        "bundleAnalyzer": false,
+        "enabled": false,
+        "namespace": "WorkflowActions",
+        "erros": [
+            "Target is disabled"
+        ],
+        "widgetTSFileName": "",
+        "factoryTSFileName": "",
+        "factoryTSFilePath": "",
+        "templateTsFileName": "",
+        "templateTsFilePath": "",
+        "cssFiles": [],
+        "htmlFiles": [],
+        "designerTSFileName": "",
+        "designerTSFilePath": "",
+        "designerCSSFiles": [],
+        "designerHTMLFiles": [],
+        "tsFileInfo": {
+            "success": false
+        },
+        "manifestInfo": {
+            "success": false
+        },
+        "designerManifestInfo": {
+            "success": false
+        },
+        "tsDesignerFileInfo": {
+            "success": false
+        },
+        "publicPath": "/_ideFiles/WorkflowActions/CreateActionPlan/",
+        "generatDefaultConfigurationJson": false
     },
     {
         "name": "RefreshWatcher",
         "sourcePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/PortalWidgets/RefreshWatcher",
         "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/PortalWidgets/RefreshWatcher",
-        "type": "",
-        "designerPath": "",
-        "valid": false,
+        "type": "widget",
+        "designerPath": "/Users/igorsharedo/Desktop/Test/src/WebBased/PortalWidgets/RefreshWatcher/Designer",
+        "valid": true,
         "manifestFilePath": "",
+        "designerManifestFilePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/PortalWidgets/RefreshWatcher/Designer/RefreshWatcherDesigner.widget.json",
         "modulesToExtract": [
             {
                 "modules": [
@@ -891,10 +1107,7 @@
         "bundleAnalyzer": false,
         "enabled": true,
         "namespace": "PortalWidgets",
-        "erros": [
-            "Invalid ! No manifest file found",
-            "Invalid ! No Manifest file found"
-        ],
+        "erros": [],
         "widgetTSFileName": "",
         "factoryTSFileName": "",
         "factoryTSFilePath": "",
@@ -902,17 +1115,63 @@
         "templateTsFilePath": "",
         "cssFiles": [],
         "htmlFiles": [],
-        "designerTSFileName": "",
-        "designerTSFilePath": "",
+        "designerTSFileName": "RefreshWatcherDesigner.ts",
+        "designerTSFilePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/PortalWidgets/RefreshWatcher/Designer/RefreshWatcherDesigner.ts",
         "designerCSSFiles": [],
         "designerHTMLFiles": [],
+        "designerManifestJSON": {
+            "id": "PortalWidgets.RefreshWatcherDesigner",
+            "designer": {
+                "allowInPortalDesigner": false,
+                "allowInSharedoPortalDesigner": false
+            },
+            "scripts": [
+                "/_ideFiles/PortalWidgets/RefreshWatcher/Designer/RefreshWatcherDesigner.js"
+            ],
+            "styles": [
+                "/_ideFiles/PortalWidgets/RefreshWatcher/Designer/RefreshWatcherDesigner.css"
+            ],
+            "templates": [
+                "/_ideFiles/PortalWidgets/RefreshWatcher/Designer/RefreshWatcherDesigner.html"
+            ],
+            "menuTemplates": [],
+            "components": []
+        },
         "tsFileInfo": {
             "tsFileName": "RefreshWatcher.ts",
             "tsFilePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/PortalWidgets/RefreshWatcher/RefreshWatcher.ts",
             "success": true
         },
         "manifestInfo": {
-            "success": false
+            "type": "widget",
+            "success": true,
+            "manifest": {
+                "id": "PortalWidgets.RefreshWatcher",
+                "designer": {
+                    "allowInPortalDesigner": false,
+                    "allowInSharedoPortalDesigner": true,
+                    "title": "Refresh Watcher",
+                    "icon": "fa-calendar",
+                    "description": "Refreshes specified components on events or at specified intervals.",
+                    "categories": [
+                        "Custom Widgets"
+                    ],
+                    "isConfigurable": true,
+                    "configurationWidget": "PortalWidgets.RefreshWatcherDesigner"
+                },
+                "scripts": [
+                    "/_ideFiles/PortalWidgets/RefreshWatcher/RefreshWatcher.js"
+                ],
+                "styles": [
+                    "/_ideFiles/PortalWidgets/RefreshWatcher/RefreshWatcher.css"
+                ],
+                "templates": [
+                    "/_ideFiles/PortalWidgets/RefreshWatcher/RefreshWatcher.html"
+                ],
+                "menuTemplates": []
+            },
+            "manifestFileName": "RefreshWatcher.widget.json",
+            "manifestFilePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/PortalWidgets/RefreshWatcher/RefreshWatcher.widget.json"
         },
         "designerManifestInfo": {
             "success": false
@@ -921,5 +1180,146 @@
             "success": false
         },
         "publicPath": "/_ideFiles/PortalWidgets/RefreshWatcher/"
+    },
+    {
+        "name": "SingleValuePortalWidget",
+        "sourcePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/PortalWidgets/SingleValuePortalWidget",
+        "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/PortalWidgets/SingleValuePortalWidget",
+        "type": "widget",
+        "designerPath": "/Users/igorsharedo/Desktop/Test/src/WebBased/PortalWidgets/SingleValuePortalWidget/Designer",
+        "valid": true,
+        "manifestFilePath": "",
+        "designerManifestFilePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/PortalWidgets/SingleValuePortalWidget/Designer/SingleValuePortalWidgetDesigner.widget.json",
+        "modulesToExtract": [
+            {
+                "modules": [
+                    "lodash"
+                ],
+                "extractedFileName": "lodash.js"
+            }
+        ],
+        "bundleAnalyzer": false,
+        "enabled": true,
+        "namespace": "PortalWidgets",
+        "erros": [],
+        "widgetTSFileName": "",
+        "factoryTSFileName": "",
+        "factoryTSFilePath": "",
+        "templateTsFileName": "",
+        "templateTsFilePath": "",
+        "cssFiles": [],
+        "htmlFiles": [],
+        "designerTSFileName": "SingleValuePortalWidgetDesigner.ts",
+        "designerTSFilePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/PortalWidgets/SingleValuePortalWidget/Designer/SingleValuePortalWidgetDesigner.ts",
+        "designerCSSFiles": [],
+        "designerHTMLFiles": [],
+        "designerManifestJSON": {
+            "id": "PortalWidgets.SingleValuePortalWidgetDesigner",
+            "designer": {
+                "allowInPortalDesigner": false,
+                "allowInSharedoPortalDesigner": false
+            },
+            "scripts": [
+                "/_ideFiles/PortalWidgets/SingleValuePortalWidget/Designer/SingleValuePortalWidgetDesigner.js"
+            ],
+            "styles": [
+                "/_ideFiles/PortalWidgets/SingleValuePortalWidget/Designer/SingleValuePortalWidgetDesigner.css"
+            ],
+            "templates": [
+                "/_ideFiles/PortalWidgets/SingleValuePortalWidget/Designer/SingleValuePortalWidgetDesigner.html"
+            ],
+            "menuTemplates": [],
+            "components": []
+        },
+        "tsFileInfo": {
+            "tsFileName": "SingleValuePortalWidget.ts",
+            "tsFilePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/PortalWidgets/SingleValuePortalWidget/SingleValuePortalWidget.ts",
+            "success": true
+        },
+        "manifestInfo": {
+            "type": "widget",
+            "success": true,
+            "manifest": {
+                "id": "PortalWidgets.SingleValuePortalWidget",
+                "type": "widget",
+                "priority": 6000,
+                "designer": {
+                    "allowInPortalDesigner": true,
+                    "allowInSharedoPortalDesigner": true,
+                    "allowAspectAdapter": false,
+                    "title": "Single Value Portal Widget",
+                    "icon": "fa-cog",
+                    "description": "Show a single value in a portal widget",
+                    "categories": [
+                        "UD - IDEAspects"
+                    ],
+                    "isConfigurable": true,
+                    "configurationWidget": "PortalWidgets.SingleValuePortalWidgetDesigner",
+                    "defaultConfigurationJson": {
+                        "configuration": {
+                            "fieldPath": "title",
+                            "title": null,
+                            "calculatedValue": "",
+                            "calculatedTitle": "",
+                            "valueOnNotFound": "Not Found",
+                            "formatter": "value",
+                            "debug": {
+                                "supportRequestEnabled": false,
+                                "enabled": true,
+                                "logToConsole": true,
+                                "showInAspect": false,
+                                "liveConfig": false
+                            },
+                            "eventsToReactTo": [
+                                {
+                                    "eventPath": "sharedo.core.case.phase-changed",
+                                    "methodToCall": "loadAndBind"
+                                },
+                                {
+                                    "eventPath": "sharedo.core.case.forms.phase.phase-changed",
+                                    "methodToCall": "loadAndBind"
+                                },
+                                {
+                                    "eventPath": "sharedo.updated",
+                                    "methodToCall": "loadAndBind"
+                                },
+                                {
+                                    "eventPath": "sharedo.core.case.sharedo-updated",
+                                    "methodToCall": "loadAndBind"
+                                }
+                            ],
+                            "refreshOn": {
+                                "sharedoIdChanged": true,
+                                "sharedoParentIdChanged": true,
+                                "sharedoPhaseChanged": true
+                            },
+                            "dataSettings": {
+                                "getValueUsingParents": false,
+                                "maxDepth": 0
+                            }
+                        }
+                    }
+                },
+                "scripts": [
+                    "/_ideFiles/PortalWidgets/SingleValuePortalWidget/SingleValuePortalWidget.js"
+                ],
+                "styles": [
+                    "/_ideFiles/PortalWidgets/SingleValuePortalWidget/SingleValuePortalWidget.css"
+                ],
+                "templates": [
+                    "/_ideFiles/PortalWidgets/SingleValuePortalWidget/SingleValuePortalWidget.html"
+                ],
+                "menuTemplates": [],
+                "components": []
+            }
+        },
+        "designerManifestInfo": {
+            "success": false
+        },
+        "tsDesignerFileInfo": {
+            "success": false
+        },
+        "publicPath": "/_ideFiles/PortalWidgets/SingleValuePortalWidget/",
+        "generatDefaultConfigurationJson": true
     }
 ]

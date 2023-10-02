@@ -56,7 +56,7 @@ import { IDataMapping } from "./ExternalMatterSearchInterface";
       } else {
         // Handle regular mappings
         if (searchResultField.includes("{") && searchResultField.includes("}")) {
-          let value = searchResultField.replace(/{|}/g, '');
+          let value = searchResultField;//.replace(/{|}/g, '');
           value = extractValue(value, data, null,dataContextName);
           // value = value.split('-').map((part) => {
           //   // return getNestedProperty(data, part);
@@ -92,7 +92,7 @@ export function reverseMapData(mappedData: any, dataMapping: IDataMapping[]): an
       if (searchResultField.includes("{*}")) {
         // Handle wildcard mappings
         const searchResultBase = searchResultField.split("{*}")[0];
-        let objectBase = searchResultBase.replace(/{|}/g, '');
+        let objectBase = searchResultBase;//.replace(/{|}/g, '');
         if (objectBase.endsWith(".")) {
           objectBase = objectBase.substring(0, objectBase.length - 1);
         }

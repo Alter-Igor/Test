@@ -1,5 +1,6 @@
 import { Options } from '@eonasdan/tempus-dominus';
-import { IWidgetJson } from '../BaseClasses/IWidgetJson';
+import { IDefaultSettingsWithSpecificComponentConfig, IWidgetJson } from '../BaseClasses/IWidgetJson';
+import { DEBUG_DEFAULT } from '../BaseClasses/DebugDefaults';
 
 
 export interface IDatePickerAspectOptions {
@@ -8,16 +9,48 @@ export interface IDatePickerAspectOptions {
     pickerEnabled: boolean  | undefined; //if true, the date picker will be enabled
     eventToFireOnUpdate: Array<string> | undefined; //the event to fire when the date is updated
     datePickerOptions: Options  | undefined; //the options to pass to the date picker 
+    hideInputBox: boolean  | undefined; //if true, the input box will be hidden
     defaultValue:
     {
         defaultDateFromNowHours: number  | undefined; //when no value is set, set the date to now + this number of hours
-        getValueUsingParents:boolean | undefined, //if true, will get the value from the parent data context if not found in the current data context
-        maxDepth: number | undefined, //the max depth to search for the value in the parent and parent of parent data context 0 = current data context only
     }
     
 }
 
-export const setting : IWidgetJson<IDatePickerAspectOptions>= {
+export const DATE_PICKER_DEFAULTS : IDefaultSettingsWithSpecificComponentConfig<IDatePickerAspectOptions>=
+{
+          
+    "formBuilderField": "eDiscoveryUpdatePlannedDate",
+    "hideInputBox": true,
+    "defaultValue":{
+        "defaultDateFromNowHours": 24,
+    },
+
+    "title": "Updated planned due date:",
+    "pickerEnabled": true,
+    "eventToFireOnUpdate": ["IDEAspects.DatePickerAspect.Update"],
+    
+    "datePickerOptions": {
+        "display": {
+            "inline": true,
+            "sideBySide": true,
+            "theme": "light"
+        }
+    },
+    "debug": DEBUG_DEFAULT(),
+    "refreshOn": {
+        "sharedoIdChanged": false,
+        "sharedoParentIdChanged": false,
+        "sharedoPhaseChanged": false,
+    },
+    "eventsToReactTo": [],
+    "dataSettings": {
+        "getValueUsingParents": false,
+        "maxDepth": 0,
+    }
+}
+
+export const DATE_PICKER_WIDGET_DEFAULTS : IWidgetJson<IDatePickerAspectOptions>= {
     type: 'widget',
     "priority": 6000,
     "designer": {
@@ -31,36 +64,7 @@ export const setting : IWidgetJson<IDatePickerAspectOptions>= {
         "isConfigurable": true,
         "configurationWidget": null,
 
-        "defaultConfigurationJson": {
-            "formBuilderField": "eDiscoveryUpdatePlannedDate",
-            "defaultValue":{
-                "defaultDateFromNowHours": 24,
-                "getValueUsingParents":true,
-                "maxDepth": 0,
-            },
-
-            "title": "Updated planned due date:",
-            "pickerEnabled": true,
-            "eventToFireOnUpdate": ["IDEAspects.DatePickerAspect.Update"],
-            
-            "datePickerOptions": {
-                "display": {
-                    "inline": true,
-                    "sideBySide": true,
-                    "theme": "light"
-                }
-            },
-            "debug": {
-                "enabled": true,
-                "logToConsole": true,
-                "showInAspect": true
-            },
-            "eventsToReactTo": [],
-            "dataSettings": {
-                "getValueUsingParents": false,
-                "maxDepth": 0,
-            }
-        }
+        "defaultConfigurationJson":  { configuration: DATE_PICKER_DEFAULTS}
     },
     "scripts": [],
     "styles": [

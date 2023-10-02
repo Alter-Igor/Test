@@ -15,16 +15,16 @@
  */
 export function formatValue(value: any, formatter: string): any {
     // Create a new function based on the formatter
-    const dynamicFunc = new Function('value', `return (${formatter});`);
-    // Invoke the function with the given value
+    let dynamicFunc : Function
     let returnValue: any;
     try{
+         dynamicFunc = new Function('value', `return (${formatter});`);
+    // Invoke the function with the given value
      returnValue = dynamicFunc(value);
     }
     catch(e)
     {
-        console.log(`Error formatting value [${value}] with formatter [${formatter}]`, e);
-        returnValue = "Error formatting value - see console"
+        returnValue = `Error formatting value ${value} with formatter ${formatter} - ${e}`;
     }
     return returnValue;
 }

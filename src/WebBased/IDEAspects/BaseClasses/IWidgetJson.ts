@@ -1,6 +1,7 @@
+import { IBaseIDEAspectConfiguration } from "./BaseIDEAspect";
 import { IDebug } from "./IDebug";
 
-export type I_IDE_Aspect_Modeller_Configuration<TConfig> = IDefaultSettings<TConfig> 
+export type I_IDE_Aspect_Modeller_Configuration<TConfig> = IWidgetConfigSettings<TConfig> 
 
 export type TDataSettings=
 {
@@ -13,23 +14,59 @@ export interface EventToReactTo {
   methodToCall: string;
 }
 
-export type IDefaultSettings<TConfig> = TConfig &
+export type IDefaultSettingsWithSpecificComponentConfig<TConfig> = TConfig & IDefaultSettings
+// {
+//     debug: IDebug,
+//     eventsToReactTo: Array<EventToReactTo>,
+//     refreshOn:IRefreshOn,
+//     dataSettings:TDataSettings
+//     // config:IDefaultConfigSettings<TConfig>
+// }
+
+
+
+export type IDefaultSettings =
 {
     debug: IDebug,
     eventsToReactTo: Array<EventToReactTo>,
+    refreshOn:IRefreshOn,
     dataSettings:TDataSettings
 }
 
+export type IRefreshOn= {
+  sharedoIdChanged: boolean,
+  sharedoParentIdChanged: boolean,
+  sharedoPhaseChanged: boolean,
+}
+
+
+// export type IDefaultSettingsWithSpecificComponentConfig<TConfig> = TConfig &
+// {
+//     debug: IDebug,
+//     eventsToReactTo: Array<EventToReactTo>,
+//     dataSettings:TDataSettings
+// }
+
+// export type IDefaultConfigSettings<TConfig> = TConfig &
+// {
+//     debug: IDebug,
+//     eventsToReactTo: Array<EventToReactTo>,
+//     dataSettings:TDataSettings
+// }
 
 export interface IWidgetJson<TConfigurationSettings> {
   type: "wf-action" | "widget";
   priority: number;
-  designer: IWidgetJsonDesigner<I_IDE_Aspect_Modeller_Configuration<TConfigurationSettings>>;
+  designer: IWidgetJsonDesigner<IDefaultSettingsWithSpecificComponentConfig<TConfigurationSettings>>;
   scripts: string[];
   styles: string[];
   templates: string[];
   menuTemplates: any[];
   components: string[];
+}
+
+export interface IWidgetConfigSettings<TConfig> {
+  configuration:IDefaultSettingsWithSpecificComponentConfig<TConfig>
 }
 
 export interface IWidgetJsonDesigner<TConfigurationSettingsWithCommon> {
@@ -42,5 +79,5 @@ export interface IWidgetJsonDesigner<TConfigurationSettingsWithCommon> {
   categories: any[];
   isConfigurable: boolean;
   configurationWidget?: any;
-  defaultConfigurationJson:TConfigurationSettingsWithCommon
+  defaultConfigurationJson:IWidgetConfigSettings<TConfigurationSettingsWithCommon>
 }

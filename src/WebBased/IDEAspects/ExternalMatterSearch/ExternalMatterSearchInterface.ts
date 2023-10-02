@@ -9,11 +9,14 @@ export interface IExternalMatterSearchConfiguration {
   selectedFieldDisplayValue:string
   searchFields: IFieldPlacement; // "code,description"
   selectedFields: IFieldPlacement; // "code,description"
+  // refreshIfSharedoIdChanged: boolean;
   dataMapping: IDataMapping[],
+  fieldMapping?: IDataMapping[],
+  formBuilderName: string;
   formBuilderFieldSerialisedData: string;
   fackSearchDataIDEPath: string | undefined;
   fackLoadDataIDEPath: string | undefined;  
-
+  showSearchingStatus: boolean;
   searchApiExecutionSettings?: Array<TAPIExecutionSettings>;
   loadApiExecutionSettings?: Array<TAPIExecutionSettings>;
 

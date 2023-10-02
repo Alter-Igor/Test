@@ -2,12 +2,11 @@ import * as ko from 'knockout';
 import { I_IDE_Aspect_Modeller_Configuration } from './IWidgetJson';
 
 export type NestedObservableObject<T> = {
-    [K in keyof T]: T[K] extends Array<infer U> ? ko.ObservableArray<NestedObservableObject<U>> :
-    T[K] extends object ? ko.Observable<NestedObservableObject<T[K]>> :
-    ko.Observable<T[K]>;
+    [K in keyof T]      : T[K] extends Array<infer U> ? ko.ObservableArray<NestedObservableObject<U>> :
+    T[K] extends object ? ko.Observable<NestedObservableObject<T[K]>> : ko.Observable<T[K]>;
 };
 
-export function toObservableObject<T>(obj: T, existing: NestedObservableObject<T>): NestedObservableObject<T> {
+export function toObservableObject<T>(obj: T, existing?: NestedObservableObject<T>): NestedObservableObject<T> {
     
     if(!existing) existing = {} as NestedObservableObject<T>;
    
@@ -19,19 +18,23 @@ export function toObservableObject<T>(obj: T, existing: NestedObservableObject<T
                 if (!existing[key]) {
                     existing[key] = ko.observableArray(value.map(item => toObservableObject(item, {} as NestedObservableObject<typeof item>))) as any;
                 } else {
+                    // existing[key]=ensureIsObservableArray(existing, key)
                     existing[key](value.map(item => toObservableObject(item, {} as NestedObservableObject<typeof item>)));
                 }
             } else if (value !== null && typeof value === 'object') {
                 if (!existing[key]) {
                     existing[key] = ko.observable(toObservableObject(value, {} as NestedObservableObject<typeof value>)) as any;
                 } else {
+                    // existing[key]  = ensureIsObservable(existing, key);
                     existing[key](toObservableObject((value as any), (existing[key]() as any)));
                 }
             } else {
                 if (!existing[key]) {
                     (existing[key] as any) = ko.observable(value);
                 } else {
+                    // existing[key] = ensureIsObservable(existing, key);
                     existing[key]((value as any));
+                    
                 }
             }
         }
@@ -47,6 +50,27 @@ export interface IDebug {
       liveConfig?: boolean;
     }
   
+
+
+function ensureIsObservable(existing: any, key: string) {
+    if (ko.isObservable(existing[key])) {
+        return existing[key] ;
+    }
+    else {
+        return ko.observable();
+    }
+}
+
+
+
+function ensureIsObservableArray(existing: any, key: string) {
+    if (ko.isObservableArray(existing[key])) {
+        return existing[key] ;
+    }
+    else {
+        return ko.observableArray();
+    }
+}
 
 // export type I_IDE_Aspect_Modeller_Configuration<TConfig> = TConfig & {
 //     debug: IDebug;

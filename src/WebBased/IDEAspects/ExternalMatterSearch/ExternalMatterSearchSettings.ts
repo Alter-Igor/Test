@@ -16,7 +16,7 @@ export const Settings: IWidgetJson<IExternalMatterSearchConfiguration> =
         "categories": [],
         "isConfigurable": true,
         "configurationWidget": null,
-        defaultConfigurationJson:Default
+        defaultConfigurationJson:{ configuration: Default}
     },
     "scripts": [
     ],

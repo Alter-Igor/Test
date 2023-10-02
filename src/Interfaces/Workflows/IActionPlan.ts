@@ -4,6 +4,6 @@
     order: any;
     callToActionVar: any;
     description: any;
-
+    enableComment:boolean
 }
 

@@ -29,7 +29,7 @@ export const DEFAULT_SELECTED_FIELDS_CONFIG: IFieldPlacement =
         {
             "fields": [
                 {
-                    "field": "dataContext.data.matterCode",
+                    "field": "${dataContext.data.matterCode}",
                     "style": "font-weight:bold",
                     "icon": [
                         {
@@ -46,7 +46,7 @@ export const DEFAULT_SELECTED_FIELDS_CONFIG: IFieldPlacement =
                     "width": null
                 },
                 {
-                    "field": "dataContext.data.shortName",
+                    "field": "${dataContext.data.shortName}",
                     "width": null,
                     "style": {
                         "font-weight": "bold",
@@ -55,7 +55,7 @@ export const DEFAULT_SELECTED_FIELDS_CONFIG: IFieldPlacement =
                     }
                 },
                 {
-                    "field": "dataContext.data.status",
+                    "field": "${dataContext.data.status}",
                     "formatter": "value.toUpperCase()",
                     "label": "Status",
                     "position": "right",
@@ -71,11 +71,11 @@ export const DEFAULT_SELECTED_FIELDS_CONFIG: IFieldPlacement =
                     "field": [
                         {
                             "rule": "dataContext.data.secure",
-                            "field": "'Secured!'"
+                            "field": "Secured!"
                         },
                         {
                             "rule": "!dataContext.data.secure",
-                            "field": "'Not Secured'"
+                            "field": "Not Secured"
                         }
                     ],
                     "style": [
@@ -106,7 +106,7 @@ export const DEFAULT_SELECTED_FIELDS_CONFIG: IFieldPlacement =
                         "font-size": "smaller",
                         "margin-top": "-10px"
                     },
-                    "field": "dataContext.data.practiceGroup"
+                    "field": "${dataContext.data.practiceGroup}"
                 },
                 {
                     "field": ""
@@ -117,11 +117,11 @@ export const DEFAULT_SELECTED_FIELDS_CONFIG: IFieldPlacement =
             "fields": [
                 {
                     "label": "Client",
-                    "field": "dataContext.data.client.name",
+                    "field": "${dataContext.data.client.name}",
                     "width": null
                 },
                 {
-                    "field": "dataContext.data.client.code",
+                    "field": "${dataContext.data.client.code}",
                     "width": null,
                     "style": {}
                 }
@@ -131,11 +131,11 @@ export const DEFAULT_SELECTED_FIELDS_CONFIG: IFieldPlacement =
             "fields": [
                 {
                     "label": "Partner",
-                    "field": "dataContext.data.partner.name",
+                    "field": "${dataContext.data.partner.name}",
                     "width": null
                 },
                 {
-                    "field": "dataContext.data.partner.code",
+                    "field": "${dataContext.data.partner.code}",
                     "width": null,
                     "style": {}
                 }
@@ -145,18 +145,18 @@ export const DEFAULT_SELECTED_FIELDS_CONFIG: IFieldPlacement =
             "fields": [
                 {
                     "label": "Location",
-                    "field": "dataContext.data.location.country",
+                    "field": "${dataContext.data.location.country}",
                     "width": null
                 },
                 {
                     "label": "Office",
-                    "field": "dataContext.data.location.office",
+                    "field": "${dataContext.data.location.office}",
                     "width": null,
                     "style": {}
                 },
                 {
                     "label": "Region",
-                    "field": "dataContext.data.location.region",
+                    "field": "${dataContext.data.location.region}",
                     "width": null,
                     "style": {}
                 }

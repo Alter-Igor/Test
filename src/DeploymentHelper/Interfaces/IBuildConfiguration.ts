@@ -1,3 +1,4 @@
+import { type } from "jquery";
 
 export interface IBuildConfiguration {
     defaults: IDefaults;
@@ -38,6 +39,7 @@ export interface ISetting {
     sourcePath?: string;
     modulesToExtract?: IExtract[]
     generatDefaultConfigurationJson?: boolean;
+    type?: "workflow" | "widget" | "aspect" | undefined
 }
 
 export interface IExtract {
@@ -76,18 +78,21 @@ let test: IBuildConfiguration = {
             "Widgets": {
                 "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/Widgets",
                 "sourcePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/Widgets",
-                "enabled": true
+                "enabled": true,
+                "type":"widget"
             },
             "IDEAspects": {
                 "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/IDEAspects",
                 "sourcePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/IDEAspects",
                 "enabled": true,
                 "generatDefaultConfigurationJson": true,
+                type:"aspect"
             },
             "WorkflowActions": {
                 "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/WorkflowActions",
                 "sourcePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions",
-                "enabled": true
+                "enabled": true,
+                type:"workflow"
             }
         }
     },

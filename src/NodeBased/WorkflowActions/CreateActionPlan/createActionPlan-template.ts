@@ -5,7 +5,8 @@ let actionPlan : IActionPlan ={
     mandatory: undefined,
     order: undefined,
     callToActionVar: undefined,
-    description: undefined
+    description: undefined,
+    enableComment: true
 };
 
 
@@ -28,7 +29,7 @@ if (!listAsString) {
     listAsString = emptyArray;//JSON.stringify(emptyArray);
     // log.Information(listAsString);
    ctx["$model.Configuration.outputCollection"] = listAsString;
-
+ 
 }
 
 let list =listAsString;// JSON.parse(listAsString) as Array<any>;

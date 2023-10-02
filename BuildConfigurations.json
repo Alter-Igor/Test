@@ -35,7 +35,9 @@
         "WorkflowActions": {
             "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/WorkflowActions",
             "sourcePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions",
-            "enabled": true
+            "enabled": true,
+            "generatDefaultConfigurationJson":false,
+            "type":"workflow"
         },
         "PortalWidgets": {
             "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/PortalWidgets",
@@ -71,16 +73,27 @@
                 "enabled":true
             },
             "RecursiveFindAttribute":{
-                "enabled":true
+                "enabled":false
             },
             "CreateTaskv2":{
-                "enabled":true
+                "enabled":false
+            },
+            "CreateCallToAction":{
+                "enabled":false
+            },
+            "CreateActionPlan"
+            :{
+                "enabled":false
             }
             
         },
         "PortalWidgets":{
             "RefreshWatcher":{
                 "enabled":true
+            },
+            "SingleValuePortalWidget":{
+                "enabled":true,
+                "generatDefaultConfigurationJson":true
             }
         }
     }

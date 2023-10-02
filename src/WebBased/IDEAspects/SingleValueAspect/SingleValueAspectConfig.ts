@@ -1,9 +1,9 @@
 import { DEBUG_DEFAULT } from "../BaseClasses/DebugDefaults";
-import { IDefaultSettings, IWidgetJson } from "../BaseClasses/IWidgetJson";
+import { IDefaultSettingsWithSpecificComponentConfig, IWidgetJson } from "../BaseClasses/IWidgetJson";
 
 export interface ISingleValueAspectConfiguration {
     fieldPath: string | undefined,
-    title: string | undefined
+    title: string | undefined | null
     valueOnNotFound: string | undefined,
     calculatedValue: string;
     calculatedTitle: string;
@@ -11,14 +11,16 @@ export interface ISingleValueAspectConfiguration {
 }
 
 
-export const Default: IDefaultSettings<ISingleValueAspectConfiguration> = {
-    fieldPath: "Title",
-    title: "Title Value",
+export const Default: IDefaultSettingsWithSpecificComponentConfig<ISingleValueAspectConfiguration> = {
+ 
+    fieldPath: "title",
+    title: null,
     calculatedValue: "",
     calculatedTitle: "",
     valueOnNotFound: "Not Found",
-    formatter: "value",
+    formatter: "value",//if(priority.name === 'normal') {         return = '<span class="normal">Normal Priority</span>';     } else if(priority.name === 'high') {         return = '<span class="high">High Priority</span>';     } else if(priority.name === 'urgent') {         return = '<span class="urgent">Urgent Priority</span>';     } else {         return = '<span>Unknown Priority</span>';     }
     debug: DEBUG_DEFAULT(),
+    
     eventsToReactTo: [
         {
             eventPath: "sharedo.core.case.phase-changed",
@@ -37,10 +39,17 @@ export const Default: IDefaultSettings<ISingleValueAspectConfiguration> = {
             methodToCall: "loadAndBind"
         }
     ],
+    refreshOn: {
+        sharedoIdChanged: true,
+        sharedoParentIdChanged: true,
+        sharedoPhaseChanged: true,
+    },
     dataSettings: {
         getValueUsingParents: false,
         maxDepth: 0,
     }
+
+
 }
 
 export const WidgetSettings : IWidgetJson<ISingleValueAspectConfiguration> ={
@@ -48,15 +57,15 @@ export const WidgetSettings : IWidgetJson<ISingleValueAspectConfiguration> ={
     "priority": 6000,
     "designer": {
         "allowInPortalDesigner": false,
-        "allowInSharedoPortalDesigner": false,
+        "allowInSharedoPortalDesigner": true,
         "allowAspectAdapter": true,
         "title": "Single Value Aspect",
         "icon": "fa-cog",
         "description": "Single Value Aspect",
-        "categories": [],
+        "categories": [   "UD - IDEAspects"],
         "isConfigurable": true,
         "configurationWidget": null,
-        "defaultConfigurationJson": Default
+        "defaultConfigurationJson": { configuration: Default}
     },
     "scripts": [
     ],

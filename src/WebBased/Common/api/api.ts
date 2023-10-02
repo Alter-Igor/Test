@@ -76,7 +76,7 @@ export type TUserErrors =
         additionalInfo?: any
     }
 
-export async function executeFetch<T>(api: string, method: string, data: any): Promise<TExecuteFetchResponse> {
+export async function executeFetch<T>(api: string, method: string, data: any, retryCounter?:number): Promise<TExecuteFetchResponse> {
     let retValue: TExecuteFetchResponse = {
         data: undefined,
         response: undefined,
@@ -100,6 +100,20 @@ export async function executeFetch<T>(api: string, method: string, data: any): P
     ).then(async (response) => {
         retValue.response = response;
         if (response.ok === false) {
+            if(response.status === 401){
+                retryCounter = retryCounter || 1;
+                if(retryCounter > 3){
+                    retValue.info.error.push({
+                        code: "API_ERROR",
+                        message: `An error occured while trying to call the API after 3 attempts. statusText: ${response.statusText}`,
+                        userMessage: "An error occured while trying to call the API."
+                    });
+                    return { data: undefined, response };
+                }
+                await $ajax.get("https://hsf-vnext.sharedo.co.uk/security/refreshTokens?_=" + Date.now);
+                return await executeFetch<T>(api, method, data,retryCounter);
+            }
+
             retValue.info.error.push({
                 code: "API_ERROR",
                 message: `An error occured while trying to call the API. statusText: ${response.statusText}`,
@@ -107,14 +121,14 @@ export async function executeFetch<T>(api: string, method: string, data: any): P
             });
         }
 
-        let data;
+        let responseData;
         //check if response is JSON
         try {
             if (response.headers.get("content-type")?.includes("application/json")) {
-                data = await response.json();
+                responseData = await response.json();
             }
             else {
-                data = await response.text();
+                responseData = await response.text();
             }
             retValue.info.success = true;
         }
@@ -125,7 +139,7 @@ export async function executeFetch<T>(api: string, method: string, data: any): P
                 userMessage: `An error occured while trying to extract the data from the API.`
             });
         }
-        return { data, response };
+        return { data: responseData, response };
     }).catch((error) => {
         l(err(`Error from API Call ${url}`), error);
 

@@ -1,7 +1,7 @@
 import { err, l } from "../../../../Common/Log";
 import { formatFunc } from "../../../../helpers/Formatter";
 import { extractValue } from "../../../../helpers/VakueExtractor";
-import { evaluteRule, executeFunc } from "../../../../helpers/evaluteRule";
+import { evaluteRule, executeEmbeddedCode, executeFunc } from "../../../../helpers/evaluteRule";
 import { ICSSRule, IFieldPlacement, IFieldRowField, IFieldRule, IIconRule, INameValue, IStyleEntry, IStyleRule } from "../ExternalMatterSearchInterface";
 import { TCustomBindingContext } from "./TemplateGenerator";
 
@@ -184,7 +184,7 @@ export class TemplateApplicator {
       let arrItem = cssClass as ICSSRule[];
       for (let i = 0; i < arrItem.length; i++) {
         let cssRule = arrItem[i];
-        let cssValue = executeFunc(cssRule.cssClass, viewModel);
+        let cssValue = executeEmbeddedCode(cssRule.cssClass, viewModel);
 
         if (cssRule.rule) {
           let currentDataBind = rootDiv.getAttribute('data-bind') || '';
