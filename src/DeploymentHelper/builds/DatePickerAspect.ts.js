@@ -8539,6 +8539,241 @@ var require_knockout_latest = __commonJS({
   }
 });
 
+// node_modules/detect-browser/index.js
+var require_detect_browser = __commonJS({
+  "node_modules/detect-browser/index.js"(exports) {
+    "use strict";
+    var __spreadArray = exports && exports.__spreadArray || function(to, from, pack) {
+      if (pack || arguments.length === 2)
+        for (var i = 0, l2 = from.length, ar; i < l2; i++) {
+          if (ar || !(i in from)) {
+            if (!ar)
+              ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+          }
+        }
+      return to.concat(ar || Array.prototype.slice.call(from));
+    };
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.getNodeVersion = exports.detectOS = exports.parseUserAgent = exports.browserName = exports.detect = exports.ReactNativeInfo = exports.BotInfo = exports.SearchBotDeviceInfo = exports.NodeInfo = exports.BrowserInfo = void 0;
+    var BrowserInfo = (
+      /** @class */
+      function() {
+        function BrowserInfo2(name, version, os2) {
+          this.name = name;
+          this.version = version;
+          this.os = os2;
+          this.type = "browser";
+        }
+        return BrowserInfo2;
+      }()
+    );
+    exports.BrowserInfo = BrowserInfo;
+    var NodeInfo = (
+      /** @class */
+      function() {
+        function NodeInfo2(version) {
+          this.version = version;
+          this.type = "node";
+          this.name = "node";
+          this.os = process.platform;
+        }
+        return NodeInfo2;
+      }()
+    );
+    exports.NodeInfo = NodeInfo;
+    var SearchBotDeviceInfo = (
+      /** @class */
+      function() {
+        function SearchBotDeviceInfo2(name, version, os2, bot) {
+          this.name = name;
+          this.version = version;
+          this.os = os2;
+          this.bot = bot;
+          this.type = "bot-device";
+        }
+        return SearchBotDeviceInfo2;
+      }()
+    );
+    exports.SearchBotDeviceInfo = SearchBotDeviceInfo;
+    var BotInfo = (
+      /** @class */
+      function() {
+        function BotInfo2() {
+          this.type = "bot";
+          this.bot = true;
+          this.name = "bot";
+          this.version = null;
+          this.os = null;
+        }
+        return BotInfo2;
+      }()
+    );
+    exports.BotInfo = BotInfo;
+    var ReactNativeInfo = (
+      /** @class */
+      function() {
+        function ReactNativeInfo2() {
+          this.type = "react-native";
+          this.name = "react-native";
+          this.version = null;
+          this.os = null;
+        }
+        return ReactNativeInfo2;
+      }()
+    );
+    exports.ReactNativeInfo = ReactNativeInfo;
+    var SEARCHBOX_UA_REGEX = /alexa|bot|crawl(er|ing)|facebookexternalhit|feedburner|google web preview|nagios|postrank|pingdom|slurp|spider|yahoo!|yandex/;
+    var SEARCHBOT_OS_REGEX = /(nuhk|curl|Googlebot|Yammybot|Openbot|Slurp|MSNBot|Ask\ Jeeves\/Teoma|ia_archiver)/;
+    var REQUIRED_VERSION_PARTS = 3;
+    var userAgentRules = [
+      ["aol", /AOLShield\/([0-9\._]+)/],
+      ["edge", /Edge\/([0-9\._]+)/],
+      ["edge-ios", /EdgiOS\/([0-9\._]+)/],
+      ["yandexbrowser", /YaBrowser\/([0-9\._]+)/],
+      ["kakaotalk", /KAKAOTALK\s([0-9\.]+)/],
+      ["samsung", /SamsungBrowser\/([0-9\.]+)/],
+      ["silk", /\bSilk\/([0-9._-]+)\b/],
+      ["miui", /MiuiBrowser\/([0-9\.]+)$/],
+      ["beaker", /BeakerBrowser\/([0-9\.]+)/],
+      ["edge-chromium", /EdgA?\/([0-9\.]+)/],
+      [
+        "chromium-webview",
+        /(?!Chrom.*OPR)wv\).*Chrom(?:e|ium)\/([0-9\.]+)(:?\s|$)/
+      ],
+      ["chrome", /(?!Chrom.*OPR)Chrom(?:e|ium)\/([0-9\.]+)(:?\s|$)/],
+      ["phantomjs", /PhantomJS\/([0-9\.]+)(:?\s|$)/],
+      ["crios", /CriOS\/([0-9\.]+)(:?\s|$)/],
+      ["firefox", /Firefox\/([0-9\.]+)(?:\s|$)/],
+      ["fxios", /FxiOS\/([0-9\.]+)/],
+      ["opera-mini", /Opera Mini.*Version\/([0-9\.]+)/],
+      ["opera", /Opera\/([0-9\.]+)(?:\s|$)/],
+      ["opera", /OPR\/([0-9\.]+)(:?\s|$)/],
+      ["pie", /^Microsoft Pocket Internet Explorer\/(\d+\.\d+)$/],
+      ["pie", /^Mozilla\/\d\.\d+\s\(compatible;\s(?:MSP?IE|MSInternet Explorer) (\d+\.\d+);.*Windows CE.*\)$/],
+      ["netfront", /^Mozilla\/\d\.\d+.*NetFront\/(\d.\d)/],
+      ["ie", /Trident\/7\.0.*rv\:([0-9\.]+).*\).*Gecko$/],
+      ["ie", /MSIE\s([0-9\.]+);.*Trident\/[4-7].0/],
+      ["ie", /MSIE\s(7\.0)/],
+      ["bb10", /BB10;\sTouch.*Version\/([0-9\.]+)/],
+      ["android", /Android\s([0-9\.]+)/],
+      ["ios", /Version\/([0-9\._]+).*Mobile.*Safari.*/],
+      ["safari", /Version\/([0-9\._]+).*Safari/],
+      ["facebook", /FB[AS]V\/([0-9\.]+)/],
+      ["instagram", /Instagram\s([0-9\.]+)/],
+      ["ios-webview", /AppleWebKit\/([0-9\.]+).*Mobile/],
+      ["ios-webview", /AppleWebKit\/([0-9\.]+).*Gecko\)$/],
+      ["curl", /^curl\/([0-9\.]+)$/],
+      ["searchbot", SEARCHBOX_UA_REGEX]
+    ];
+    var operatingSystemRules = [
+      ["iOS", /iP(hone|od|ad)/],
+      ["Android OS", /Android/],
+      ["BlackBerry OS", /BlackBerry|BB10/],
+      ["Windows Mobile", /IEMobile/],
+      ["Amazon OS", /Kindle/],
+      ["Windows 3.11", /Win16/],
+      ["Windows 95", /(Windows 95)|(Win95)|(Windows_95)/],
+      ["Windows 98", /(Windows 98)|(Win98)/],
+      ["Windows 2000", /(Windows NT 5.0)|(Windows 2000)/],
+      ["Windows XP", /(Windows NT 5.1)|(Windows XP)/],
+      ["Windows Server 2003", /(Windows NT 5.2)/],
+      ["Windows Vista", /(Windows NT 6.0)/],
+      ["Windows 7", /(Windows NT 6.1)/],
+      ["Windows 8", /(Windows NT 6.2)/],
+      ["Windows 8.1", /(Windows NT 6.3)/],
+      ["Windows 10", /(Windows NT 10.0)/],
+      ["Windows ME", /Windows ME/],
+      ["Windows CE", /Windows CE|WinCE|Microsoft Pocket Internet Explorer/],
+      ["Open BSD", /OpenBSD/],
+      ["Sun OS", /SunOS/],
+      ["Chrome OS", /CrOS/],
+      ["Linux", /(Linux)|(X11)/],
+      ["Mac OS", /(Mac_PowerPC)|(Macintosh)/],
+      ["QNX", /QNX/],
+      ["BeOS", /BeOS/],
+      ["OS/2", /OS\/2/]
+    ];
+    function detect2(userAgent) {
+      if (!!userAgent) {
+        return parseUserAgent(userAgent);
+      }
+      if (typeof document === "undefined" && typeof navigator !== "undefined" && navigator.product === "ReactNative") {
+        return new ReactNativeInfo();
+      }
+      if (typeof navigator !== "undefined") {
+        return parseUserAgent(navigator.userAgent);
+      }
+      return getNodeVersion();
+    }
+    exports.detect = detect2;
+    function matchUserAgent(ua) {
+      return ua !== "" && userAgentRules.reduce(function(matched, _a) {
+        var browser = _a[0], regex = _a[1];
+        if (matched) {
+          return matched;
+        }
+        var uaMatch = regex.exec(ua);
+        return !!uaMatch && [browser, uaMatch];
+      }, false);
+    }
+    function browserName(ua) {
+      var data = matchUserAgent(ua);
+      return data ? data[0] : null;
+    }
+    exports.browserName = browserName;
+    function parseUserAgent(ua) {
+      var matchedRule = matchUserAgent(ua);
+      if (!matchedRule) {
+        return null;
+      }
+      var name = matchedRule[0], match = matchedRule[1];
+      if (name === "searchbot") {
+        return new BotInfo();
+      }
+      var versionParts = match[1] && match[1].split(".").join("_").split("_").slice(0, 3);
+      if (versionParts) {
+        if (versionParts.length < REQUIRED_VERSION_PARTS) {
+          versionParts = __spreadArray(__spreadArray([], versionParts, true), createVersionParts(REQUIRED_VERSION_PARTS - versionParts.length), true);
+        }
+      } else {
+        versionParts = [];
+      }
+      var version = versionParts.join(".");
+      var os2 = detectOS(ua);
+      var searchBotMatch = SEARCHBOT_OS_REGEX.exec(ua);
+      if (searchBotMatch && searchBotMatch[1]) {
+        return new SearchBotDeviceInfo(name, version, os2, searchBotMatch[1]);
+      }
+      return new BrowserInfo(name, version, os2);
+    }
+    exports.parseUserAgent = parseUserAgent;
+    function detectOS(ua) {
+      for (var ii = 0, count = operatingSystemRules.length; ii < count; ii++) {
+        var _a = operatingSystemRules[ii], os2 = _a[0], regex = _a[1];
+        var match = regex.exec(ua);
+        if (match) {
+          return os2;
+        }
+      }
+      return null;
+    }
+    exports.detectOS = detectOS;
+    function getNodeVersion() {
+      var isNode = typeof process !== "undefined" && process.version;
+      return isNode ? new NodeInfo(process.version.slice(1)) : null;
+    }
+    exports.getNodeVersion = getNodeVersion;
+    function createVersionParts(count) {
+      var output = [];
+      for (var ii = 0; ii < count; ii++) {
+        output.push("0");
+      }
+      return output;
+    }
+  }
+});
+
 // src/WebBased/IDEAspects/DatePickerAspect/DatePickerAspect.ts
 var DatePickerAspect_exports = {};
 __export(DatePickerAspect_exports, {
@@ -8547,10 +8782,9 @@ __export(DatePickerAspect_exports, {
 module.exports = __toCommonJS(DatePickerAspect_exports);
 var import_tempus_dominus = __toESM(require_tempus_dominus());
 
-// src/WebBased/IDEAspects/BaseClasses/DebugDefaults.ts
+// src/WebBased/IDEAspects/BaseClasses/DefaultSettings.ts
 var DEBUG_DEFAULT = () => {
   let retValue = {
-    supportRequestEnabled: false,
     enabled: true,
     logToConsole: true,
     showInAspect: false,
@@ -8558,12 +8792,60 @@ var DEBUG_DEFAULT = () => {
   };
   return retValue;
 };
+var DEFAULT_SHAREDO_COMMAND = {
+  typeSystemName: "task",
+  title: "Support Required for ${dataContext.pageContext.user.firstname} ${dataContext.pageContext.user.lastname} on ${dataContext.pageContext.pageTitle}",
+  description: void 0
+};
+var DEFAULT_SUPPORT_BUTTON = {
+  raiseSupportTicket: true,
+  supportTicketMessage: "Support Required for ${dataContext.pageContext.user.firstname} ${dataContext.pageContext.user.lastname} on ${dataContext.pageContext.pageTitle} context ${JSON.stringify(dataContext)}",
+  raiseSupportTicketSharedoCommand: DEFAULT_SHAREDO_COMMAND,
+  dataContext: "Populated by the system",
+  title: "Raise Support Ticket",
+  styleRules: void 0,
+  classRules: void 0,
+  toolTip: "Raise a support ticket with the support desk"
+};
 var REFRESH_ON_DEFAULTS = {
   sharedoIdChanged: false,
   sharedoParentIdChanged: false,
   sharedoPhaseChanged: false
 };
-var DefaultDataSettings = {
+var DEFAULT_ERROR_MANAGEMENT_TRAPS = [
+  {
+    dataContext: null,
+    enabled: true,
+    rule: "dataContext.error.message.toLowerCase().includes('forbidden')",
+    userFreindlyMessage: "The matter is not accessible to you. It may be behind a Information Barrier.",
+    resolutionSuggestions: ["Please contact the matter owner for access."],
+    userFreindlyHTMLMessageTemplate: void 0,
+    supportButton: DEFAULT_SUPPORT_BUTTON,
+    styleRules: [
+      {
+        rule: "true",
+        style: "box-shadow: 1px 1px 10px #d46060;"
+      }
+    ],
+    classRules: [
+      {
+        rule: "true",
+        cssClass: "ems-selected-item"
+      },
+      {
+        rule: "true",
+        cssClass: "ems-show"
+      }
+    ]
+  }
+];
+var DEFAULT_ERROR_MANAGEMENT_SETTINGS = {
+  errorTraps: DEFAULT_ERROR_MANAGEMENT_TRAPS,
+  enabled: true,
+  displayUnTrappedErrorInAspect: true,
+  unTrappedErrorsSupportButton: void 0
+};
+var DEFAULT_CONFIGURATION_SETTINGS = {
   debug: DEBUG_DEFAULT(),
   refreshOn: REFRESH_ON_DEFAULTS,
   eventsToReactTo: [
@@ -8579,12 +8861,19 @@ var DefaultDataSettings = {
   dataSettings: {
     getValueUsingParents: false,
     maxDepth: 0
-  }
+  },
+  errorManagement: DEFAULT_ERROR_MANAGEMENT_SETTINGS
 };
 
 // src/WebBased/IDEAspects/DatePickerAspect/DatePickerAspectConfiguration.ts
 var DATE_PICKER_DEFAULTS = {
   "formBuilderField": "eDiscoveryUpdatePlannedDate",
+  "getValueOptions": [
+    {
+      "rule": "!dataContext.aspectData.formBuilder.formData.eDiscoveryUpdatePlannedDate",
+      "fieldPath": "form-alt-ediscovery-job-desired-completion-date-date-only.job-desired-completion-date"
+    }
+  ],
   "hideInputBox": true,
   "defaultValue": {
     "defaultDateFromNowHours": 24
@@ -8609,7 +8898,8 @@ var DATE_PICKER_DEFAULTS = {
   "dataSettings": {
     "getValueUsingParents": false,
     "maxDepth": 0
-  }
+  },
+  "errorManagement": DEFAULT_ERROR_MANAGEMENT_SETTINGS
 };
 var DATE_PICKER_WIDGET_DEFAULTS = {
   type: "widget",
@@ -8638,7 +8928,7 @@ var DATE_PICKER_WIDGET_DEFAULTS = {
 };
 
 // src/WebBased/IDEAspects/BaseClasses/BaseIDEAspect.ts
-var ko2 = __toESM(require_knockout_latest());
+var ko3 = __toESM(require_knockout_latest());
 
 // node_modules/uuid/dist/esm-node/rng.js
 var import_crypto = __toESM(require("crypto"));
@@ -9328,7 +9618,7 @@ var nv = (name, value) => {
 clearSec();
 
 // src/WebBased/IDEAspects/BaseClasses/KOConverter.ts
-var ko = __toESM(require_knockout_latest());
+var ko2 = __toESM(require_knockout_latest());
 function toObservableObject(obj, existing) {
   if (!existing)
     existing = {};
@@ -9337,19 +9627,19 @@ function toObservableObject(obj, existing) {
       const value = obj[key];
       if (Array.isArray(value)) {
         if (!existing[key]) {
-          existing[key] = ko.observableArray(value.map((item) => toObservableObject(item, {})));
+          existing[key] = ko2.observableArray(value.map((item) => toObservableObject(item, {})));
         } else {
           existing[key](value.map((item) => toObservableObject(item, {})));
         }
       } else if (value !== null && typeof value === "object") {
         if (!existing[key]) {
-          existing[key] = ko.observable(toObservableObject(value, {}));
+          existing[key] = ko2.observable(toObservableObject(value, {}));
         } else {
           existing[key](toObservableObject(value, existing[key]()));
         }
       } else {
         if (!existing[key]) {
-          existing[key] = ko.observable(value);
+          existing[key] = ko2.observable(value);
         } else {
           existing[key](value);
         }
@@ -9395,59 +9685,13 @@ function getNestedProperty(obj, propertyPath) {
   }
   return current;
 }
-function getValueFromKOObject(koObject) {
-  if (typeof koObject === "function") {
-    return koObject();
-  }
-  return koObject;
-}
-function gvko(koObject) {
-  return getValueFromKOObject(koObject);
-}
-
-// src/Common/HtmlHelper.ts
-function escapeHtml(unsafe) {
-  return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-}
-
-// src/Common/JsonToHTMLConverter.ts
-var JsonToHtmlConverter = class {
-  static convert(json2) {
-    if (json2 == null)
-      return this.escapeHtml("<em>null</em>");
-    if (typeof json2 !== "object")
-      return this.escapeHtml(json2.toString());
-    if (Array.isArray(json2)) {
-      return this.arrayToHtml(json2);
-    } else {
-      return this.objectToHtml(json2);
-    }
-  }
-  static arrayToHtml(arr) {
-    const itemsHtml = arr.map((item) => `<li>${this.convert(item)}</li>`).join("");
-    return `<ul>${itemsHtml}</ul>`;
-  }
-  static objectToHtml(obj) {
-    const propertiesHtml = Object.keys(obj).map((key) => `<li>${this.escapeHtml(key)}: ${this.convert(obj[key])}</li>`).join("");
-    return `<ul>${propertiesHtml}</ul>`;
-  }
-  static escapeHtml(unsafe) {
-    return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-  }
-};
-var json = {
-  code: "ERROR_CODE",
-  message: "Something went wrong",
-  details: {
-    info: "Detailed information about the error",
-    timestamp: (/* @__PURE__ */ new Date()).toISOString(),
-    items: [1, 2, 3]
-  }
-};
 
 // src/WebBased/Common/api/api.ts
 async function executePost(api, postBody) {
   return (await executeFetch(api, "POST", postBody)).data;
+}
+async function executePostv2(api, postBody) {
+  return executeFetch(api, "POST", postBody);
 }
 function validateApi(api) {
   let location = window.document.location.origin;
@@ -9666,6 +9910,10 @@ async function searchForAttribute(workItemId, attributeName) {
   };
   console.log("Searching using ShareDo Id: " + workItemId);
   let httpResultFindByQuery = await executeFindByQuery(req);
+  if (!httpResultFindByQuery) {
+    console.log("No result found");
+    return retValue;
+  }
   console.log(`Work item ${workItemId} found`);
   console.log(JSON.stringify(httpResultFindByQuery.results));
   let typeSystemName = httpResultFindByQuery.results[0].data["type.systemName"];
@@ -9684,6 +9932,451 @@ async function searchForAttribute(workItemId, attributeName) {
   return retValue;
 }
 
+// src/Common/Debound.ts
+var timer;
+function debounceFunction(func, wait) {
+  return function executedFunction() {
+    const later = () => {
+      clearTimeout(timer);
+      func();
+    };
+    clearTimeout(timer);
+    timer = window.setTimeout(later, wait);
+  };
+}
+
+// src/Interfaces/api/graph/IGraphQuery.ts
+var IGraphQueryDfaults = {
+  "fields": [
+    {
+      "path": "workitem.title"
+    },
+    {
+      "path": "workitem.id"
+    }
+  ],
+  "debug": false,
+  "allowParallelExecution": true,
+  "executeCalculatedFields": true,
+  "responseType": "flat",
+  "entityType": void 0,
+  "entityId": ""
+};
+
+// src/WebBased/Common/api/executeFindByGraph/executeFindByGraph.ts
+function executeFindByGraph(inputOption) {
+  return executePostv2("/api/graph/workitem/query", inputOption);
+}
+
+// src/Common/JsonToHTMLConverter.ts
+var JsonToHtmlConverter = class {
+  static convert(json2) {
+    if (json2 == null)
+      return this.escapeHtml("<em>null</em>");
+    if (typeof json2 !== "object")
+      return this.escapeHtml(json2.toString());
+    if (Array.isArray(json2)) {
+      return this.arrayToHtml(json2);
+    } else {
+      return this.objectToHtml(json2);
+    }
+  }
+  static arrayToHtml(arr) {
+    const itemsHtml = arr.map((item) => `<li>${this.convert(item)}</li>`).join("");
+    return `<ul>${itemsHtml}</ul>`;
+  }
+  static objectToHtml(obj) {
+    const propertiesHtml = Object.keys(obj).map((key) => `<li>${this.escapeHtml(key)}: ${this.convert(obj[key])}</li>`).join("");
+    return `<ul>${propertiesHtml}</ul>`;
+  }
+  static escapeHtml(unsafe) {
+    return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+  }
+};
+var json = {
+  code: "ERROR_CODE",
+  message: "Something went wrong",
+  details: {
+    info: "Detailed information about the error",
+    timestamp: (/* @__PURE__ */ new Date()).toISOString(),
+    items: [1, 2, 3]
+  }
+};
+
+// src/helpers/evaluteRule.ts
+function evaluteRule(rule, dataContext, dataContextName) {
+  if (!rule) {
+    return false;
+  }
+  try {
+    const returnValue = executeFunc(rule, dataContext, dataContextName);
+    if (typeof returnValue === "boolean") {
+      return returnValue;
+    } else {
+      l(err(`Rule [${rule}] did not return a boolean value. It returned: ${returnValue}`));
+      return false;
+    }
+  } catch (e) {
+    console.log(`Error evaluating rule [${rule}] with data context`, e);
+    return false;
+  }
+}
+function executeFunc(expression, dataContext, dataContextName) {
+  l(inf(`evaluteRule(${expression})`), dataContext);
+  if (expression === "") {
+    return "";
+  }
+  if (!expression) {
+    return void 0;
+  }
+  let dynamicFunc;
+  try {
+    let dataContextNameToUse = "dataContext";
+    if (dataContextName) {
+      const escapedDataContextName = dataContextName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const regex = new RegExp(escapedDataContextName, "g");
+      expression = expression.replace(regex, dataContextNameToUse);
+    }
+    checkAndLogUndefined(dataContext, expression, dataContextNameToUse);
+    dynamicFunc = new Function(`${dataContextNameToUse}`, `return (${expression});`);
+  } catch (e) {
+    let errMessage = `Error creating function for expression [${expression}]`;
+    l(err(errMessage), e);
+    return errMessage;
+  }
+  l(inf(`evaluteRule(${expression}) - dynamicFunc: `), dynamicFunc);
+  try {
+    const returnValue = dynamicFunc(dataContext);
+    return returnValue;
+  } catch (e) {
+    console.log(`Error evaluating rule [${expression}] with data context`, e);
+    return `${e}`;
+  }
+}
+function checkAndLogUndefined(obj, rule, dataContextName) {
+  const props = rule.split(".");
+  let current = {};
+  current[dataContextName] = obj;
+  for (let i = 0; i < props.length; i++) {
+    if (current[props[i]] === void 0) {
+      l(err(`Error while evaluating a rule ${rule}! The property ${dataContextName}.${props.slice(0, i + 1).join(".")} is undefined.`));
+      l(err(`Check the configuration of the rule ${rule}!`));
+      return void 0;
+    }
+    current = current[props[i]];
+  }
+  return current;
+}
+function executeEmbeddedCode(input, dataContext, dataContextName) {
+  if (!input) {
+    return "";
+  }
+  return input.replace(/\$\{(.+?)\}/g, (_, code) => {
+    try {
+      let val = executeFunc(code, dataContext, dataContextName);
+      if (val === void 0) {
+        val = "";
+      }
+      val = JSON.stringify(val, void 0, 2);
+      val = JsonToHtmlConverter.convert(val);
+      val = val.substring(1, val.length - 1);
+      return val;
+    } catch (error) {
+      console.error("Failed to execute embedded code:", error);
+      let val = "";
+      if (error.message) {
+        val = error.message;
+      } else {
+        val = JSON.stringify(error);
+      }
+      return JSON.stringify(val);
+    }
+  });
+}
+
+// src/WebBased/IDEAspects/BaseClasses/BaseIDEAspect.ts
+var import_detect_browser = __toESM(require_detect_browser());
+
+// src/helpers/Formatter.ts
+function formatValue(value, formatter) {
+  let dynamicFunc;
+  let returnValue;
+  try {
+    dynamicFunc = new Function("value", `return (${formatter});`);
+    returnValue = dynamicFunc(value);
+  } catch (e) {
+    returnValue = `Error formatting value ${value} with formatter ${formatter} - ${e}`;
+  }
+  return returnValue;
+}
+var formatFunc = formatValue;
+
+// src/helpers/VakueExtractor.ts
+function extractValue(value, viewModel, formatter, dataContextName) {
+  let valueToSet = executeEmbeddedCode(value, viewModel, dataContextName);
+  if (typeof valueToSet !== "string") {
+    valueToSet = JSON.stringify(valueToSet, null, 2);
+  }
+  if (formatter) {
+    valueToSet = formatFunc(valueToSet, formatter);
+  }
+  return valueToSet;
+}
+
+// src/WebBased/IDEAspects/BaseClasses/Template/TemplateApplicator.ts
+var TemplateApplicator = class {
+  constructor() {
+  }
+  setupElement(element, valueAccessor, allBindings, viewModel, bindingContext) {
+    let instruction = allBindings().matterSearchBinding;
+    if (!instruction) {
+      l(err("No instruction defined"));
+      return;
+    }
+    if (instruction.type == "IFieldPlacement") {
+      let rowField = instruction.object;
+      this.buildPlacements(rowField, "dataContextName", viewModel, element);
+    }
+  }
+  updateElement(element, valueAccessor, allBindings, viewModel, bindingContext) {
+    l("updateElement", element, valueAccessor, allBindings, viewModel, bindingContext);
+  }
+  buildPlacements(placement, dataContextName, viewModel, container) {
+    let rowCounter = 0;
+    const rootDiv = document.createElement("div");
+    container.appendChild(rootDiv);
+    if (placement.container) {
+      container.classList.add("ems-container");
+      let containerParent = container.parentElement;
+      if (containerParent) {
+        containerParent.classList.add("ems-container-parent");
+        this.addCSS(placement.container.cssClass, containerParent, dataContextName, viewModel);
+        this.addStyle(placement.container.style, containerParent, dataContextName, viewModel);
+      }
+    }
+    rootDiv.classList.add("ems-placement-item");
+    rootDiv.id = "resultItem";
+    this.addCSS(placement.cssClass, rootDiv, dataContextName, viewModel);
+    this.addStyle(placement.style, rootDiv, dataContextName, viewModel);
+    if (placement.icon) {
+      this.addIcons(placement.icon, dataContextName, rootDiv, viewModel);
+    }
+    const divRowContainer = document.createElement("div");
+    divRowContainer.classList.add("ems-row-container");
+    rootDiv.appendChild(divRowContainer);
+    placement.rows?.forEach((row) => {
+      rowCounter++;
+      const rowDiv = document.createElement("div");
+      rowDiv.style.alignItems = row.alignItems || "space-between";
+      rowDiv.classList.add("ems-row" + rowCounter);
+      rowDiv.classList.add("ems-row");
+      this.addCSS(row.cssClass, rowDiv, dataContextName, viewModel);
+      this.addStyle(row.style, rowDiv, dataContextName, viewModel);
+      row.fields?.forEach((field) => {
+        this.addField(field, dataContextName, rowDiv, viewModel);
+      });
+      divRowContainer.appendChild(rowDiv);
+    });
+  }
+  addField(field, dataContextName, rowDiv, viewModel) {
+    const fieldDiv = document.createElement("div");
+    fieldDiv.classList.add("ems-row-group");
+    this.addCSS(field.cssClass, fieldDiv, dataContextName, viewModel);
+    if (field.width)
+      fieldDiv.style.width = `${field.width}px`;
+    if (field.position)
+      fieldDiv.style.textAlign = field.position;
+    this.addStyle(field.style, fieldDiv, dataContextName, viewModel);
+    if (field.label) {
+      const labelElem = document.createElement("label");
+      labelElem.textContent = field.label;
+      labelElem.classList.add("ems-label");
+      fieldDiv.appendChild(labelElem);
+    }
+    this.addIcons(field.icon, dataContextName, fieldDiv, viewModel);
+    const spanElem = document.createElement("span");
+    spanElem.classList.add("ems-field-value");
+    if (field.field instanceof Array) {
+      this.addFieldArray(field.field, field.formatter, spanElem, viewModel);
+    }
+    if (typeof field.field === "string") {
+      this.setInnerHTML(field.field, field.formatter, viewModel, spanElem);
+    }
+    fieldDiv.appendChild(spanElem);
+    rowDiv.appendChild(fieldDiv);
+  }
+  setInnerHTML(value, formatter, viewModel, element) {
+    let valueToSet = extractValue(value, viewModel, formatter);
+    element.innerHTML = valueToSet;
+  }
+  addIcons(icons, dataContextName, fieldDiv, viewModel) {
+    if (!icons)
+      return;
+    if (typeof icons === "string") {
+      icons = [{ icon: icons }];
+    }
+    icons.forEach((iconRule) => {
+      const iconElem = document.createElement("span");
+      iconElem.className = "fa card-icon " + iconRule.icon;
+      iconElem.classList.add("ems-icon");
+      if (iconRule.cssClass)
+        iconElem.classList.add(iconRule.cssClass);
+      if (typeof iconRule.style === "string")
+        iconElem.setAttribute("style", iconRule.style);
+      if (iconRule.rule) {
+        console.log("iconRule.rule", iconRule.rule);
+        let value = evaluteRule(iconRule.rule, viewModel);
+        if (!value) {
+          iconElem.style.display = "none";
+        }
+      }
+      if (iconRule.position === "before") {
+        fieldDiv.insertBefore(iconElem, fieldDiv.firstChild);
+      }
+      if (iconRule.position === "after") {
+        fieldDiv.appendChild(iconElem);
+      }
+      if (!iconRule.position) {
+        fieldDiv.appendChild(iconElem);
+      }
+    });
+  }
+  addCSS(cssClass, rootDiv, dataContextName, viewModel) {
+    if (typeof cssClass === "string") {
+      cssClass = [{ cssClass }];
+    }
+    if (cssClass instanceof Array) {
+      let arrItem = cssClass;
+      for (let i = 0; i < arrItem.length; i++) {
+        let cssRule = arrItem[i];
+        let cssValue = executeEmbeddedCode(cssRule.cssClass, viewModel);
+        if (cssRule.rule) {
+          let currentDataBind = rootDiv.getAttribute("data-bind") || "";
+          if (currentDataBind) {
+            currentDataBind += ",";
+          }
+          let rule = cssRule.rule;
+          let value = evaluteRule(rule, viewModel);
+          if (value) {
+            rootDiv.classList.add(cssValue);
+          }
+        } else {
+          rootDiv.classList.add(cssValue);
+        }
+      }
+    }
+  }
+  addFieldArray(fields, formatter, fieldDiv, viewModel) {
+    if (!fields)
+      return;
+    fields.forEach((field) => {
+      if (field.rule) {
+        console.log("fieldRule.rule", field.rule);
+        let value = evaluteRule(field.rule, viewModel);
+        if (value) {
+          this.setInnerHTML(field.field, formatter, viewModel, fieldDiv);
+        }
+      } else {
+        this.setInnerHTML(field.field, formatter, viewModel, fieldDiv);
+      }
+    });
+  }
+  addStyle(style, rootDiv, dataContextName, viewModel) {
+    if (style == void 0)
+      return;
+    if (typeof style === "string") {
+      style = [{ style }];
+    }
+    if (style instanceof Array) {
+      let arrItem = style;
+      for (let i = 0; i < arrItem.length; i++) {
+        let styleRule = arrItem[i].rule;
+        if (styleRule) {
+          let currentDataBind = rootDiv.getAttribute("data-bind") || "";
+          if (currentDataBind) {
+            currentDataBind += ",";
+          }
+          let value = evaluteRule(styleRule, viewModel);
+          if (value) {
+            this.setStyles(style, viewModel, dataContextName, rootDiv);
+          }
+        } else {
+          this.setStyles(style, viewModel, dataContextName, rootDiv);
+        }
+      }
+    } else {
+      this.setStyles(style, viewModel, dataContextName, rootDiv);
+    }
+  }
+  setStyles(style, data, dataContextName, rootDiv) {
+    let retValue = {};
+    if (!style) {
+      return "";
+    }
+    ;
+    if (typeof style === "string") {
+      let n = {
+        style
+      };
+      return this.buildStyleNameValue(n, retValue);
+    }
+    if (Array.isArray(style)) {
+      let arrItem = style;
+      if (Array.isArray(arrItem)) {
+        for (let i = 0; i < arrItem.length; i++) {
+          let styleRuleOrNameValue = arrItem[i];
+          if (styleRuleOrNameValue.rule) {
+            if (evaluteRule(styleRuleOrNameValue.rule, data)) {
+              if (!styleRuleOrNameValue.style)
+                continue;
+              retValue = this.buildStyleNameValue(styleRuleOrNameValue, retValue);
+            }
+          } else {
+            retValue = this.buildStyleNameValue(styleRuleOrNameValue, retValue);
+          }
+        }
+      }
+      for (let i = 0; i < arrItem.length; i++) {
+        let styleRuleOrNameValue = arrItem[i];
+        if (styleRuleOrNameValue.rule) {
+          if (evaluteRule(styleRuleOrNameValue.rule, data)) {
+            if (!styleRuleOrNameValue.style)
+              continue;
+            retValue = this.buildStyleNameValue(styleRuleOrNameValue, retValue);
+          }
+        } else {
+          retValue = this.buildStyleNameValue(styleRuleOrNameValue, retValue);
+        }
+      }
+    } else {
+      if (typeof style === "object") {
+        retValue = style;
+      }
+    }
+    for (let key in retValue) {
+      if (retValue.hasOwnProperty(key)) {
+        rootDiv.style[key] = retValue[key];
+      }
+    }
+  }
+  buildStyleNameValue(rule, retValue) {
+    if (typeof rule.style === "object") {
+      retValue = { ...retValue, ...rule.style };
+    }
+    if (typeof rule.style === "string") {
+      let styleItems = rule.style.split(";");
+      for (let i = 0; i < styleItems.length; i++) {
+        let styleItem = styleItems[i];
+        let nameValue = styleItem.split(":");
+        if (nameValue.length == 2) {
+          retValue[nameValue[0].trim()] = nameValue[1].trim();
+        }
+      }
+    }
+    return retValue;
+  }
+};
+
 // src/WebBased/IDEAspects/BaseClasses/BaseIDEAspect.ts
 console.log("v: - 3.29");
 var FOMR_BUILDER_PATH_STRING = "aspectData.formBuilder.formData";
@@ -9699,7 +10392,7 @@ var BaseIDEAspect = class {
     this.disposables = [];
     this.refreshLog = new Array();
     this.errorDivSelector = ERROR_DIV_SELECTOR;
-    this.errors = ko2.observableArray();
+    this.errors = ko3.observableArray();
     if (arr.length === 0) {
       return;
     }
@@ -9722,33 +10415,44 @@ var BaseIDEAspect = class {
     this.originalConfiguration = polutedConfiguration;
     this.baseModel = baseModel;
     if (!this.sharedoConfiguration.configuration) {
-      console.error("No configuration found in the sharedoConfiguration - check the aspect or widget config that ther eis a base configuration of configuration:{}");
+      console.error(
+        "No configuration found in the sharedoConfiguration - check the aspect or widget config that ther eis a base configuration of configuration:{}"
+      );
       throw new Error("No configuration found in the sharedoConfiguration");
     }
-    this.sharedoConfiguration.configuration.debug = $.extend(DEBUG_DEFAULT(), this.sharedoConfiguration.configuration.debug);
-    this.sharedoConfiguration.configuration = $.extend(this.defaults, this.originalConfiguration.configuration);
+    this.sharedoConfiguration.configuration = $.extend(
+      DEFAULT_CONFIGURATION_SETTINGS,
+      this.sharedoConfiguration.configuration
+    );
+    this.sharedoConfiguration.configuration = $.extend(
+      this.defaults,
+      this.originalConfiguration.configuration
+    );
     this.model = this.sharedoConfiguration._host?.model;
     this.blade = this.sharedoConfiguration._host?.blade;
-    this.loaded = this.loaded || ko2.observable(false);
-    this.sharedoId = this.sharedoConfiguration._host?.model.id || $ui.pageContext?.sharedoId || ko2.observable(void 0);
+    this.loaded = this.loaded || ko3.observable(false);
+    this.sharedoId = this.sharedoConfiguration._host?.model.id || $ui.pageContext?.sharedoId || ko3.observable(void 0);
     if (!this.sharedoId || this.sharedoId()) {
       this.log("No sharedoId found");
     }
-    this.sharedoTypeSystemName = this.sharedoConfiguration._host?.model?.sharedoTypeSystemName || $ui.pageContext?.sharedoTypeName || ko2.observable(void 0);
+    this.sharedoTypeSystemName = this.sharedoConfiguration._host?.model?.sharedoTypeSystemName || $ui.pageContext?.sharedoTypeName || ko3.observable(void 0);
     if (!this.sharedoTypeSystemName || !this.sharedoTypeSystemName()) {
       this.log("No sharedoTypeSystemName found");
     }
-    this.parentSharedoId = this.sharedoConfiguration._host?.model?.parentSharedoId || ko2.observable(void 0);
-    this.phaseName = this.sharedoConfiguration._host?.model?.phaseName || $ui.pageContext?.phaseName || ko2.observable(void 0);
-    this.phaseIsOpen = this.sharedoConfiguration._host?.model?.phaseIsOpen || $ui.pageContext?.phaseIsOpen || ko2.observable(void 0);
+    this.parentSharedoId = this.sharedoConfiguration._host?.model?.parentSharedoId || ko3.observable(void 0);
+    this.phaseName = this.sharedoConfiguration._host?.model?.phaseName || $ui.pageContext?.phaseName || ko3.observable(void 0);
+    this.phaseIsOpen = this.sharedoConfiguration._host?.model?.phaseIsOpen || $ui.pageContext?.phaseIsOpen || ko3.observable(void 0);
     this.validation = {};
-    this.validationErrorCount = this.validationErrorCount || ko2.observable(0);
+    this.validationErrorCount = this.validationErrorCount || ko3.observable(0);
     this.applyComponentConfiguration(this.sharedoConfiguration.configuration);
     this.LocationToSaveOrLoadData = this.setLocationOfDataToLoadAndSave();
     this.fireEvent("onInitialise", this.model);
   }
   applyComponentConfiguration(configuration) {
-    let configurationAsObservables = toObservableObject(configuration, this.options);
+    let configurationAsObservables = toObservableObject(
+      configuration,
+      this.options
+    );
     this.configuration = configuration;
     this.options = configurationAsObservables;
     this._options = configurationAsObservables;
@@ -9780,31 +10484,32 @@ var BaseIDEAspect = class {
       return;
     }
     this.l("Setting up live config");
-    const serializedData = JSON.stringify(this.sharedoConfiguration, (key, value) => {
-      if (key === "_host") {
-        return void 0;
-      }
-      return value;
-    }, 4);
-    let config = ko2.observable(serializedData);
+    const serializedData = JSON.stringify(
+      this.sharedoConfiguration,
+      (key, value) => {
+        if (key === "_host") {
+          return void 0;
+        }
+        return value;
+      },
+      4
+    );
+    let config = ko3.observable(serializedData);
     this.liveConfigData = {
       config
     };
     let timeout = false;
     this.liveConfigDiv = this.createLiveConfigDiv();
     this.element.prepend(this.liveConfigDiv);
+    let applyChange = () => {
+      this.applyComponentConfiguration(JSON.parse(config()).configuration);
+      this.liveConfigurationRefreshed();
+      this.buildErrorDiv();
+    };
     setTimeout(() => {
       config.subscribe((newValue) => {
-        if (timeout) {
-          return;
-        }
-        setTimeout(() => {
-          timeout = false;
-          let newConfig = JSON.parse(config());
-          this.applyComponentConfiguration(newConfig.configuration);
-          this.liveConfigurationRefreshed();
-        }, 500);
-        timeout = true;
+        const debouncedApplyChange = debounceFunction(applyChange, 3e3);
+        debouncedApplyChange();
       });
     }, 3e3);
   }
@@ -9832,12 +10537,19 @@ var BaseIDEAspect = class {
     this._options?.eventsToReactTo()?.forEach((eventToWatch) => {
       console.log("Subscribing to event", eventToWatch);
       this.disposables.push(
-        $ui.events.subscribe(eventToWatch.eventPath(), (e) => {
-          this.refreshComponent(eventToWatch.eventPath(), eventToWatch.methodToCall());
-        }, this)
+        $ui.events.subscribe(
+          eventToWatch.eventPath(),
+          (e) => {
+            this.refreshComponent(
+              eventToWatch.eventPath(),
+              eventToWatch.methodToCall()
+            );
+          },
+          this
+        )
       );
     });
-    let refreshOn = ko2.toJS(this._options?.refreshOn());
+    let refreshOn = ko3.toJS(this._options?.refreshOn());
     if (refreshOn) {
       if (refreshOn.sharedoIdChanged) {
         this.disposables.push(
@@ -9874,13 +10586,21 @@ var BaseIDEAspect = class {
     }
     this.lastRefresh = /* @__PURE__ */ new Date();
     console.log("Refreshing component");
-    let logItem = { eventPath, methodToCall, time: /* @__PURE__ */ new Date(), success: false };
+    let logItem = {
+      eventPath,
+      methodToCall,
+      time: /* @__PURE__ */ new Date(),
+      success: false
+    };
     try {
       if (methodToCall) {
         console.log("Executing method", methodToCall);
         let componentToRefresh = this;
         if (!componentToRefresh[methodToCall]) {
-          console.log(`Method not found on component ${this.thisComponentName}`, methodToCall);
+          console.log(
+            `Method not found on component ${this.thisComponentName}`,
+            methodToCall
+          );
         }
         {
           componentToRefresh[methodToCall]();
@@ -9902,7 +10622,7 @@ var BaseIDEAspect = class {
     l("errorDiv.innerHTML");
     errorDiv.innerHTML = "";
     if (!this.errors) {
-      this.errors = ko2.observableArray();
+      this.errors = ko3.observableArray();
     }
     if (this.errors().length === 0) {
       return;
@@ -9916,58 +10636,172 @@ var BaseIDEAspect = class {
     errorContainerDiv.appendChild(titleDiv);
     let foreachDiv = document.createElement("div");
     errorContainerDiv.appendChild(foreachDiv);
-    this.errors().forEach((error) => {
-      let userMessageDiv = document.createElement("div");
-      userMessageDiv.className = "ide-aspect-error-user-message";
-      userMessageDiv.innerHTML = error.userMessage;
-      userMessageDiv.onclick = () => {
-        let detailedMessageDiv = document.createElement("div");
-        detailedMessageDiv.className = "ide-aspect-error-detailed-message";
-        const code = escapeHtml(error.code || "");
-        const message = escapeHtml(error.message || "");
-        const userMessage = escapeHtml(error.userMessage || "");
-        const errorStack = escapeHtml(error.errorStack || "");
-        const additionalInfo = JsonToHtmlConverter.convert(error.additionalInfo || {});
-        const html = `
-                            <div>
-                            <h2>Error: ${code}</h2>
-                            <p><strong>Message:</strong> ${message}</p>
-                            <p><strong>User Message:</strong> ${userMessage}</p>
-                            <p><strong>Stack:</strong> ${errorStack}</p>
-                            <p><strong>Additional Info:</strong> ${additionalInfo}</p>
-                            </div>`;
-        detailedMessageDiv.innerHTML = html;
-        $ui.errorDialog(detailedMessageDiv);
-      };
-      foreachDiv.appendChild(userMessageDiv);
-      if (error.suggestions && error.suggestions.length > 0) {
-        let suggestionsDiv = document.createElement("div");
-        suggestionsDiv.className = "ide-aspect-error-suggestions";
-        suggestionsDiv.innerHTML = `<b>Suggestions:</b><br/>${error.suggestions.join("<br/>")}`;
-        foreachDiv.appendChild(suggestionsDiv);
+    for (let i = 0; i < this.errors().length; i++) {
+      let error = this.errors()[i];
+      this.addErrorTrapping(error);
+      foreachDiv.appendChild(this.buildIndividualError(error));
+    }
+  }
+  buildIndividualError(error) {
+    let templateApplicator = new TemplateApplicator();
+    let dataContext = this.getDataContext([{ obj: error, key: "error" }]);
+    let linkedTrappedError = error.linkedTrappedError;
+    let individualErrorDiv = document.createElement("div");
+    individualErrorDiv.className = "ide-aspect-error-individual-error";
+    if (linkedTrappedError) {
+      templateApplicator.addCSS(
+        linkedTrappedError.classRules,
+        individualErrorDiv,
+        "dataContext",
+        dataContext
+      );
+      templateApplicator.addStyle(
+        linkedTrappedError.styleRules,
+        individualErrorDiv,
+        "dataContext",
+        dataContext
+      );
+    }
+    let userMessageDiv = document.createElement("div");
+    userMessageDiv.className = "ide-aspect-error-user-message";
+    let suggestionsDiv;
+    let supportButtonDiv;
+    let actionsDiv;
+    let internalSuggestionsDiv;
+    userMessageDiv.innerHTML = linkedTrappedError?.userFreindlyMessage || error.userMessage || error.message || "Unknown error";
+    if (linkedTrappedError?.userFreindlyHTMLMessageTemplate) {
+      let userFreindlyMessage = executeEmbeddedCode(
+        linkedTrappedError.userFreindlyHTMLMessageTemplate,
+        dataContext
+      );
+      userMessageDiv.innerHTML = userFreindlyMessage;
+      suggestionsDiv = userMessageDiv.querySelector(".ide-aspect-error-suggestions") || suggestionsDiv;
+      actionsDiv = userMessageDiv.querySelector(".ide-aspect-error-actions") || actionsDiv;
+      internalSuggestionsDiv = userMessageDiv.querySelector(
+        ".ide-aspect-error-internal-suggestions"
+      ) || internalSuggestionsDiv;
+    }
+    individualErrorDiv.appendChild(userMessageDiv);
+    {
+      if (!suggestionsDiv) {
+        suggestionsDiv = document.createElement("div");
+        individualErrorDiv.appendChild(suggestionsDiv);
       }
-      if (error.actions && error.actions.length > 0) {
-        let actionsDiv = document.createElement("div");
-        actionsDiv.className = "ide-aspect-error-actions";
-        actionsDiv.innerHTML = `<b>Actions:</b><br/>${error.actions.join("<br/>")}`;
-        foreachDiv.appendChild(actionsDiv);
+      if (!actionsDiv) {
+        actionsDiv = document.createElement("div");
+        individualErrorDiv.appendChild(actionsDiv);
       }
-      if (error.internalSuggestions && error.internalSuggestions.length > 0) {
-        let internalSuggestionsDiv = document.createElement("div");
-        internalSuggestionsDiv.className = "ide-aspect-error-internal-suggestions";
-        internalSuggestionsDiv.innerHTML = `<b>Internal Suggestions:</b><br/>${error.internalSuggestions.join("<br/>")}`;
-        foreachDiv.appendChild(internalSuggestionsDiv);
+      if (!internalSuggestionsDiv) {
+        internalSuggestionsDiv = document.createElement("div");
+        individualErrorDiv.appendChild(internalSuggestionsDiv);
       }
-    });
-    if (this._options?.debug().supportRequestEnabled) {
+      if (!supportButtonDiv) {
+        supportButtonDiv = document.createElement("div");
+        individualErrorDiv.appendChild(supportButtonDiv);
+      }
+    }
+    let resolutionSuggestions = linkedTrappedError?.resolutionSuggestions || error.internalSuggestions || [];
+    if (resolutionSuggestions.length > 0) {
+      suggestionsDiv.className = "ide-aspect-error-suggestions";
+      suggestionsDiv.innerHTML = `<b>Suggestions:</b><br/>${resolutionSuggestions.join(
+        "<br/>"
+      )}`;
+    }
+    let actions = error.sharedoErrorActions || [];
+    if (actions.length > 0) {
+      actionsDiv.innerHTML = `<b>Actions:</b><br/>${actions.join("<br/>")}`;
+    }
+    let internalSuggestions = error.internalSuggestions || [];
+    if (internalSuggestions.length > 0) {
+      internalSuggestionsDiv.innerHTML = `<b>Internal Suggestions:</b><br/>${internalSuggestions.join(
+        "<br/>"
+      )}`;
+    }
+    let supportButton = linkedTrappedError?.supportButton || this.configuration?.errorManagement?.unTrappedErrorsSupportButton;
+    if (supportButton) {
       let actionDiv = document.createElement("div");
       actionDiv.className = "ide-aspect-error-support-action";
-      errorContainerDiv.appendChild(actionDiv);
+      individualErrorDiv.appendChild(actionDiv);
       let button = document.createElement("button");
       button.className = "btn btn-primary";
-      button.innerText = "Create Support Task";
+      button.onclick = () => {
+        this.createOpenPanel(supportButton, dataContext);
+      };
+      templateApplicator.addCSS(
+        supportButton.classRules,
+        actionDiv,
+        "dataContext",
+        dataContext
+      );
+      templateApplicator.addStyle(
+        supportButton.styleRules,
+        actionDiv,
+        "dataContext",
+        dataContext
+      );
+      button.innerText = supportButton.title;
       actionDiv.appendChild(button);
     }
+    return individualErrorDiv;
+  }
+  createOpenPanel(supportButton, dataContext) {
+    if (!supportButton) {
+      return;
+    }
+    let buttonConfig = supportButton.raiseSupportTicketSharedoCommand;
+    let supportTicketMessage = buttonConfig.description || supportButton.supportTicketMessage || "";
+    let config = {
+      title: executeEmbeddedCode(buttonConfig.title, dataContext),
+      typeSystemName: executeEmbeddedCode(buttonConfig.typeSystemName, dataContext),
+      description: executeEmbeddedCode(supportTicketMessage, dataContext)
+    };
+    $ui.nav.invoke({
+      invokeType: "panel",
+      invoke: "Sharedo.Core.Case.Sharedo.AddEditSharedo",
+      config
+    });
+  }
+  addErrorTrapping(error) {
+    let errorTrapped = false;
+    let errorTraps = this.configuration?.errorManagement?.errorTraps || [];
+    for (let errorTrapsIndex = 0; errorTrapsIndex < errorTraps.length; errorTrapsIndex++) {
+      let trap = errorTraps[errorTrapsIndex];
+      if (trap.enabled === false) {
+        continue;
+      }
+      try {
+        let dataContext = this.getDataContext([{ obj: error, key: "error" }]);
+        l(
+          `Evaluating rule [${trap.rule}] on error ${error} with dataContext:`,
+          dataContext
+        );
+        let ruleResult = evaluteRule(trap.rule, dataContext);
+        if (ruleResult) {
+          errorTrapped = true;
+          error.linkedTrappedError = trap;
+          break;
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  }
+  getDataContext(additional) {
+    const browser = (0, import_detect_browser.detect)();
+    let dataContext = {
+      thisComponentName: this.thisComponentName,
+      user: ko3.toJS($ui.pageContext?.user),
+      pageContext: ko3.toJS($ui.pageContext),
+      aspectData: ko3.toJS(this.baseModel),
+      configuration: ko3.toJS(this._options),
+      browser
+    };
+    let additionalData = additional || [];
+    for (let i = 0; i < additionalData.length; i++) {
+      let item = additionalData[i];
+      dataContext[item.key] = item.obj;
+    }
+    return dataContext;
   }
   // abstract setDependantScriptFiles(): string[];
   // abstract setDependantStyleFiles(): string[];
@@ -9983,55 +10817,87 @@ var BaseIDEAspect = class {
   onSave(model) {
     this.fireEvent("onSave", model);
     let dataToSave = this._data;
-    this.log("Saving, model passed in we need to persist to", "green", dataToSave);
+    this.log(
+      "Saving, model passed in we need to persist to",
+      "green",
+      dataToSave
+    );
     if (this.LocationToSaveOrLoadData === void 0) {
-      this.log("No location to save data to set - this method should be overriden", "red");
+      this.log(
+        "No location to save data to set - this method should be overriden",
+        "red"
+      );
       return;
     }
     let dataToPersist = this._data;
     let currentData = getNestedProperty(model, this.LocationToSaveOrLoadData);
     if (currentData) {
-      this.log(`Current data at location ${this.LocationToSaveOrLoadData} :`, "magenta", currentData);
+      this.log(
+        `Current data at location ${this.LocationToSaveOrLoadData} :`,
+        "magenta",
+        currentData
+      );
     }
     if (!currentData) {
     }
-    this.log(`New data to persist to location ${this.LocationToSaveOrLoadData} :`, "blue", dataToPersist);
+    this.log(
+      `New data to persist to location ${this.LocationToSaveOrLoadData} :`,
+      "blue",
+      dataToPersist
+    );
     setNestedProperty(model, this.LocationToSaveOrLoadData, dataToPersist);
     this.l("Data saved", model);
   }
-  async getData() {
+  /**
+   * Gets the data to load, defaults to LocationToSaveOrLoadData unless a fieldPath is passed in
+   * @param fieldPath
+   * @returns
+   */
+  async getData(fieldPath) {
     if (this._data) {
       return this._data;
     }
+    fieldPath = fieldPath || this.LocationToSaveOrLoadData;
     let useParents = this._options?.dataSettings().getValueUsingParents();
     let shareDoId = this.sharedoId();
     let maxDepth = this._options?.dataSettings().maxDepth();
-    let LocationToSaveOrLoadData = gvko(this.LocationToSaveOrLoadData);
-    if (LocationToSaveOrLoadData === void 0) {
-      this.log("No location to load data from set - this method should be overriden", "red");
+    if (fieldPath === void 0) {
+      this.log(
+        "No location to load data from set - this method should be overriden",
+        "red"
+      );
       return this._data;
     }
-    this._data = getNestedProperty(this.model, LocationToSaveOrLoadData);
+    this._data = getNestedProperty(this.model, fieldPath);
     if (this._data !== void 0) {
       this.l("Data found at location", this._data);
-      this._data = ko2.toJS(this._data);
+      this._data = ko3.toJS(this._data);
       return this._data;
     }
     if (this._data === void 0 && useParents === false && shareDoId) {
-      return searchForAttributeRecursive(shareDoId, LocationToSaveOrLoadData, false).then((data) => {
-        if (data.found) {
-          this._data = data.value;
+      return searchForAttributeRecursive(shareDoId, fieldPath, false).then(
+        (data) => {
+          if (data.found) {
+            this._data = data.value;
+          }
+          return this._data;
         }
-        return this._data;
-      });
+      );
     }
     if (this._data === void 0 && useParents === true) {
       let idToUser = this.sharedoId() || this.parentSharedoId();
       if (!idToUser) {
-        this.log("No id to use for search both sharedoId and parentSharedoId are undefined");
+        this.log(
+          "No id to use for search both sharedoId and parentSharedoId are undefined"
+        );
         return this._data;
       }
-      return searchForAttributeRecursive(idToUser, LocationToSaveOrLoadData, useParents, maxDepth).then((data) => {
+      return searchForAttributeRecursive(
+        idToUser,
+        fieldPath,
+        useParents,
+        maxDepth
+      ).then((data) => {
         if (data.found) {
           this._data = data.value;
         }
@@ -10039,11 +10905,43 @@ var BaseIDEAspect = class {
       });
     }
   }
+  searchForAttributeRecursive(id, attribute, useParents, maxDepth) {
+    return searchForAttributeRecursive(id, attribute, useParents, maxDepth);
+  }
+  async searchByGraph(fieldPath, useParent = false) {
+    let inputOption = IGraphQueryDfaults;
+    let shareDoId = this.sharedoId();
+    let parentId = this.parentSharedoId();
+    let query = {
+      path: fieldPath
+    };
+    inputOption.fields.push(query);
+    if (useParent === false && shareDoId) {
+      inputOption.entityId = shareDoId;
+    } else if (useParent === true && parentId) {
+      inputOption.entityId = parentId;
+    }
+    if (!inputOption.entityId) {
+      this.log(
+        "No id to use for search both sharedoId and parentSharedoId are undefined"
+      );
+      return;
+    }
+    let result = await executeFindByGraph(inputOption);
+    if (result.info.success === false) {
+      this.log("Error executing search", "red", result.info);
+      return;
+    }
+    return result.data?.data[fieldPath];
+  }
   setData(value) {
-    let valueToPersist = ko2.toJS(value);
-    let previousValue = ko2.toJS(this._data);
+    let valueToPersist = ko3.toJS(value);
+    let previousValue = ko3.toJS(this._data);
     this._data = valueToPersist;
-    this.fireValueChangedEvent("onDataBeforeChanged", { previousValue, newValue: valueToPersist });
+    this.fireValueChangedEvent("onDataBeforeChanged", {
+      previousValue,
+      newValue: valueToPersist
+    });
     if (this.LocationToSaveOrLoadData === void 0) {
       return;
     }
@@ -10064,7 +10962,11 @@ var BaseIDEAspect = class {
   loadAndBind() {
     this.log("IDEAspects.Example : loadAndBind");
     this.log("Loading data (model:any) passed in", "green");
-    this.log("Loading data based on location to save", "green", this.LocationToSaveOrLoadData);
+    this.log(
+      "Loading data based on location to save",
+      "green",
+      this.LocationToSaveOrLoadData
+    );
     this.fireEvent("onLoad", this.model);
   }
   /**
@@ -10091,22 +10993,26 @@ var BaseIDEAspect = class {
   debugSettings() {
     let debugSetting = DEBUG_DEFAULT();
     if (this._options?.debug()) {
-      debugSetting = ko2.toJS(this._options?.debug());
+      debugSetting = ko3.toJS(this._options?.debug());
     }
     return debugSetting;
   }
   /**
    * Provides logging for the component based on the debug configuration
-   * @param message 
-   * @param color 
-   * @param data 
+   * @param message
+   * @param color
+   * @param data
    */
   log(message, color, data) {
     if (this.debugSettings().enabled) {
       if (this.debugSettings().logToConsole) {
         if (!color)
           color = "black";
-        console.log(`%c ${this.thisComponentName} - ${message}`, `color:${color}`, data);
+        console.log(
+          `%c ${this.thisComponentName} - ${message}`,
+          `color:${color}`,
+          data
+        );
       }
     }
   }
@@ -10163,7 +11069,6 @@ var BaseIDEAspect = class {
     if (!this.logToAspect()) {
       return;
     }
-    ;
     this.aspectLogOutput = document.createElement("div");
     let aspectLogOutput = this.aspectLogOutput;
     aspectLogOutput.id = `aspectLogOutput-${this.uniqueId}`;
@@ -10213,13 +11118,16 @@ var BaseIDEAspect = class {
     fireEvent(event);
   }
   /**
-   * 
+   *
    * @returns Formbuild if it exists or creates it if it does not
-   * 
+   *
    */
   formbuilder() {
     if (!this.blade?.model?.aspectData?.formBuilder?.formData) {
-      this.log("blade.model.aspectData.formBuilder.formData not found - will create the path", "blue");
+      this.log(
+        "blade.model.aspectData.formBuilder.formData not found - will create the path",
+        "blue"
+      );
     } else {
       this.log("blade.model.aspectData.formBuilder.formData found", "green");
     }
@@ -10231,18 +11139,23 @@ var BaseIDEAspect = class {
   }
   /**
    * Ensures there is a form builder in the passed in model and returns it
-   * @param model 
-   * @returns 
+   * @param model
+   * @returns
    */
   ensureFormbuilder(model) {
     if (!model?.aspectData?.formBuilder?.formData) {
-      this.log("blade.model.aspectData.formBuilder.formData not found - will create the path", "blue");
+      this.log(
+        "blade.model.aspectData.formBuilder.formData not found - will create the path",
+        "blue"
+      );
     } else {
       this.log("blade.model.aspectData.formBuilder.formData found", "green");
     }
     model = model || {};
     model.aspectData = model.aspectData || {};
-    model.aspectData.formBuilder = model.aspectData.formBuilder || { formData: {} };
+    model.aspectData.formBuilder = model.aspectData.formBuilder || {
+      formData: {}
+    };
     return model.aspectData.formBuilder.formData;
   }
   formbuilderField(formbuilderField, setValue) {
@@ -10256,7 +11169,10 @@ var BaseIDEAspect = class {
     }
     let foundValue = formBuilder[formbuilderField];
     if (!foundValue) {
-      this.log(`Form builder does not contain field ${formbuilderField} `, "orange");
+      this.log(
+        `Form builder does not contain field ${formbuilderField} `,
+        "orange"
+      );
       this.log(`Creating field ${formbuilderField} `, "blue");
       formBuilder[formbuilderField] = void 0;
     }
@@ -10273,6 +11189,7 @@ var BaseIDEAspect = class {
 var import_knockout = __toESM(require_knockout_latest());
 var DatePickerAspect = class extends BaseIDEAspect {
   liveConfigurationRefreshed() {
+    this.loadAndBind();
   }
   refresh(newConfig) {
   }
@@ -10300,7 +11217,41 @@ var DatePickerAspect = class extends BaseIDEAspect {
       this.err("No formbuilder field set in configuration - check aspect configuration");
       throw new Error("No formbuilder field set in configuration - check aspect configuration");
     }
-    return getFormBuilderFieldPath(this.sharedoConfiguration.configuration.formBuilderField);
+    let formBuilderField = executeEmbeddedCode(this.sharedoConfiguration.configuration.formBuilderField, this.getDataContext());
+    return getFormBuilderFieldPath(formBuilderField);
+  }
+  getDataContext() {
+    let dataContext = import_knockout.default.toJS(this.model);
+    let formBuilderData = this.formbuilder();
+    dataContext["formBuilder"] = formBuilderData;
+    return dataContext;
+  }
+  async getValueToPopulate() {
+    let dataContext = this.getDataContext();
+    let retValue = executeEmbeddedCode(this.configuration?.formBuilderField, dataContext) || "";
+    if (retValue) {
+      retValue = await this.getData();
+      if (retValue) {
+        retValue = JSON.stringify(retValue, null, 2);
+      }
+    }
+    if (this.configuration?.getValueOptions) {
+      if (typeof this.configuration?.getValueOptions === "string") {
+        retValue = executeEmbeddedCode(this.configuration?.getValueOptions, dataContext);
+      }
+      if (Array.isArray(this.configuration?.getValueOptions)) {
+        for (let i = 0; i < this.configuration.getValueOptions.length; i++) {
+          let option = this.configuration.getValueOptions[i];
+          let value = evaluteRule(option.rule, dataContext);
+          if (value) {
+            retValue = await this.searchByGraph(option.fieldPath, true);
+            break;
+          }
+        }
+        ;
+      }
+    }
+    return retValue;
   }
   setPickerEnabledState(newValue) {
     if (!this.datePickerDiv) {
@@ -10323,11 +11274,12 @@ var DatePickerAspect = class extends BaseIDEAspect {
    */
   async getModelDataAsDate() {
     let retValue;
-    let foundValue = await this.getData();
+    let foundValue = await this.getValueToPopulate();
     if (!foundValue) {
-      foundValue = this.generateDefaultDate();
+      retValue = this.generateDefaultDate();
+    } else {
+      retValue = this.ensureDate(foundValue);
     }
-    retValue = this.ensureDate(foundValue);
     this.setModelDataAsDate(retValue);
     return retValue;
   }
@@ -10358,7 +11310,9 @@ var DatePickerAspect = class extends BaseIDEAspect {
     if (this.datePickerDiv) {
       this.log("Already exists", "red");
       this.datePickerDiv.remove();
-      return;
+    }
+    if (this.dateTimePicker) {
+      this.dateTimePicker.dispose();
     }
     this.datePickerDiv = document.createElement("div");
     this.datePickerDiv.classList.add("the-picker");
@@ -10382,30 +11336,40 @@ var DatePickerAspect = class extends BaseIDEAspect {
     this.datePickerDiv.appendChild(input);
     element.appendChild(this.datePickerDiv);
     let datePickerOption = import_knockout.default.toJS(this.options?.datePickerOptions());
-    this.dateTimePicker = new import_tempus_dominus.TempusDominus(this.datePickerDiv, datePickerOption);
-    this.options?.datePickerOptions.subscribe((newValue) => {
-      this.loadAndBind();
-    });
-    this.setPickerEnabledState(this.options?.pickerEnabled());
-    let dateToSet = await this.getModelDataAsDate();
-    this.dateTimePicker.dates.setValue(
-      dateToSet,
-      this.dateTimePicker.dates.lastPickedIndex
-    );
-    this.dateTimePicker.subscribe("change.td", (e) => {
-      this.log("Date Changed", "red", e);
-      this.options?.eventToFireOnUpdate()?.forEach((event) => {
-        $ui.events.broadcast(
-          event,
-          {
-            source: this,
-            formbuilderField: this.options?.formBuilderField(),
-            value: this.getCurrentSelectedDate()
-          }
-        );
+    try {
+      this.dateTimePicker = new import_tempus_dominus.TempusDominus(this.datePickerDiv, datePickerOption);
+      this.setPickerEnabledState(this.options?.pickerEnabled());
+      let dateToSet = await this.getModelDataAsDate();
+      this.dateTimePicker.dates.setValue(
+        dateToSet,
+        this.dateTimePicker.dates.lastPickedIndex
+      );
+      this.dateTimePicker.subscribe("change.td", (e) => {
+        this.log("Date Changed", "red", e);
+        this.options?.eventToFireOnUpdate()?.forEach((event) => {
+          $ui.events.broadcast(
+            event,
+            {
+              source: this,
+              formbuilderField: this.options?.formBuilderField(),
+              value: this.getCurrentSelectedDate()
+            }
+          );
+        });
+        this.setModelDataAsDate(this.getCurrentSelectedDate());
       });
-      this.setModelDataAsDate(this.getCurrentSelectedDate());
-    });
+    } catch (e) {
+      this.log("Error parsing date picker options", "red", e);
+      let errorDiv = document.createElement("div");
+      errorDiv.classList.add("alert");
+      errorDiv.classList.add("alert-danger");
+      errorDiv.classList.add("alert-dismissible");
+      errorDiv.classList.add("fade");
+      errorDiv.classList.add("show");
+      errorDiv.setAttribute("role", "alert");
+      errorDiv.innerHTML = `<strong>Error parsing date picker options</strong> - check aspect configuration <br> ${e}`;
+      this.datePickerDiv.appendChild(errorDiv);
+    }
   }
   /**
    * Ensure the date is a valid date
@@ -10448,7 +11412,9 @@ var DatePickerAspect = class extends BaseIDEAspect {
 0 && (module.exports = {
   DatePickerAspect
 });
+//! this is a function for debug purpose only
 //! --> LocationToSaveOrLoadData <-- - this should be called at the end of this function to ensure that the options and configuration data is availabel to the child class
+//! TODO Fix Typings
 /*! Bundled license information:
 
 @eonasdan/tempus-dominus/dist/js/tempus-dominus.js:

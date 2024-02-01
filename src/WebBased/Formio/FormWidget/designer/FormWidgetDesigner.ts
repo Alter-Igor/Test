@@ -4,10 +4,10 @@ import { DEFAULT_FORM } from "./DefaultForm";
 import { createFormBuilderPage } from "../../Common/FormioBuilder";
 import { renderForm } from "../../Common/FormioRender";
 import { FormPreviewSettings } from "./FormSettings";
-import { checkLowdashCompatability } from "../../Common/Styling";
 import { setDataContext } from "../../Common/SetDataContext";
 import { TShareDoBlade } from "../../../../Interfaces/SharedoAspectModels";
 import { IWidgetBase } from "../../../../Interfaces/Widgets/IWidget";
+import { checkLowdashCompatability } from "../../../../Common/LowdasCompatability";
 
 
 export function FormWidgetDesigner(element: HTMLElement, configuration: any, baseModel: any): FormWidgetDesignerClass {

@@ -131,15 +131,6 @@
   margin-bottom: 10px;
 }
 
-.ide-aspect-error-user-message:before {
-  content: "- ";
-  color: red;
-}
-
-.ide-aspect-error-user-message:after {
-  content: "";
-  color: red;
-}
 
 .ide-aspect-error-detailed-message {
   margin: 0;

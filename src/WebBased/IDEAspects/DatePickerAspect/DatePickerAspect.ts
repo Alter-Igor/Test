@@ -1,10 +1,11 @@
 import { DateTime, Options, TempusDominus } from '@eonasdan/tempus-dominus';
 //https://getdatepicker.com/6/options/display.html
-import { IDatePickerAspectOptions, DATE_PICKER_DEFAULTS, DATE_PICKER_WIDGET_DEFAULTS} from "./DatePickerAspectConfiguration";
-import { IDefaultSettingsWithSpecificComponentConfig, IWidgetJson} from '../BaseClasses/IWidgetJson';
+import { IDatePickerAspectOptions, DATE_PICKER_DEFAULTS, DATE_PICKER_WIDGET_DEFAULTS } from "./DatePickerAspectConfiguration";
+import { IDefaultSettingsWithSpecificComponentConfig, IWidgetJson } from '../BaseClasses/Interfaces';
 import { BaseIDEAspect, getFormBuilderFieldPath } from '../BaseClasses/BaseIDEAspect';
-import { DEBUG_DEFAULT } from '../BaseClasses/DebugDefaults';
+import { DEBUG_DEFAULT } from '../BaseClasses/DefaultSettings';
 import ko from 'knockout';
+import { evaluteRule, executeEmbeddedCode } from '../../../helpers/evaluteRule';
 
 let thisWidgetSystemName = "DatePickerAspect";
 
@@ -14,7 +15,7 @@ let thisWidgetSystemName = "DatePickerAspect";
 
 export class DatePickerAspect extends BaseIDEAspect<IDatePickerAspectOptions, any> {
     liveConfigurationRefreshed(): void {
-        //TODO: implement
+        this.loadAndBind();
     }
     refresh(newConfig: any): void {
         // throw new Error('Method not implemented.');
@@ -22,11 +23,11 @@ export class DatePickerAspect extends BaseIDEAspect<IDatePickerAspectOptions, an
     reset(newConfig: any): void {
         // throw new Error('Method not implemented.');
     }
-  
-    
+
+
     datePickerDiv: HTMLDivElement | undefined;
     dateTimePicker: TempusDominus | undefined;
-    
+
     // constructor(element: HTMLElement, configuration: IDatePickerAspectOptions, baseModel: any) {
     //     super("SingleValueAspect", "aspectData.odsEntityPicker", element, configuration, baseModel)
     // }
@@ -37,28 +38,79 @@ export class DatePickerAspect extends BaseIDEAspect<IDatePickerAspectOptions, an
         return "DatePickerAspect";
     }
     setup(): void {
-        
+
         document.head.insertAdjacentHTML("beforeend", `<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">`);
 
     }
-    
+
     setWidgetJsonSettings(): IWidgetJson<IDatePickerAspectOptions> {
         return DATE_PICKER_WIDGET_DEFAULTS;
     }
-   
-setDefaults(): IDefaultSettingsWithSpecificComponentConfig<IDatePickerAspectOptions> {
-    return DATE_PICKER_DEFAULTS;
-}
 
-   //Abstract methods - must be implemented by the derived class
+    setDefaults(): IDefaultSettingsWithSpecificComponentConfig<IDatePickerAspectOptions> {
+        return DATE_PICKER_DEFAULTS;
+    }
+
+    //Abstract methods - must be implemented by the derived class
     setLocationOfDataToLoadAndSave(): string {
-        if(!this.sharedoConfiguration.configuration.formBuilderField)
-        {
+        if (!this.sharedoConfiguration.configuration.formBuilderField) {
             this.err("No formbuilder field set in configuration - check aspect configuration");
             throw new Error("No formbuilder field set in configuration - check aspect configuration");
         }
-        return getFormBuilderFieldPath(this.sharedoConfiguration.configuration.formBuilderField);
+
+        let formBuilderField = executeEmbeddedCode(this.sharedoConfiguration.configuration.formBuilderField, this.getDataContext());
+
+        return getFormBuilderFieldPath(formBuilderField);
     }
+    getDataContext(): any {
+        let dataContext = ko.toJS(this.model) as any;
+        let formBuilderData= this.formbuilder();
+        dataContext["formBuilder"] = formBuilderData; //to make it easier to access the formbuilder data
+        return dataContext;
+
+    }
+
+
+    async getValueToPopulate()  {
+
+        
+        let dataContext = this.getDataContext();
+        let retValue: string | undefined = executeEmbeddedCode(this.configuration?.formBuilderField,dataContext) || "";
+
+        if(retValue)
+        {
+            retValue = await this.getData()
+            if(retValue)
+            {
+                retValue = JSON.stringify(retValue, null, 2);
+            }
+        }
+
+       
+        if (this.configuration?.getValueOptions) {
+            if (typeof this.configuration?.getValueOptions === "string") {
+                retValue = executeEmbeddedCode(this.configuration?.getValueOptions, dataContext);
+            }
+
+            if (Array.isArray(this.configuration?.getValueOptions)) {
+
+                // this.configuration.getValueOptions.forEach((option) => {
+                for(let i = 0; i < this.configuration.getValueOptions.length; i++){
+                    let option = this.configuration.getValueOptions[i];
+ 
+                    let value = evaluteRule(option.rule, dataContext);
+                    if (value) {
+                        retValue = await this.searchByGraph(option.fieldPath, true);
+                        break; //we stop as soon as we have a true rule
+                    }
+                };
+            }
+        }
+        
+        return retValue;
+
+    }
+
 
     private setPickerEnabledState(newValue: boolean | null | undefined) {
         if (!this.datePickerDiv) {
@@ -86,16 +138,18 @@ setDefaults(): IDefaultSettingsWithSpecificComponentConfig<IDatePickerAspectOpti
      */
     async getModelDataAsDate() {
         let retValue: DateTime
+        let foundValue = await this.getValueToPopulate();
 
-        let foundValue = await this.getData();
+        //  let foundValue = await this.getData(fieldPath);
         if (!foundValue) {
-            foundValue = this.generateDefaultDate();
+            retValue = this.generateDefaultDate();
         }
-        
-        retValue = this.ensureDate(foundValue);
+        else{
+            retValue = this.ensureDate(foundValue);
+        }
 
         this.setModelDataAsDate(retValue); //set the value to ensure it is valid
-       
+
 
         return retValue;
     }
@@ -132,7 +186,10 @@ setDefaults(): IDefaultSettingsWithSpecificComponentConfig<IDatePickerAspectOpti
         if (this.datePickerDiv) {
             this.log("Already exists", "red");
             this.datePickerDiv.remove();
-            return;
+        }
+
+        if (this.dateTimePicker) {
+            this.dateTimePicker.dispose();
         }
 
         //Build the date picker div 
@@ -147,17 +204,14 @@ setDefaults(): IDefaultSettingsWithSpecificComponentConfig<IDatePickerAspectOpti
         input.classList.add("form-control");
         input.setAttribute("data-td-target", "#" + this.uniqueId);
 
-        if(this.options?.hideInputBox())
-        {
+        if (this.options?.hideInputBox()) {
             input.classList.add("hidden");
         }
-        this.options?.hideInputBox.subscribe((newValue) => { 
-            if(newValue)
-            {
+        this.options?.hideInputBox.subscribe((newValue) => {
+            if (newValue) {
                 input.classList.add("hidden");
             }
-            else
-            {
+            else {
                 input.classList.remove("hidden");
             }
         });
@@ -177,32 +231,52 @@ setDefaults(): IDefaultSettingsWithSpecificComponentConfig<IDatePickerAspectOpti
         element.appendChild(this.datePickerDiv);
 
         let datePickerOption = ko.toJS(this.options?.datePickerOptions()) as Options | undefined;
-        this.dateTimePicker = new TempusDominus(this.datePickerDiv, datePickerOption);
-        this.options?.datePickerOptions.subscribe((newValue) => {
-            this.loadAndBind();
-        });
+
+        try {
+            this.dateTimePicker = new TempusDominus(this.datePickerDiv, datePickerOption);
+            // this.options?.datePickerOptions.subscribe((newValue) => { ///! causing recurring
+            //     this.loadAndBind();
+            // });
 
 
-        this.setPickerEnabledState(this.options?.pickerEnabled());
-        //Set the value of the picker to the value in the model
-        let dateToSet = await this.getModelDataAsDate()
-        this.dateTimePicker.dates.setValue(
-            dateToSet,
-            this.dateTimePicker.dates.lastPickedIndex
-        );
+            this.setPickerEnabledState(this.options?.pickerEnabled());
+            //Set the value of the picker to the value in the model
+            let dateToSet = await this.getModelDataAsDate()
+            this.dateTimePicker.dates.setValue(
+                dateToSet,
+                this.dateTimePicker.dates.lastPickedIndex
+            );
 
-        this.dateTimePicker.subscribe("change.td", (e: any) => {
-            this.log("Date Changed", "red", e);
-            this.options?.eventToFireOnUpdate()?.forEach((event) => {
-                $ui.events.broadcast(event,
-                    {
-                        source: this,
-                        formbuilderField: this.options?.formBuilderField(),
-                        value: this.getCurrentSelectedDate()
-                    }); //fire event and pass in the date
+            this.dateTimePicker.subscribe("change.td", (e: any) => {
+                this.log("Date Changed", "red", e);
+                this.options?.eventToFireOnUpdate()?.forEach((event) => {
+                    $ui.events.broadcast(event,
+                        {
+                            source: this,
+                            formbuilderField: this.options?.formBuilderField(),
+                            value: this.getCurrentSelectedDate()
+                        }); //fire event and pass in the date
+                });
+                this.setModelDataAsDate(this.getCurrentSelectedDate());
             });
-            this.setModelDataAsDate(this.getCurrentSelectedDate());
-        });
+        }
+        catch (e) {
+            this.log("Error parsing date picker options", "red", e);
+            //create error div
+            let errorDiv = document.createElement("div");
+            errorDiv.classList.add("alert");
+            errorDiv.classList.add("alert-danger");
+            errorDiv.classList.add("alert-dismissible");
+            errorDiv.classList.add("fade");
+            errorDiv.classList.add("show");
+            errorDiv.setAttribute("role", "alert");
+            errorDiv.innerHTML = `<strong>Error parsing date picker options</strong> - check aspect configuration <br> ${e}`;
+
+            this.datePickerDiv.appendChild(errorDiv);
+
+        }
+
+
 
     };
 
@@ -211,7 +285,7 @@ setDefaults(): IDefaultSettingsWithSpecificComponentConfig<IDatePickerAspectOpti
         * @param d
         * @returns a DateTime based on the input or a default date if the input is not valid
     **/
-    ensureDate(d: any) : DateTime {
+    ensureDate(d: any): DateTime {
         let retValue: DateTime;
         //check if d is a date
         if (d instanceof DateTime) {
@@ -219,10 +293,9 @@ setDefaults(): IDefaultSettingsWithSpecificComponentConfig<IDatePickerAspectOpti
         }
 
         try {
-             retValue = new DateTime(DateTime.parse(d));
-            if(!DateTime.isValid(retValue))
-            {
-                retValue= this.generateDefaultDate();;
+            retValue = new DateTime(DateTime.parse(d));
+            if (!DateTime.isValid(retValue)) {
+                retValue = this.generateDefaultDate();;
             }
 
         }

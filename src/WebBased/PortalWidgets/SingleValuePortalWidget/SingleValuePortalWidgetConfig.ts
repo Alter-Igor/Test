@@ -1,4 +1,4 @@
-import { IWidgetJson } from "../../IDEAspects/BaseClasses/IWidgetJson";
+import { IWidgetJson } from "../../IDEAspects/BaseClasses/Interfaces";
 import { ISingleValueAspectConfiguration, Default } from "../../IDEAspects/SingleValueAspect/SingleValueAspectConfig";
 
 export interface ISingleValuePortalConfiguration extends ISingleValueAspectConfiguration {

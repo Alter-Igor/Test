@@ -1,4 +1,4 @@
-import { IWidgetJson } from "../BaseClasses/IWidgetJson";
+import { IWidgetJson } from "../BaseClasses/Interfaces";
 import { Default } from "./ExternalMatterSearchDefaults";
 import { IExternalMatterSearchConfiguration } from "./ExternalMatterSearchInterface";
  

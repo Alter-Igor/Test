@@ -1,27 +1,22 @@
 import { AUTOCOMPLETE_CARD_TYPE, AUTOCOMPLETE_MODE } from "../../../Interfaces/components/IAutoCompleteFindCardOptions";
 import { getNestedProperty, gvko, setAllFieldsToNull } from "../../Common/ObjectHelper";
-import { TExecuteFetchResponse, TUserErrors, executeFetch, executeGet, executeGetv2 } from "../../Common/api/api";
-import { IDefaultSettingsWithSpecificComponentConfig, IWidgetJson } from "../BaseClasses/IWidgetJson";
+import { TExecuteFetchResponse, executeFetch, executeGetv2 } from "../../Common/api/api";
+import { IDefaultSettingsWithSpecificComponentConfig, IWidgetJson } from "../BaseClasses/Interfaces";
 import ko, { Observable } from "knockout";
 import { Settings } from "./ExternalMatterSearchSettings";
 import { Default } from "./ExternalMatterSearchDefaults";
-import { formatFunc } from "../../../helpers/Formatter";
-import { Section, inf, lh, secBackOne } from "../../../Common/Log";
-import { IExternalMatterSearchConfiguration, IFieldPlacement, IFieldRowField, INameValue, IRule, IStyleEntry, IStyleRule, TAPIExecutionSettings } from "./ExternalMatterSearchInterface";
-import { autoGenerateTemplate, generateHtmlDiv } from "./Template/TemplateGenerator";
+import {  inf,  secBackOne } from "../../../Common/Log";
+import { IExternalMatterSearchConfiguration, TAPIExecutionSettings } from "./ExternalMatterSearchInterface";
+import { autoGenerateTemplate, generateHtmlDiv } from "../BaseClasses/Template/TemplateGenerator";
 import { validateJSON } from "../../../helpers/Schema";
-import { DEFAULT_SEARCH_FIELDS_CONFIG } from "./DefaultSearchFields";
 import * as SCHEMA from "./ConfigSchema.json";
-import { DEFAULT_SELECTED_FIELDS_CONFIG } from "./DefaultSelectedFields";
-import { mapData, reverseMapData } from "./DataMapper";
-import { forEach, set } from "lodash";
+import { mapData } from "./DataMapper";
 import { NestedObservableObject } from "../BaseClasses/KOConverter";
-import { data, error } from "jquery";
-import { replaceValues } from "../../Common/TemplateValueReplaces";
-import { TemplateApplicator } from "./Template/TemplateApplicator";
+import { TemplateApplicator } from "../BaseClasses/Template/TemplateApplicator";
 import { BaseIDEAspect } from "../BaseClasses/BaseIDEAspect";
 import { deserializeObjectFromBase64, serializeObjectToBase64 } from "../../../helpers/Serialization";
 import { executeEmbeddedCode, evaluteRule } from "../../../helpers/evaluteRule";
+import { IRule, IFieldPlacement } from "../BaseClasses/Template/Interfaces";
 
 const CSS_CLASS_SELECTED_ITEM = "ems-selected-item";
 const CSS_CLASS_RESULT_ITEM = "ems-result-item";
@@ -106,7 +101,7 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
         });
 
 
-
+        
         this.selectedFieldsSubscription = this.selectedFieldsSubscription || this.options?.selectedFields.subscribe((newValue) => {
             this.ensureSelectedMatterTemplate();
 
@@ -193,6 +188,8 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
      */
     async loadSelectedExternalResult(model: IExternalResultItem) {
 
+        let resultModel:any|undefined = undefined;
+
         try {
             //https://hsf-vnext.sharedo.co.uk/api/externalMatterProvider/details/81735089
 
@@ -211,8 +208,8 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
                 $ui.stacks.unlock(self);
             }
             else {
-                model = await this.loadMatterDetailsFromLoadAPI(model);
-                this.selectedMatter(model);
+                resultModel = await this.loadMatterDetailsFromLoadAPI(model);
+                this.selectedMatter(resultModel);
 
                 // let mappedData = mapData(this.selectedMatter!(), ko.toJS(this.options?.dataMapping()));
                 // this.inf("Mapped Data", mappedData)
@@ -241,7 +238,16 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
             //         textValue = textValue.replace(m, val);
             //     });
             // }
-            textValue = executeEmbeddedCode(textValue, model)
+
+            if(resultModel)
+            {
+                textValue = executeEmbeddedCode(textValue, resultModel)
+            }
+            else{
+                textValue = executeEmbeddedCode(textValue, model)
+            }
+
+            
 
 
             //Resut the basic selected display card to the auto complete
@@ -346,12 +352,13 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
 
         if (!this.selectedDiv) {
             this.err("No selectedDiv defined");
+            
             return;
         }
 
         this.selectedDiv.innerHTML = "";
 
-        if (this.selectedMatter && this.selectedMatter() === undefined) {
+        if (!this.selectedMatter || this.selectedMatter() === undefined) {
             this.selectedDiv.classList.remove("ems-show");
             return;
         }
@@ -445,7 +452,8 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
         this.clearErrors();
 
         try {
-            let retValue: any = model;
+            // let retValue: any = model;
+            let retValue: any | undefined = undefined;
 
             let url = this.options?.loadApiUrl();
 
@@ -491,7 +499,8 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
                 let dataPath = this.options?.loadApiResultDataPath();
                 let data = this.validateResponseData(response, dataPath);
                 if (response.info.success === false) {
-                    this.buildUserErrors(response);
+                    // this.buildUserErrors(response);
+                    this.selectedMatter(undefined);
                     return retValue;
                 }
                 this.inf("loadMatterDetailsFromLoadAPI", data)
@@ -507,7 +516,7 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
         }
     }
 
-    private buildUserErrors(response: TExecuteFetchResponse) {
+    private buildUserErrors(response: TExecuteFetchResponse<any>) {
         this.err("Error loading matter details", response);
 
         let errorMessageFromSharedo = response.data?.errorMessage;
@@ -551,15 +560,7 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
         this.load(model);
     };
 
-    createSupportTask() {
-        //TODO: Create a support task
-        $ui.nav.invoke({
-            "invokeType": "panel",
-            "invoke": "Sharedo.Core.Case.Sharedo.AddEditSharedo",
-            "config": "{\"typeSystemName\":\"task-eddiscovery-adhoc\",\"title\":\"\",\"Support Request\":\"\"}"
-        });
-
-    }
+  
 
     save(model: any) {
         let data =
@@ -914,7 +915,7 @@ export class ExternalMatterSearch extends BaseIDEAspect<IExternalMatterSearchCon
      * @param addErrors if set to false then no errors will be added to the errors array
      * @returns 
      */
-    validateResponseData(response: TExecuteFetchResponse, dataPath: string | undefined, setting?: TAPIExecutionSettings, addErrors?: boolean) {
+    validateResponseData(response: TExecuteFetchResponse<any>, dataPath: string | undefined, setting?: TAPIExecutionSettings, addErrors?: boolean) {
         let retValue: any | undefined = undefined
 
         if(!dataPath)

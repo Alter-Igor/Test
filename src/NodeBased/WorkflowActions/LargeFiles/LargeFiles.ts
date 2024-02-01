@@ -36,6 +36,7 @@ function getEmailAttachments(): Array<IEmailAttachments> {
     return retValue;
   }
 
+//call api
 
 
   //Loop through the related documents and remove them from the work item

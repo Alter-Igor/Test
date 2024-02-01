@@ -1,4 +1,4 @@
-import { IFieldPlacement } from "./ExternalMatterSearchInterface";
+import { IFieldPlacement } from "../BaseClasses/Template/Interfaces";
 
 export const DEFAULT_SELECTED_FIELDS_CONFIG: IFieldPlacement =
 {

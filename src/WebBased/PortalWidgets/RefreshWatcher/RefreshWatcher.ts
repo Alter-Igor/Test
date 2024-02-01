@@ -3,7 +3,7 @@ import { TSharedo } from "../../../Interfaces/TSharedo";
 import { IBaseIDEAspectConfiguration} from "../../IDEAspects/BaseClasses/BaseIDEAspect";
 import { strToClass } from "../../Common/ObjectHelper";
 import ko from "knockout";
-import { IDefaultSettingsWithSpecificComponentConfig } from "../../IDEAspects/BaseClasses/IWidgetJson";
+import { IDefaultSettingsWithSpecificComponentConfig } from "../../IDEAspects/BaseClasses/Interfaces";
 
 
 

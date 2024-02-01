@@ -1,5 +1,5 @@
 
-import { IWidgetJson } from "../../IDEAspects/BaseClasses/IWidgetJson";
+import { IWidgetJson } from "../../IDEAspects/BaseClasses/Interfaces";
 import { SingleValueAspect } from "../../IDEAspects/SingleValueAspect/SingleValueAspect";
 import { ISingleValueAspectConfiguration } from "../../IDEAspects/SingleValueAspect/SingleValueAspectConfig";
 import { SingleValuePortalDefault, WidgetSettings } from "./SingleValuePortalWidgetConfig";

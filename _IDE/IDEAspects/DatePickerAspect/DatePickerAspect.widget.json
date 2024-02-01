@@ -1,58 +1,112 @@
 {
-    "id": "IDEAspects.DatePickerAspect",
-    "priority": 6000,
-    "designer":
-    {
-        "allowInPortalDesigner": false,
-        "allowInSharedoPortalDesigner": false,
-        "allowAspectAdapter": true,  
-        "title": null,
-        "icon": "fa-cog",
-        "description": null,
-        "categories": 
-        [
+  "id": "IDEAspects.DatePickerAspect",
+  "type": "widget",
+  "priority": 6000,
+  "designer": {
+    "allowInPortalDesigner": false,
+    "allowInSharedoPortalDesigner": false,
+    "allowAspectAdapter": true,
+    "title": "Date Picker Aspect",
+    "icon": "fa-cog",
+    "description": "Date Picker Aspect",
+    "categories": [],
+    "isConfigurable": true,
+    "configurationWidget": null,
+    "defaultConfigurationJson": {
+      "configuration": {
+        "formBuilderField": "eDiscoveryUpdatePlannedDate",
+        "getValueOptions": [
+          {
+            "rule": "!dataContext.aspectData.formBuilder.formData.eDiscoveryUpdatePlannedDate",
+            "fieldPath": "form-alt-ediscovery-job-desired-completion-date-date-only.job-desired-completion-date"
+          }
         ],
-        "isConfigurable": true,
-        "configurationWidget": null,
-        
-        "defaultConfigurationJson": { 
-            "formBuilderField":"eDiscoveryUpdatePlannedDate",
-            "title":"Updated planned due date:",
-            "pickerEnabled": true,
-            "eventsToFireOnUpdate":["IDEAspects.DatePickerAspect.Update"],
-            "defaultDateFromNowHours":24,
-            "datePickerOptions": {
-                "display": {
-                    "inline": true,
-                    "sideBySide": true,
-                    "theme": "light"
-                }
-            },
-            "debug":
+        "hideInputBox": true,
+        "defaultValue": {
+          "defaultDateFromNowHours": 24
+        },
+        "title": "Updated planned due date:",
+        "pickerEnabled": true,
+        "eventToFireOnUpdate": [
+          "IDEAspects.DatePickerAspect.Update"
+        ],
+        "datePickerOptions": {
+          "display": {
+            "inline": true,
+            "sideBySide": true,
+            "theme": "light"
+          }
+        },
+        "debug": {
+          "enabled": true,
+          "logToConsole": true,
+          "showInAspect": false,
+          "liveConfig": false
+        },
+        "refreshOn": {
+          "sharedoIdChanged": false,
+          "sharedoParentIdChanged": false,
+          "sharedoPhaseChanged": false
+        },
+        "eventsToReactTo": [],
+        "dataSettings": {
+          "getValueUsingParents": false,
+          "maxDepth": 0
+        },
+        "errorManagement": {
+          "errorTraps": [
             {
-                "enabled":true,
-                "logToConsole":true,
-                "showEvents":false,
-                "showInAspect":true
+              "dataContext": null,
+              "enabled": true,
+              "rule": "dataContext.error.message.toLowerCase().includes('forbidden')",
+              "userFreindlyMessage": "The matter is not accessible to you. It may be behind a Information Barrier.",
+              "resolutionSuggestions": [
+                "Please contact the matter owner for access."
+              ],
+              "supportButton": {
+                "raiseSupportTicket": true,
+                "supportTicketMessage": "Support Required for ${dataContext.pageContext.user.firstname} ${dataContext.pageContext.user.lastname} on ${dataContext.pageContext.pageTitle} context ${JSON.stringify(dataContext)}",
+                "raiseSupportTicketSharedoCommand": {
+                  "typeSystemName": "task",
+                  "title": "Support Required for ${dataContext.pageContext.user.firstname} ${dataContext.pageContext.user.lastname} on ${dataContext.pageContext.pageTitle}"
+                },
+                "dataContext": "Populated by the system",
+                "title": "Raise Support Ticket",
+                "toolTip": "Raise a support ticket with the support desk"
+              },
+              "styleRules": [
+                {
+                  "rule": "true",
+                  "style": "box-shadow: 1px 1px 10px #d46060;"
+                }
+              ],
+              "classRules": [
+                {
+                  "rule": "true",
+                  "cssClass": "ems-selected-item"
+                },
+                {
+                  "rule": "true",
+                  "cssClass": "ems-show"
+                }
+              ]
             }
-         } 
-    },
-    "scripts":
-    [
-        "/_ideFiles/IDEAspects/DatePickerAspect/DatePickerAspect.js"
-    ],
-    "styles":
-    [
-        "/_ideFiles/IDEAspects/DatePickerAspect/DatePickerAspect.css"
-    ],
-    "templates":
-    [
-        "/_ideFiles/IDEAspects/DatePickerAspect/DatePickerAspect.html"
-    ],
-    "menuTemplates":
-    [
-    ],
-    "components":
-    [
-    ]
+          ],
+          "enabled": true,
+          "displayUnTrappedErrorInAspect": true
+        }
+      }
+    }
+  },
+  "scripts": [
+    "/_ideFiles/IDEAspects/DatePickerAspect/DatePickerAspect.js"
+  ],
+  "styles": [
+    "/_ideFiles/IDEAspects/DatePickerAspect/DatePickerAspect.css"
+  ],
+  "templates": [
+    "/_ideFiles/IDEAspects/DatePickerAspect/DatePickerAspect.html"
+  ],
+  "menuTemplates": [],
+  "components": []
 }

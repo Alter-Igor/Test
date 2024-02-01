@@ -1,13 +1,20 @@
 [
     {
-        "name": "OdsPicker",
-        "sourcePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/IDEAspects/OdsPicker",
-        "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/IDEAspects/OdsPicker",
+        "name": "DatePickerAspect",
+        "sourcePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/IDEAspects/DatePickerAspect",
+        "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/IDEAspects/DatePickerAspect",
         "type": "",
         "designerPath": "",
         "valid": false,
         "manifestFilePath": "",
-        "modulesToExtract": [],
+        "modulesToExtract": [
+            {
+                "modules": [
+                    "lodash"
+                ],
+                "extractedFileName": "lodash.js"
+            }
+        ],
         "bundleAnalyzer": false,
         "enabled": false,
         "namespace": "IDEAspects",
@@ -30,120 +37,6 @@
         },
         "manifestInfo": {
             "success": false
-        },
-        "designerManifestInfo": {
-            "success": false
-        },
-        "tsDesignerFileInfo": {
-            "success": false
-        },
-        "publicPath": "/_ideFiles/IDEAspects/OdsPicker/",
-        "generatDefaultConfigurationJson": true
-    },
-    {
-        "name": "DatePickerAspect",
-        "sourcePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/IDEAspects/DatePickerAspect",
-        "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/IDEAspects/DatePickerAspect",
-        "type": "widget",
-        "designerPath": "",
-        "valid": true,
-        "manifestFilePath": "",
-        "modulesToExtract": [
-            {
-                "modules": [
-                    "lodash"
-                ],
-                "extractedFileName": "lodash.js"
-            }
-        ],
-        "bundleAnalyzer": false,
-        "enabled": true,
-        "namespace": "IDEAspects",
-        "erros": [],
-        "widgetTSFileName": "",
-        "factoryTSFileName": "",
-        "factoryTSFilePath": "",
-        "templateTsFileName": "",
-        "templateTsFilePath": "",
-        "cssFiles": [],
-        "htmlFiles": [],
-        "designerTSFileName": "",
-        "designerTSFilePath": "",
-        "designerCSSFiles": [],
-        "designerHTMLFiles": [],
-        "tsFileInfo": {
-            "tsFileName": "DatePickerAspect.ts",
-            "tsFilePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/IDEAspects/DatePickerAspect/DatePickerAspect.ts",
-            "success": true
-        },
-        "manifestInfo": {
-            "type": "widget",
-            "success": true,
-            "manifest": {
-                "id": "IDEAspects.DatePickerAspect",
-                "type": "widget",
-                "priority": 6000,
-                "designer": {
-                    "allowInPortalDesigner": false,
-                    "allowInSharedoPortalDesigner": false,
-                    "allowAspectAdapter": true,
-                    "title": "Date Picker Aspect",
-                    "icon": "fa-cog",
-                    "description": "Date Picker Aspect",
-                    "categories": [],
-                    "isConfigurable": true,
-                    "configurationWidget": null,
-                    "defaultConfigurationJson": {
-                        "configuration": {
-                            "formBuilderField": "eDiscoveryUpdatePlannedDate",
-                            "hideInputBox": true,
-                            "defaultValue": {
-                                "defaultDateFromNowHours": 24
-                            },
-                            "title": "Updated planned due date:",
-                            "pickerEnabled": true,
-                            "eventToFireOnUpdate": [
-                                "IDEAspects.DatePickerAspect.Update"
-                            ],
-                            "datePickerOptions": {
-                                "display": {
-                                    "inline": true,
-                                    "sideBySide": true,
-                                    "theme": "light"
-                                }
-                            },
-                            "debug": {
-                                "supportRequestEnabled": false,
-                                "enabled": true,
-                                "logToConsole": true,
-                                "showInAspect": false,
-                                "liveConfig": false
-                            },
-                            "refreshOn": {
-                                "sharedoIdChanged": false,
-                                "sharedoParentIdChanged": false,
-                                "sharedoPhaseChanged": false
-                            },
-                            "eventsToReactTo": [],
-                            "dataSettings": {
-                                "getValueUsingParents": false,
-                                "maxDepth": 0
-                            }
-                        }
-                    }
-                },
-                "scripts": [
-                    "/_ideFiles/IDEAspects/DatePickerAspect/DatePickerAspect.js"
-                ],
-                "styles": [
-                    "/_ideFiles/IDEAspects/DatePickerAspect/DatePickerAspect.css"
-                ],
-                "templates": [
-                    "/_ideFiles/IDEAspects/DatePickerAspect/DatePickerAspect.html"
-                ],
-                "menuTemplates": [],
-                "components": []
-            }
         },
         "designerManifestInfo": {
             "success": false
@@ -218,7 +111,6 @@
                             "valueOnNotFound": "Not Found",
                             "formatter": "value",
                             "debug": {
-                                "supportRequestEnabled": false,
                                 "enabled": true,
                                 "logToConsole": true,
                                 "showInAspect": false,
@@ -250,6 +142,49 @@
                             "dataSettings": {
                                 "getValueUsingParents": false,
                                 "maxDepth": 0
+                            },
+                            "errorManagement": {
+                                "errorTraps": [
+                                    {
+                                        "dataContext": null,
+                                        "enabled": true,
+                                        "rule": "dataContext.error.message.toLowerCase().includes('forbidden')",
+                                        "userFreindlyMessage": "The matter is not accessible to you. It may be behind a Information Barrier.",
+                                        "resolutionSuggestions": [
+                                            "Please contact the matter owner for access."
+                                        ],
+                                        "supportButton": {
+                                            "raiseSupportTicket": true,
+                                            "supportTicketMessage": "Support Required for ${dataContext.pageContext.user.firstname} ${dataContext.pageContext.user.lastname} on ${dataContext.pageContext.pageTitle} context ${JSON.stringify(dataContext)}",
+                                            "raiseSupportTicketSharedoCommand": {
+                                                "typeSystemName": "task",
+                                                "title": "Support Required for ${dataContext.pageContext.user.firstname} ${dataContext.pageContext.user.lastname} on ${dataContext.pageContext.pageTitle}"
+                                            },
+                                            "dataContext": "Populated by the system",
+                                            "title": "Raise Support Ticket",
+                                            "toolTip": "Raise a support ticket with the support desk",
+                                            "enabled": false
+                                        },
+                                        "styleRules": [
+                                            {
+                                                "rule": "true",
+                                                "style": "box-shadow: 1px 1px 10px #d46060;"
+                                            }
+                                        ],
+                                        "classRules": [
+                                            {
+                                                "rule": "true",
+                                                "cssClass": "ems-selected-item"
+                                            },
+                                            {
+                                                "rule": "true",
+                                                "cssClass": "ems-show"
+                                            }
+                                        ]
+                                    }
+                                ],
+                                "enabled": true,
+                                "displayUnTrappedErrorInAspect": true
                             }
                         }
                     }
@@ -280,9 +215,9 @@
         "name": "ExternalMatterSearch",
         "sourcePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/IDEAspects/ExternalMatterSearch",
         "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/IDEAspects/ExternalMatterSearch",
-        "type": "widget",
+        "type": "",
         "designerPath": "",
-        "valid": true,
+        "valid": false,
         "manifestFilePath": "",
         "modulesToExtract": [
             {
@@ -293,9 +228,11 @@
             }
         ],
         "bundleAnalyzer": false,
-        "enabled": true,
+        "enabled": false,
         "namespace": "IDEAspects",
-        "erros": [],
+        "erros": [
+            "Target is disabled"
+        ],
         "widgetTSFileName": "",
         "factoryTSFileName": "",
         "factoryTSFilePath": "",
@@ -308,357 +245,10 @@
         "designerCSSFiles": [],
         "designerHTMLFiles": [],
         "tsFileInfo": {
-            "tsFileName": "ExternalMatterSearch.ts",
-            "tsFilePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/IDEAspects/ExternalMatterSearch/ExternalMatterSearch.ts",
-            "success": true
+            "success": false
         },
         "manifestInfo": {
-            "type": "widget",
-            "success": true,
-            "manifest": {
-                "id": "IDEAspects.ExternalMatterSearch",
-                "type": "widget",
-                "priority": 6000,
-                "designer": {
-                    "allowInPortalDesigner": false,
-                    "allowInSharedoPortalDesigner": false,
-                    "allowAspectAdapter": true,
-                    "title": "External Matter Search",
-                    "icon": "fa-cog",
-                    "description": "External Matter Search",
-                    "categories": [],
-                    "isConfigurable": true,
-                    "configurationWidget": null,
-                    "defaultConfigurationJson": {
-                        "configuration": {
-                            "title": "Matter Search",
-                            "showSearchingStatus": true,
-                            "inputVisability": [
-                                {
-                                    "rule": "dataContext.phaseName ? dataContext.phaseName.toLowerCase()==='new' : true"
-                                }
-                            ],
-                            "fackMode": false,
-                            "formBuilderName": "custom-alt-ediscovery-instruction-matter-details",
-                            "formBuilderFieldSerialisedData": "matterJSON",
-                            "selectedFieldDisplayValue": "${dataContext.matterCode} - ${dataContext.shortName}",
-                            "loadApiResultDataPath": "data",
-                            "loadApiUrl": "/api/proxy/hurricane-api/_/v2/matters/${dataContext.data.matterCode||dataContext.data.code}",
-                            "dataMapping": [
-                                {
-                                    "formBuilderField": "expert-matter-number",
-                                    "searchResultField": "${dataContext.data.matterCode}"
-                                },
-                                {
-                                    "formBuilderField": "expert-matter-number-value",
-                                    "searchResultField": "${dataContext.data.matterCode}"
-                                },
-                                {
-                                    "formBuilderField": "matter-details-ib",
-                                    "searchResultField": "${dataContext.data.secure}"
-                                },
-                                {
-                                    "formBuilderField": "matter-details-name",
-                                    "searchResultField": "${dataContext.data.shortName}"
-                                },
-                                {
-                                    "formBuilderField": "matter-details-client-name",
-                                    "searchResultField": "${dataContext.data.client.name}"
-                                },
-                                {
-                                    "formBuilderField": "matter-details-client-code",
-                                    "searchResultField": "${dataContext.data.client.code}"
-                                },
-                                {
-                                    "formBuilderField": "matter-details-partner-name",
-                                    "searchResultField": "${dataContext.data.partner.name}"
-                                }
-                            ],
-                            "fieldMapping": [
-                                {
-                                    "formBuilderField": "jurisdictions-country",
-                                    "searchResultField": "${dataContext.data.location.country}"
-                                }
-                            ],
-                            "debug": {
-                                "supportRequestEnabled": false,
-                                "enabled": true,
-                                "logToConsole": true,
-                                "showInAspect": false,
-                                "liveConfig": false
-                            },
-                            "searchFields": {
-                                "container": {},
-                                "icon": [
-                                    {
-                                        "icon": "fa-search fa-2x text-primary"
-                                    }
-                                ],
-                                "style": [
-                                    {
-                                        "rule": "dataContext.data.data.status.toLowerCase()==='closed'",
-                                        "style": {
-                                            "color": "lightgrey"
-                                        }
-                                    }
-                                ],
-                                "rows": [
-                                    {
-                                        "fields": [
-                                            {
-                                                "field": "${dataContext.data.data.matterCode||dataContext.data.data.code}",
-                                                "style": "font-weight:bold",
-                                                "icon": [
-                                                    {
-                                                        "rule": "dataContext.data.data.status.toLowerCase()==='open'",
-                                                        "icon": "fa-folder-open text-success",
-                                                        "position": "before"
-                                                    },
-                                                    {
-                                                        "rule": "dataContext.data.data.status.toLowerCase()==='closed'",
-                                                        "icon": "fa-folder text-danger",
-                                                        "position": "before"
-                                                    }
-                                                ],
-                                                "width": null
-                                            },
-                                            {
-                                                "style": {
-                                                    "color": "blue"
-                                                },
-                                                "field": "${dataContext.data.title}"
-                                            },
-                                            {
-                                                "field": "${dataContext.data.data.status}",
-                                                "formatter": "value.toUpperCase()",
-                                                "label": "Status",
-                                                "position": "right",
-                                                "width": null
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        "fields": [
-                                            {
-                                                "field": ""
-                                            },
-                                            {
-                                                "label": "Client",
-                                                "field": "${dataContext.data.data.client}",
-                                                "width": null
-                                            },
-                                            {
-                                                "field": ""
-                                            }
-                                        ]
-                                    }
-                                ]
-                            },
-                            "selectedFields": {
-                                "container": {
-                                    "style": [
-                                        {
-                                            "rule": "dataContext.data.secure",
-                                            "style": {
-                                                "box-shadow": "1px 1px 62px #cb8383"
-                                            }
-                                        },
-                                        {
-                                            "rule": "!dataContext.data.secure",
-                                            "style": {
-                                                "box-shadow": "1px 1px 10px #a4a3a3"
-                                            }
-                                        }
-                                    ]
-                                },
-                                "icon": [
-                                    {
-                                        "rule": "dataContext.data.secure",
-                                        "icon": "fa-shield text-warning fa-2x",
-                                        "position": "before"
-                                    }
-                                ],
-                                "rows": [
-                                    {
-                                        "fields": [
-                                            {
-                                                "field": "${dataContext.data.matterCode}",
-                                                "style": "font-weight:bold",
-                                                "icon": [
-                                                    {
-                                                        "rule": "dataContext.data.status.toLowerCase()==='open'",
-                                                        "icon": "fa-folder-open text-success",
-                                                        "position": "before"
-                                                    },
-                                                    {
-                                                        "rule": "dataContext.data.status.toLowerCase()==='closed'",
-                                                        "icon": "fa-folder text-danger",
-                                                        "position": "before"
-                                                    }
-                                                ],
-                                                "width": null
-                                            },
-                                            {
-                                                "field": "${dataContext.data.shortName}",
-                                                "width": null,
-                                                "style": {
-                                                    "font-weight": "bold",
-                                                    "color": "red",
-                                                    "font-size": "larger"
-                                                }
-                                            },
-                                            {
-                                                "field": "${dataContext.data.status}",
-                                                "formatter": "value.toUpperCase()",
-                                                "label": "Status",
-                                                "position": "right",
-                                                "width": null,
-                                                "style": "font-weight:bold"
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        "fields": [
-                                            {
-                                                "field": [
-                                                    {
-                                                        "rule": "dataContext.data.secure",
-                                                        "field": "Secured!"
-                                                    },
-                                                    {
-                                                        "rule": "!dataContext.data.secure",
-                                                        "field": "Not Secured"
-                                                    }
-                                                ],
-                                                "style": [
-                                                    {
-                                                        "style": {
-                                                            "margin-top": "-10px",
-                                                            "font-size": "x-small"
-                                                        }
-                                                    },
-                                                    {
-                                                        "rule": "!dataContext.data.secure",
-                                                        "style": {
-                                                            "color": "green",
-                                                            "font-weight": "bold"
-                                                        }
-                                                    },
-                                                    {
-                                                        "rule": "dataContext.data.secure",
-                                                        "style": {
-                                                            "color": "red",
-                                                            "font-weight": "bold"
-                                                        }
-                                                    }
-                                                ]
-                                            },
-                                            {
-                                                "style": {
-                                                    "font-size": "smaller",
-                                                    "margin-top": "-10px"
-                                                },
-                                                "field": "${dataContext.data.practiceGroup}"
-                                            },
-                                            {
-                                                "field": ""
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        "fields": [
-                                            {
-                                                "label": "Client",
-                                                "field": "${dataContext.data.client.name}",
-                                                "width": null
-                                            },
-                                            {
-                                                "field": "${dataContext.data.client.code}",
-                                                "width": null,
-                                                "style": {}
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        "fields": [
-                                            {
-                                                "label": "Partner",
-                                                "field": "${dataContext.data.partner.name}",
-                                                "width": null
-                                            },
-                                            {
-                                                "field": "${dataContext.data.partner.code}",
-                                                "width": null,
-                                                "style": {}
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        "fields": [
-                                            {
-                                                "label": "Location",
-                                                "field": "${dataContext.data.location.country}",
-                                                "width": null
-                                            },
-                                            {
-                                                "label": "Office",
-                                                "field": "${dataContext.data.location.office}",
-                                                "width": null,
-                                                "style": {}
-                                            },
-                                            {
-                                                "label": "Region",
-                                                "field": "${dataContext.data.location.region}",
-                                                "width": null,
-                                                "style": {}
-                                            }
-                                        ]
-                                    }
-                                ]
-                            },
-                            "searchApiExecutionSettings": [
-                                {
-                                    "method": "GET",
-                                    "url": "/api/proxy/hurricane-api/_/v1/find?q=${dataContext.searchTerm}&engines=MBN",
-                                    "resultDataPath": "data[0].results",
-                                    "name": "Aderant Matter Content"
-                                },
-                                {
-                                    "method": "GET",
-                                    "url": "/api/proxy/hurricane-api/_/v1/find?q=${dataContext.searchTerm}&engines=MBC",
-                                    "resultDataPath": "data[0].results",
-                                    "name": "AAderant Matter Number"
-                                }
-                            ],
-                            "refreshOn": {
-                                "sharedoIdChanged": true,
-                                "sharedoParentIdChanged": true,
-                                "sharedoPhaseChanged": false
-                            },
-                            "eventsToReactTo": [],
-                            "dataSettings": {
-                                "getValueUsingParents": false,
-                                "maxDepth": 0
-                            }
-                        }
-                    }
-                },
-                "scripts": [
-                    "/_ideFiles/IDEAspects/ExternalMatterSearch/ExternalMatterSearch.js"
-                ],
-                "styles": [
-                    "/_ideFiles/IDEAspects/ExternalMatterSearch/ExternalMatterSearch.css"
-                ],
-                "templates": [
-                    "/_ideFiles/IDEAspects/ExternalMatterSearch/ExternalMatterSearch.html"
-                ],
-                "menuTemplates": [],
-                "components": [
-                    "Sharedo.UI.Framework.Components.AutoComplete",
-                    "Sharedo.Core.Case.TextEditor.Component",
-                    "Sharedo.UI.Framework.Components.SyntaxEditor"
-                ]
-            }
+            "success": false
         },
         "designerManifestInfo": {
             "success": false
@@ -721,11 +311,10 @@
         "name": "CustomProgressMilestone",
         "sourcePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/CustomProgressMilestone",
         "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/WorkflowActions/CustomProgressMilestone",
-        "type": "wf-action",
-        "designerPath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/CustomProgressMilestone/Designer",
-        "valid": true,
+        "type": "workflow",
+        "designerPath": "",
+        "valid": false,
         "manifestFilePath": "",
-        "designerManifestFilePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/CustomProgressMilestone/Designer/manifest.widget.json",
         "modulesToExtract": [
             {
                 "modules": [
@@ -735,9 +324,11 @@
             }
         ],
         "bundleAnalyzer": false,
-        "enabled": true,
+        "enabled": false,
         "namespace": "WorkflowActions",
-        "erros": [],
+        "erros": [
+            "Target is disabled"
+        ],
         "widgetTSFileName": "",
         "factoryTSFileName": "",
         "factoryTSFilePath": "",
@@ -745,57 +336,15 @@
         "templateTsFilePath": "",
         "cssFiles": [],
         "htmlFiles": [],
-        "designerTSFileName": "CustomProgressMilestoneDesigner.ts",
-        "designerTSFilePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/CustomProgressMilestone/Designer/CustomProgressMilestoneDesigner.ts",
+        "designerTSFileName": "",
+        "designerTSFilePath": "",
         "designerCSSFiles": [],
         "designerHTMLFiles": [],
-        "designerManifestJSON": {
-            "id": "WorkflowActions.CustomProgressMilestoneDesigner",
-            "priority": 6000,
-            "designer": {
-                "allowInPortalDesigner": false,
-                "allowInSharedoPortalDesigner": false
-            },
-            "scripts": [
-                "/_ideFiles/WorkflowActions/CustomProgressMilestone/Designer/CustomProgressMilestoneDesigner.js"
-            ],
-            "styles": [
-                "/_ideFiles/WorkflowActions/CustomProgressMilestone/Designer/CustomProgressMilestoneDesigner.css"
-            ],
-            "templates": [
-                "/_ideFiles/WorkflowActions/CustomProgressMilestone/Designer/CustomProgressMilestoneDesigner.html"
-            ],
-            "menuTemplates": [],
-            "components": [
-                "Sharedo.Core.Case.Components.SharedoTypePicker"
-            ]
-        },
         "tsFileInfo": {
             "success": false
         },
         "manifestInfo": {
-            "type": "wf-action",
-            "success": true,
-            "manifest": {
-                "systemName": "WorkflowActions.CustomProgressMilestone",
-                "category": "Actions",
-                "name": "Custom Dynamic Progress milestone",
-                "icon": "fa-forward",
-                "description": "Transition a work item to another phase with Dynamic values",
-                "configWidget": "WorkflowActions.CustomProgressMilestoneDesigner",
-                "factoryIncludes": [],
-                "factoryScript": "/_ideFiles/WorkflowActions/CustomProgressMilestone/CustomProgressMilestone-factory.js",
-                "templateScript": "/_ideFiles/WorkflowActions/CustomProgressMilestone/CustomProgressMilestone-template.js",
-                "helperScripts": [
-                    "PhaseHelpers",
-                    "StringHelpers"
-                ],
-                "requiredTypes": [
-                    "/Identifier/Work Type Identifier"
-                ]
-            },
-            "manifestFileName": "CustomProgressMilestone.wf-action.json",
-            "manifestFilePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/CustomProgressMilestone/CustomProgressMilestone.wf-action.json"
+            "success": false
         },
         "designerManifestInfo": {
             "success": false
@@ -810,11 +359,10 @@
         "name": "IsSharedoInPhaseWithFeature",
         "sourcePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/IsSharedoInPhaseWithFeature",
         "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/WorkflowActions/IsSharedoInPhaseWithFeature",
-        "type": "wf-action",
-        "designerPath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/IsSharedoInPhaseWithFeature/Designer",
-        "valid": true,
+        "type": "workflow",
+        "designerPath": "",
+        "valid": false,
         "manifestFilePath": "",
-        "designerManifestFilePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/IsSharedoInPhaseWithFeature/Designer/manifest.widget.json",
         "modulesToExtract": [
             {
                 "modules": [
@@ -824,9 +372,11 @@
             }
         ],
         "bundleAnalyzer": false,
-        "enabled": true,
+        "enabled": false,
         "namespace": "WorkflowActions",
-        "erros": [],
+        "erros": [
+            "Target is disabled"
+        ],
         "widgetTSFileName": "",
         "factoryTSFileName": "",
         "factoryTSFilePath": "",
@@ -834,57 +384,15 @@
         "templateTsFilePath": "",
         "cssFiles": [],
         "htmlFiles": [],
-        "designerTSFileName": "IsSharedoInPhaseWithFeatureDesigner.ts",
-        "designerTSFilePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/IsSharedoInPhaseWithFeature/Designer/IsSharedoInPhaseWithFeatureDesigner.ts",
+        "designerTSFileName": "",
+        "designerTSFilePath": "",
         "designerCSSFiles": [],
         "designerHTMLFiles": [],
-        "designerManifestJSON": {
-            "id": "WorkflowActions.IsSharedoInPhaseWithFeatureDesigner",
-            "priority": 6000,
-            "designer": {
-                "allowInPortalDesigner": false,
-                "allowInSharedoPortalDesigner": false
-            },
-            "scripts": [
-                "/_ideFiles/WorkflowActions/IsSharedoInPhaseWithFeature/Designer/IsSharedoInPhaseWithFeatureDesigner.js"
-            ],
-            "styles": [
-                "/_ideFiles/WorkflowActions/IsSharedoInPhaseWithFeature/Designer/IsSharedoInPhaseWithFeatureDesigner.css"
-            ],
-            "templates": [
-                "/_ideFiles/WorkflowActions/IsSharedoInPhaseWithFeature/Designer/IsSharedoInPhaseWithFeatureDesigner.html"
-            ],
-            "menuTemplates": [],
-            "components": [
-                "Sharedo.Core.Case.Components.SharedoTypePicker"
-            ]
-        },
         "tsFileInfo": {
             "success": false
         },
         "manifestInfo": {
-            "type": "wf-action",
-            "success": true,
-            "manifest": {
-                "systemName": "WorkflowActions.IsSharedoInPhaseWithFeature",
-                "category": "Actions",
-                "name": "Is Sharedo In Phase With Feature",
-                "icon": "fa-forward",
-                "description": "Checks if a Sharedo is in a phase with a specific feature.",
-                "configWidget": "WorkflowActions.IsSharedoInPhaseWithFeatureDesigner",
-                "factoryIncludes": [],
-                "factoryScript": "/_ideFiles/WorkflowActions/IsSharedoInPhaseWithFeature/IsSharedoInPhaseWithFeature-factory.js",
-                "templateScript": "/_ideFiles/WorkflowActions/IsSharedoInPhaseWithFeature/IsSharedoInPhaseWithFeature-template.js",
-                "helperScripts": [
-                    "PhaseHelpers",
-                    "StringHelpers"
-                ],
-                "requiredTypes": [
-                    "/Identifier/Work Type Identifier"
-                ]
-            },
-            "manifestFileName": "IsSharedoInPhaseWithFeature.wf-action.json",
-            "manifestFilePath": "/Users/igorsharedo/Desktop/Test/src/NodeBased/WorkflowActions/IsSharedoInPhaseWithFeature/IsSharedoInPhaseWithFeature.wf-action.json"
+            "success": false
         },
         "designerManifestInfo": {
             "success": false
@@ -1091,11 +599,10 @@
         "name": "RefreshWatcher",
         "sourcePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/PortalWidgets/RefreshWatcher",
         "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/PortalWidgets/RefreshWatcher",
-        "type": "widget",
-        "designerPath": "/Users/igorsharedo/Desktop/Test/src/WebBased/PortalWidgets/RefreshWatcher/Designer",
-        "valid": true,
+        "type": "",
+        "designerPath": "",
+        "valid": false,
         "manifestFilePath": "",
-        "designerManifestFilePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/PortalWidgets/RefreshWatcher/Designer/RefreshWatcherDesigner.widget.json",
         "modulesToExtract": [
             {
                 "modules": [
@@ -1105,9 +612,11 @@
             }
         ],
         "bundleAnalyzer": false,
-        "enabled": true,
+        "enabled": false,
         "namespace": "PortalWidgets",
-        "erros": [],
+        "erros": [
+            "Target is disabled"
+        ],
         "widgetTSFileName": "",
         "factoryTSFileName": "",
         "factoryTSFilePath": "",
@@ -1115,63 +624,15 @@
         "templateTsFilePath": "",
         "cssFiles": [],
         "htmlFiles": [],
-        "designerTSFileName": "RefreshWatcherDesigner.ts",
-        "designerTSFilePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/PortalWidgets/RefreshWatcher/Designer/RefreshWatcherDesigner.ts",
+        "designerTSFileName": "",
+        "designerTSFilePath": "",
         "designerCSSFiles": [],
         "designerHTMLFiles": [],
-        "designerManifestJSON": {
-            "id": "PortalWidgets.RefreshWatcherDesigner",
-            "designer": {
-                "allowInPortalDesigner": false,
-                "allowInSharedoPortalDesigner": false
-            },
-            "scripts": [
-                "/_ideFiles/PortalWidgets/RefreshWatcher/Designer/RefreshWatcherDesigner.js"
-            ],
-            "styles": [
-                "/_ideFiles/PortalWidgets/RefreshWatcher/Designer/RefreshWatcherDesigner.css"
-            ],
-            "templates": [
-                "/_ideFiles/PortalWidgets/RefreshWatcher/Designer/RefreshWatcherDesigner.html"
-            ],
-            "menuTemplates": [],
-            "components": []
-        },
         "tsFileInfo": {
-            "tsFileName": "RefreshWatcher.ts",
-            "tsFilePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/PortalWidgets/RefreshWatcher/RefreshWatcher.ts",
-            "success": true
+            "success": false
         },
         "manifestInfo": {
-            "type": "widget",
-            "success": true,
-            "manifest": {
-                "id": "PortalWidgets.RefreshWatcher",
-                "designer": {
-                    "allowInPortalDesigner": false,
-                    "allowInSharedoPortalDesigner": true,
-                    "title": "Refresh Watcher",
-                    "icon": "fa-calendar",
-                    "description": "Refreshes specified components on events or at specified intervals.",
-                    "categories": [
-                        "Custom Widgets"
-                    ],
-                    "isConfigurable": true,
-                    "configurationWidget": "PortalWidgets.RefreshWatcherDesigner"
-                },
-                "scripts": [
-                    "/_ideFiles/PortalWidgets/RefreshWatcher/RefreshWatcher.js"
-                ],
-                "styles": [
-                    "/_ideFiles/PortalWidgets/RefreshWatcher/RefreshWatcher.css"
-                ],
-                "templates": [
-                    "/_ideFiles/PortalWidgets/RefreshWatcher/RefreshWatcher.html"
-                ],
-                "menuTemplates": []
-            },
-            "manifestFileName": "RefreshWatcher.widget.json",
-            "manifestFilePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/PortalWidgets/RefreshWatcher/RefreshWatcher.widget.json"
+            "success": false
         },
         "designerManifestInfo": {
             "success": false
@@ -1264,7 +725,6 @@
                             "valueOnNotFound": "Not Found",
                             "formatter": "value",
                             "debug": {
-                                "supportRequestEnabled": false,
                                 "enabled": true,
                                 "logToConsole": true,
                                 "showInAspect": false,
@@ -1296,6 +756,49 @@
                             "dataSettings": {
                                 "getValueUsingParents": false,
                                 "maxDepth": 0
+                            },
+                            "errorManagement": {
+                                "errorTraps": [
+                                    {
+                                        "dataContext": null,
+                                        "enabled": true,
+                                        "rule": "dataContext.error.message.toLowerCase().includes('forbidden')",
+                                        "userFreindlyMessage": "The matter is not accessible to you. It may be behind a Information Barrier.",
+                                        "resolutionSuggestions": [
+                                            "Please contact the matter owner for access."
+                                        ],
+                                        "supportButton": {
+                                            "raiseSupportTicket": true,
+                                            "supportTicketMessage": "Support Required for ${dataContext.pageContext.user.firstname} ${dataContext.pageContext.user.lastname} on ${dataContext.pageContext.pageTitle} context ${JSON.stringify(dataContext)}",
+                                            "raiseSupportTicketSharedoCommand": {
+                                                "typeSystemName": "task",
+                                                "title": "Support Required for ${dataContext.pageContext.user.firstname} ${dataContext.pageContext.user.lastname} on ${dataContext.pageContext.pageTitle}"
+                                            },
+                                            "dataContext": "Populated by the system",
+                                            "title": "Raise Support Ticket",
+                                            "toolTip": "Raise a support ticket with the support desk",
+                                            "enabled": false
+                                        },
+                                        "styleRules": [
+                                            {
+                                                "rule": "true",
+                                                "style": "box-shadow: 1px 1px 10px #d46060;"
+                                            }
+                                        ],
+                                        "classRules": [
+                                            {
+                                                "rule": "true",
+                                                "cssClass": "ems-selected-item"
+                                            },
+                                            {
+                                                "rule": "true",
+                                                "cssClass": "ems-show"
+                                            }
+                                        ]
+                                    }
+                                ],
+                                "enabled": true,
+                                "displayUnTrappedErrorInAspect": true
                             }
                         }
                     }

@@ -1,5 +1,5 @@
-import { DEBUG_DEFAULT } from "../BaseClasses/DebugDefaults";
-import { IDefaultSettingsWithSpecificComponentConfig } from "../BaseClasses/IWidgetJson";
+import { DEBUG_DEFAULT, DEFAULT_ERROR_MANAGEMENT_SETTINGS } from "../BaseClasses/DefaultSettings";
+import { IDefaultSettingsWithSpecificComponentConfig } from "../BaseClasses/Interfaces";
 import { DEFAULT_SEARCH_FIELDS_CONFIG } from "./DefaultSearchFields";
 import { DEFAULT_SELECTED_FIELDS_CONFIG } from "./DefaultSelectedFields";
 import { IExternalMatterSearchConfiguration } from "./ExternalMatterSearchInterface";
@@ -71,7 +71,7 @@ export const Default: IDefaultSettingsWithSpecificComponentConfig<IExternalMatte
             method: "GET",
             url: "/api/proxy/hurricane-api/_/v1/find?q=${dataContext.searchTerm}&engines=MBC",
             resultDataPath: "data[0].results",
-            name: "AAderant Matter Number"
+            name: "Aderant Matter Number"
         }
     ],
     refreshOn:
@@ -84,5 +84,6 @@ export const Default: IDefaultSettingsWithSpecificComponentConfig<IExternalMatte
     dataSettings: {
         getValueUsingParents: false,
         maxDepth: 0,
-    }
+    },
+    errorManagement: DEFAULT_ERROR_MANAGEMENT_SETTINGS
 }

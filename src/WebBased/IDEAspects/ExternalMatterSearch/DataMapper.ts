@@ -1,6 +1,6 @@
 import { extractValue } from "../../../helpers/VakueExtractor";
 import { getNestedProperty, setNestedProperty } from "../../Common/ObjectHelper";
-import { IDataMapping } from "./ExternalMatterSearchInterface";
+import { IDataMapping } from "../BaseClasses/Template/Interfaces";
 
   
 //   function getNestedProperty(obj: any, path: string) {

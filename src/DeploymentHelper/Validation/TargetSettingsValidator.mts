@@ -10,7 +10,7 @@ import { mergeValues } from "./ObjectMerger.mjs";
 import { compileTypeScriptToJavaScript } from "../TypeScriptToJavascript.mjs"
 import { nv, l, inf, suc, err } from "../Log.mjs";
 import { BaseIDEAspect } from "../../WebBased/IDEAspects/BaseClasses/BaseIDEAspect";
-import { IWidgetJson } from "../../WebBased/IDEAspects/BaseClasses/IWidgetJson";
+import { IWidgetJson } from "../../WebBased/IDEAspects/BaseClasses/Interfaces";
 
 export async function validateAndBuildTargetSettings(defaultSettings: IDefaults, targetTypeName: string, target: ITargetEntry, key: string, defaultValue: ISetting) {
     let targetValue = target[key];

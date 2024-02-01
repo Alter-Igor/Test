@@ -23,7 +23,6 @@
         "valueOnNotFound": "Not Found",
         "formatter": "value",
         "debug": {
-          "supportRequestEnabled": false,
           "enabled": true,
           "logToConsole": true,
           "showInAspect": false,
@@ -55,6 +54,49 @@
         "dataSettings": {
           "getValueUsingParents": false,
           "maxDepth": 0
+        },
+        "errorManagement": {
+          "errorTraps": [
+            {
+              "dataContext": null,
+              "enabled": true,
+              "rule": "dataContext.error.message.toLowerCase().includes('forbidden')",
+              "userFreindlyMessage": "The matter is not accessible to you. It may be behind a Information Barrier.",
+              "resolutionSuggestions": [
+                "Please contact the matter owner for access."
+              ],
+              "supportButton": {
+                "raiseSupportTicket": true,
+                "supportTicketMessage": "Support Required for ${dataContext.pageContext.user.firstname} ${dataContext.pageContext.user.lastname} on ${dataContext.pageContext.pageTitle} context ${JSON.stringify(dataContext)}",
+                "raiseSupportTicketSharedoCommand": {
+                  "typeSystemName": "task",
+                  "title": "Support Required for ${dataContext.pageContext.user.firstname} ${dataContext.pageContext.user.lastname} on ${dataContext.pageContext.pageTitle}"
+                },
+                "dataContext": "Populated by the system",
+                "title": "Raise Support Ticket",
+                "toolTip": "Raise a support ticket with the support desk",
+                "enabled": false
+              },
+              "styleRules": [
+                {
+                  "rule": "true",
+                  "style": "box-shadow: 1px 1px 10px #d46060;"
+                }
+              ],
+              "classRules": [
+                {
+                  "rule": "true",
+                  "cssClass": "ems-selected-item"
+                },
+                {
+                  "rule": "true",
+                  "cssClass": "ems-show"
+                }
+              ]
+            }
+          ],
+          "enabled": true,
+          "displayUnTrappedErrorInAspect": true
         }
       }
     }

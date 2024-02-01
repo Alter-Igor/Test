@@ -1,11 +1,12 @@
 import { Options } from '@eonasdan/tempus-dominus';
-import { IDefaultSettingsWithSpecificComponentConfig, IWidgetJson } from '../BaseClasses/IWidgetJson';
-import { DEBUG_DEFAULT } from '../BaseClasses/DebugDefaults';
+import { IDefaultSettingsWithSpecificComponentConfig, IWidgetJson } from '../BaseClasses/Interfaces';
+import { DEBUG_DEFAULT, DEFAULT_ERROR_MANAGEMENT_SETTINGS } from '../BaseClasses/DefaultSettings';
 
 
 export interface IDatePickerAspectOptions {
     title: string  | undefined; //the title to display above the date picker
     formBuilderField: string  | undefined; //the form builder field to get the value from and set the value to
+    getValueOptions: getValueOption[] | string  | undefined; //the field path to get the value from (if different from the form builder field)
     pickerEnabled: boolean  | undefined; //if true, the date picker will be enabled
     eventToFireOnUpdate: Array<string> | undefined; //the event to fire when the date is updated
     datePickerOptions: Options  | undefined; //the options to pass to the date picker 
@@ -17,10 +18,25 @@ export interface IDatePickerAspectOptions {
     
 }
 
+
+export interface getValueOption
+{
+    rule: string;
+    fieldPath: string;
+}
+
+
+
 export const DATE_PICKER_DEFAULTS : IDefaultSettingsWithSpecificComponentConfig<IDatePickerAspectOptions>=
 {
           
     "formBuilderField": "eDiscoveryUpdatePlannedDate",
+    "getValueOptions": [
+        {
+            "rule": "!dataContext.aspectData.formBuilder.formData.eDiscoveryUpdatePlannedDate",
+            "fieldPath":"form-alt-ediscovery-job-desired-completion-date-date-only.job-desired-completion-date",
+        }
+    ],
     "hideInputBox": true,
     "defaultValue":{
         "defaultDateFromNowHours": 24,
@@ -47,7 +63,8 @@ export const DATE_PICKER_DEFAULTS : IDefaultSettingsWithSpecificComponentConfig<
     "dataSettings": {
         "getValueUsingParents": false,
         "maxDepth": 0,
-    }
+    },
+    "errorManagement": DEFAULT_ERROR_MANAGEMENT_SETTINGS
 }
 
 export const DATE_PICKER_WIDGET_DEFAULTS : IWidgetJson<IDatePickerAspectOptions>= {

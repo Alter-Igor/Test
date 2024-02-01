@@ -1,7 +1,8 @@
 import { Formio } from 'formiojs';
 import { TestForm } from '../FormWidget/TestForm';
-import { addDefaultFormIOStyleSheetsToShadow, checkLowdashCompatability } from './Styling';
+import { addDefaultFormIOStyleSheetsToShadow } from './Styling';
 import * as DataContext from './SetDataContext';
+import { checkLowdashCompatability } from '../../../Common/LowdasCompatability';
 
 
 

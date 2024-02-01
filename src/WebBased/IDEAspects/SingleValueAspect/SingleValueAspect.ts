@@ -2,7 +2,7 @@
 import { formatValue } from "../../../helpers/Formatter";
 import { searchForAttributeRecursive } from "../../Common/api/searchForAttributeWithParents";
 import { BaseIDEAspect } from "../BaseClasses/BaseIDEAspect";
-import { IDefaultSettingsWithSpecificComponentConfig, IWidgetJson } from "../BaseClasses/IWidgetJson";
+import { IDefaultSettingsWithSpecificComponentConfig, IWidgetJson } from "../BaseClasses/Interfaces";
 import { Default, ISingleValueAspectConfiguration, WidgetSettings } from "./SingleValueAspectConfig";
 
 let thisWidgetSystemName = "SingleValueAspect";

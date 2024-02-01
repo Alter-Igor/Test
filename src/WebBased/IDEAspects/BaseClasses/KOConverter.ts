@@ -1,5 +1,5 @@
 import * as ko from 'knockout';
-import { I_IDE_Aspect_Modeller_Configuration } from './IWidgetJson';
+import { I_IDE_Aspect_Modeller_Configuration } from './Interfaces';
 
 export type NestedObservableObject<T> = {
     [K in keyof T]      : T[K] extends Array<infer U> ? ko.ObservableArray<NestedObservableObject<U>> :

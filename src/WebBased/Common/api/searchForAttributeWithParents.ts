@@ -117,6 +117,12 @@ export async function searchForAttribute(workItemId: string, attributeName: stri
     }
     console.log("Searching using ShareDo Id: " + workItemId);
     let httpResultFindByQuery = await executeFindByQuery<any>(req);
+
+    if(!httpResultFindByQuery)
+    {
+        console.log("No result found");
+        return retValue;
+    }
     console.log(`Work item ${workItemId} found`);
     console.log(JSON.stringify(httpResultFindByQuery.results));
 

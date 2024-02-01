@@ -6,8 +6,9 @@
  */
 
 import { err, inf, l, lh1, secBackOne } from "../../../Common/Log";
+import { TUserErrors } from "../../IDEAspects/BaseClasses/Interfaces";
 
-export async function executePost<T>(api: string, postBody: any): Promise<T> {
+export async function executePost<T>(api: string, postBody: any): Promise<T | undefined> {
     //return await $ajax.post(/* webpackIgnore: true */ validateApi(api), postBody);
     return (await executeFetch<T>(api, "POST", postBody)).data;
 }
@@ -16,7 +17,7 @@ export async function executePost<T>(api: string, postBody: any): Promise<T> {
 //     return await $ajax.get(/* webpackIgnore: true */ validateApi(api));
 // } 
 
-export async function executeGet<T>(api: string): Promise<T> {
+export async function executeGet<T>(api: string): Promise<T | undefined> {
     return (await executeFetch<T>(api, "GET", undefined)).data;
 }
 
@@ -25,14 +26,18 @@ export async function executeGetv2<T>(api: string){
     return  executeFetch<T>(api, "GET", undefined);
 }
 
+export async function executePostv2<TResponse>(api: string, postBody: any) {
+    //return await $ajax.post(/* webpackIgnore: true */ validateApi(api), postBody);
+    return executeFetch<TResponse>(api, "POST", postBody);
+}
 
 
-export async function executePut<T>(api: string, postBody: any): Promise<T> {
+export async function executePut<T>(api: string, postBody: any): Promise<T | undefined> {
     //return await $ajax.put(/* webpackIgnore: true */ validateApi(api), postBody);
     return (await executeFetch<T>(api, "PUT", postBody)).data;
 }
 
-export async function executeDelete<T>(api: string): Promise<T> {
+export async function executeDelete<T>(api: string): Promise<T | undefined> {
     //return await $ajax.delete(/* webpackIgnore: true */ validateApi(api));
     return (await executeFetch<T>(api, "DELETE", undefined)).data;
 }
@@ -53,9 +58,9 @@ function validateApi(api: string): string {
 
 }
 
-export type TExecuteFetchResponse =
+export type TExecuteFetchResponse<TResponse> =
     {
-        data: any | undefined,
+        data: TResponse | undefined,
         response: Response | undefined,
         info:
         {
@@ -64,20 +69,10 @@ export type TExecuteFetchResponse =
         }
     }
 
-export type TUserErrors =
-    {
-        code: string,
-        message: string,
-        userMessage: string,
-        suggestions?: Array<string>
-        internalSuggestions?: Array<string>
-        actions?: Array<string>
-        errorStack?: string,
-        additionalInfo?: any
-    }
 
-export async function executeFetch<T>(api: string, method: string, data: any, retryCounter?:number): Promise<TExecuteFetchResponse> {
-    let retValue: TExecuteFetchResponse = {
+
+export async function executeFetch<TResponse>(api: string, method: string, data: any, retryCounter?:number): Promise<TExecuteFetchResponse<TResponse>> {
+    let retValue: TExecuteFetchResponse<TResponse> = {
         data: undefined,
         response: undefined,
         info: {
@@ -111,7 +106,7 @@ export async function executeFetch<T>(api: string, method: string, data: any, re
                     return { data: undefined, response };
                 }
                 await $ajax.get("https://hsf-vnext.sharedo.co.uk/security/refreshTokens?_=" + Date.now);
-                return await executeFetch<T>(api, method, data,retryCounter);
+                return await executeFetch<TResponse>(api, method, data,retryCounter);
             }
 
             retValue.info.error.push({

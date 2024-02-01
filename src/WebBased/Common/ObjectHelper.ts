@@ -103,6 +103,6 @@ export function getNestedProperty(obj: any, propertyPath: string): any {
         return koObject
     }
 
-    export function gvko(koObject: any): any {
-        return getValueFromKOObject(koObject);
+    export function gvko<T>(koObject: any): T | any {
+        return ko.toJS(koObject);
     }

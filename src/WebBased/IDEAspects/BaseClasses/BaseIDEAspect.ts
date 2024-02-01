@@ -1,29 +1,57 @@
 import * as ko from "knockout";
-import { ISharedoBladeModel, TShareDoBlade, IConfigurationHost } from "../../../Interfaces/SharedoAspectModels";
-import { IDebug, ObservableIDebug } from "./IDebug";
-import { v4 as uuid } from 'uuid';
+import {
+    ISharedoBladeModel,
+    TShareDoBlade,
+    IConfigurationHost,
+} from "../../../Interfaces/SharedoAspectModels";
+import { IDebug } from "./IDebug";
+import { v4 as uuid } from "uuid";
 import { TSharedo } from "../../../Interfaces/TSharedo";
-import { EventToReactTo, IDefaultSettingsWithSpecificComponentConfig, IWidgetJson, I_IDE_Aspect_Modeller_Configuration } from "./IWidgetJson";
+import {
+    IDefaultSettingsWithSpecificComponentConfig,
+    IErrorTrap,
+    ISharedoPanelConfig,
+    ISupportButton,
+    IWidgetJson,
+    I_IDE_Aspect_Modeller_Configuration,
+    TUserErrors,
+} from "./Interfaces";
 import { ShareDoEvent, fireEvent } from "../../Common/EventsHelper";
-import { clearSec, err, inf, l, lh1, nv, wrn } from "../../../Common/Log"
+import { clearSec, err, inf, l, lh1, nv, wrn } from "../../../Common/Log";
 import { IFormBuilderData } from "../../../Interfaces/Aspect/IFormBuilder";
-import { TUserErrors } from "../../Common/api/api";
 import { NestedObservableObject, toObservableObject } from "./KOConverter";
-import { getNestedProperty, gvko, setNestedProperty, strToClass } from "../../Common/ObjectHelper";
+import {
+    getNestedProperty,
+    gvko,
+    setNestedProperty,
+    strToClass,
+} from "../../Common/ObjectHelper";
 import { escapeHtml } from "../../../Common/HtmlHelper";
 import { JsonToHtmlConverter } from "../../../Common/JsonToHTMLConverter";
 import { searchForAttributeRecursive } from "../../Common/api/searchForAttributeWithParents";
-import { DEBUG_DEFAULT } from "./DebugDefaults";
-import { forEach } from "lodash";
-import color from "color";
+import {
+    DEBUG_DEFAULT,
+    DEFAULT_CONFIGURATION_SETTINGS,
+} from "./DefaultSettings";
+import { debounceFunction } from "../../../Common/Debound";
+import { executeFindByQuery } from "../../Common/api/executeFindByQuery/FindByQuery";
+import {
+    IGraphQuery,
+    IGraphQueryDfaults as IGraphQueryDefaults,
+    IGraphQueryField,
+} from "../../../Interfaces/api/graph/IGraphQuery";
+import { IFindByQueryOptions } from "../../Common/api/executeFindByQuery/IFindByQueryInput";
+import { executeFindByGraph } from "../../Common/api/executeFindByGraph/executeFindByGraph";
+import { evaluteRule, executeEmbeddedCode } from "../../../helpers/evaluteRule";
+import { detect } from "detect-browser";
+import { TemplateApplicator } from "./Template/TemplateApplicator";
 import { data } from "jquery";
+import { DataContext } from "../../Formio/Common/SetDataContext";
 
-
-console.log("v: - 3.29")
+console.log("v: - 3.29");
 
 export const FOMR_BUILDER_PATH_STRING = "aspectData.formBuilder.formData";
 export const ERROR_DIV_SELECTOR = "#render-errors-here";
-
 
 interface IDEAspectConfiguration {
     model: ISharedoBladeModel;
@@ -34,15 +62,18 @@ type Observableify<T> = {
     [P in keyof T]: ko.Observable<T[P]>;
 };
 
-export type ObservableConfigurationOptions2<TConfig> =
-    { [K in keyof IBaseIDEAspectConfiguration<TConfig>]: ko.Observable<IBaseIDEAspectConfiguration<TConfig>[K]>; }
+export type ObservableConfigurationOptions2<TConfig> = {
+    [K in keyof IBaseIDEAspectConfiguration<TConfig>]: ko.Observable<
+        IBaseIDEAspectConfiguration<TConfig>[K]
+    >;
+};
 
+export type ObservableSharedoConfigurationOptions<TConfig> =
+    NestedObservableObject<I_IDE_Aspect_Modeller_Configuration<TConfig>>;
 
-export type ObservableSharedoConfigurationOptions<TConfig> = NestedObservableObject<I_IDE_Aspect_Modeller_Configuration<TConfig>>
-
-export type ObservableConfigurationOptions<TConfig> = NestedObservableObject<IDefaultSettingsWithSpecificComponentConfig<TConfig>>
-
-
+export type ObservableConfigurationOptions<TConfig> = NestedObservableObject<
+    IDefaultSettingsWithSpecificComponentConfig<TConfig>
+>;
 
 // export type IObservableConfigurationOptions<TConfig> =  {debug: ko.Observable<ObservableIDebug>} &
 // {
@@ -50,28 +81,30 @@ export type ObservableConfigurationOptions<TConfig> = NestedObservableObject<IDe
 
 // }
 
-export type IBaseIDEAspectConfiguration<TConfig> = IConfigurationHost & I_IDE_Aspect_Modeller_Configuration<TConfig>;
+export type IBaseIDEAspectConfiguration<TConfig> = IConfigurationHost &
+    I_IDE_Aspect_Modeller_Configuration<TConfig>;
 // abstract class Creator<TConfig> {
 //     public abstract FactoryMethod(element: HTMLElement, configuration: IBaseIDEAspectConfiguration<TConfig>, baseModel: any): any;
 // }
-
-
-
 
 export function getFormBuilderFieldPath(formBuilderField: string) {
     return `${FOMR_BUILDER_PATH_STRING}.${formBuilderField}`;
 }
 
-type ObservablePerson<TConfig> = Observableify<IBaseIDEAspectConfiguration<TConfig>>;
+type ObservablePerson<TConfig> = Observableify<
+    IBaseIDEAspectConfiguration<TConfig>
+>;
 
 interface IModel {
     [key: string]: any;
 }
 
-export abstract class BaseIDEAspect<TConfig, TPersitance>  {
+export abstract class BaseIDEAspect<TConfig, TPersitance> {
     _data: any; //non model data storage
     originalConfiguration!: I_IDE_Aspect_Modeller_Configuration<TConfig>;
-    configuration: IDefaultSettingsWithSpecificComponentConfig<TConfig> | undefined;
+    configuration:
+        | IDefaultSettingsWithSpecificComponentConfig<TConfig>
+        | undefined;
     sharedoConfiguration!: IBaseIDEAspectConfiguration<TConfig>;
     defaults: IDefaultSettingsWithSpecificComponentConfig<TConfig> | undefined;
     element!: HTMLElement;
@@ -89,10 +122,18 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
     baseModel!: TSharedo<any>;
     thisComponentName!: string;
     LocationToSaveOrLoadData: string | undefined; //The location to load and save the data from
-    shareDoOptions!: ObservableSharedoConfigurationOptions<TConfig>
-    _shareDoOptions!: ObservableSharedoConfigurationOptions<unknown> //use for typings of this base ide as TConfig caused issue
-    options: ObservableConfigurationOptions<IDefaultSettingsWithSpecificComponentConfig<TConfig>> | undefined
-    _options: ObservableConfigurationOptions<IDefaultSettingsWithSpecificComponentConfig<unknown>> | undefined
+    shareDoOptions!: ObservableSharedoConfigurationOptions<TConfig>;
+    _shareDoOptions!: ObservableSharedoConfigurationOptions<unknown>; //use for typings of this base ide as TConfig caused issue
+    options:
+        | ObservableConfigurationOptions<
+            IDefaultSettingsWithSpecificComponentConfig<TConfig>
+        >
+        | undefined;
+    _options:
+        | ObservableConfigurationOptions<
+            IDefaultSettingsWithSpecificComponentConfig<unknown>
+        >
+        | undefined;
     uniqueId!: string;
     widgetSettings!: IWidgetJson<TConfig>;
     aspectLogOutput: HTMLDivElement | undefined;
@@ -104,10 +145,6 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
     lastRefresh: Date | undefined;
     disposables: Array<any>;
 
-
-
-
-
     /**
      * Base Constructor for all IDEAspects, forces the implementation of the load and save methods
      * @param componentName //The name of the component e.g. Aspect.QuickView
@@ -118,14 +155,17 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
      * @param defaults //The defaults passed in from the widget to set incase of bad configuration or missing configuration
      */
     constructor();
-    constructor(element: HTMLElement, configuration: TConfig, baseModel: TSharedo<any>)
+    constructor(
+        element: HTMLElement,
+        configuration: TConfig,
+        baseModel: TSharedo<any>
+    );
     public constructor(...arr: any[]) {
-
         this.widgetSettings = this.setWidgetJsonSettings();
         this.thisComponentName = this.setThisComponentName();
         this.defaults = this.setDefaults(); //setup the default by calling the abstract method in the child class
         this.disposables = [];
-        this.refreshLog = new Array<any>()
+        this.refreshLog = new Array<any>();
 
         this.errorDivSelector = ERROR_DIV_SELECTOR;
         this.errors = ko.observableArray<TUserErrors>();
@@ -150,16 +190,18 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
             this.addAspectLogOutput();
             return;
         }
-
     }
 
-    _initialise(element: HTMLElement, polutedConfiguration: I_IDE_Aspect_Modeller_Configuration<TConfig>, baseModel: TSharedo<any>) {
-
+    _initialise(
+        element: HTMLElement,
+        polutedConfiguration: I_IDE_Aspect_Modeller_Configuration<TConfig>,
+        baseModel: TSharedo<any>
+    ) {
         //let configuration = polutedConfiguration.configuration; //Poluted as Sharedo added additional information to thsi object depending on where its instansiated
         this.sharedoConfiguration = polutedConfiguration;
         this.element = element;
         //ShareDo passes the config as well as other stuff, so we need to extract the config
-        this.originalConfiguration = polutedConfiguration
+        this.originalConfiguration = polutedConfiguration;
         this.baseModel = baseModel;
 
         // this.originalConfiguration
@@ -175,21 +217,25 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
 
         //check that we have a sub configuration
         if (!this.sharedoConfiguration.configuration) {
-            console.error("No configuration found in the sharedoConfiguration - check the aspect or widget config that ther eis a base configuration of configuration:{}")
+            console.error(
+                "No configuration found in the sharedoConfiguration - check the aspect or widget config that ther eis a base configuration of configuration:{}"
+            );
             throw new Error("No configuration found in the sharedoConfiguration");
-
         }
 
-        this.sharedoConfiguration.configuration.debug = $.extend(DEBUG_DEFAULT(), this.sharedoConfiguration.configuration.debug) as IDebug; //make sure debug is set or use defaults
+        this.sharedoConfiguration.configuration = $.extend(
+            DEFAULT_CONFIGURATION_SETTINGS,
+            this.sharedoConfiguration.configuration
+        ); //make sure debug is set or use defaults
         // this.originalConfiguration.debug = $.extend(baseDefaults.debug, this.originalConfiguration.debug) as IDebug;
         // configuration.debug = $.extend(baseDefaults, configuration.debug) as IDebug;
 
-
         // this.data = undefined;
         // Merge the configuration with the defaults
-        this.sharedoConfiguration.configuration = $.extend(this.defaults, this.originalConfiguration.configuration)
-
-
+        this.sharedoConfiguration.configuration = $.extend(
+            this.defaults,
+            this.originalConfiguration.configuration
+        );
 
         //create a new model
         this.model = this.sharedoConfiguration._host?.model;
@@ -197,19 +243,33 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
         this.blade = this.sharedoConfiguration._host?.blade;
         this.loaded = this.loaded || ko.observable(false);
         // Map the base model properties
-        this.sharedoId = this.sharedoConfiguration._host?.model.id || $ui.pageContext?.sharedoId || ko.observable(undefined);
+        this.sharedoId =
+            this.sharedoConfiguration._host?.model.id ||
+            $ui.pageContext?.sharedoId ||
+            ko.observable(undefined);
         if (!this.sharedoId || this.sharedoId()) {
             this.log("No sharedoId found");
         }
 
-        this.sharedoTypeSystemName = this.sharedoConfiguration._host?.model?.sharedoTypeSystemName || $ui.pageContext?.sharedoTypeName || ko.observable(undefined);
+        this.sharedoTypeSystemName =
+            this.sharedoConfiguration._host?.model?.sharedoTypeSystemName ||
+            $ui.pageContext?.sharedoTypeName ||
+            ko.observable(undefined);
         if (!this.sharedoTypeSystemName || !this.sharedoTypeSystemName()) {
             this.log("No sharedoTypeSystemName found");
         }
 
-        this.parentSharedoId = this.sharedoConfiguration._host?.model?.parentSharedoId || ko.observable(undefined);
-        this.phaseName = this.sharedoConfiguration._host?.model?.phaseName || $ui.pageContext?.phaseName || ko.observable(undefined);
-        this.phaseIsOpen = this.sharedoConfiguration._host?.model?.phaseIsOpen || $ui.pageContext?.phaseIsOpen || ko.observable(undefined);
+        this.parentSharedoId =
+            this.sharedoConfiguration._host?.model?.parentSharedoId ||
+            ko.observable(undefined);
+        this.phaseName =
+            this.sharedoConfiguration._host?.model?.phaseName ||
+            $ui.pageContext?.phaseName ||
+            ko.observable(undefined);
+        this.phaseIsOpen =
+            this.sharedoConfiguration._host?.model?.phaseIsOpen ||
+            $ui.pageContext?.phaseIsOpen ||
+            ko.observable(undefined);
         // this.shareDoOptions = toObservableObject(this.sharedoConfiguration, this.shareDoOptions);
         // this._shareDoOptions = this.shareDoOptions as ObservableSharedoConfigurationOptions<unknown>
 
@@ -220,19 +280,25 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
         this.applyComponentConfiguration(this.sharedoConfiguration.configuration);
         //setup the location to load and save the data from by calling the abstract method in the child class
         //! --> LocationToSaveOrLoadData <-- - this should be called at the end of this function to ensure that the options and configuration data is availabel to the child class
-        this.LocationToSaveOrLoadData = this.setLocationOfDataToLoadAndSave(); 
+        this.LocationToSaveOrLoadData = this.setLocationOfDataToLoadAndSave();
         this.fireEvent("onInitialise", this.model);
     }
 
-    private applyComponentConfiguration(configuration: IDefaultSettingsWithSpecificComponentConfig<TConfig>) {
-
-        let configurationAsObservables = toObservableObject(configuration, this.options);
+    private applyComponentConfiguration(
+        configuration: IDefaultSettingsWithSpecificComponentConfig<TConfig>
+    ) {
+        let configurationAsObservables = toObservableObject(
+            configuration,
+            this.options
+        );
         this.configuration = configuration;
 
         this.options = configurationAsObservables;
         // ! Note line below is for typing within the IDEBase, the line above is for typing within the child class
-        this._options = configurationAsObservables as ObservableConfigurationOptions<IDefaultSettingsWithSpecificComponentConfig<unknown>>;
-     
+        this._options =
+            configurationAsObservables as ObservableConfigurationOptions<
+                IDefaultSettingsWithSpecificComponentConfig<unknown>
+            >;
     }
 
     clearErrors() {
@@ -240,13 +306,11 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
     }
 
     setupErrorManager() {
-
         this.l("Setting up error manager");
         this.errors?.subscribe((newValue) => {
             this.inf("Errors changed", newValue);
             this.buildErrorDiv();
         });
-
     }
 
     setupLiveConfig() {
@@ -255,8 +319,6 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
                 this.activateLiveConfig(newValue.liveConfig);
             }
         });
-
-
 
         this.activateLiveConfig(this._options?.debug().liveConfig()); //TODO fix typings
     }
@@ -267,18 +329,23 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
             return;
         }
 
-        if (this.liveConfigDiv) { //leave alone if already active
+        if (this.liveConfigDiv) {
+            //leave alone if already active
             return;
         }
 
         this.l("Setting up live config");
 
-        const serializedData = JSON.stringify(this.sharedoConfiguration, (key, value) => {
-            if (key === "_host") {
-                return undefined;
-            }
-            return value;
-        }, 4);
+        const serializedData = JSON.stringify(
+            this.sharedoConfiguration,
+            (key, value) => {
+                if (key === "_host") {
+                    return undefined;
+                }
+                return value;
+            },
+            4
+        );
 
         //clone the config
         let config = ko.observable(serializedData);
@@ -289,63 +356,65 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
 
         let timeout: boolean = false;
 
-
-
         this.liveConfigDiv = this.createLiveConfigDiv();
 
         this.element.prepend(this.liveConfigDiv);
+        let applyChange = () => {
+            this.applyComponentConfiguration(JSON.parse(config()).configuration);
+            this.liveConfigurationRefreshed();
+            this.buildErrorDiv();
+        };
 
         setTimeout(() => {
             config.subscribe((newValue) => {
+                const debouncedApplyChange = debounceFunction(applyChange, 3000);
+                debouncedApplyChange();
+
                 // console.log("The new value is " + newValue)
 
-                if (timeout) {
-                    return;
-                }
-                setTimeout(() => {
-                    timeout = false;
-                    let newConfig = JSON.parse(config())
+                // if (timeout) {
+                //     return;
+                // }
+                // setTimeout(() => {
+                //     timeout = false;
+                //     let newConfig = JSON.parse(config())
 
-                    this.applyComponentConfiguration(newConfig.configuration);
-                    this.liveConfigurationRefreshed();
-                    // this.refresh(newConfig);
-                    // this.reset(newConfig);
-                }, 500);
-                timeout = true;
-
+                //     this.applyComponentConfiguration(newConfig.configuration);
+                //     this.liveConfigurationRefreshed();
+                //     // this.refresh(newConfig);
+                //     // this.reset(newConfig);
+                // }, 500);
+                // timeout = true;
             });
         }, 3000);
-
 
         // ko.applyBindings(this.liveConfigData, this.liveConfigDiv);x
 
         // }
     }
 
-
-
     ensureStylesLoaded(href: string): void {
         if (!document.querySelector(`link[href="${href}"]`)) {
-            const link = document.createElement('link');
+            const link = document.createElement("link");
             link.href = href;
-            link.rel = 'stylesheet';
-            link.type = 'text/css';
+            link.rel = "stylesheet";
+            link.type = "text/css";
             document.head.appendChild(link);
         }
     }
 
     createLiveConfigDiv(): HTMLElement {
         // Create the outer <div> with class "col-sm-12 formbuilder-editor-json"
-        const outerDiv = document.createElement('div');
-        outerDiv.className = 'col-sm-12 formbuilder-editor-json';
+        const outerDiv = document.createElement("div");
+        outerDiv.className = "col-sm-12 formbuilder-editor-json";
 
         // Create the inner <div> with the specified attributes
-        const innerDiv = document.createElement('div');
-        innerDiv.id = 'liveConfig';
-        innerDiv.className = 'form-control textarea';
-        innerDiv.style.height = '300px';
+        const innerDiv = document.createElement("div");
+        innerDiv.id = "liveConfig";
+        innerDiv.className = "form-control textarea";
+        innerDiv.style.height = "300px";
         // innerDiv.setAttribute('data-bind', 'syntaxEditor: liveConfigData.config, enable: true, event: { focusout: liveConfigData.onFocusOut }');
-        innerDiv.setAttribute('data-bind', 'syntaxEditor: liveConfigData.config');
+        innerDiv.setAttribute("data-bind", "syntaxEditor: liveConfigData.config");
         // innerDiv.setAttribute('data-bind', 'syntaxEditor: model.config');
         // Append the innerDiv to the outerDiv
         outerDiv.appendChild(innerDiv);
@@ -357,16 +426,21 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
         this._options?.eventsToReactTo()?.forEach((eventToWatch) => {
             console.log("Subscribing to event", eventToWatch);
             this.disposables.push(
-                $ui.events.subscribe(eventToWatch.eventPath(), (e: any) => {
-
-                    this.refreshComponent(eventToWatch.eventPath(), eventToWatch.methodToCall());
-                }, this));
+                $ui.events.subscribe(
+                    eventToWatch.eventPath(),
+                    (e: any) => {
+                        this.refreshComponent(
+                            eventToWatch.eventPath(),
+                            eventToWatch.methodToCall()
+                        );
+                    },
+                    this
+                )
+            );
         });
-
 
         let refreshOn = ko.toJS(this._options?.refreshOn());
         if (refreshOn) {
-
             if (refreshOn.sharedoIdChanged) {
                 this.disposables.push(
                     this.sharedoId.subscribe((newValue) => {
@@ -390,19 +464,18 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
                     })
                 );
             }
-
-
-
-
         }
-
     }
 
-    refreshComponent(eventPath: string | undefined, methodToCall: string | undefined) {
+    refreshComponent(
+        eventPath: string | undefined,
+        methodToCall: string | undefined
+    ) {
         this.refreshLog = this.refreshLog || [];
-        if (this.lastRefresh) //TODO: change this so we collect all refreshes and do them in one go
-        {
-            let secondsSinceLastRefresh = (new Date().getTime() - this.lastRefresh.getTime()) / 100;
+        if (this.lastRefresh) {
+            //TODO: change this so we collect all refreshes and do them in one go
+            let secondsSinceLastRefresh =
+                (new Date().getTime() - this.lastRefresh.getTime()) / 100;
             console.log("Seconds since last refresh", secondsSinceLastRefresh);
             if (secondsSinceLastRefresh < 10) {
                 console.log("Skipping refresh, too soon");
@@ -412,40 +485,43 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
 
         this.lastRefresh = new Date();
         console.log("Refreshing component");
-        let logItem = { eventPath: eventPath, methodToCall: methodToCall, time: new Date(), success: false };
+        let logItem = {
+            eventPath: eventPath,
+            methodToCall: methodToCall,
+            time: new Date(),
+            success: false,
+        };
         try {
             if (methodToCall) {
                 // let params = widgets.parameters;
                 console.log("Executing method", methodToCall);
-                let componentToRefresh = (this as any);
+                let componentToRefresh = this as any;
                 if (!componentToRefresh[methodToCall]) {
-                    console.log(`Method not found on component ${this.thisComponentName}`, methodToCall);
+                    console.log(
+                        `Method not found on component ${this.thisComponentName}`,
+                        methodToCall
+                    );
                 }
                 {
                     componentToRefresh[methodToCall](); //todo: parameters
                 }
             }
-        }
-        catch (e) {
+        } catch (e) {
             console.log(e);
-
-        }
-        finally {
+        } finally {
             logItem.success = true;
             this.refreshLog.push(logItem);
         }
-
     }
 
     buildErrorDiv() {
-        this.inf("Building error div")
+        this.inf("Building error div");
         let errorDiv = this.element.querySelector(this.errorDivSelector);
         if (!errorDiv) {
-
             return;
         }
 
-        l("errorDiv.innerHTML")
+        l("errorDiv.innerHTML");
         errorDiv.innerHTML = ""; //clean out the div
 
         if (!this.errors) {
@@ -466,99 +542,288 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
         let foreachDiv = document.createElement("div");
         errorContainerDiv.appendChild(foreachDiv);
 
-        this.errors().forEach((error) => {
+        // this.errors().forEach((error) => {
+        for (let i = 0; i < this.errors().length; i++) {
+            let error = this.errors()[i];
+            //Look for any trapping and add to the error object
+            this.addErrorTrapping(error);
+            //Render the error div and add to the foreach div
+            foreachDiv.appendChild(this.buildIndividualError(error));
+        }
+    }
 
-            let userMessageDiv = document.createElement("div");
-            userMessageDiv.className = "ide-aspect-error-user-message";
-            userMessageDiv.innerHTML = error.userMessage;
+    buildIndividualError(error: TUserErrors) {
+        let templateApplicator = new TemplateApplicator();
+        let dataContext = this.getDataContext([{ obj: error, key: "error" }]);
+        let linkedTrappedError = error.linkedTrappedError;
 
+        let individualErrorDiv: HTMLDivElement = document.createElement("div");
 
+        individualErrorDiv.className = "ide-aspect-error-individual-error";
+        if (linkedTrappedError) {
+            templateApplicator.addCSS(
+                linkedTrappedError.classRules,
+                individualErrorDiv,
+                "dataContext",
+                dataContext
+            );
+            templateApplicator.addStyle(
+                linkedTrappedError.styleRules,
+                individualErrorDiv,
+                "dataContext",
+                dataContext
+            );
+        }
 
-            userMessageDiv.onclick = () => {
+        let userMessageDiv = document.createElement("div");
+        userMessageDiv.className = "ide-aspect-error-user-message";
 
-                //create a div that can scoll
-                let detailedMessageDiv = document.createElement("div");
-                detailedMessageDiv.className = "ide-aspect-error-detailed-message";
+        let suggestionsDiv: HTMLDivElement | undefined;
+        let supportButtonDiv: HTMLDivElement | undefined;
+        let actionsDiv: HTMLDivElement | undefined;
+        // actionsDiv.className = "ide-aspect-error-actions";
 
+        let internalSuggestionsDiv: HTMLDivElement | undefined;
+        // internalSuggestionsDiv.className = "ide-aspect-error-internal-suggestions";
 
-                const code = escapeHtml(error.code || "");
-                const message = escapeHtml(error.message || "");
-                const userMessage = escapeHtml(error.userMessage || "");
-                const errorStack = escapeHtml(error.errorStack || "");
+        userMessageDiv.innerHTML =
+            linkedTrappedError?.userFreindlyMessage ||
+            error.userMessage ||
+            error.message ||
+            "Unknown error";
 
-                const additionalInfo = JsonToHtmlConverter.convert(error.additionalInfo || {});
+        if (linkedTrappedError?.userFreindlyHTMLMessageTemplate) {
+            let userFreindlyMessage = executeEmbeddedCode(
+                linkedTrappedError.userFreindlyHTMLMessageTemplate,
+                dataContext
+            );
+            userMessageDiv.innerHTML = userFreindlyMessage;
+            //Find section divs in the template if they exist
+            suggestionsDiv =
+                (userMessageDiv.querySelector(".ide-aspect-error-suggestions") as
+                    | HTMLDivElement
+                    | undefined) || suggestionsDiv;
+            actionsDiv =
+                (userMessageDiv.querySelector(".ide-aspect-error-actions") as
+                    | HTMLDivElement
+                    | undefined) || actionsDiv;
+            internalSuggestionsDiv =
+                (userMessageDiv.querySelector(
+                    ".ide-aspect-error-internal-suggestions"
+                ) as HTMLDivElement | undefined) || internalSuggestionsDiv;
+        }
 
-                const html = `
-                            <div>
-                            <h2>Error: ${code}</h2>
-                            <p><strong>Message:</strong> ${message}</p>
-                            <p><strong>User Message:</strong> ${userMessage}</p>
-                            <p><strong>Stack:</strong> ${errorStack}</p>
-                            <p><strong>Additional Info:</strong> ${additionalInfo}</p>
-                            </div>`;
+        individualErrorDiv.appendChild(userMessageDiv);
 
+        // userMessageDiv.onclick = () => {
 
-                detailedMessageDiv.innerHTML = html;
+        //     //create a div that can scoll
+        //     let detailedMessageDiv = document.createElement("div");
+        //     detailedMessageDiv.className = "ide-aspect-error-detailed-message";
 
-                $ui.errorDialog(detailedMessageDiv);
+        //     const code = escapeHtml(error.code || "");
+        //     const message = escapeHtml(error.message || "");
+        //     const userMessage = escapeHtml(error.userMessage || "");
+        //     const errorStack = escapeHtml(error.errorStack || "");
 
+        //     const additionalInfo = JsonToHtmlConverter.convert(error.additionalInfo || {});
+
+        //     const html = `
+        //                     <div>
+        //                     <h2>Error: ${code}</h2>
+        //                     <p><strong>Message:</strong> ${message}</p>
+        //                     <p><strong>User Message:</strong> ${userMessage}</p>
+        //                     <p><strong>Stack:</strong> ${errorStack}</p>
+        //                     <p><strong>Additional Info:</strong> ${additionalInfo}</p>
+        //                     </div>`;
+
+        //     detailedMessageDiv.innerHTML = html;
+        //     $ui.errorDialog(detailedMessageDiv);
+
+        // }
+
+        //create the sections divs if they done exists and add to the individual error div
+        {
+            if (!suggestionsDiv) {
+                suggestionsDiv = document.createElement("div");
+                individualErrorDiv.appendChild(suggestionsDiv);
             }
 
-
-            foreachDiv.appendChild(userMessageDiv);
-
-            if (error.suggestions && error.suggestions.length > 0) {
-                let suggestionsDiv = document.createElement("div");
-                suggestionsDiv.className = "ide-aspect-error-suggestions";
-                suggestionsDiv.innerHTML = `<b>Suggestions:</b><br/>${error.suggestions.join("<br/>")}`;
-                foreachDiv.appendChild(suggestionsDiv);
+            if (!actionsDiv) {
+                actionsDiv = document.createElement("div");
+                individualErrorDiv.appendChild(actionsDiv);
             }
 
-            if (error.actions && error.actions.length > 0) {
-                let actionsDiv = document.createElement("div");
-                actionsDiv.className = "ide-aspect-error-actions";
-                actionsDiv.innerHTML = `<b>Actions:</b><br/>${error.actions.join("<br/>")}`;
-                foreachDiv.appendChild(actionsDiv);
+            if (!internalSuggestionsDiv) {
+                internalSuggestionsDiv = document.createElement("div");
+                individualErrorDiv.appendChild(internalSuggestionsDiv);
             }
 
-            if (error.internalSuggestions && error.internalSuggestions.length > 0) {
-                let internalSuggestionsDiv = document.createElement("div");
-                internalSuggestionsDiv.className = "ide-aspect-error-internal-suggestions";
-                internalSuggestionsDiv.innerHTML = `<b>Internal Suggestions:</b><br/>${error.internalSuggestions.join("<br/>")}`;
-                foreachDiv.appendChild(internalSuggestionsDiv);
+            if (!supportButtonDiv) {
+                supportButtonDiv = document.createElement("div");
+                individualErrorDiv.appendChild(supportButtonDiv);
             }
+        }
 
-        });
+        let resolutionSuggestions =
+            linkedTrappedError?.resolutionSuggestions ||
+            error.internalSuggestions ||
+            [];
+        if (resolutionSuggestions.length > 0) {
+            suggestionsDiv.className = "ide-aspect-error-suggestions";
+            suggestionsDiv.innerHTML = `<b>Suggestions:</b><br/>${resolutionSuggestions.join(
+                "<br/>"
+            )}`;
+        }
 
-        if (this._options?.debug().supportRequestEnabled) {
+        let actions = error.sharedoErrorActions || [];
+        if (actions.length > 0) {
+            actionsDiv.innerHTML = `<b>Actions:</b><br/>${actions.join("<br/>")}`;
+        }
+
+        let internalSuggestions = error.internalSuggestions || [];
+        if (internalSuggestions.length > 0) {
+            internalSuggestionsDiv.innerHTML = `<b>Internal Suggestions:</b><br/>${internalSuggestions.join(
+                "<br/>"
+            )}`;
+        }
+
+        let supportButton =
+            linkedTrappedError?.supportButton ||
+            this.configuration?.errorManagement?.unTrappedErrorsSupportButton;
+        if (supportButton && supportButton.enabled) {
             let actionDiv = document.createElement("div");
             actionDiv.className = "ide-aspect-error-support-action";
-            errorContainerDiv.appendChild(actionDiv);
+            individualErrorDiv.appendChild(actionDiv);
             let button = document.createElement("button");
             button.className = "btn btn-primary";
-            // button.setAttribute("data-bind","click:createSupportTask,visible:options.debug..supportRequestEnabled");
-            button.innerText = "Create Support Task";
+
+            button.onclick = () => {
+                this.createOpenPanel(supportButton, dataContext);
+            };
+
+            templateApplicator.addCSS(
+                supportButton.classRules,
+                actionDiv,
+                "dataContext",
+                dataContext
+            );
+            templateApplicator.addStyle(
+                supportButton.styleRules,
+                actionDiv,
+                "dataContext",
+                dataContext
+            );
+
+            button.innerText = supportButton.title;
             actionDiv.appendChild(button);
         }
 
-
-
-
+        return individualErrorDiv;
     }
 
+    createOpenPanel(
+        supportButton: ISupportButton | undefined,
+        dataContext: any
+    ) {
+ 
+        if (!supportButton) {
+            return;
+        } 
+
+
+        let buttonConfig = supportButton.raiseSupportTicketSharedoCommand;
+        let supportTicketMessage = buttonConfig.description ||  supportButton.supportTicketMessage || "";
+
+        let config: ISharedoPanelConfig =
+        {
+            title: executeEmbeddedCode(buttonConfig.title, dataContext),
+            typeSystemName: executeEmbeddedCode(buttonConfig.typeSystemName, dataContext),
+            description:executeEmbeddedCode(supportTicketMessage, dataContext)
+        }
+        $ui.nav.invoke({
+            invokeType: "panel",
+            invoke: "Sharedo.Core.Case.Sharedo.AddEditSharedo",
+            config: config,
+        });
+    }
+
+    addErrorTrapping(error: TUserErrors) {
+        //run rules in error traps to see if this error has been trapped bhy a rule
+        let errorTrapped = false;
+        // let errorTraps = gvko<IErrorTrap[]>(this._options?.errorManagement()?.errorTraps) || [];
+        let errorTraps = this.configuration?.errorManagement?.errorTraps || [];
+
+        // errorTraps.forEach((trap) => {
+        for (
+            let errorTrapsIndex = 0;
+            errorTrapsIndex < errorTraps.length;
+            errorTrapsIndex++
+        ) {
+            let trap = errorTraps[errorTrapsIndex];
+            if (trap.enabled === false) {
+                continue;
+            }
+            try {
+                let dataContext = this.getDataContext([{ obj: error, key: "error" }]);
+                l(
+                    `Evaluating rule [${trap.rule}] on error ${error} with dataContext:`,
+                    dataContext
+                );
+                let ruleResult = evaluteRule(trap.rule, dataContext);
+                if (ruleResult) {
+                    errorTrapped = true;
+                    error.linkedTrappedError = trap;
+                    break;
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        }
+    }
+    getDataContext(additional?: [{ obj: any; key: string }] | undefined): any {
+        const browser = detect();
+        let dataContext: any = {
+            thisComponentName: this.thisComponentName,
+            user: ko.toJS($ui.pageContext?.user),
+            pageContext: ko.toJS($ui.pageContext),
+            aspectData: ko.toJS(this.baseModel),
+            configuration: ko.toJS(this._options),
+            browser: browser,
+        };
+
+        let additionalData = additional || [];
+        for (let i = 0; i < additionalData.length; i++) {
+            let item = additionalData[i];
+            dataContext[item.key] = item.obj;
+        }
+
+        return dataContext;
+    }
+
+    // createSupportTask() {
+    //     //TODO: Create a support task
+    //     $ui.nav.invoke({
+    //         "invokeType": "panel",
+    //         "invoke": "Sharedo.Core.Case.Sharedo.AddEditSharedo",
+    //         "config": "{\"typeSystemName\":\"task-eddiscovery-adhoc\",\"title\":\"\",\"Support Request\":\"\"}"
+    //     });
+
+    // }
+
     /**
-       * Abstract method to be implemented by the child class to refresh the aspect
-       * @param newConfig 
-       */
+     * Abstract method to be implemented by the child class to refresh the aspect
+     * @param newConfig
+     */
     abstract refresh(newConfig: any): void;
 
     /**
-    * Abstract method to be implemented by the child class to reset the aspect based 
-    * @param newConfig 
-    */
+     * Abstract method to be implemented by the child class to reset the aspect based
+     * @param newConfig
+     */
     abstract reset(newConfig: any): void;
 
-    abstract liveConfigurationRefreshed():void;
+    abstract liveConfigurationRefreshed(): void;
 
     /**
      * ! important: Mandatory method to be implemented by the child class to set the defaults
@@ -566,7 +831,7 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
      * @returns Defaults<TConfig>
      * @memberof BaseIDEAspect
      * @abstract
-     * 
+     *
      */
     abstract setDefaults(): IDefaultSettingsWithSpecificComponentConfig<TConfig>;
 
@@ -576,34 +841,30 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
     // abstract setExampleForModeller(): Defaults<TConfig>;
 
     /**
-    * !IMPORTANT - This is the location of the data to load and save to
-    * Examples of this are:
-    * - aspectData.formBuilder.formData.{formBuilderField}
-    * - aspectData.odsEntityPicker
-    * - undefined (if no data is to be loaded or saved by the base class)
-    * @returns The location of the data to load and save to OR undefined if no data is to be loaded or saved by the base class
-    */
+     * !IMPORTANT - This is the location of the data to load and save to
+     * Examples of this are:
+     * - aspectData.formBuilder.formData.{formBuilderField}
+     * - aspectData.odsEntityPicker
+     * - undefined (if no data is to be loaded or saved by the base class)
+     * @returns The location of the data to load and save to OR undefined if no data is to be loaded or saved by the base class
+     */
     abstract setLocationOfDataToLoadAndSave(): string | undefined;
 
     /**
-     * !IMPORTANT - This is the name of the component e.g. QuickView 
+     * !IMPORTANT - This is the name of the component e.g. QuickView
      * This will also be used during the build and will be appended with the Built Target e.g. IDEAspects.QuickView
      */
     abstract setThisComponentName(): string;
-
 
     /**
      * !IMPORTANT - This is the first method once the class has been constructed, default contructor logic should be placed here
      */
     abstract setup(): void;
 
-
     /**
      * !IMPORTANT - This is the settings for the widget.json that will be generated
      */
     abstract setWidgetJsonSettings(): IWidgetJson<TConfig>;
-
-
 
     // abstract setDependantScriptFiles(): string[];
     // abstract setDependantStyleFiles(): string[];
@@ -620,36 +881,56 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
     onSave(model: any) {
         this.fireEvent("onSave", model);
 
-        let dataToSave = this._data
-        this.log("Saving, model passed in we need to persist to", "green", dataToSave);
+        let dataToSave = this._data;
+        this.log(
+            "Saving, model passed in we need to persist to",
+            "green",
+            dataToSave
+        );
 
         if (this.LocationToSaveOrLoadData === undefined) {
-            this.log("No location to save data to set - this method should be overriden", "red");
+            this.log(
+                "No location to save data to set - this method should be overriden",
+                "red"
+            );
             return;
         }
-
 
         let dataToPersist = this._data;
         let currentData = getNestedProperty(model, this.LocationToSaveOrLoadData);
         if (currentData) {
-            this.log(`Current data at location ${this.LocationToSaveOrLoadData} :`, "magenta", currentData);
+            this.log(
+                `Current data at location ${this.LocationToSaveOrLoadData} :`,
+                "magenta",
+                currentData
+            );
         }
         if (!currentData) {
             // this.log("Data does not exist, we will create", "orange");
             //  setNestedProperty(model, this.LocationToSaveOrLoadData, {});
             // currentData = getNestedProperty(model, this.LocationToSaveOrLoadData);
         }
-        this.log(`New data to persist to location ${this.LocationToSaveOrLoadData} :`, "blue", dataToPersist);
+        this.log(
+            `New data to persist to location ${this.LocationToSaveOrLoadData} :`,
+            "blue",
+            dataToPersist
+        );
         setNestedProperty(model, this.LocationToSaveOrLoadData, dataToPersist);
 
         this.l("Data saved", model);
+    }
 
-    };
-
-    async getData() {
+    /**
+     * Gets the data to load, defaults to LocationToSaveOrLoadData unless a fieldPath is passed in
+     * @param fieldPath
+     * @returns
+     */
+    async getData(fieldPath?: string) {
         if (this._data) {
             return this._data;
         }
+
+        fieldPath = fieldPath || this.LocationToSaveOrLoadData;
 
         //This section is d=use due to typing issue that needs to be resolved.
         // let useParents = gvko(this._options.dataSettings().getValueUsingParents) as boolean | undefined
@@ -658,17 +939,21 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
         // let LocationToSaveOrLoadData = gvko(this.LocationToSaveOrLoadData) as string | undefined
         //end area of typing issue
 
-        let useParents = this._options?.dataSettings().getValueUsingParents()
-        let shareDoId = this.sharedoId()
-        let maxDepth = this._options?.dataSettings().maxDepth()
-        let LocationToSaveOrLoadData = gvko(this.LocationToSaveOrLoadData);
+        let useParents = this._options?.dataSettings().getValueUsingParents();
+        let shareDoId = this.sharedoId();
+        let maxDepth = this._options?.dataSettings().maxDepth();
 
-        if (LocationToSaveOrLoadData === undefined) {
-            this.log("No location to load data from set - this method should be overriden", "red");
+        // let LocationToSaveOrLoadData = gvko(this.LocationToSaveOrLoadData);
+
+        if (fieldPath === undefined) {
+            this.log(
+                "No location to load data from set - this method should be overriden",
+                "red"
+            );
             return this._data;
         }
 
-        this._data = getNestedProperty(this.model, LocationToSaveOrLoadData);
+        this._data = getNestedProperty(this.model, fieldPath);
 
         if (this._data !== undefined) {
             this.l("Data found at location", this._data);
@@ -677,43 +962,95 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
         }
 
         //if data ot found in the current model, look via the search
-        if (this._data === undefined && useParents === false && shareDoId) //! TODO Fix Typings
-        {
-            return searchForAttributeRecursive(shareDoId, LocationToSaveOrLoadData, false).then((data) => {
-                if (data.found) {
-                    this._data = data.value;
+        if (this._data === undefined && useParents === false && shareDoId) {
+            //! TODO Fix Typings
+            return searchForAttributeRecursive(shareDoId, fieldPath, false).then(
+                (data) => {
+                    if (data.found) {
+                        this._data = data.value;
+                    }
+                    return this._data;
                 }
-                return this._data;
-            })
+            );
         }
 
-        if (this._data === undefined && useParents === true) //! TODO Fix Typings
-        {
-
+        if (this._data === undefined && useParents === true) {
+            //! TODO Fix Typings
             let idToUser = this.sharedoId() || this.parentSharedoId();
 
             if (!idToUser) {
-                this.log("No id to use for search both sharedoId and parentSharedoId are undefined");
+                this.log(
+                    "No id to use for search both sharedoId and parentSharedoId are undefined"
+                );
                 return this._data;
             }
-            return searchForAttributeRecursive(idToUser, LocationToSaveOrLoadData, useParents, maxDepth).then((data) => {
+            return searchForAttributeRecursive(
+                idToUser,
+                fieldPath,
+                useParents,
+                maxDepth
+            ).then((data) => {
                 if (data.found) {
                     this._data = data.value;
                 }
                 return this._data;
-            })
+            });
         }
     }
 
+    searchForAttributeRecursive(
+        id: string,
+        attribute: string,
+        useParents: boolean,
+        maxDepth: number | undefined
+    ): Promise<any> {
+        return searchForAttributeRecursive(id, attribute, useParents, maxDepth);
+    }
 
+    async searchByGraph(fieldPath: string, useParent: boolean = false) {
+        let inputOption: IGraphQuery = JSON.parse(JSON.stringify(IGraphQueryDefaults));
+        let shareDoId = this.sharedoId();
+        let parentId = this.parentSharedoId();
 
+        let query: IGraphQueryField = {
+            path: fieldPath,
+        };
+
+        inputOption.fields.push(query);
+
+        if (useParent === false && shareDoId) {
+            //! TODO Fix Typings
+            inputOption.entityId = shareDoId;
+        } else if (useParent === true && parentId) {
+            //! TODO Fix Typings
+            inputOption.entityId = parentId;
+        }
+
+        if (!inputOption.entityId) {
+            this.log(
+                "No id to use for search both sharedoId and parentSharedoId are undefined"
+            );
+            return;
+        }
+
+        let result = await executeFindByGraph(inputOption);
+
+        if (result.info.success === false) {
+            this.log("Error executing search", "red", result.info);
+            return;
+        }
+
+        return result.data?.data[fieldPath];
+    }
 
     setData(value: TPersitance | undefined) {
-
         let valueToPersist = ko.toJS(value);
         let previousValue = ko.toJS(this._data);
         this._data = valueToPersist;
-        this.fireValueChangedEvent("onDataBeforeChanged", { previousValue: previousValue, newValue: valueToPersist });
+        this.fireValueChangedEvent("onDataBeforeChanged", {
+            previousValue: previousValue,
+            newValue: valueToPersist,
+        });
 
         if (this.LocationToSaveOrLoadData === undefined) {
             return;
@@ -732,12 +1069,11 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
         this.fireEvent("onDataChanged", this.model);
     }
 
-
     onDestroy(model?: any) {
         this.log("IDEAspects.Example : onDestroy");
         this.fireEvent("onDestroy", model);
         $ui.util.dispose(this.disposables);
-    };
+    }
 
     /**
      * Called by the UI framework after initial creation and binding to load data
@@ -746,9 +1082,13 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
     loadAndBind() {
         this.log("IDEAspects.Example : loadAndBind");
         this.log("Loading data (model:any) passed in", "green");
-        this.log("Loading data based on location to save", "green", this.LocationToSaveOrLoadData);
+        this.log(
+            "Loading data based on location to save",
+            "green",
+            this.LocationToSaveOrLoadData
+        );
         this.fireEvent("onLoad", this.model);
-    };
+    }
 
     /**
      * Called by the aspect IDE adapter before the model is saved
@@ -757,7 +1097,6 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
         this.log("IDEAspects.Example : onBeforeSave");
         this.fireEvent("onBeforeSave", model);
     }
-
 
     /**
      * Called by the aspect IDE adapter after the model has been saved.
@@ -775,12 +1114,11 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
         this.fireEvent("onReload", model);
     }
 
-
     debugSettings() {
         let debugSetting: IDebug = DEBUG_DEFAULT();
 
         if (this._options?.debug()) {
-            debugSetting = ko.toJS(this._options?.debug())
+            debugSetting = ko.toJS(this._options?.debug());
         }
 
         return debugSetting;
@@ -788,34 +1126,33 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
 
     /**
      * Provides logging for the component based on the debug configuration
-     * @param message 
-     * @param color 
-     * @param data 
+     * @param message
+     * @param color
+     * @param data
      */
     log(message: string, color?: string, data?: any): void {
-
-
-
         if (this.debugSettings().enabled) {
             if (this.debugSettings().logToConsole) {
                 if (!color) color = "black";
                 // let lineNo = extractLineNumberFromStack((new Error()).stack);
-                console.log(`%c ${this.thisComponentName} - ${message}`, `color:${color}`, data);
+                console.log(
+                    `%c ${this.thisComponentName} - ${message}`,
+                    `color:${color}`,
+                    data
+                );
             }
         }
     }
 
     canLog(): boolean {
-
         return this.debugSettings().enabled;
     }
     logToConsole(): boolean {
         return this.canLog() && this.debugSettings().logToConsole;
     }
     logToAspect(): boolean {
-        return this.canLog() && this.debugSettings().showInAspect
+        return this.canLog() && this.debugSettings().showInAspect;
     }
-
 
     inf(message: string, ...args: any[]) {
         if (this.logToConsole()) {
@@ -830,10 +1167,7 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
     }
 
     err(message: string, ...args: any[]) {
-
         //get the previous caller
-
-
 
         if (this.logToConsole()) {
             l(err(message), ...args);
@@ -869,7 +1203,9 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
     }
 
     addAspectLogOutput() {
-        if (!this.logToAspect()) { return };
+        if (!this.logToAspect()) {
+            return;
+        }
 
         this.aspectLogOutput = document.createElement("div");
         let aspectLogOutput = this.aspectLogOutput;
@@ -902,7 +1238,6 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
         aspectLogOutput.style.boxShadow = "0px 0px 5px 0px rgba(0,0,0,0.75)";
 
         this.element.prepend(aspectLogOutput);
-
     }
 
     fireEvent(eventName: string, data: any) {
@@ -910,58 +1245,62 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
             eventPath: this.thisComponentName + "." + eventName,
             eventName: eventName,
             source: this,
-            data: data
-        }
+            data: data,
+        };
         fireEvent(event);
     }
 
-    fireValueChangedEvent(eventName: string, changedData: { previousValue: any, newValue: any }) {
+    fireValueChangedEvent(
+        eventName: string,
+        changedData: { previousValue: any; newValue: any }
+    ) {
         let event: ShareDoEvent = {
             eventPath: this.thisComponentName + "." + eventName,
             eventName: eventName,
             source: this,
-            data: changedData
-        }
+            data: changedData,
+        };
         fireEvent(event);
     }
 
     /**
-     * 
+     *
      * @returns Formbuild if it exists or creates it if it does not
-     * 
+     *
      */
     formbuilder() {
-
         if (!this.blade?.model?.aspectData?.formBuilder?.formData) {
-            this.log("blade.model.aspectData.formBuilder.formData not found - will create the path", "blue");
-        }
-        else {
+            this.log(
+                "blade.model.aspectData.formBuilder.formData not found - will create the path",
+                "blue"
+            );
+        } else {
             this.log("blade.model.aspectData.formBuilder.formData found", "green");
         }
 
         //Ensure the path exists
         if (!this.blade) {
             //TODO: if no blade where is form builder data
-            return undefined
+            return undefined;
         }
         this.blade = this.blade || {};
         return this.ensureFormbuilder(this.blade.model);
 
         // return this.blade!.model!.aspectData!.formBuilder!.formData;
-
     }
 
     /**
      * Ensures there is a form builder in the passed in model and returns it
-     * @param model 
-     * @returns 
+     * @param model
+     * @returns
      */
     ensureFormbuilder(model: any): IFormBuilderData {
-
         if (!model?.aspectData?.formBuilder?.formData) {
-            this.log("blade.model.aspectData.formBuilder.formData not found - will create the path", "blue");
-        }
-        else {
+            this.log(
+                "blade.model.aspectData.formBuilder.formData not found - will create the path",
+                "blue"
+            );
+        } else {
             this.log("blade.model.aspectData.formBuilder.formData found", "green");
         }
 
@@ -969,12 +1308,12 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
 
         model = model || {};
         model.aspectData = model.aspectData || {};
-        model.aspectData.formBuilder = model.aspectData.formBuilder || { formData: {} };
-
+        model.aspectData.formBuilder = model.aspectData.formBuilder || {
+            formData: {},
+        };
 
         return model.aspectData.formBuilder.formData;
     }
-
 
     formbuilderField(formbuilderField: string, setValue?: string) {
         if (!this.formbuilder()) {
@@ -987,9 +1326,12 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
             return;
         }
 
-        let foundValue = formBuilder[formbuilderField]
+        let foundValue = formBuilder[formbuilderField];
         if (!foundValue) {
-            this.log(`Form builder does not contain field ${formbuilderField} `, "orange");
+            this.log(
+                `Form builder does not contain field ${formbuilderField} `,
+                "orange"
+            );
             this.log(`Creating field ${formbuilderField} `, "blue");
             formBuilder[formbuilderField] = undefined;
         }
@@ -1003,10 +1345,7 @@ export abstract class BaseIDEAspect<TConfig, TPersitance>  {
 
         return foundValue;
     }
-
 }
-
-
 
 // class MyClass {
 

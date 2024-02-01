@@ -1,8 +1,8 @@
 
 
 import * as ko from "knockout";
-import { checkLowdashCompatability } from "./Styling";
 import { DeferredPromise } from "../../Common/DifferedPromise";
+import { checkLowdashCompatability } from "../../../Common/LowdasCompatability";
 
 
 let defaultContext :DataContext;

@@ -2,7 +2,7 @@ import * as ko from "knockout";
 import * as $ from "jquery";
 import { ISingleValuePortalConfiguration, SingleValuePortalDefault } from "../SingleValuePortalWidgetConfig";
 import { NestedObservableObject, toObservableObject } from "../../../IDEAspects/BaseClasses/KOConverter";
-import { IDefaultSettingsWithSpecificComponentConfig, IWidgetConfigSettings } from "../../../IDEAspects/BaseClasses/IWidgetJson";
+import { IDefaultSettingsWithSpecificComponentConfig, IWidgetConfigSettings } from "../../../IDEAspects/BaseClasses/Interfaces";
 
 
 export function SingleValuePortalWidgetDesigner(element: HTMLElement, configuration: any, baseModel: any): SingleValuePortalWidgetDesignerClass {

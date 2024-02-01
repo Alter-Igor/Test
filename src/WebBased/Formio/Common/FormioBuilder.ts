@@ -1,7 +1,8 @@
 import { FormBuilder } from "formiojs";
-import { addDefaultFormIOStyleSheetsToIframe, checkLowdashCompatability } from "./Styling";
+import { addDefaultFormIOStyleSheetsToIframe } from "./Styling";
 import { DeferredPromise } from "../../Common/DifferedPromise";
 import { defaultFormat } from "moment";
+import { checkLowdashCompatability } from "../../../Common/LowdasCompatability";
 
 
 export function createFormBuilderPage(element: Element,schema: string) : DeferredPromise<FormBuilder> {

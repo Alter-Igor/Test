@@ -1,9 +1,11 @@
+import { data } from "jquery";
+import { JsonToHtmlConverter } from "../Common/JsonToHTMLConverter";
 import { l, inf, err, lh1 } from "../Common/Log";
+import { utf8ToBase64 } from "../Common/Base64Encoding";
 
 export function evaluteRule(rule: string | undefined | null, dataContext: any, dataContextName?: string): boolean {
 
-  if(!rule)
-  {
+  if (!rule) {
     return false;
   }
 
@@ -101,22 +103,43 @@ export function checkAndLogUndefined(obj: any, rule: string, dataContextName: st
  * @param dataContextName 
  * @returns 
  */
-export function executeEmbeddedCode(input: string | undefined | null, dataContext:any, dataContextName?: string): string {
-  
-  if(!input)
-  {
+export function executeEmbeddedCode(input: string | undefined | null, dataContext: any, dataContextName?: string): string {
+
+  if (!input) {
     return "";
   }
-  
+
   return input.replace(/\$\{(.+?)\}/g, (_, code) => {
     try {
       // WARNING: Eval can execute arbitrary code and is unsafe
       // Only use with trusted input
+
+      dataContext["helpers"] = dataContext["helpers"] || {};
+      dataContext["helpers"].utf8ToBase64 = utf8ToBase64;
+ 
       let val = executeFunc(code, dataContext, dataContextName);
-      return val.toString();
-    } catch (error) {
+      if (val === undefined) {
+        val = '';
+      }
+      // val = JSON.stringify(val, undefined, 2);
+
+      val = JsonToHtmlConverter.convert(val);
+      
+      //remove outter " from val
+      // val = val.substring(1, val.length - 1);
+      return val;
+    } catch (error: any) {
       console.error('Failed to execute embedded code:', error);
-      return '';
+
+      let val = '';
+      if (error.message) {
+        val = error.message;
+      }
+      else {
+        val = JSON.stringify(error);
+      }
+
+      return JSON.stringify(val);
     }
   });
 }

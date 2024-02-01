@@ -18,18 +18,18 @@
                     "extractedFileName": "utils.js"
                 }
             ],
-            "enabled": true
+            "enabled": false
 
         },
         "Widgets": {
             "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/Widgets",
             "sourcePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/Widgets",
-            "enabled": true
+            "enabled": false
         },
         "IDEAspects": {
             "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/IDEAspects",
             "sourcePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/IDEAspects",
-            "enabled": true,
+            "enabled": false,
             "generatDefaultConfigurationJson":true
         },
         "WorkflowActions": {
@@ -42,35 +42,31 @@
         "PortalWidgets": {
             "deployPath": "/Users/igorsharedo/Desktop/Test/_IDE/PortalWidgets",
             "sourcePath": "/Users/igorsharedo/Desktop/Test/src/WebBased/PortalWidgets",
-            "enabled": true
+            "enabled": false
         }
     }
     },
     "targets": {
         "IDEAspects": {
-            "OdsPicker": {
-                "enabled": false,
-                "modulesToExtract": [ ]
-            },
             "DatePickerAspect" :{
-                "enabled": true
+                "enabled": false
             },
             "SingleValueAspect":{
                 "enabled": true
             },
             "ExternalMatterSearch":{
-                "enabled": true
+                "enabled": false
             }
         },
         "WorkflowActions": {
             "LargeFiles": {
-                "enabled": false
+                "enabled": true
             },
             "CustomProgressMilestone":{
-                "enabled":true
+                "enabled":false
             },
             "IsSharedoInPhaseWithFeature":{
-                "enabled":true
+                "enabled":false
             },
             "RecursiveFindAttribute":{
                 "enabled":false
@@ -89,10 +85,10 @@
         },
         "PortalWidgets":{
             "RefreshWatcher":{
-                "enabled":true
+                "enabled":false
             },
             "SingleValuePortalWidget":{
-                "enabled":true,
+                "enabled":false,
                 "generatDefaultConfigurationJson":true
             }
         }

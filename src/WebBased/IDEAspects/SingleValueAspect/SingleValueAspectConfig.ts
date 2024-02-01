@@ -1,5 +1,5 @@
-import { DEBUG_DEFAULT } from "../BaseClasses/DebugDefaults";
-import { IDefaultSettingsWithSpecificComponentConfig, IWidgetJson } from "../BaseClasses/IWidgetJson";
+import { DEBUG_DEFAULT, DEFAULT_ERROR_MANAGEMENT_SETTINGS } from "../BaseClasses/DefaultSettings";
+import { IDefaultSettingsWithSpecificComponentConfig, IWidgetJson } from "../BaseClasses/Interfaces";
 
 export interface ISingleValueAspectConfiguration {
     fieldPath: string | undefined,
@@ -47,7 +47,8 @@ export const Default: IDefaultSettingsWithSpecificComponentConfig<ISingleValueAs
     dataSettings: {
         getValueUsingParents: false,
         maxDepth: 0,
-    }
+    },
+    errorManagement: DEFAULT_ERROR_MANAGEMENT_SETTINGS,
 
 
 }
